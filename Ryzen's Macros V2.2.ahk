@@ -1,4 +1,4 @@
-﻿;                                                               GO TO THE BOTTOM OF THE SCRIPT FOR HELP, INFO AND A QUICK TUTORIAL
+;                                                               GO TO THE BOTTOM OF THE SCRIPT FOR HELP, INFO AND A QUICK TUTORIAL
 ;                                                               GO TO THE BOTTOM OF THE SCRIPT FOR HELP, INFO AND A QUICK TUTORIAL
 ;                                                               GO TO THE BOTTOM OF THE SCRIPT FOR HELP, INFO AND A QUICK TUTORIAL
 ;                                                               GO TO THE BOTTOM OF THE SCRIPT FOR HELP, INFO AND A QUICK TUTORIAL
@@ -383,7 +383,7 @@ Goto, Macro
 ; DO NOT delete the "Libraries" folder or else the script will crash when you try to use GTAHax.
 
 ; KNOWN ISSUES:
-; The "HelpWhatIsThis" macro has some spelling errors. It took so long to set up though that i won't even bother trying to fix this mess, and I'm too terrified to do anything to it because i fear I will break them lmfao.
+; No.
 
 
 ; Changelog:
@@ -392,6 +392,10 @@ Goto, Macro
 ; Made GTAHax public, as I have found a way of making it far easier to use. The macro now automatically sets the priority of Discord to Above Normal. It also sets SocialClubHelper.exe, and Launcher.exe to Low.
 ; Removed all weapon macros because they are useless.
 ; MASSIVELY improved the formatting of the entire script, the keybinding system is sorted to the actual text now, and it is easier to edit. Moved the descriptions of the macros to where the macros are located in the file.
+; Fixed some spelling errors on the chat macros.
+; Improved ammo macros.
+; Disabled CapsLock because it is gay.
+; Added to Github!
 ; 2.1:
 ; Upped the version number, as per tradition again.
 ; Added FastRespawn. Added Suspend, which is not a macro, but it suspends the hotkeys. In other words, it cancels the macros and disables them until you press the button again.
