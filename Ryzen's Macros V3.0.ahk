@@ -6,18 +6,16 @@
 ;                                                               GO TO THE BOTTOM OF THE SCRIPT FOR HELP, INFO AND A QUICK TUTORIAL
 ;                                                               GO TO THE BOTTOM OF THE SCRIPT FOR HELP, INFO AND A QUICK TUTORIAL
 ;                                                               GO TO THE BOTTOM OF THE SCRIPT FOR HELP, INFO AND A QUICK TUTORIAL
-
-#NoEnv                           ; Claims to improve performance, not sure what it actually does.
+CFG = GTA Binds.ini
 #SingleInstance, force           ; You can't start multiple instances of the macro with this on
 #IfWinActive ahk_class grcWindow ; Disables hotkeys when alt-tabbed or GTA is closed. Restart macro if you decide to restart GTA with this enabled.
 #IfWinActive Grand Theft Auto V  ; Same as above, just makes it more reliable.
-#MaxThreadsPerHotkey 1           ; Doesn't increase speed, just improves the macro overall.
+#MaxThreadsPerHotkey 1           ; Absolute cancer if above 1. Doesn't increase speed.
 #MaxThreads 99999                ; Increases speed
-#MaxThreadsBuffer On             ; Doesn't matter as long as MaxThreadsPerHotkey is 1
+#MaxThreadsBuffer On             ; Doesn't matter as long as MaxThreadsPerHotkey is 1, otherwise turn it off or you will get cancer.
 #MaxHotkeysPerInterval 99000000  ; Also increases speed
 #KeyHistory 0                    ; Claims to increase speed 
-#HotkeyInterval 99000000         ; Also increases speed
-#Persistent                      ; Keeps the script running
+#HotkeyInterval 99000000         ; Also increases speed             
 ListLines Off                    ; Also claims to increase speed
 SetDefaultMouseSpeed, 0          ; Could theoretically increase speed.
 SetBatchLines, -1                ; Also increases speed
@@ -29,49 +27,126 @@ Process, Priority, GTA5.exe, H   ; Sets the task priority of GTA V to high, whic
 SetWorkingDir %A_ScriptDir%      ; Ensures a consistent starting directory.
 Goto, DiscordPriority            ; Automatically excecutes DiscordPriority when you start the script, which sets Discords's priority to High, which should make it more usable now that we increased the priority of GTA to High, and changes some other applications to Low.
 Macro:
-;                                                                                          ———Assign Hotkeys———
+Gui, Add, Text,, InteractionMenuKey:
+Gui, Add, Text,, ThermalHelmet:
+Gui, Add, Text,, FastSniperSwitch:
+Gui, Add, Text,, EWO:
+Gui, Add, Text,, EWOLookBehindKey:
+Gui, Add, Text,, EWOSpecialAbilitySlashEmoteKey:
+Gui, Add, Text,, BST:
+Gui, Add, Text,, Ammo:
+Gui, Add, Text,, FastRespawn:
+Gui, Add, Text,, Suspend:
+Gui, Add, Text,, GTAHax:
+Gui, Add, Text,, HelpWhatsThis:
+Gui, Add, Text,, EssayAboutGTA:
+Gui, Add, Text,, ClipboardSpam:
+Gui, Add, Text,, ShutUp:
 
-THERMALHELM := ","            ;
-FastSniperSwitch := "*$F1"    ;
-EWO := "*$<"                  ;
-BST := "*$§"                  ;
-Ammo := "*$¨"                 ;
-FastRespawn := "*$F3"         ;
-Suspend := "F2"               ;
-GTAHax := "PrintScreen"       ;
-HelpWhatsThis := "F5"	      ;
-EssayAboutGTA := "F7"         ;
-ClipboardSpam := "F8"         ;
-ShutUp := "F6"                ; 
-DisableCapsLock := "Capslock" ; 
-;                                                                                           ———Hotkey Code———
+Gui, Add, Hotkey,vInteractionMenuKey ym,m
+Gui, Add, Hotkey,vThermalHelmet, ,
+Gui, Add, Hotkey,vFastSniperSwitch,F4
+Gui, Add, Hotkey,vEWO,<
+Gui, Add, Hotkey,vEWOLookBehindKey,c
+Gui, Add, Hotkey,vEWOSpecialAbilitySlashEmoteKey,CapsLock
+Gui, Add, Hotkey,vBST,§
+Gui, Add, Hotkey,vAmmo,¨
+Gui, Add, Hotkey,vFastRespawn,F3
+Gui, Add, Hotkey,vSuspend,F2
+Gui, Add, Hotkey,vGTAHax,PrintScreen
+Gui, Add, Hotkey,vHelpWhatsThis,F5
+Gui, Add, Hotkey,vEssayAboutGTA,F7
+Gui, Add, Hotkey,vClipboardSpam,F8
+Gui, Add, Hotkey,vShutUp,F6
 
-Hotkey, %THERMALHELM%, THERMALHELM           ;
-Hotkey, %FastSniperSwitch%, FastSniperSwitch ;
-Hotkey, %EWO%, EWO                           ;
-Hotkey, %BST%, BST                           ;
-Hotkey, %Ammo%, Ammo                         ;
-Hotkey, %FastRespawn%, FastRespawn           ;
-Hotkey, %Suspend%, Suspend                   ;
-Hotkey, %GTAHax%, GTAHax                     ;
-Hotkey, %HelpWhatsThis%, HelpWhatsThis	     ; 
-Hotkey, %EssayAboutGTA%, EssayAboutGTA       ;
-Hotkey, %ClipboardSpam%, ClipboardSpam       ;
-Hotkey, %ShutUp%, ShutUp                     ; 
-Hotkey, %DisableCapsLock%, DisableCapsLock   ; 
+IfExist, %CFG%
+{ 
+IniRead,Read_InteractionMenuKey,%CFG%,Hotkeys,Interaction Menu Key
+IniRead,Read_ThermalHelmet,%CFG%,Hotkeys,Thermal Helmet
+IniRead,Read_FastSniperSwitch,%CFG%,Hotkeys,Fast Sniper Switch
+IniRead,Read_EWO,%CFG%,Hotkeys,EWO
+IniRead,Read_EWOLookBehindKey,%CFG%,Hotkeys,EWO Look Behind Button
+IniRead,Read_EWOSpecialAbilitySlashEmoteKey,%CFG%,Hotkeys,EWO Special Ability/Emote Button
+IniRead,Read_BST,%CFG%,Hotkeys,BST
+IniRead,Read_Ammo,%CFG%,Hotkeys,Buy Ammo
+IniRead,Read_FastRespawn,%CFG%,Hotkeys,Fast Respawn
+IniRead,Read_Suspend,%CFG%,Hotkeys,Suspend Macro
+IniRead,Read_GTAHax,%CFG%,Hotkeys,GTAHax EWO Codes
+IniRead,Read_HelpWhatsThis,%CFG%,Hotkeys,idkwtfthisis
+IniRead,Read_EssayAboutGTA,%CFG%,Hotkeys,Essay About GTA
+IniRead,Read_ClipboardSpam,%CFG%,Hotkeys,Clipboard Spam
+IniRead,Read_ShutUp,%CFG%,Hotkeys,Shut Up Spam
+
+GuiControl,,InteractionMenuKey,%Read_InteractionMenuKey%
+GuiControl,,ThermalHelmet,%Read_ThermalHelmet%
+GuiControl,,FastSniperSwitch,%Read_FastSniperSwitch%
+GuiControl,,EWO,%Read_EWO%
+GuiControl,,EWOLookBehindKey,%Read_EWOLookBehindKey%
+GuiControl,,EWOSpecialAbilitySlashEmoteKey,%Read_EWOSpecialAbilitySlashEmoteKey%
+GuiControl,,BST,%Read_BST%
+GuiControl,,Ammo,%Read_Ammo%
+GuiControl,,FastRespawn,%Read_FastRespawn%
+GuiControl,,Suspend,%Read_Suspend%
+GuiControl,,GTAHax,%Read_GTAHax%
+GuiControl,,HelpWhatsThis,%Read_HelpWhatsThis%
+GuiControl,,EssayAboutGTA,%Read_EssayAboutGTA%
+GuiControl,,ClipboardSpam,%Read_ClipboardSpam%
+GuiControl,,ShutUp,%Read_ShutUp%
+}
+
+Gui, Add, Button, gSaveConfig,Save config and start the Macros!
+Gui, Show,, Ryzen's Macros V3.0
 return
-;                                                                                           ———Macro Code———
 
-THERMALHELM: ; Toggles thermal helmet. Hold the "L" key in order to use it if you are not in a CEO or MC.
+SaveConfig:
+Gui, Submit
+
+{
+IniWrite,%InteractionMenuKey%,%CFG%,Hotkeys,Interaction Menu Key
+IniWrite,%ThermalHelmet%,%CFG%,Hotkeys,Thermal Helmet
+IniWrite,%FastSniperSwitch%,%CFG%,Hotkeys,Fast Sniper Switch
+IniWrite,%EWO%,%CFG%,Hotkeys,EWO
+IniWrite,%EWOLookBehindKey%,%CFG%,Hotkeys,EWO Look Behind Button
+IniWrite,%EWOSpecialAbilitySlashEmoteKey%,%CFG%,Hotkeys,EWO Special Ability/Emote Button
+IniWrite,%BST%,%CFG%,Hotkeys,BST
+IniWrite,%Ammo%,%CFG%,Hotkeys,Buy Ammo
+IniWrite,%FastRespawn%,%CFG%,Hotkeys,Fast Respawn
+IniWrite,%Suspend%,%CFG%,Hotkeys,Suspend Macro
+IniWrite,%GTAHax%,%CFG%,Hotkeys,GTAHax EWO Codes
+IniWrite,%HelpWhatsThis%,%CFG%,Hotkeys,idkwtfthisis
+IniWrite,%EssayAboutGTA%,%CFG%,Hotkeys,Essay About GTA
+IniWrite,%ClipboardSpam%,%CFG%,Hotkeys,Clipboard Spam
+IniWrite,%ShutUp%,%CFG%,Hotkeys,Shut Up Spam
+}
+
+DisableCapsLock := "*$CapsLock"
+
+Hotkey, %ThermalHelmet%, ThermalHelmet   
+Hotkey, *$%FastSniperSwitch%, FastSniperSwitch 
+Hotkey, *$%EWO%, EWO                           
+Hotkey, *$%BST%, BST                           
+Hotkey, *$%Ammo%, Ammo                         
+Hotkey, *$%FastRespawn%, FastRespawn           
+Hotkey, %Suspend%, Suspend                   
+Hotkey, %GTAHax%, GTAHax                     
+Hotkey, %HelpWhatsThis%, HelpWhatsThis	     
+Hotkey, %EssayAboutGTA%, EssayAboutGTA       
+Hotkey, %ClipboardSpam%, ClipboardSpam       
+Hotkey, %ShutUp%, ShutUp 
+Hotkey, *$%DisableCapsLock%, DisableCapsLock  
+#Include *i %A_ScriptDir%/Libraries/Extra Scripts.ahk 
+return
+;                                                                            ———Macro Code———
+ThermalHelmet: ; Toggles thermal helmet. Hold the "L" key in order to use it if you are not in a CEO or MC.
 {
  If GetKeyState("L", "L") {
-  Send, m{down 3}{enter}
+  send {%InteractionMenuKey%}{down 3}{enter}
  } Else {
-  Send, m{down 4}{enter}
+  send {%InteractionMenuKey%}{down 4}{enter}
  }
 send {down}{enter}
 sleep 50
-send {space}m
+send {space}{%InteractionMenuKey%}
 }
 return
 
@@ -86,24 +161,24 @@ send {lbutton}
 return
 
 EWO: ; Kills yourself instantly. Now has a 5 minute cooldown unless using GTAHax or something similar.
-send {lbutton}
-sendinput {end down}{c down}{lbutton up}{rbutton up}{enter down}{g down}
-send m{up}
+sendinput {%EWOSpecialAbilitySlashEmoteKey% down}{c down}{lbutton up}{rbutton up}{enter down}{g down}
+send {%InteractionMenuKey%}{up}
 sendinput {wheelup}{enter up}
 send {enter 4}
-sendinput {c up}{< up}{g up}{end up}
+sendinput {c up}{< up}{g up}{%EWOSpecialAbilitySlashEmoteKey% up}
+setcapslockstate, off
 return
 
 BST: ; Drops BST. Must be in CEO obviously.
-send m{enter}{down 4}{enter}{down}{enter}
+send {%InteractionMenuKey%}{enter}{down 4}{enter}{down}{enter}
 return
 
 Ammo: ; Buys ammo. Hold the "L" key in order to use it if you are not in a CEO or MC.
 {
  If GetKeyState("L", "L") {
-  Send, m{down 2}{enter}
+  send {%InteractionMenuKey%}{down 2}{enter}
  } Else {
-  Send, m{down 3}{enter}
+  send {%InteractionMenuKey%}{down 3}{enter}
  }
 send {down 5}{enter}{up}{enter}  ; cycle 1 
 send {up 2}{enter}{down 2} ; cycle 2
@@ -116,7 +191,7 @@ send {up 2}{enter}{down 2} ; cycle 5
 send {enter} ; end of cycle 5
 send {up 2}{enter}{down 2} ; cycle 6
 send {enter 2} ; end of cycle 6
-send m
+send {%InteractionMenuKey%}
 }
 return 
 
@@ -173,8 +248,7 @@ return
 
 HelpWhatsThis: ; Spams "don't care + didn't ask + cry about it + stay mad + get real + L + mald seethe cope harder + hoes mad + basic + skill issue + ratio + you fell off + the audacity + triggered + any askers + redpilled + get a life + ok and? + cringe + touch grass + donowalled + not based + you’re a (insert stereotype) + not funny didn't laugh + you're* + grammar issue + go outside + get good + reported + ad hominem + GG! + ur mom"
 sendinput {f5 up}
-send {t}
-send d
+send td
 sendinput on’t care {Numpadadd} didn't ask {Numpadadd} cry a
 send b
 sendinput out it {Numpadadd} stay mad {Numpadadd} get real {Numpadadd} L {Numpadadd} 
@@ -184,9 +258,7 @@ send {space}
 sendinput hoes mad {Numpadadd} basic {Numpadadd} skill issue{Numpadadd} 
 send {space}
 sendinput {Numpadadd} ratio
-send {enter}
-send {t}
-send {Numpadadd} 
+send {enter}t{Numpadadd} 
 sendinput {space}you fell off {Numpadadd} the audacity 
 send {space}{Numpadadd}
 sendinput {space}triggered {Numpadadd} any askers {Numpadadd} redp
@@ -196,9 +268,7 @@ send {space}
 sendinput {Numpadadd} cringe {Numpadadd} touch grass {Numpadadd} donow
 send a
 sendinput lled {Numpadadd} not based
-send {enter}
-send {t}
-send {Numpadadd} 
+send {enter}t{Numpadadd} 
 sendinput {space}you’re a (insert stereotype)
 send {space}
 sendinput {Numpadadd} not funny didn't laugh {Numpadadd} you
@@ -206,24 +276,21 @@ send ’
 sendinput re* {Numpadadd} grammar issue {Numpadadd} go outsi
 send d
 sendinput e {Numpadadd} get good {Numpadadd} reported
-send {enter}
-send {t}
-send {Numpadadd}
+send {enter}t{Numpadadd}
 sendinput {space}ad hominem {Numpadadd} GG{shift down}1{shift up} {Numpadadd} ur mom
 send {enter}
 return
 
 EssayAboutGTA: ; Complains about how bad the FPS is in GTA Online.
 sendinput {f7 up}
-send {t}
-send w
+send tw
 sendinput hy is my fps so shlt this game
-send {space}h
-sendinput as terrible optimization its c
-send h
-sendinput inese as shlt man i hate this
-send {space}g
-sendinput ame im gonna swat the r* headq
+send {space}
+sendinput has terrible optimization its{space}
+send c
+sendinput hinese as shlt man i hate this
+send {space}
+sendinput game im gonna swat the r* headq
 send u
 sendinput arters man i
 send {enter}ts
@@ -234,11 +301,9 @@ send d
 sendinput k but how can they not afford{space}
 send s
 sendinput ome dedicated servers they are a
-send {space}m
-sendinput ulti billion 
-send {enter}
-send {t}
-send d
+send {space}
+sendinput multi billion 
+send {enter}td
 sendinput ollar company also why does it
 send {space}
 sendinput still use p2p technology for s
@@ -249,7 +314,7 @@ sendinput nce gta 4 man it honestly baffl
 send l
 sendinput es me how
 send {enter}to
-sendinput utdated gta online is and how
+sendinput utdated gta online is and how{space}
 send b
 sendinput ad the fps is fr its so cpu bo 
 send u
@@ -387,6 +452,9 @@ Goto, Macro
 
 
 ; Changelog:
+; 3.0:
+; Keybinding system completely rewritten! You now have an interface that lets you set binds and save binds. Very nice indeed.
+; Nothing else much changed.
 ; 2.2:
 ; Upped the version number, as per tradition again.
 ; Made GTAHax public, as I have found a way of making it far easier to use. The macro now automatically sets the priority of Discord to Above Normal. It also sets SocialClubHelper.exe, and Launcher.exe to Low.
@@ -422,4 +490,3 @@ Goto, Macro
 ; A: Go to your CEO office or any other place with a "Weapon Locker" and then remove weapons that you don't need/want.
 ; Q: How do I remove macros? 
 ; A: Go up to the "Hotkey Code" Section, and remove the specific (Hotkey, %EXAMPLE%, EXAMPLE;) that you don't want. Now, remove that code, and then, go up to the "Assign Hotkeys" section and remove the corressponding bind, or else the macro will not start.
-
