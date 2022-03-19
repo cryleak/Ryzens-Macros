@@ -30,21 +30,22 @@ Process, Priority, GTA5.exe, H   ; Sets the task priority of GTA V to high, whic
 SetWorkingDir %A_ScriptDir%      ; Ensures a consistent starting directory.
 Goto, DiscordPriority            ; Automatically excecutes DiscordPriority when you start the script, which sets Discords's priority to High, which should make it more usable now that we increased the priority of GTA to High, and changes some other applications to Low.
 Macro:
-Gui, Add, Text,, InteractionMenuKey:
-Gui, Add, Text,, ThermalHelmet:
-Gui, Add, Text,, FastSniperSwitch:
+Gui, Add, Text,, Interaction Menu Key:
+Gui, Add, Text,, Thermal Helmet:
+Gui, Add, Text,, Fast Sniper Switch:
 Gui, Add, Text,, EWO:
-Gui, Add, Text,, EWOLookBehindKey:
-Gui, Add, Text,, EWOSpecialAbilitySlashActionKey:
+Gui, Add, Text,, EWO Look Behind Key:
+Gui, Add, Text,, EWO Special Ability / Action Key:
 Gui, Add, Text,, BST:
 Gui, Add, Text,, Ammo:
-Gui, Add, Text,, FastRespawn:
-Gui, Add, Text,, Suspend:
-Gui, Add, Text,, GTAHax:
-Gui, Add, Text,, HelpWhatsThis:
-Gui, Add, Text,, EssayAboutGTA:
-Gui, Add, Text,, ClipboardSpam:
-Gui, Add, Text,, ShutUp:
+Gui, Add, Text,, Fast Respawn:
+Gui, Add, Text,, Suspend Macro:
+Gui, Add, Text,, GTA Hax:
+Gui, Add, Text,, Epic Roast:
+Gui, Add, Text,, Essay About GTA:
+Gui, Add, Text,, Custom Text Spam:
+Gui, Add, Text,, Custom Spam Text (30 character limit):
+Gui, Add, Text,, Shut Up:
 
 Gui, Add, Hotkey,vInteractionMenuKey ym,m
 Gui, Add, Hotkey,vThermalHelmet, ,
@@ -59,8 +60,10 @@ Gui, Add, Hotkey,vSuspend,F2
 Gui, Add, Hotkey,vGTAHax,PrintScreen
 Gui, Add, Hotkey,vHelpWhatsThis,F5
 Gui, Add, Hotkey,vEssayAboutGTA,F7
-Gui, Add, Hotkey,vClipboardSpam,F8
+Gui, Add, Hotkey,vCustomTextSpam,F8
+Gui, Add, Edit,vCustomSpamText,
 Gui, Add, Hotkey,vShutUp,F6
+
 
 IfExist, %CFG%
 { 
@@ -77,8 +80,9 @@ IniRead,Read_Suspend,%CFG%,Hotkeys,Suspend Macro
 IniRead,Read_GTAHax,%CFG%,Hotkeys,GTAHax EWO Codes
 IniRead,Read_HelpWhatsThis,%CFG%,Hotkeys,idkwtfthisis
 IniRead,Read_EssayAboutGTA,%CFG%,Hotkeys,Essay About GTA
-IniRead,Read_ClipboardSpam,%CFG%,Hotkeys,Clipboard Spam
+IniRead,Read_CustomTextSpam,%CFG%,Hotkeys,Clipboard Spam
 IniRead,Read_ShutUp,%CFG%,Hotkeys,Shut Up Spam
+IniRead,Read_CustomSpamText,%CFG%,Chat Shit,Custom Spam Text
 
 GuiControl,,InteractionMenuKey,%Read_InteractionMenuKey%
 GuiControl,,ThermalHelmet,%Read_ThermalHelmet%
@@ -93,14 +97,27 @@ GuiControl,,Suspend,%Read_Suspend%
 GuiControl,,GTAHax,%Read_GTAHax%
 GuiControl,,HelpWhatsThis,%Read_HelpWhatsThis%
 GuiControl,,EssayAboutGTA,%Read_EssayAboutGTA%
-GuiControl,,ClipboardSpam,%Read_ClipboardSpam%
+GuiControl,,CustomTextSpam,%Read_CustomTextSpam%
 GuiControl,,ShutUp,%Read_ShutUp%
+GuiControl,,CustomSpamText,%Read_CustomSpamText%
 }
 
 Gui, Add, Button, gSaveConfig,Save config
 Gui, Add, Button, gHideWindow,Hide window
 Gui, Add, Button, gExitMacros,Exit Macros
-Gui, Show,, Ryzen's Macros V3.0
+Menu, Tray, NoStandard
+Menu, Tray, Add, Show UI, ShowGUI
+Menu, Tray, Add, Hide UI, HideWindow
+Menu, Tray, Add, Save Macros, SaveConfig
+Menu, Tray, Add
+Menu, Tray, Standard
+Menu, Tray, Tip, Ryzen's Macros Version 3.0
+Gui, Show,, Ryzen's Macros Version 3.0
+SetTimer, ProcessCheckTimer, 3000
+return
+
+ShowGUI:
+Gui, Show
 return
 
 ExitMacros:
@@ -126,8 +143,9 @@ IniWrite,%Suspend%,%CFG%,Hotkeys,Suspend Macro
 IniWrite,%GTAHax%,%CFG%,Hotkeys,GTAHax EWO Codes
 IniWrite,%HelpWhatsThis%,%CFG%,Hotkeys,idkwtfthisis
 IniWrite,%EssayAboutGTA%,%CFG%,Hotkeys,Essay About GTA
-IniWrite,%ClipboardSpam%,%CFG%,Hotkeys,Clipboard Spam
+IniWrite,%CustomTextSpam%,%CFG%,Hotkeys,Clipboard Spam
 IniWrite,%ShutUp%,%CFG%,Hotkeys,Shut Up Spam
+IniWrite,%CustomSpamText%,%CFG%,Chat Shit,Custom Spam Text
 }
 
 DisableCapsLock := "*$CapsLock"
@@ -142,7 +160,7 @@ Hotkey, %Suspend%, Suspend
 Hotkey, %GTAHax%, GTAHax                     
 Hotkey, %HelpWhatsThis%, HelpWhatsThis	     
 Hotkey, %EssayAboutGTA%, EssayAboutGTA       
-Hotkey, %ClipboardSpam%, ClipboardSpam       
+Hotkey, %CustomTextSpam%, CustomTextSpam      
 Hotkey, %ShutUp%, ShutUp 
 Hotkey, *$%DisableCapsLock%, DisableCapsLock  
 #Include *i Put your own scripts here!.ahk
@@ -337,10 +355,10 @@ sendinput bad gta online is
 send {enter}
 return
 
-ClipboardSpam: ; Spams whatever your clipboard is. Copy anything to your clipboard for it to work.
-sendinput {f8 up}
+CustomTextSpam: ; Spams whatever your clipboard is. Copy anything to your clipboard for it to work.
+sendinput {%CustomTextSpam% up}
 send t{shift up}
-sendinput {raw}%Clipboard%
+sendinput {raw}%CustomSpamText%
 Send {enter}
 return
 
@@ -443,6 +461,18 @@ EnumProcessesByName4(procName) {
 }
 }
 Goto, Macro
+
+ProcessCheckTimer:
+Process, Exist, GTA5.exe
+pid1 := ErrorLevel
+If (!pid1)
+{  Process, Exist, script.exe
+   pid2 := ErrorLevel
+   If (pid2)
+      Process, Close, %pid2%
+   ExitApp
+}
+return
 
 ;                                                                                        ———END OF CODE. INFO AND OTHER STUFF BELOW———
 
