@@ -145,7 +145,7 @@ Hotkey, %EssayAboutGTA%, EssayAboutGTA
 Hotkey, %ClipboardSpam%, ClipboardSpam       
 Hotkey, %ShutUp%, ShutUp 
 Hotkey, *$%DisableCapsLock%, DisableCapsLock  
-#Include *i %A_ScriptDir%/Libraries/Extra Scripts.ahk
+#Include *i Put your own scripts here!.ahk
 return
 ;                                                                            ———Macro Code———
 ThermalHelmet: ; Toggles thermal helmet. Hold the "L" key in order to use it if you are not in a CEO or MC.

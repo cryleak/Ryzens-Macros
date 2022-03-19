@@ -13,12 +13,12 @@
 ; These are kind of like lua scripts in mod menus, except you can't mod people with this shit, hopefully...
 
 ;                                                                                          ———Assign Hotkeys———
-
-ArmorExample := "F23"              ; Put your bindings here
+;                                              Put your bindings here
+ArmorExample := "F23" ; NOTE: This macro will not work unless you have a keyboard with F23, just an example key. Change it to whatever you want.
 
 ;                                                                                           ———Hotkey Code———
-
-Hotkey, %ArmorExample%, ArmorExample           ; Put the code to make it actually work here.
+;                                                         Put the code to make it actually work here.
+Hotkey, %ArmorExample%, ArmorExample           
 return
 ;                                                                                           ———Macro Code———
 ArmorExample: ; Example macro that gets armor.
