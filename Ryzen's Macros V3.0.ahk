@@ -35,7 +35,7 @@ Gui, Add, Text,, ThermalHelmet:
 Gui, Add, Text,, FastSniperSwitch:
 Gui, Add, Text,, EWO:
 Gui, Add, Text,, EWOLookBehindKey:
-Gui, Add, Text,, EWOSpecialAbilitySlashEmoteKey:
+Gui, Add, Text,, EWOSpecialAbilitySlashActionKey:
 Gui, Add, Text,, BST:
 Gui, Add, Text,, Ammo:
 Gui, Add, Text,, FastRespawn:
@@ -51,7 +51,7 @@ Gui, Add, Hotkey,vThermalHelmet, ,
 Gui, Add, Hotkey,vFastSniperSwitch,F4
 Gui, Add, Hotkey,vEWO,<
 Gui, Add, Hotkey,vEWOLookBehindKey,c
-Gui, Add, Hotkey,vEWOSpecialAbilitySlashEmoteKey,CapsLock
+Gui, Add, Hotkey,vEWOSpecialAbilitySlashActionKey,CapsLock
 Gui, Add, Hotkey,vBST,§
 Gui, Add, Hotkey,vAmmo,¨
 Gui, Add, Hotkey,vFastRespawn,F3
@@ -69,7 +69,7 @@ IniRead,Read_ThermalHelmet,%CFG%,Hotkeys,Thermal Helmet
 IniRead,Read_FastSniperSwitch,%CFG%,Hotkeys,Fast Sniper Switch
 IniRead,Read_EWO,%CFG%,Hotkeys,EWO
 IniRead,Read_EWOLookBehindKey,%CFG%,Hotkeys,EWO Look Behind Button
-IniRead,Read_EWOSpecialAbilitySlashEmoteKey,%CFG%,Hotkeys,EWO Special Ability/Emote Button
+IniRead,Read_EWOSpecialAbilitySlashActionKey,%CFG%,Hotkeys,EWO Special Ability/Action Key
 IniRead,Read_BST,%CFG%,Hotkeys,BST
 IniRead,Read_Ammo,%CFG%,Hotkeys,Buy Ammo
 IniRead,Read_FastRespawn,%CFG%,Hotkeys,Fast Respawn
@@ -85,7 +85,7 @@ GuiControl,,ThermalHelmet,%Read_ThermalHelmet%
 GuiControl,,FastSniperSwitch,%Read_FastSniperSwitch%
 GuiControl,,EWO,%Read_EWO%
 GuiControl,,EWOLookBehindKey,%Read_EWOLookBehindKey%
-GuiControl,,EWOSpecialAbilitySlashEmoteKey,%Read_EWOSpecialAbilitySlashEmoteKey%
+GuiControl,,EWOSpecialAbilitySlashActionKey,%Read_EWOSpecialAbilitySlashActionKey%
 GuiControl,,BST,%Read_BST%
 GuiControl,,Ammo,%Read_Ammo%
 GuiControl,,FastRespawn,%Read_FastRespawn%
@@ -110,7 +110,7 @@ IniWrite,%ThermalHelmet%,%CFG%,Hotkeys,Thermal Helmet
 IniWrite,%FastSniperSwitch%,%CFG%,Hotkeys,Fast Sniper Switch
 IniWrite,%EWO%,%CFG%,Hotkeys,EWO
 IniWrite,%EWOLookBehindKey%,%CFG%,Hotkeys,EWO Look Behind Button
-IniWrite,%EWOSpecialAbilitySlashEmoteKey%,%CFG%,Hotkeys,EWO Special Ability/Emote Button
+IniWrite,%EWOSpecialAbilitySlashActionKey%,%CFG%,Hotkeys,EWO Special Ability/Action Key
 IniWrite,%BST%,%CFG%,Hotkeys,BST
 IniWrite,%Ammo%,%CFG%,Hotkeys,Buy Ammo
 IniWrite,%FastRespawn%,%CFG%,Hotkeys,Fast Respawn
@@ -164,11 +164,11 @@ send {lbutton}
 return
 
 EWO: ; Kills yourself instantly. Now has a 5 minute cooldown unless using GTAHax or something similar.
-sendinput {%EWOSpecialAbilitySlashEmoteKey% down}{c down}{lbutton up}{rbutton up}{enter down}{g down}
+sendinput {%EWOSpecialAbilitySlashActionKey% down}{c down}{lbutton up}{rbutton up}{enter down}{g down}
 send {%InteractionMenuKey%}{up}
 sendinput {wheelup}{enter up}
 send {enter 4}
-sendinput {c up}{< up}{g up}{%EWOSpecialAbilitySlashEmoteKey% up}
+sendinput {c up}{< up}{g up}{%EWOSpecialAbilitySlashActionKey% up}
 setcapslockstate, off
 return
 
@@ -263,8 +263,8 @@ send {space}
 sendinput {Numpadadd} ratio
 send {enter}t{Numpadadd} 
 sendinput {space}you fell off {Numpadadd} the audacity 
-send {space}{Numpadadd}
-sendinput {space}triggered {Numpadadd} any askers {Numpadadd} redp
+send {space}
+sendinput {Numpadadd}{space}triggered {Numpadadd} any askers {Numpadadd} redp
 send i
 sendinput lled {Numpadadd} get a life {Numpadadd} ok and? 
 send {space}
