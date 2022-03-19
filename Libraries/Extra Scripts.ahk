@@ -14,15 +14,15 @@
 
 ;                                                                                          ———Assign Hotkeys———
 
-Example := "F23"              ; Put your bindings here
+ArmorExample := "F23"              ; Put your bindings here
 
 ;                                                                                           ———Hotkey Code———
 
-Hotkey, %Example%, Example           ; Put the code to make it actually work here.
+Hotkey, %ArmorExample%, ArmorExample           ; Put the code to make it actually work here.
 return
 ;                                                                                           ———Macro Code———
-Example: ; Example macro that presses M and then up.
-send {m}{up}
+ArmorExample: ; Example macro that gets armor.
+send {m}{enter}{down 4}{enter}{down 3}{enter}
 return
 
 

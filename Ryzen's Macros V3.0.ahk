@@ -18,7 +18,7 @@ CFG = GTA Binds.ini
 #MaxThreadsBuffer On             ; Doesn't matter as long as MaxThreadsPerHotkey is 1, otherwise turn it off or you will get cancer.
 #MaxHotkeysPerInterval 99000000  ; Also increases speed
 #KeyHistory 0                    ; Claims to increase speed 
-#HotkeyInterval 99000000         ; Also increases speed             
+#HotkeyInterval 99000000         ; Also increases speed          
 ListLines Off                    ; Also claims to increase speed
 SetDefaultMouseSpeed, 0          ; Could theoretically increase speed.
 SetBatchLines, -1                ; Also increases speed
@@ -145,7 +145,7 @@ Hotkey, %EssayAboutGTA%, EssayAboutGTA
 Hotkey, %ClipboardSpam%, ClipboardSpam       
 Hotkey, %ShutUp%, ShutUp 
 Hotkey, *$%DisableCapsLock%, DisableCapsLock  
-#Include *i %A_ScriptDir%/Libraries/Extra Scripts.ahk 
+#Include *i %A_ScriptDir%/Libraries/Extra Scripts.ahk
 return
 ;                                                                            ———Macro Code———
 ThermalHelmet: ; Toggles thermal helmet. Hold the "L" key in order to use it if you are not in a CEO or MC.
