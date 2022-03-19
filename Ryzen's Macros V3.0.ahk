@@ -164,11 +164,11 @@ send {lbutton}
 return
 
 EWO: ; Kills yourself instantly. Now has a 5 minute cooldown unless using GTAHax or something similar.
-sendinput {%EWOSpecialAbilitySlashActionKey% down}{c down}{lbutton up}{rbutton up}{enter down}{g down}
+sendinput {%EWOSpecialAbilitySlashActionKey% down}{%EWOLookBehindKey% down}{lbutton up}{rbutton up}{enter down}{g down}
 send {%InteractionMenuKey%}{up}
 sendinput {wheelup}{enter up}
 send {enter 4}
-sendinput {c up}{< up}{g up}{%EWOSpecialAbilitySlashActionKey% up}
+sendinput {%EWOLookBehindKey% up}{< up}{g up}{%EWOSpecialAbilitySlashActionKey% up}
 setcapslockstate, off
 return
 
