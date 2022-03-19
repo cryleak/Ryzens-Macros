@@ -97,12 +97,20 @@ GuiControl,,ClipboardSpam,%Read_ClipboardSpam%
 GuiControl,,ShutUp,%Read_ShutUp%
 }
 
-Gui, Add, Button, gSaveConfig,Save config and start the Macros!
+Gui, Add, Button, gSaveConfig,Save config
+Gui, Add, Button, gHideWindow,Hide window
+Gui, Add, Button, gExitMacros,Exit Macros
 Gui, Show,, Ryzen's Macros V3.0
 return
 
-SaveConfig:
+ExitMacros:
+ExitApp
+
+HideWindow:
 Gui, Submit
+
+SaveConfig:
+Gui, Submit, NoHide
 
 {
 IniWrite,%InteractionMenuKey%,%CFG%,Hotkeys,Interaction Menu Key
