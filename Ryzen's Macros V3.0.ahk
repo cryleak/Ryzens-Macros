@@ -65,6 +65,8 @@ Gui, Add, Hotkey,vCustomTextSpam,F8
 Gui, Add, Edit,vCustomSpamText,
 Gui, Add, Hotkey,vShutUp,F6
 
+DisableCapsLock := "*$CapsLock"
+Hotkey, *$%DisableCapsLock%, DisableCapsLock  
 
 IfExist, %CFG%
 { 
@@ -103,9 +105,9 @@ GuiControl,,ShutUp,%Read_ShutUp%
 GuiControl,,CustomSpamText,%Read_CustomSpamText%
 }
 
-Gui, Add, Button, gSaveConfig,Save config
-Gui, Add, Button, gHideWindow,Hide window
-Gui, Add, Button, gExitMacros,Exit Macros
+Gui, Add, Button, gSaveConfig,Save config and start the macros!
+Gui, Add, Button, gHideWindow,Hide window and start the macros!
+Gui, Add, Button, gExitMacros,Exit macros
 Menu, Tray, NoStandard
 Menu, Tray, Add, Show UI, ShowGUI
 Menu, Tray, Add, Hide UI, HideWindow
@@ -148,8 +150,6 @@ IniWrite,%ShutUp%,%CFG%,Hotkeys,Shut Up Spam
 IniWrite,%CustomSpamText%,%CFG%,Chat Shit,Custom Spam Text
 }
 
-DisableCapsLock := "*$CapsLock"
-
 Hotkey, *$%ThermalHelmet%, ThermalHelmet   
 Hotkey, *$%FastSniperSwitch%, FastSniperSwitch 
 Hotkey, *$%EWO%, EWO                           
@@ -162,7 +162,6 @@ Hotkey, %HelpWhatsThis%, HelpWhatsThis
 Hotkey, %EssayAboutGTA%, EssayAboutGTA       
 Hotkey, %CustomTextSpam%, CustomTextSpam      
 Hotkey, %ShutUp%, ShutUp 
-Hotkey, *$%DisableCapsLock%, DisableCapsLock  
 #Include *i Put your own scripts here!.ahk
 return
 ;                                                                            ———Macro Code———
