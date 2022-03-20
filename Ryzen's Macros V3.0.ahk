@@ -10,25 +10,26 @@ CFG = GTA Binds.ini
 ; All of this shit apparently theoretically increase speed according to the person know as Quxck. It probably only helps if you have high FPS,
 ; but i have noticed a difference between SetKeyDelay 10, 10 (the default) and -1, -1 (the fastest) even at a "low" FPS of 60FPS.
 ; Just use them because they probably improve speed, at least a little bit.
-#SingleInstance, force           ; You can't start multiple instances of the macro with this on.
-#IfWinActive ahk_class grcWindow ; Disables hotkeys when alt-tabbed or GTA is closed. Restart macro if you decide to restart GTA with this enabled.
-#IfWinActive Grand Theft Auto V  ; Same as above, just makes it more reliable.
-#MaxThreadsPerHotkey 1           ; Absolute cancer if above 1. Doesn't increase speed.
-#MaxThreads 99999                ; Allows you to run multiple macros at once, at least I think so...
-#MaxThreadsBuffer On             ; Doesn't matter as long as MaxThreadsPerHotkey is 1, otherwise turn it off or you will get cancer.
-#MaxHotkeysPerInterval 99000000  ; You will get an error message if you reach this limit, so I increased it to a ridiculously high number, so that can't happen.
-#KeyHistory 0                    ; Useful for debugging, displays what keys you have pressed. Reduces performance when on though.
-#HotkeyInterval 99000000         ; You will get an error message if you reach this limit, so I increased it to a ridiculously high number, so that can't happen.     
-ListLines Off                    ; Useful for debugging. Improves performance with it off.
-SetDefaultMouseSpeed, 0          ; Could theoretically increase speed in some situations.
-SetKeyDelay, -1, -1              ; Always increases speed. Always use, and no it won't reduce reliability by much...
-SetBatchLines, -1                ; Increases speed if your macro is multiple lines long. Increase CPU usage, so if you are lagging with these macros, even after reducing priority, remove this line.
-SetWinDelay, -1                  ; Window delay between window commands, it helps speed sometimes.
-SetControlDelay, -1              ; Control-modifying command delay, sometimes helps.
-Process, Priority, , H           ; Sets the task priority of these macros to high, which in theory should improve speeds. Remove this if you lag with it on.
-Process, Priority, GTA5.exe, H   ; Sets the task priority of GTA V to high, which in theory should improve FPS, mostly on lower end systems
-SetWorkingDir %A_ScriptDir%      ; Ensures a consistent starting directory. Helps for some shit.
-Goto, DiscordPriority            ; Automatically excecutes DiscordPriority when you start the script, which sets Discords's priority to High, which should make it more usable now that we increased the priority of GTA to High, and it also changes some other applications to Low.
+#SingleInstance, force            ; You can't start multiple instances of the macro with this on.
+#IfWinActive ahk_class grcWindow  ; Disables hotkeys when alt-tabbed or GTA is closed. Restart macro if you decide to restart GTA with this enabled.
+#IfWinActive Grand Theft Auto V   ; Same as above, just makes it more reliable.
+#MaxThreadsPerHotkey 1            ; Absolute cancer if above 1. Doesn't increase speed.
+#MaxThreads 99999                 ; Allows you to run multiple macros at once, at least I think so...
+#MaxThreadsBuffer On              ; Doesn't matter as long as MaxThreadsPerHotkey is 1, otherwise turn it off or you will get cancer.
+#MaxHotkeysPerInterval 99000000   ; You will get an error message if you reach this limit, so I increased it to a ridiculously high number, so that can't happen.
+#KeyHistory 0                     ; Useful for debugging, displays what keys you have pressed. Reduces performance when on though.
+#HotkeyInterval 99000000          ; You will get an error message if you reach this limit, so I increased it to a ridiculously high number, so that can't happen.     
+ListLines Off                     ; Useful for debugging. Improves performance with it off.
+SetDefaultMouseSpeed, 0           ; Could theoretically increase speed in some situations.
+SetKeyDelay, -1, -1               ; Always increases speed. Always use, and no it won't reduce reliability by much...
+SetBatchLines, -1                 ; Increases speed if your macro is multiple lines long. Increase CPU usage, so if you are lagging with these macros, even after reducing priority, remove this line.
+SetWinDelay, -1                   ; Window delay between window commands, it helps speed sometimes.
+SetControlDelay, -1               ; Control-modifying command delay, sometimes helps.
+Process, Priority, , H            ; Sets the task priority of these macros to high, which in theory should improve speeds. Remove this if you lag with it on.
+Process, Priority, GTA5.exe, H    ; Sets the task priority of GTA V to high, which in theory should improve FPS, mostly on lower end systems
+SetWorkingDir %A_ScriptDir%       ; Ensures a consistent starting directory. Helps for some shit.
+SetTimer, ProcessCheckTimer, 3000 ; Macros will close if you don't have GTA open.
+Goto, DiscordPriority             ; Automatically excecutes DiscordPriority when you start the script, which sets Discords's priority to High, which should make it more usable now that we increased the priority of GTA to High, and it also changes some other applications to Low.
 Macro:
 Gui, Add, Text,, Interaction Menu Key:
 Gui, Add, Text,, Thermal Helmet:
@@ -113,7 +114,6 @@ Menu, Tray, Add
 Menu, Tray, Standard
 Menu, Tray, Tip, Ryzen's Macros Version 3.0
 Gui, Show,, Ryzen's Macros Version 3.0
-SetTimer, ProcessCheckTimer, 3000
 return
 
 ShowGUI:
@@ -374,6 +374,18 @@ send {CapsLock}
 setcapslockstate, off
 return
 
+ProcessCheckTimer:
+Process, Exist, GTA5.exe
+pid1 := ErrorLevel
+If (!pid1)
+{  Process, Exist, script.exe
+   pid2 := ErrorLevel
+   If (pid2)
+      Process, Close, %pid2%
+   ExitApp
+}
+return
+
 DiscordPriority: ; Sets the process priority of various applications.
 SetDiscordPriority:
 {
@@ -461,18 +473,6 @@ EnumProcessesByName4(procName) {
 }
 }
 Goto, Macro
-
-ProcessCheckTimer:
-Process, Exist, GTA5.exe
-pid1 := ErrorLevel
-If (!pid1)
-{  Process, Exist, script.exe
-   pid2 := ErrorLevel
-   If (pid2)
-      Process, Close, %pid2%
-   ExitApp
-}
-return
 
 ;                                                                                        ———END OF CODE. INFO AND OTHER STUFF BELOW———
 
