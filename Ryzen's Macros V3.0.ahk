@@ -34,6 +34,7 @@ Macro:
 Gui, Add, Text,, Interaction Menu Key:
 Gui, Add, Text,, Thermal Helmet:
 Gui, Add, Text,, Fast Sniper Switch:
+Gui, Add, Text,, Sniper Bind:
 Gui, Add, Text,, EWO:
 Gui, Add, Text,, EWO Look Behind Key:
 Gui, Add, Text,, EWO Special Ability / Action Key:
@@ -51,6 +52,7 @@ Gui, Add, Text,, Shut Up Chat Macro:
 Gui, Add, Hotkey,vInteractionMenuKey ym,m
 Gui, Add, Hotkey,vThermalHelmet, ,
 Gui, Add, Hotkey,vFastSniperSwitch,F4
+Gui, Add, Hotkey,vSniperBind,1
 Gui, Add, Hotkey,vEWO,<
 Gui, Add, Hotkey,vEWOLookBehindKey,c
 Gui, Add, Hotkey,vEWOSpecialAbilitySlashActionKey,CapsLock
@@ -73,6 +75,7 @@ IfExist, %CFG%
 IniRead,Read_InteractionMenuKey,%CFG%,Hotkeys,Interaction Menu Key
 IniRead,Read_ThermalHelmet,%CFG%,Hotkeys,Thermal Helmet
 IniRead,Read_FastSniperSwitch,%CFG%,Hotkeys,Fast Sniper Switch
+IniRead,Read_SniperBind,%CFG%,Hotkeys,Sniper Bind
 IniRead,Read_EWO,%CFG%,Hotkeys,EWO
 IniRead,Read_EWOLookBehindKey,%CFG%,Hotkeys,EWO Look Behind Button
 IniRead,Read_EWOSpecialAbilitySlashActionKey,%CFG%,Hotkeys,EWO Special Ability/Action Key
@@ -90,6 +93,7 @@ IniRead,Read_CustomSpamText,%CFG%,Chat Shit,Custom Spam Text
 GuiControl,,InteractionMenuKey,%Read_InteractionMenuKey%
 GuiControl,,ThermalHelmet,%Read_ThermalHelmet%
 GuiControl,,FastSniperSwitch,%Read_FastSniperSwitch%
+GuiControl,,SniperBind,%Read_SniperBind%
 GuiControl,,EWO,%Read_EWO%
 GuiControl,,EWOLookBehindKey,%Read_EWOLookBehindKey%
 GuiControl,,EWOSpecialAbilitySlashActionKey,%Read_EWOSpecialAbilitySlashActionKey%
@@ -135,6 +139,7 @@ Gui, Submit, NoHide
 IniWrite,%InteractionMenuKey%,%CFG%,Hotkeys,Interaction Menu Key
 IniWrite,%ThermalHelmet%,%CFG%,Hotkeys,Thermal Helmet
 IniWrite,%FastSniperSwitch%,%CFG%,Hotkeys,Fast Sniper Switch
+IniWrite,%SniperBind%,%CFG%,Hotkeys,Sniper Bind
 IniWrite,%EWO%,%CFG%,Hotkeys,EWO
 IniWrite,%EWOLookBehindKey%,%CFG%,Hotkeys,EWO Look Behind Button
 IniWrite,%EWOSpecialAbilitySlashActionKey%,%CFG%,Hotkeys,EWO Special Ability/Action Key
@@ -179,11 +184,11 @@ send {space}{%InteractionMenuKey%}
 return
 
 FastSniperSwitch: ; Switches from sniper to marksman and back to sniper rapidly. You must have the normal sniper rifle removed from your loadout for this to work.
-send {1}
+send {%SniperBind%}
 sleep 20
 send {lbutton}
 sleep 20
-send {1}
+send {%SniperBind%}
 sleep 20
 send {lbutton}
 return
