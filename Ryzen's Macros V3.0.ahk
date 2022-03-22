@@ -34,7 +34,7 @@ Macro:
 Gui, Add, Text,, Interaction Menu Key:
 Gui, Add, Text,, Thermal Helmet:
 Gui, Add, Text,, Fast Sniper Switch:
-Gui, Add, Text,, Sniper Bind:
+Gui, Add, Text,, Sniper Rifle Bind:
 Gui, Add, Text,, EWO:
 Gui, Add, Text,, EWO Look Behind Key:
 Gui, Add, Text,, EWO Special Ability / Action Key:
@@ -42,7 +42,7 @@ Gui, Add, Text,, BST:
 Gui, Add, Text,, Ammo:
 Gui, Add, Text,, Fast Respawn:
 Gui, Add, Text,, Suspend Macro:
-Gui, Add, Text,, GTA Hax:
+Gui, Add, Text,, GTA Hax EWO Codes:
 Gui, Add, Text,, Epic Roast:
 Gui, Add, Text,, Essay About GTA Chat Macro:
 Gui, Add, Text,, Custom Text Spam:
@@ -226,7 +226,7 @@ send {up 2}{enter}{down 2} ; cycle 6
 send {enter 2} ; end of cycle 6
 send {%InteractionMenuKey%}
 }
-return 
+return
 
 FastRespawn: ; Respawns extremely fast.
 send {lbutton 30}
@@ -261,7 +261,7 @@ return
 
 GTAHax: ; Applies the EWO no cooldown code using GTAHax.
 sendinput {printscreen up}
-Run, GTAHaXUI.exe, %A_ScriptDir%\Libraries, , Max
+Run, GTAHaXUI.exe, %A_ScriptDir%, , Max
 Sleep 1500
 DllCall("SetCursorPos", int, 300, int, 298) ;Line 1
 send {LButton}{BackSpace}262145
