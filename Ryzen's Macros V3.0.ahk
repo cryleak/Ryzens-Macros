@@ -67,7 +67,7 @@ Gui, Add, Hotkey,vCustomTextSpam,F8
 Gui, Add, Edit,vCustomSpamText,
 Gui, Add, Hotkey,vShutUp,F6
 
-DisableCapsLock := "*$CapsLock"
+DisableCapsLock := "CapsLock"
 Hotkey, *$%DisableCapsLock%, DisableCapsLock  
 
 IfExist, %CFG%
@@ -223,7 +223,11 @@ send {enter} ; end of cycle 4
 send {up 2}{enter}{down 2} ; cycle 5
 send {enter} ; end of cycle 5
 send {up 2}{enter}{down 2} ; cycle 6
-send {enter 2} ; end of cycle 6
+send {enter} ; end of cycle 6
+send {up 2}{enter}{down 2} ; cycle 7
+send {enter} ; end of cycle 7
+send {up 2}{enter}{down 2} ; cycle 8
+send {enter}{left} ; end of cycle 8
 send {%InteractionMenuKey%}
 }
 return
