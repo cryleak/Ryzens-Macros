@@ -21,33 +21,36 @@ CFG = GTA Binds.ini
 #HotkeyInterval 99000000          ; You will get an error message if you reach this limit, so I increased it to a ridiculously high number, so that can't happen.     
 ListLines Off                     ; Useful for debugging. Improves performance with it off.
 SetDefaultMouseSpeed, 0           ; Could theoretically increase speed in some situations.
-SetKeyDelay, -1, -1               ; Always increases speed. Always use, and no it won't reduce reliability by much...
 SetBatchLines, -1                 ; Increases speed if your macro is multiple lines long. Increase CPU usage, so if you are lagging with these macros, even after reducing priority, remove this line.
+SetKeyDelay, -1, -1               ; Always increases speed. Always use, and no it won't reduce reliability by much...
 SetWinDelay, -1                   ; Window delay between window commands, it helps speed sometimes.
 SetControlDelay, -1               ; Control-modifying command delay, sometimes helps.
 Process, Priority, , H            ; Sets the task priority of these macros to high, which in theory should improve speeds. Remove this if you lag with it on.
 Process, Priority, GTA5.exe, H    ; Sets the task priority of GTA V to high, which in theory should improve FPS, mostly on lower end systems
 SetWorkingDir %A_ScriptDir%       ; Ensures a consistent starting directory. Helps for some shit.
-SetTimer, ProcessCheckTimer, 3000 ; Macros will close if you don't have GTA open.
+SetTimer, ProcessCheck, 3000
 Goto, DiscordPriority             ; Automatically excecutes DiscordPriority when you start the script, which sets Discords's priority to High, which should make it more usable now that we increased the priority of GTA to High, and it also changes some other applications to Low.
 Macro:
-Gui, Add, Text,, Interaction Menu Key:
-Gui, Add, Text,, Thermal Helmet:
-Gui, Add, Text,, Fast Sniper Switch:
+Gui, Add, Text,, Interaction Menu Bind:
+Gui, Add, Text,, Thermal Helmet Macro:
+Gui, Add, Text,, Fast Sniper Switch Macro:
 Gui, Add, Text,, Sniper Rifle Bind:
-Gui, Add, Text,, EWO:
-Gui, Add, Text,, EWO Look Behind Key:
-Gui, Add, Text,, EWO Special Ability / Action Key:
-Gui, Add, Text,, BST:
-Gui, Add, Text,, Ammo:
-Gui, Add, Text,, Fast Respawn:
-Gui, Add, Text,, Suspend Macro:
-Gui, Add, Text,, GTA Hax EWO Codes:
-Gui, Add, Text,, Epic Roast:
+Gui, Add, Text,, Instant EWO Macro:
+Gui, Add, Text,, EWO Look Behind Bind:
+Gui, Add, Text,, EWO Special Ability / Action Bind:
+Gui, Add, Text,, BST Macro:
+Gui, Add, Text,, Ammo Macro:
+Gui, Add, Text,, Fast Respawn Macro:
+Gui, Add, Text,, Suspend:
+Gui, Add, Text,, GTA Hax EWO Codes Macro:
+Gui, Add, Text,, Epic Roast Chat Macro:
 Gui, Add, Text,, Essay About GTA Chat Macro:
-Gui, Add, Text,, Custom Text Spam:
+Gui, Add, Text,, Custom Text Spam Chat Macro:
 Gui, Add, Text,, Custom Spam Text (30 character limit):
 Gui, Add, Text,, Shut Up Chat Macro:
+Gui, Add, Text,, Reload Outfit:
+Gui, Add, Text,, Close macros if GTA is closed?
+Gui, Add, Text,, CEO/VIP/MC mode:
 
 Gui, Add, Hotkey,vInteractionMenuKey ym,m
 Gui, Add, Hotkey,vThermalHelmet, ,
@@ -64,31 +67,41 @@ Gui, Add, Hotkey,vGTAHax,PrintScreen
 Gui, Add, Hotkey,vHelpWhatsThis,F5
 Gui, Add, Hotkey,vEssayAboutGTA,F7
 Gui, Add, Hotkey,vCustomTextSpam,F8
-Gui, Add, Edit,vCustomSpamText,
+Gui, Add, Edit,vCustomSpamText
 Gui, Add, Hotkey,vShutUp,F6
+Gui, Add, Hotkey,vReloadOutfit,Insert
+Gui, Add, CheckBox, gProcessCheck vProcessCheck2,
+Gui, Add, CheckBox, vCEOMode
+IniWrite,1,%CFG%,Misc,CEO Mode (always on by default, don't change)
+IniRead,Read_CEOMode,%CFG%,Misc,CEO Mode
+GuiControl,,CEOMode,%Read_CEOMode%
 
 DisableCapsLock := "CapsLock"
 Hotkey, *$%DisableCapsLock%, DisableCapsLock  
+Enter := "Enter"
+Hotkey, *$%Enter%, Enter
 
 IfExist, %CFG%
 { 
-IniRead,Read_InteractionMenuKey,%CFG%,Hotkeys,Interaction Menu Key
-IniRead,Read_ThermalHelmet,%CFG%,Hotkeys,Thermal Helmet
-IniRead,Read_FastSniperSwitch,%CFG%,Hotkeys,Fast Sniper Switch
-IniRead,Read_SniperBind,%CFG%,Hotkeys,Sniper Bind
-IniRead,Read_EWO,%CFG%,Hotkeys,EWO
-IniRead,Read_EWOLookBehindKey,%CFG%,Hotkeys,EWO Look Behind Button
-IniRead,Read_EWOSpecialAbilitySlashActionKey,%CFG%,Hotkeys,EWO Special Ability/Action Key
-IniRead,Read_BST,%CFG%,Hotkeys,BST
-IniRead,Read_Ammo,%CFG%,Hotkeys,Buy Ammo
-IniRead,Read_FastRespawn,%CFG%,Hotkeys,Fast Respawn
-IniRead,Read_Suspend,%CFG%,Hotkeys,Suspend Macro
-IniRead,Read_GTAHax,%CFG%,Hotkeys,GTAHax EWO Codes
-IniRead,Read_HelpWhatsThis,%CFG%,Hotkeys,idkwtfthisis
-IniRead,Read_EssayAboutGTA,%CFG%,Hotkeys,Essay About GTA
-IniRead,Read_CustomTextSpam,%CFG%,Hotkeys,Clipboard Spam
-IniRead,Read_ShutUp,%CFG%,Hotkeys,Shut Up Spam
-IniRead,Read_CustomSpamText,%CFG%,Chat Shit,Custom Spam Text
+IniRead,Read_InteractionMenuKey,%CFG%,Keybinds,Interaction Menu Key
+IniRead,Read_ThermalHelmet,%CFG%,PVP Macros,Thermal Helmet
+IniRead,Read_FastSniperSwitch,%CFG%,PVP Macros,Fast Sniper Switch
+IniRead,Read_SniperBind,%CFG%,Keybinds,Sniper Bind
+IniRead,Read_EWO,%CFG%,PVP Macros,EWO
+IniRead,Read_EWOLookBehindKey,%CFG%,Keybinds,EWO Look Behind Button
+IniRead,Read_EWOSpecialAbilitySlashActionKey,%CFG%,Keybinds,EWO Special Ability/Action Key
+IniRead,Read_BST,%CFG%,PVP Macros,BST
+IniRead,Read_Ammo,%CFG%,PVP Macros,Buy Ammo
+IniRead,Read_FastRespawn,%CFG%,Misc,Fast Respawn
+IniRead,Read_Suspend,%CFG%,Misc,Suspend Macro
+IniRead,Read_GTAHax,%CFG%,Misc,GTAHax EWO Codes
+IniRead,Read_HelpWhatsThis,%CFG%,Chat Macros,idkwtfthisis
+IniRead,Read_EssayAboutGTA,%CFG%,Chat Macros,Essay About GTA
+IniRead,Read_CustomTextSpam,%CFG%,Chat Macros,Custom Text Spam
+IniRead,Read_ShutUp,%CFG%,Chat Macros,Shut Up Spam
+IniRead,Read_CustomSpamText,%CFG%,Chat Macros,Custom Spam Text
+IniRead,Read_ReloadOutfit,%CFG%,Misc,Reload Outfit
+IniRead,Read_ProcessCheck2,%CFG%,Misc,Process Check
 
 GuiControl,,InteractionMenuKey,%Read_InteractionMenuKey%
 GuiControl,,ThermalHelmet,%Read_ThermalHelmet%
@@ -107,6 +120,8 @@ GuiControl,,EssayAboutGTA,%Read_EssayAboutGTA%
 GuiControl,,CustomTextSpam,%Read_CustomTextSpam%
 GuiControl,,ShutUp,%Read_ShutUp%
 GuiControl,,CustomSpamText,%Read_CustomSpamText%
+GuiControl,,ReloadOutfit,%Read_ReloadOutfit%
+GuiControl,,ProcessCheck2,%Read_ProcessCheck2%
 }
 
 Gui, Add, Button, gSaveConfig,Save config and start the macros!
@@ -122,6 +137,19 @@ Menu, Tray, Tip, Ryzen's Macros Version 3.0
 Gui, Show,, Ryzen's Macros Version 3.0
 return
 
+ProcessCheck:
+GuiControlGet, ProcessCheck2 ; Retrieves 1 if it is checked, 0 if it is unchecked.
+If (ProcessCheck2 = 0)
+{
+return
+}
+else
+{
+sleep 2000
+goto ProcessCheckTimer
+return
+}
+
 ShowGUI:
 Gui, Show
 return
@@ -136,51 +164,56 @@ SaveConfig:
 Gui, Submit, NoHide
 
 {
-IniWrite,%InteractionMenuKey%,%CFG%,Hotkeys,Interaction Menu Key
-IniWrite,%ThermalHelmet%,%CFG%,Hotkeys,Thermal Helmet
-IniWrite,%FastSniperSwitch%,%CFG%,Hotkeys,Fast Sniper Switch
-IniWrite,%SniperBind%,%CFG%,Hotkeys,Sniper Bind
-IniWrite,%EWO%,%CFG%,Hotkeys,EWO
-IniWrite,%EWOLookBehindKey%,%CFG%,Hotkeys,EWO Look Behind Button
-IniWrite,%EWOSpecialAbilitySlashActionKey%,%CFG%,Hotkeys,EWO Special Ability/Action Key
-IniWrite,%BST%,%CFG%,Hotkeys,BST
-IniWrite,%Ammo%,%CFG%,Hotkeys,Buy Ammo
-IniWrite,%FastRespawn%,%CFG%,Hotkeys,Fast Respawn
-IniWrite,%Suspend%,%CFG%,Hotkeys,Suspend Macro
-IniWrite,%GTAHax%,%CFG%,Hotkeys,GTAHax EWO Codes
-IniWrite,%HelpWhatsThis%,%CFG%,Hotkeys,idkwtfthisis
-IniWrite,%EssayAboutGTA%,%CFG%,Hotkeys,Essay About GTA
-IniWrite,%CustomTextSpam%,%CFG%,Hotkeys,Clipboard Spam
-IniWrite,%ShutUp%,%CFG%,Hotkeys,Shut Up Spam
-IniWrite,%CustomSpamText%,%CFG%,Chat Shit,Custom Spam Text
+IniWrite,%InteractionMenuKey%,%CFG%,Keybinds,Interaction Menu Key
+IniWrite,%ThermalHelmet%,%CFG%,PVP Macros,Thermal Helmet
+IniWrite,%FastSniperSwitch%,%CFG%,PVP Macros,Fast Sniper Switch
+IniWrite,%SniperBind%,%CFG%,Keybinds,Sniper Bind
+IniWrite,%EWO%,%CFG%,PVP Macros,EWO
+IniWrite,%EWOLookBehindKey%,%CFG%,Keybinds,EWO Look Behind Button
+IniWrite,%EWOSpecialAbilitySlashActionKey%,%CFG%,Keybinds,EWO Special Ability/Action Key
+IniWrite,%BST%,%CFG%,PVP Macros,BST
+IniWrite,%Ammo%,%CFG%,PVP Macros,Buy Ammo
+IniWrite,%FastRespawn%,%CFG%,Misc,Fast Respawn
+IniWrite,%Suspend%,%CFG%,Misc,Suspend Macro
+IniWrite,%GTAHax%,%CFG%,Misc,GTAHax EWO Codes
+IniWrite,%HelpWhatsThis%,%CFG%,Chat Macros,idkwtfthisis
+IniWrite,%EssayAboutGTA%,%CFG%,Chat Macros,Essay About GTA
+IniWrite,%CustomTextSpam%,%CFG%,Chat Macros,Custom Text Spam
+IniWrite,%ShutUp%,%CFG%,Chat Macros,Shut Up Spam
+IniWrite,%CustomSpamText%,%CFG%,Chat Macros,Custom Spam Text
+IniWrite,%ReloadOutfit%,%CFG%,Misc,Reload Outfit
+IniWrite,%ProcessCheck2%,%CFG%,Misc,Process Check
 }
 
-Hotkey, *$%ThermalHelmet%, ThermalHelmet   
-Hotkey, *$%FastSniperSwitch%, FastSniperSwitch 
-Hotkey, *$%EWO%, EWO                           
-Hotkey, *$%BST%, BST                           
-Hotkey, *$%Ammo%, Ammo                         
-Hotkey, *$%FastRespawn%, FastRespawn           
-Hotkey, %Suspend%, Suspend                   
-Hotkey, %GTAHax%, GTAHax                     
-Hotkey, %HelpWhatsThis%, HelpWhatsThis	     
-Hotkey, %EssayAboutGTA%, EssayAboutGTA       
-Hotkey, %CustomTextSpam%, CustomTextSpam      
-Hotkey, %ShutUp%, ShutUp 
-#Include *i Put your own scripts here!.ahk
+Hotkey, *$%ThermalHelmet%, ThermalHelmet
+Hotkey, *$%FastSniperSwitch%, FastSniperSwitch
+Hotkey, *$%EWO%, EWO
+Hotkey, *$%BST%, BST
+Hotkey, *$%Ammo%, Ammo
+Hotkey, *$%FastRespawn%, FastRespawn
+Hotkey, %Suspend%, Suspend
+Hotkey, %GTAHax%, GTAHax
+Hotkey, %HelpWhatsThis%, HelpWhatsThis
+Hotkey, %EssayAboutGTA%, EssayAboutGTA
+Hotkey, %CustomTextSpam%, CustomTextSpam
+Hotkey, %ShutUp%, ShutUp
+Hotkey, %ReloadOutfit%, ReloadOutfit
+#Include *i Put your own scripts here.ahk
 return
 ;                                                                            ———Macro Code———
 ThermalHelmet: ; Toggles thermal helmet. Hold the "L" key in order to use it if you are not in a CEO or MC.
+GuiControlGet, CEOMode ; Retrieves 1 if it is checked, 0 if it is unchecked.
+If (CEOMode = 0)
 {
- If GetKeyState("L", "L") {
-  send {%InteractionMenuKey%}{down 3}{enter}
- } Else {
-  send {%InteractionMenuKey%}{down 4}{enter}
- }
+send {%InteractionMenuKey%}{down 3}{enter}
+}
+else
+{
+send {%InteractionMenuKey%}{down 4}{enter}
+}
 send {down}{enter}
 sleep 50
 send {space}{%InteractionMenuKey%}
-}
 return
 
 FastSniperSwitch: ; Switches from sniper to marksman and back to sniper rapidly. You must have the normal sniper rifle removed from your loadout for this to work.
@@ -203,16 +236,27 @@ setcapslockstate, off
 return
 
 BST: ; Drops BST. Must be in CEO obviously.
+GuiControlGet, CEOMode ; Retrieves 1 if it is checked, 0 if it is unchecked.
+If (CEOMode = 0)
+{
+return
+}
+else
+{
 send {%InteractionMenuKey%}{enter}{down 4}{enter}{down}{enter}
+}
 return
 
 Ammo: ; Buys ammo. Hold the "L" key in order to use it if you are not in a CEO or MC.
+GuiControlGet, CEOMode ; Retrieves 1 if it is checked, 0 if it is unchecked.
+If (CEOMode = 0)
 {
- If GetKeyState("L", "L") {
-  send {%InteractionMenuKey%}{down 2}{enter}
- } Else {
-  send {%InteractionMenuKey%}{down 3}{enter}
- }
+send {%InteractionMenuKey%}{down 2}{enter}
+}
+else
+{
+send {%InteractionMenuKey%}{down 3}{enter}
+}
 send {down 5}{enter}{up}{enter}  ; cycle 1 
 send {up 2}{enter}{down 2} ; cycle 2
 send {enter} ; end of cycle 2 
@@ -229,7 +273,6 @@ send {enter} ; end of cycle 7
 send {up 2}{enter}{down 2} ; cycle 8
 send {enter}{left} ; end of cycle 8
 send {%InteractionMenuKey%}
-}
 return
 
 FastRespawn: ; Respawns extremely fast.
@@ -264,7 +307,7 @@ return
 
 
 GTAHax: ; Applies the EWO no cooldown code using GTAHax.
-sendinput {printscreen up}
+sendinput {%GTAHax% up}
 Run, GTAHaXUI.exe, %A_ScriptDir%, , Max
 Sleep 1500
 DllCall("SetCursorPos", int, 300, int, 298) ;Line 1
@@ -284,7 +327,7 @@ WinActivate ahk_class grcWindow
 return
 
 HelpWhatsThis: ; Spams "don't care + didn't ask + cry about it + stay mad + get real + L + mald seethe cope harder + hoes mad + basic + skill issue + ratio + you fell off + the audacity + triggered + any askers + redpilled + get a life + ok and? + cringe + touch grass + donowalled + not based + you’re a (insert stereotype) + not funny didn't laugh + you're* + grammar issue + go outside + get good + reported + ad hominem + GG! + ur mom"
-sendinput {f5 up}
+sendinput {%HelpWhatsThis% up}
 send td
 sendinput on’t care {Numpadadd} didn't ask {Numpadadd} cry a
 send b
@@ -319,7 +362,7 @@ send {enter}
 return
 
 EssayAboutGTA: ; Complains about how bad the FPS is in GTA Online.
-sendinput {f7 up}
+sendinput {%EssayAboutGTA% up}
 send tw
 sendinput hy is my fps so shlt this game
 send {space}
@@ -377,9 +420,26 @@ sendinput {raw}shut up
 send {enter}
 return
 
+ReloadOutfit:
+GuiControlGet, CEOMode ; Retrieves 1 if it is checked, 0 if it is unchecked.
+If (CEOMode = 0)
+{
+send {%InteractionMenuKey%}{down 3}{enter}
+}
+else
+{
+send {%InteractionMenuKey%}{down 4}{enter}
+}
+send {down 3}{enter 2}{%InteractionMenuKey%}
+return
+
 DisableCapsLock: ; Disables CapsLock, so you can't press it.
 send {CapsLock}
 setcapslockstate, off
+return
+
+Enter:
+send {enter}
 return
 
 ProcessCheckTimer:
