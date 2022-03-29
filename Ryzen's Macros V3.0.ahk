@@ -49,6 +49,7 @@ Gui, Add, Text,, Custom Text Spam Chat Macro:
 Gui, Add, Text,, Custom Spam Text (30 character limit):
 Gui, Add, Text,, Shut Up Chat Macro:
 Gui, Add, Text,, Reload Outfit:
+Gui, Add, Text,, Show UI
 Gui, Add, Text,, Close macros if GTA is closed?
 Gui, Add, Text,, CEO/VIP/MC mode:
 
@@ -69,11 +70,12 @@ Gui, Add, Hotkey,vEssayAboutGTA,F7
 Gui, Add, Hotkey,vCustomTextSpam,F8
 Gui, Add, Edit,vCustomSpamText
 Gui, Add, Hotkey,vShutUp,F6
-Gui, Add, Hotkey,vReloadOutfit,Insert
+Gui, Add, Hotkey,vReloadOutfit,INS
+Gui, Add, Hotkey,vShowUI,END
 Gui, Add, CheckBox, gProcessCheck vProcessCheck2,
 Gui, Add, CheckBox, vCEOMode
-IniWrite,1,%CFG%,Misc,CEO Mode (always on by default, don't change)
-IniRead,Read_CEOMode,%CFG%,Misc,CEO Mode
+IniWrite,1,%CFG%,Misc,CEO Mode (always on by default. Don't change)
+IniRead,Read_CEOMode,%CFG%,Misc,CEO Mode (always on by default. Don't change)
 GuiControl,,CEOMode,%Read_CEOMode%
 
 DisableCapsLock := "CapsLock"
@@ -101,6 +103,7 @@ IniRead,Read_CustomTextSpam,%CFG%,Chat Macros,Custom Text Spam
 IniRead,Read_ShutUp,%CFG%,Chat Macros,Shut Up Spam
 IniRead,Read_CustomSpamText,%CFG%,Chat Macros,Custom Spam Text
 IniRead,Read_ReloadOutfit,%CFG%,Misc,Reload Outfit
+IniRead,Read_ShowUI,%CFG%,Misc,Show UI
 IniRead,Read_ProcessCheck2,%CFG%,Misc,Process Check
 
 GuiControl,,InteractionMenuKey,%Read_InteractionMenuKey%
@@ -121,6 +124,7 @@ GuiControl,,CustomTextSpam,%Read_CustomTextSpam%
 GuiControl,,ShutUp,%Read_ShutUp%
 GuiControl,,CustomSpamText,%Read_CustomSpamText%
 GuiControl,,ReloadOutfit,%Read_ReloadOutfit%
+GuiControl,,ShowUI,%Read_ShowUI%
 GuiControl,,ProcessCheck2,%Read_ProcessCheck2%
 }
 
@@ -182,6 +186,7 @@ IniWrite,%CustomTextSpam%,%CFG%,Chat Macros,Custom Text Spam
 IniWrite,%ShutUp%,%CFG%,Chat Macros,Shut Up Spam
 IniWrite,%CustomSpamText%,%CFG%,Chat Macros,Custom Spam Text
 IniWrite,%ReloadOutfit%,%CFG%,Misc,Reload Outfit
+IniWrite,%ShowUI%,%CFG%,Misc,Show UI
 IniWrite,%ProcessCheck2%,%CFG%,Misc,Process Check
 }
 
@@ -198,6 +203,7 @@ Hotkey, %EssayAboutGTA%, EssayAboutGTA
 Hotkey, %CustomTextSpam%, CustomTextSpam
 Hotkey, %ShutUp%, ShutUp
 Hotkey, %ReloadOutfit%, ReloadOutfit
+Hotkey, %ShowUI%, ShowUI
 #Include *i Put your own scripts here.ahk
 return
 ;                                                                            ———Macro Code———
@@ -440,6 +446,10 @@ return
 
 Enter:
 send {enter}
+return
+
+ShowUI:
+Gui, Show
 return
 
 ProcessCheckTimer:
