@@ -49,29 +49,31 @@ Gui, Add, Text,, Custom Text Spam Chat Macro:
 Gui, Add, Text,, Custom Spam Text (30 character limit):
 Gui, Add, Text,, Shut Up Chat Macro:
 Gui, Add, Text,, Reload Outfit:
-Gui, Add, Text,, Show UI
+Gui, Add, Text,, Show UI:
+Gui, Add, Text,, Toggle CEO Mode
 Gui, Add, Text,, Close macros if GTA is closed?
 Gui, Add, Text,, CEO/VIP/MC mode:
 
-Gui, Add, Hotkey,vInteractionMenuKey ym,m
-Gui, Add, Hotkey,vThermalHelmet, ,
-Gui, Add, Hotkey,vFastSniperSwitch,F4
-Gui, Add, Hotkey,vSniperBind,1
-Gui, Add, Hotkey,vEWO,<
-Gui, Add, Hotkey,vEWOLookBehindKey,c
-Gui, Add, Hotkey,vEWOSpecialAbilitySlashActionKey,CapsLock
-Gui, Add, Hotkey,vBST,§
-Gui, Add, Hotkey,vAmmo,¨
-Gui, Add, Hotkey,vFastRespawn,F3
-Gui, Add, Hotkey,vSuspend,F2
+Gui, Add, Hotkey,vInteractionMenuKey ym,
+Gui, Add, Hotkey,vThermalHelmet,
+Gui, Add, Hotkey,vFastSniperSwitch,
+Gui, Add, Hotkey,vSniperBind,
+Gui, Add, Hotkey,vEWO,
+Gui, Add, Hotkey,vEWOLookBehindKey,
+Gui, Add, Hotkey,vEWOSpecialAbilitySlashActionKey,
+Gui, Add, Hotkey,vBST,
+Gui, Add, Hotkey,vAmmo,
+Gui, Add, Hotkey,vFastRespawn,
+Gui, Add, Hotkey,vSuspend,
 Gui, Add, Hotkey,vGTAHax,PrintScreen
-Gui, Add, Hotkey,vHelpWhatsThis,F5
-Gui, Add, Hotkey,vEssayAboutGTA,F7
-Gui, Add, Hotkey,vCustomTextSpam,F8
+Gui, Add, Hotkey,vHelpWhatsThis,
+Gui, Add, Hotkey,vEssayAboutGTA,
+Gui, Add, Hotkey,vCustomTextSpam,
 Gui, Add, Edit,vCustomSpamText
-Gui, Add, Hotkey,vShutUp,F6
-Gui, Add, Hotkey,vReloadOutfit,INS
-Gui, Add, Hotkey,vShowUI,END
+Gui, Add, Hotkey,vShutUp,
+Gui, Add, Hotkey,vReloadOutfit,
+Gui, Add, Hotkey,vShowUI,
+Gui, Add, Hotkey,vToggleCEO,
 Gui, Add, CheckBox, gProcessCheck vProcessCheck2,
 Gui, Add, CheckBox, vCEOMode
 IniWrite,1,%CFG%,Misc,CEO Mode (always on by default. Don't change)
@@ -104,6 +106,7 @@ IniRead,Read_ShutUp,%CFG%,Chat Macros,Shut Up Spam
 IniRead,Read_CustomSpamText,%CFG%,Chat Macros,Custom Spam Text
 IniRead,Read_ReloadOutfit,%CFG%,Misc,Reload Outfit
 IniRead,Read_ShowUI,%CFG%,Misc,Show UI
+IniRead,Read_ToggleCEO,%CFG%,Misc,Toggle CEO
 IniRead,Read_ProcessCheck2,%CFG%,Misc,Process Check
 
 GuiControl,,InteractionMenuKey,%Read_InteractionMenuKey%
@@ -125,6 +128,7 @@ GuiControl,,ShutUp,%Read_ShutUp%
 GuiControl,,CustomSpamText,%Read_CustomSpamText%
 GuiControl,,ReloadOutfit,%Read_ReloadOutfit%
 GuiControl,,ShowUI,%Read_ShowUI%
+GuiControl,,ToggleCEO,%Read_ToggleCEO%
 GuiControl,,ProcessCheck2,%Read_ProcessCheck2%
 }
 
@@ -187,6 +191,7 @@ IniWrite,%ShutUp%,%CFG%,Chat Macros,Shut Up Spam
 IniWrite,%CustomSpamText%,%CFG%,Chat Macros,Custom Spam Text
 IniWrite,%ReloadOutfit%,%CFG%,Misc,Reload Outfit
 IniWrite,%ShowUI%,%CFG%,Misc,Show UI
+IniWrite,%ToggleCEO%,%CFG%,Misc,Toggle CEO
 IniWrite,%ProcessCheck2%,%CFG%,Misc,Process Check
 }
 
@@ -204,6 +209,7 @@ Hotkey, %CustomTextSpam%, CustomTextSpam
 Hotkey, %ShutUp%, ShutUp
 Hotkey, %ReloadOutfit%, ReloadOutfit
 Hotkey, %ShowUI%, ShowUI
+Hotkey, %ToggleCEO%, ToggleCEO
 #Include *i Put your own scripts here.ahk
 return
 ;                                                                            ———Macro Code———
@@ -420,7 +426,7 @@ Send {enter}
 return
 
 ShutUp: ; Spams "shut up"
-sendinput {f6 up}
+sendinput {%ShutUp% up}
 send t{shift up}
 sendinput {raw}shut up
 send {enter}
@@ -450,6 +456,19 @@ return
 
 ShowUI:
 Gui, Show
+return
+
+ToggleCEO:
+send {%ToggleCEO%}
+GuiControlGet, CEOMode ; Retrieves 1 if it is checked, 0 if it is unchecked.
+If (CEOMode = 0)
+{
+GUIControl,, CEOMode, 1
+}
+else
+{
+GUIControl,, CEOMode, 0
+}
 return
 
 ProcessCheckTimer:
