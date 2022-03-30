@@ -452,6 +452,7 @@ return
 
 Enter:
 send {enter}
+sleep 50
 return
 
 ShowUI:
