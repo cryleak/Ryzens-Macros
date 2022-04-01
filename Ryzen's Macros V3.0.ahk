@@ -153,7 +153,6 @@ return
 }
 else
 {
-sleep 2000
 goto ProcessCheckTimer
 return
 }
