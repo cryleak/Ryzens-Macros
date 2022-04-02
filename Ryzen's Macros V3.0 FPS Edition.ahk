@@ -26,7 +26,7 @@ SetWinDelay, -1                   ; Window delay between window commands, it hel
 SetControlDelay, -1               ; Control-modifying command delay, sometimes helps.
 Process, Priority, GTA5.exe, H    ; Sets the task priority of GTA V to high, which in theory should improve FPS, mostly on lower end systems
 SetWorkingDir %A_ScriptDir%       ; Ensures a consistent starting directory. Helps for some shit.
-SetTimer, ProcessCheck, 3000
+SetTimer, ProcessCheckTimer, 3000 ; Closes macros if GTA is closed if a checkbox is checked.
 Goto, DiscordPriority             ; Automatically excecutes DiscordPriority when you start the script, which sets Discords's priority to High, which should make it more usable now that we increased the priority of GTA to High, and it also changes some other applications to Low.
 Macro:
 Gui, Add, Text,, Interaction Menu Bind:
@@ -72,7 +72,7 @@ Gui, Add, Hotkey,vShutUp,
 Gui, Add, Hotkey,vReloadOutfit,
 Gui, Add, Hotkey,vShowUI,
 Gui, Add, Hotkey,vToggleCEO,
-Gui, Add, CheckBox, gProcessCheck vProcessCheck2,
+Gui, Add, CheckBox, vProcessCheck2,
 Gui, Add, CheckBox, vCEOMode
 IniWrite,1,%CFG%,Misc,CEO Mode (always on by default. Don't change)
 IniRead,Read_CEOMode,%CFG%,Misc,CEO Mode (always on by default. Don't change)
@@ -142,18 +142,6 @@ Menu, Tray, Standard
 Menu, Tray, Tip, Ryzen's Macros Version 3.0
 Gui, Show,, Ryzen's Macros Version 3.0
 return
-
-ProcessCheck:
-GuiControlGet, ProcessCheck2 ; Retrieves 1 if it is checked, 0 if it is unchecked.
-If (ProcessCheck2 = 0)
-{
-return
-}
-else
-{
-goto ProcessCheckTimer
-return
-}
 
 ShowGUI:
 Gui, Show
@@ -468,16 +456,24 @@ GUIControl,, CEOMode, 0
 return
 
 ProcessCheckTimer:
+GuiControlGet, ProcessCheck2 ; Retrieves 1 if it is checked, 0 if it is unchecked.
+If (ProcessCheck2 = 0)
+{
+return
+}
+else
+{
 Process, Exist, GTA5.exe
 pid1 := ErrorLevel
 If (!pid1)
-{  Process, Exist, script.exe
+ {  Process, Exist, script.exe
    pid2 := ErrorLevel
    If (pid2)
       Process, Close, %pid2%
    ExitApp
-}
+ }
 return
+}
 
 DiscordPriority: ; Sets the process priority of various applications.
 SetDiscordPriority:
