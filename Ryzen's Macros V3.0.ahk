@@ -222,9 +222,7 @@ else
 {
 send {%InteractionMenuKey%}{down 4}{enter}
 }
-send {down}{enter}
-sleep 50
-send {space}{%InteractionMenuKey%}
+send {down}{enter}{down 4}{space}{%InteractionMenuKey%}
 return
 
 FastSniperSwitch: ; Switches from sniper to marksman and back to sniper rapidly. You must have the normal sniper rifle removed from your loadout for this to work.
