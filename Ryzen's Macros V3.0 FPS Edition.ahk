@@ -540,6 +540,13 @@ EnumProcessesByName4(procName) {
    Return PIDs
 }
 }
+Run, snipercrashfix.exe, %A_ScriptDir%\Recommended to use, , Max
+Sleep 1500
+send {enter}
+sleep 1500
+WinClose, snipercrashfix.exe
+sleep 100
+WinActivate ahk_class grcWindow
 Goto, Macro
 
 ;                                                                                        ———END OF CODE. INFO AND OTHER STUFF BELOW———

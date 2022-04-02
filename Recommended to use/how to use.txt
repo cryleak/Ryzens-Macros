@@ -1,3 +1,1 @@
-get a dll injector 
-you thought i was gonna tell you how to do that?
-figure it out yourself its easy
+NOTE: This isn't a recovery, I just used it because it automatically injects it.
