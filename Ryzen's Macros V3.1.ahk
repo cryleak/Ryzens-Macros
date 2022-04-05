@@ -10,6 +10,8 @@ CFG = GTA Binds.ini
 ; All of this shit apparently theoretically increase speed according to the person know as Quxck. It probably only helps if you have high FPS,
 ; but i have noticed a difference between SetKeyDelay 10, 10 (the default) and -1, -1 (the fastest) even at a "low" FPS of 60FPS.
 ; Just use them because they probably improve speed, at least a little bit.
+if not A_IsAdmin
+	Run *RunAs "%A_ScriptFullPath%"
 #SingleInstance, force            ; You can't start multiple instances of the macro with this on.
 #IfWinActive ahk_class grcWindow  ; Disables hotkeys when alt-tabbed or GTA is closed. Restart macro if you decide to restart GTA with this enabled.
 #IfWinActive Grand Theft Auto V   ; Same as above, just makes it more reliable.
@@ -132,6 +134,7 @@ GuiControl,,ToggleCEO,%Read_ToggleCEO%
 GuiControl,,ProcessCheck2,%Read_ProcessCheck2%
 }
 
+Gui, Add, Button, gIncludeS, Load extra scripts
 Gui, Add, Button, gSaveConfig,Save config and start the macros!
 Gui, Add, Button, gHideWindow,Hide window and start the macros!
 Gui, Add, Button, gExitMacros,Exit macros
@@ -143,6 +146,10 @@ Menu, Tray, Add
 Menu, Tray, Standard
 Menu, Tray, Tip, Ryzen's Macros Version 3.1
 Gui, Show,, Ryzen's Macros Version 3.1
+return
+
+IncludeS:
+#Include *i Put your own scripts here.ahk
 return
 
 ShowGUI:
@@ -197,7 +204,6 @@ Hotkey, %ShutUp%, ShutUp
 Hotkey, %ReloadOutfit%, ReloadOutfit
 Hotkey, %ShowUI%, ShowUI
 Hotkey, %ToggleCEO%, ToggleCEO
-#Include *i Put your own scripts here.ahk
 return
 ;                                                                            ———Macro Code———
 ThermalHelmet: ; Toggles thermal helmet. Hold the "L" key in order to use it if you are not in a CEO or MC.
@@ -244,7 +250,7 @@ send {%InteractionMenuKey%}{enter}{down 4}{enter}{down}{enter}
 }
 return
 
-Ammo: ; Buys ammo. Hold the "L" key in order to use it if you are not in a CEO or MC.
+Ammo: ; Buys ammo.
 GuiControlGet, CEOMode ; Retrieves 1 if it is checked, 0 if it is unchecked.
 If (CEOMode = 0)
 {
@@ -256,19 +262,13 @@ send {%InteractionMenuKey%}{down 3}{enter}
 }
 send {down 5}{enter}{up}{enter}  ; cycle 1 
 send {up 2}{enter}{down 2} ; cycle 2
+sleep 125
 send {enter} ; end of cycle 2 
 send {up 2}{enter}{down 2} ; cycle 3
 send {enter} ; end of cycle 3
 send {up 2}{enter}{down 2} ; cycle 4
+sleep 75
 send {enter} ; end of cycle 4
-send {up 2}{enter}{down 2} ; cycle 5
-send {enter} ; end of cycle 5
-send {up 2}{enter}{down 2} ; cycle 6
-send {enter} ; end of cycle 6
-send {up 2}{enter}{down 2} ; cycle 7
-send {enter} ; end of cycle 7
-send {up 2}{enter}{down 2} ; cycle 8
-send {enter}{left} ; end of cycle 8
 send {%InteractionMenuKey%}
 return
 
@@ -436,8 +436,9 @@ setcapslockstate, off
 return
 
 Enter:
-send {enter}
+sendinput {enter down}
 sleep 50
+sendinput {enter up}
 return
 
 ShowUI:
@@ -472,6 +473,7 @@ If (!pid1)
    pid2 := ErrorLevel
    If (pid2)
       Process, Close, %pid2%
+MsgBox, 0, Macros will close now. RIP., GTA is no longer running. Macros will close now. RIP.
    ExitApp
  }
 return
@@ -564,11 +566,10 @@ EnumProcessesByName4(procName) {
 }
 }
 Run, snipercrashfix.exe, %A_ScriptDir%\Recommended to use, , Max
-Sleep 1500
+Sleep 750
 send {enter}
-sleep 1500
+sleep 250
 WinClose, snipercrashfix.exe
-sleep 100
 WinActivate ahk_class grcWindow
 Goto, Macro
 
