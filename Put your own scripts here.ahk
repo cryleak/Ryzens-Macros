@@ -17,12 +17,10 @@ return
 GuiControlGet, CEOMode ; Checks if CEOMode is on
 If (CEOMode = 0)
 {
-; Put the non CEO macro here (remove 1 Down key usually)
-return ; Remove this if you want it to work in non CEO.
+send {down 3} ; Non CEO Macro here
 } 
 else
 {
-send {%InteractionMenuKey%}{enter}{down 4}{enter}{down}{enter} ; Put the full macro here if you only want it to work in CEO, put the first {down} commands and {enter} command.
-}
-send {down 4}{enter}{down 3}{enter} ; Put the rest of the macro here unless it is for something in the CEO menu.
+send {down 4} ; CEO Macro here
 return
+}

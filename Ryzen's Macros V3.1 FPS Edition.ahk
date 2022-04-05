@@ -132,7 +132,6 @@ GuiControl,,ToggleCEO,%Read_ToggleCEO%
 GuiControl,,ProcessCheck2,%Read_ProcessCheck2%
 }
 
-Gui, Add, Button, gIncludeS, Load extra scripts
 Gui, Add, Button, gSaveConfig,Save config and start the macros!
 Gui, Add, Button, gHideWindow,Hide window and start the macros!
 Gui, Add, Button, gExitMacros,Exit macros
@@ -146,9 +145,6 @@ Menu, Tray, Tip, Ryzen's Macros Version 3.1 FPS Edition
 Gui, Show,, Ryzen's Macros Version 3.1 Edition
 return
 
-IncludeS:
-#Include *i Put your own scripts here.ahk
-return
 ShowGUI:
 Gui, Show
 return
@@ -201,6 +197,7 @@ Hotkey, %ShutUp%, ShutUp
 Hotkey, %ReloadOutfit%, ReloadOutfit
 Hotkey, %ShowUI%, ShowUI
 Hotkey, %ToggleCEO%, ToggleCEO
+#Include *i Put your own scripts here.ahk
 return
 ;                                                                            ———Macro Code———
 ThermalHelmet: ; Toggles thermal helmet. Hold the "L" key in order to use it if you are not in a CEO or MC.
