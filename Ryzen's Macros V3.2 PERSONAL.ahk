@@ -143,8 +143,8 @@ Menu, Tray, Add, Hide UI, HideWindow
 Menu, Tray, Add, Save Macros, SaveConfig
 Menu, Tray, Add
 Menu, Tray, Standard
-Menu, Tray, Tip, Ryzen's Macros Version 3.1
-Gui, Show,, Ryzen's Macros Version 3.1
+Menu, Tray, Tip, Ryzen's Macros Version 3.2
+Gui, Show,, Ryzen's Macros Version 3.2
 return
 
 ShowGUI:

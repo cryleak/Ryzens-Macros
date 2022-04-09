@@ -23,9 +23,11 @@ if not A_IsAdmin
 #HotkeyInterval 99000000          ; You will get an error message if you reach this limit, so I increased it to a ridiculously high number, so that can't happen.     
 ListLines Off                     ; Useful for debugging. Improves performance with it off.
 SetDefaultMouseSpeed, 0           ; Could theoretically increase speed in some situations.
+SetBatchLines, -1                 ; Increases speed if your macro is multiple lines long. Increase CPU usage, so if you are lagging with these macros, even after reducing priority, remove this line.
 SetKeyDelay, -1, -1               ; Always increases speed. Always use, and no it won't reduce reliability by much...
 SetWinDelay, -1                   ; Window delay between window commands, it helps speed sometimes.
 SetControlDelay, -1               ; Control-modifying command delay, sometimes helps.
+Process, Priority, , H            ; Sets the task priority of these macros to high, which in theory should improve speeds. Remove this if you lag with it on.
 Process, Priority, GTA5.exe, H    ; Sets the task priority of GTA V to high, which in theory should improve FPS, mostly on lower end systems
 SetWorkingDir %A_ScriptDir%       ; Ensures a consistent starting directory. Helps for some shit.
 SetTimer, ProcessCheckTimer, 3000 ; Closes macros if GTA is closed if a checkbox is checked.
@@ -141,8 +143,8 @@ Menu, Tray, Add, Hide UI, HideWindow
 Menu, Tray, Add, Save Macros, SaveConfig
 Menu, Tray, Add
 Menu, Tray, Standard
-Menu, Tray, Tip, Ryzen's Macros Version 3.1 FPS Edition
-Gui, Show,, Ryzen's Macros Version 3.1 Edition
+Menu, Tray, Tip, Ryzen's Macros Version 3.2
+Gui, Show,, Ryzen's Macros Version 3.2
 return
 
 ShowGUI:
@@ -256,13 +258,17 @@ send {%InteractionMenuKey%}{down 3}{enter}
 }
 send {down 5}{enter}{up}{enter}  ; cycle 1 
 send {up 2}{enter}{down 2} ; cycle 2
-sleep 125
+sleep 150
 send {enter} ; end of cycle 2 
 send {up 2}{enter}{down 2} ; cycle 3
+sleep 150
 send {enter} ; end of cycle 3
 send {up 2}{enter}{down 2} ; cycle 4
-sleep 75
+sleep 150
 send {enter} ; end of cycle 4
+send {up 2}{enter}{down 2} ; cycle 5
+sleep 150
+send {enter} ; end of cycle 5
 send {%InteractionMenuKey%}
 return
 
@@ -475,6 +481,27 @@ return
 
 DiscordPriority: ; Sets the process priority of various applications.
 SetDiscordPriority:
+{
+processName := "Discord.exe"
+
+PIDs := EnumProcessesByName(processName)
+for k, PID in PIDs
+   Process, Priority, % PID, H
+
+EnumProcessesByName(procName) {
+   if !DllCall("Wtsapi32\WTSEnumerateProcesses", Ptr, 0, UInt, 0, UInt, 1, PtrP, pProcessInfo, PtrP, count)
+      throw Exception("WTSEnumerateProcesses failed. A_LastError: " . A_LastError)
+   
+   addr := pProcessInfo, PIDs := []
+   Loop % count  {
+      if StrGet( NumGet(addr + 8) ) = procName
+         PID := NumGet(addr + 4, "UInt"), PIDs.Push(PID)
+      addr += A_PtrSize = 4 ? 16 : 24
+   }
+   DllCall("Wtsapi32\WTSFreeMemory", Ptr, pProcessInfo)
+   Return PIDs
+}
+}
 {
 processName := "SocialClubHelper.exe"
 

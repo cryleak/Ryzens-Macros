@@ -15,12 +15,13 @@ return
 ; IMPORTANT: Check this if you want a CEO Mode macro so it works when you aren't CEO.
 *$F22:: ; same shit
 GuiControlGet, CEOMode ; Checks if CEOMode is on
-If (CEOMode = 0)
+If (CEOMode = 0) 
 {
 send {down 3} ; Non CEO Macro here
+return ; Use this at the end of it
 } 
 else
 {
 send {down 4} ; CEO Macro here
-return
+return ; Use this at the end of it
 }
