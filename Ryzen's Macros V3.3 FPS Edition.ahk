@@ -50,7 +50,8 @@ Gui, Add, Text,, Custom Spam Text (30 character limit):
 Gui, Add, Text,, Shut Up Chat Macro:
 Gui, Add, Text,, Reload Outfit:
 Gui, Add, Text,, Show UI:
-Gui, Add, Text,, Toggle CEO Mode
+Gui, Add, Text,, Toggle CEO Mode:
+Gui, Add, Text,, Ammo buy wait time (ms):
 Gui, Add, Text,, Close macros if GTA is closed?
 Gui, Add, Text,, CEO/VIP/MC mode:
 
@@ -74,6 +75,7 @@ Gui, Add, Hotkey,vShutUp,
 Gui, Add, Hotkey,vReloadOutfit,
 Gui, Add, Hotkey,vShowUI,
 Gui, Add, Hotkey,vToggleCEO,
+Gui, Add, Edit,vSleepTime
 Gui, Add, CheckBox, vProcessCheck2,
 Gui, Add, CheckBox, vCEOMode
 IniWrite,1,%CFG%,Misc,CEO Mode (always on by default. Don't change)
@@ -107,6 +109,7 @@ IniRead,Read_CustomSpamText,%CFG%,Chat Macros,Custom Spam Text
 IniRead,Read_ReloadOutfit,%CFG%,Misc,Reload Outfit
 IniRead,Read_ShowUI,%CFG%,Misc,Show UI
 IniRead,Read_ToggleCEO,%CFG%,Misc,Toggle CEO
+IniRead,Read_SleepTime,%CFG%,Misc,Ammo Buy Sleep Time
 IniRead,Read_ProcessCheck2,%CFG%,Misc,Process Check
 
 GuiControl,,InteractionMenuKey,%Read_InteractionMenuKey%
@@ -129,6 +132,7 @@ GuiControl,,CustomSpamText,%Read_CustomSpamText%
 GuiControl,,ReloadOutfit,%Read_ReloadOutfit%
 GuiControl,,ShowUI,%Read_ShowUI%
 GuiControl,,ToggleCEO,%Read_ToggleCEO%
+GuiControl,,SleepTime,%Read_SleepTime%
 GuiControl,,ProcessCheck2,%Read_ProcessCheck2%
 }
 
@@ -141,8 +145,8 @@ Menu, Tray, Add, Hide UI, HideWindow
 Menu, Tray, Add, Save Macros, SaveConfig
 Menu, Tray, Add
 Menu, Tray, Standard
-Menu, Tray, Tip, Ryzen's Macros Version 3.2 FPS Edition
-Gui, Show,, Ryzen's Macros Version 3.2 Edition
+Menu, Tray, Tip, Ryzen's Macros Version 3.3 FPS Edition
+Gui, Show,, Ryzen's Macros Version 3.3 FPS Edition
 return
 
 ShowGUI:
@@ -179,6 +183,7 @@ IniWrite,%CustomSpamText%,%CFG%,Chat Macros,Custom Spam Text
 IniWrite,%ReloadOutfit%,%CFG%,Misc,Reload Outfit
 IniWrite,%ShowUI%,%CFG%,Misc,Show UI
 IniWrite,%ToggleCEO%,%CFG%,Misc,Toggle CEO
+IniWrite,%SleepTime%,%CFG%,Misc,Ammo Buy Sleep Time	   
 IniWrite,%ProcessCheck2%,%CFG%,Misc,Process Check
 }
 
@@ -197,7 +202,7 @@ Hotkey, %ShutUp%, ShutUp
 Hotkey, %ReloadOutfit%, ReloadOutfit
 Hotkey, %ShowUI%, ShowUI
 Hotkey, %ToggleCEO%, ToggleCEO
-#Include *i Put your own scripts here.ahk
+#Include *i PutYourOwnScriptsHere.ahk
 return
 ;                                                                            ———Macro Code———
 ThermalHelmet: ; Toggles thermal helmet. Hold the "L" key in order to use it if you are not in a CEO or MC.
@@ -256,16 +261,16 @@ send {%InteractionMenuKey%}{down 3}{enter}
 }
 send {down 5}{enter}{up}{enter}  ; cycle 1 
 send {up 2}{enter}{down 2} ; cycle 2
-sleep 150
+sleep %SleepTime%
 send {enter} ; end of cycle 2 
 send {up 2}{enter}{down 2} ; cycle 3
-sleep 150
+sleep %SleepTime%
 send {enter} ; end of cycle 3
 send {up 2}{enter}{down 2} ; cycle 4
-sleep 150
+sleep %SleepTime%
 send {enter} ; end of cycle 4
 send {up 2}{enter}{down 2} ; cycle 5
-sleep 150
+sleep %SleepTime%
 send {enter} ; end of cycle 5
 send {%InteractionMenuKey%}
 return
