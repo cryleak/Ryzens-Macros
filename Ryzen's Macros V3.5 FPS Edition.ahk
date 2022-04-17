@@ -23,11 +23,9 @@ if not A_IsAdmin
 #HotkeyInterval 99000000          ; You will get an error message if you reach this limit, so I increased it to a ridiculously high number, so that can't happen.     
 ListLines Off                     ; Useful for debugging. Improves performance with it off.
 SetDefaultMouseSpeed, 0           ; Could theoretically increase speed in some situations.
-SetBatchLines, -1                 ; Increases speed if your macro is multiple lines long. Increase CPU usage, so if you are lagging with these macros, even after reducing priority, remove this line.
 SetKeyDelay, -1, -1               ; Always increases speed. Always use, and no it won't reduce reliability by much...
 SetWinDelay, -1                   ; Window delay between window commands, it helps speed sometimes.
 SetControlDelay, -1               ; Control-modifying command delay, sometimes helps.
-Process, Priority, , H            ; Sets the task priority of these macros to high, which in theory should improve speeds. Remove this if you lag with it on.
 Process, Priority, GTA5.exe, H    ; Sets the task priority of GTA V to high, which in theory should improve FPS, mostly on lower end systems
 SetWorkingDir %A_ScriptDir%       ; Ensures a consistent starting directory. Helps for some shit.
 SetTimer, ProcessCheckTimer, 3000 ; Closes macros if GTA is closed if a checkbox is checked.
@@ -48,6 +46,18 @@ Gui, Add, Text,, Ammo weapons to buy:
 Gui, Add, Text,, Fast Respawn Macro:
 Gui, Add, Text,, Suspend:
 Gui, Add, Text,, GTA Hax EWO Codes Macro:
+			
+		   
+			
+				
+		 
+		  
+	   
+		 
+		   
+		  
+			  
+		 
 
 
 Gui, Add, Hotkey,vInteractionMenuKey ym,
@@ -78,6 +88,7 @@ Gui, Add, Text,, CEO/VIP/MC mode:
 Gui, Add, Text,, AW Mode:
 Gui, Add, Text,, Use Night Vision for Thermal Macro?
 
+
 Gui, Add, Hotkey,vHelpWhatsThis yn y10,
 Gui, Add, Hotkey,vEssayAboutGTA,
 Gui, Add, Hotkey,vCustomTextSpam,
@@ -90,6 +101,23 @@ Gui, Add, CheckBox, vProcessCheck2 h20,
 Gui, Add, CheckBox, vCEOMode h20,
 Gui, Add, CheckBox, vAWMode h20,
 Gui, Add, CheckBox, vNightVision h20,
+Gui, Add, Button, gSaveConfig,Save config and start the macros!
+Gui, Add, Button, gHideWindow,Hide window and start the macros!
+Gui, Add, Button, gExitMacros,Exit macros
+
+Gui, Add, Text,ys y10, AW Mode ONLY RPG Spam
+Gui, Add, Text,, RPG In-Game Bind:
+Gui, Add, Text,, Sticky bomb In-Game Bind:
+Gui, Add, Text,, Be able to use weapons after respawning? (AW mode only)
+
+Gui, Add, Hotkey, vRPGSpam yn y10,
+Gui, Add, Hotkey, vRPGBind,
+Gui, Add, Hotkey, vStickyBind,
+Gui, Add, Checkbox, vTabWeapon,
+
+Gui, Font, s13
+Gui, Add, Text,x1350 y150, AW MODE IS UNDER CONSTRUCTION!
+
 IniWrite,1,%CFG%,Misc,CEO Mode (always on by default. Don't change)
 IniRead,Read_CEOMode,%CFG%,Misc,CEO Mode (always on by default. Don't change)
 GuiControl,,CEOMode,%Read_CEOMode%
@@ -124,6 +152,12 @@ IniRead,Read_ToggleCEO,%CFG%,Misc,Toggle CEO
 IniRead,Read_SleepTime,%CFG%,Misc,Ammo Buy Sleep Time
 IniRead,Read_BuyCycles,%CFG%,Misc,Ammo Buy Cycles
 IniRead,Read_ProcessCheck2,%CFG%,Misc,Process Check
+IniRead,Read_AWMode,%CFG%,Misc,AW Mode On
+IniRead,Read_NightVision,%CFG%,Misc,Use Night Vision Thermal
+IniRead,Read_RPGSpam,%CFG%,PVP Macros,RPG Spam
+IniRead,Read_RPGBind,%CFG%,Keybinds,RPG Bind
+IniRead,Read_StickyBind,%CFG%,Keybinds,Sticky Bind
+IniRead,Read_TabWeapon,%CFG%,Misc,Tab Weapon
 
 GuiControl,,InteractionMenuKey,%Read_InteractionMenuKey%
 GuiControl,,ThermalHelmet,%Read_ThermalHelmet%
@@ -148,19 +182,25 @@ GuiControl,,ToggleCEO,%Read_ToggleCEO%
 GuiControl,,SleepTime,%Read_SleepTime%
 GuiControl,,BuyCycles,%Read_BuyCycles%
 GuiControl,,ProcessCheck2,%Read_ProcessCheck2%
+GuiControl,,AWMode,%Read_AWMode%
+GuiControl,,NightVision,%Read_NightVision%
+GuiControl,,RPGSpam,%Read_RPGSpam%
+GuiControl,,RPGBind,%Read_RPGBind%
+GuiControl,,StickyBind,%Read_StickyBind%
+GuiControl,,TabWeapon,%Read_TabWeapon%
 }
 
-Gui, Add, Button, gSaveConfig,Save config and start the macros!
-Gui, Add, Button, gHideWindow,Hide window and start the macros!
-Gui, Add, Button, gExitMacros,Exit macros
+															   
+															   
+										 
 Menu, Tray, NoStandard
 Menu, Tray, Add, Show UI, ShowGUI
 Menu, Tray, Add, Hide UI, HideWindow
 Menu, Tray, Add, Save Macros, SaveConfig
 Menu, Tray, Add
 Menu, Tray, Standard
-Menu, Tray, Tip, Ryzen's Macros Version 3.4
-Gui, Show,, Ryzen's Macros Version 3.4
+Menu, Tray, Tip, Ryzen's Macros Version 3.5
+Gui, Show,, Ryzen's Macros Version 3.5
 return
 
 ShowGUI:
@@ -200,6 +240,12 @@ IniWrite,%ToggleCEO%,%CFG%,Misc,Toggle CEO
 IniWrite,%SleepTime%,%CFG%,Misc,Ammo Buy Sleep Time
 IniWrite,%BuyCycles%,%CFG%,Misc,Ammo Buy Cycles
 IniWrite,%ProcessCheck2%,%CFG%,Misc,Process Check
+IniWrite,%AWMode%,%CFG%,Misc,AW Mode On
+IniWrite,%NightVision%,%CFG%,Misc,Use Night Vision Thermal
+IniWrite,%RPGSpam%,%CFG%,PVP Macros,RPG Spam
+IniWrite,%RPGBind%,%CFG%,Keybinds,RPG Bind
+IniWrite,%StickyBind%,%CFG%,Keybinds,Sticky Bind
+IniWrite,%TabWeapon%,%CFG%,Misc,Tab Weapon
 }
 
 Hotkey, *$%ThermalHelmet%, ThermalHelmet
@@ -218,6 +264,7 @@ Hotkey, %ReloadOutfit%, ReloadOutfit
 Hotkey, %ShowUI%, ShowUI
 Hotkey, %ToggleCEO%, ToggleCEO
 #Include *i PutYourOwnScriptsHere.ahk
+
 return
 ;                                                                            ———Macro Code———
 ThermalHelmet: ; Toggles thermal helmet. Hold the "L" key in order to use it if you are not in a CEO or MC.
@@ -479,8 +526,8 @@ GUIControl,, CEOMode, 0
 return
 
 ProcessCheckTimer:
-GuiControlGet, AWMode ; Retrieves 1 if it is checked, 0 if it is unchecked.
-If (AWMode = 0)
+GuiControlGet, TabWeapon
+If (TabWeapon = 0)
 {
 1 := "1"
 Hotkey, *$%1%, 1, Off
@@ -527,6 +574,16 @@ Hotkey, *$%9%, 9, On
 Hotkey, *$%0%, 0, On
 }
 
+GuiControlGet, AWMode ; Retrieves 1 if it is checked, 0 if it is unchecked.
+If (AWMode = 0)
+{
+Hotkey, *$%RPGSpam%, RPGSpam, Off
+}
+else
+{
+Hotkey, *$%RPGSpam%, RPGSpam, On
+}
+
 GuiControlGet, ProcessCheck2 ; Retrieves 1 if it is checked, 0 if it is unchecked.
 If (ProcessCheck2 = 0)
 {
@@ -547,12 +604,16 @@ MsgBox, 0, Macros will close now. RIP., GTA is no longer running. Macros will cl
 return
 }
 
+RPGSpam:
+send {%StickyBind%}{%RPGBind%}{tab}
+return
+
 1:
 send 1{tab}
 return
 
 2:
-send 242{tab}
+send 2{tab}
 return
 
 3:
@@ -589,27 +650,6 @@ return
 
 DiscordPriority: ; Sets the process priority of various applications.
 SetDiscordPriority:
-{
-processName := "Discord.exe"
-
-PIDs := EnumProcessesByName(processName)
-for k, PID in PIDs
-   Process, Priority, % PID, H
-
-EnumProcessesByName(procName) {
-   if !DllCall("Wtsapi32\WTSEnumerateProcesses", Ptr, 0, UInt, 0, UInt, 1, PtrP, pProcessInfo, PtrP, count)
-      throw Exception("WTSEnumerateProcesses failed. A_LastError: " . A_LastError)
-   
-   addr := pProcessInfo, PIDs := []
-   Loop % count  {
-      if StrGet( NumGet(addr + 8) ) = procName
-         PID := NumGet(addr + 4, "UInt"), PIDs.Push(PID)
-      addr += A_PtrSize = 4 ? 16 : 24
-   }
-   DllCall("Wtsapi32\WTSFreeMemory", Ptr, pProcessInfo)
-   Return PIDs
-}
-}
 {
 processName := "SocialClubHelper.exe"
 
