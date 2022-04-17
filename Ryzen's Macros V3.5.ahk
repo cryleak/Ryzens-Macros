@@ -116,6 +116,16 @@ DisableCapsLock := "CapsLock"
 Hotkey, *$%DisableCapsLock%, DisableCapsLock  
 Enter := "Enter"
 Hotkey, *$%Enter%, Enter
+1 := "1"
+2 := "2"
+3 := "3"
+4 := "4"
+5 := "5"
+6 := "6"
+7 := "7"
+8 := "8"
+9 := "9"
+0 := "0"
 
 IfExist, %CFG%
 { 
@@ -510,64 +520,52 @@ else
 GUIControl,, CEOMode, 0
 }
 return
-
 ProcessCheckTimer:
 GuiControlGet, TabWeapon
+GuiControlGet, AWMode
 If (TabWeapon = 0)
 {
-1 := "1"
+Hotkey, *$%RPGSpam%, RPGSpam, Off
 Hotkey, *$%1%, 1, Off
-2 := "2"
 Hotkey, *$%2%, 2, Off
-3 := "3"
 Hotkey, *$%3%, 3, Off
-4 := "4"
 Hotkey, *$%4%, 4, Off
-5 := "5"
 Hotkey, *$%5%, 5, Off
-6 := "6"
 Hotkey, *$%6%, 6, Off
-7 := "7"
 Hotkey, *$%7%, 7, Off
-8 := "8"
 Hotkey, *$%8%, 8, Off
-9 := "9"
 Hotkey, *$%9%, 9, Off
-0 := "0"
 Hotkey, *$%0%, 0, Off
 }
 else
 {
-1 := "1"
-Hotkey, *$%1%, 1, On
-2 := "2"
-Hotkey, *$%2%, 2, On
-3 := "3"
-Hotkey, *$%3%, 3, On
-4 := "4"
-Hotkey, *$%4%, 4, On
-5 := "5"
-Hotkey, *$%5%, 5, On
-6 := "6"
-Hotkey, *$%6%, 6, On
-7 := "7"
-Hotkey, *$%7%, 7, On
-8 := "8"
-Hotkey, *$%8%, 8, On
-9 := "9"
-Hotkey, *$%9%, 9, On
-0 := "0"
-Hotkey, *$%0%, 0, On
-}
-
-GuiControlGet, AWMode ; Retrieves 1 if it is checked, 0 if it is unchecked.
-If (AWMode = 0)
-{
-Hotkey, *$%RPGSpam%, RPGSpam, Off
-}
-else
-{
+  If (AWMode = 0)
+   {
+    Hotkey, *$%RPGSpam%, RPGSpam, Off
+    Hotkey, *$%1%, 1, Off
+    Hotkey, *$%2%, 2, Off
+    Hotkey, *$%3%, 3, Off
+    Hotkey, *$%4%, 4, Off
+    Hotkey, *$%5%, 5, Off
+    Hotkey, *$%6%, 6, Off
+    Hotkey, *$%7%, 7, Off
+    Hotkey, *$%8%, 8, Off
+    Hotkey, *$%9%, 9, Off
+    Hotkey, *$%0%, 0, Off
+  }
+   else{
 Hotkey, *$%RPGSpam%, RPGSpam, On
+Hotkey, *$%1%, 1, On
+Hotkey, *$%2%, 2, On
+Hotkey, *$%3%, 3, On
+Hotkey, *$%4%, 4, On
+Hotkey, *$%5%, 5, On
+Hotkey, *$%6%, 6, On
+Hotkey, *$%7%, 7, On
+Hotkey, *$%8%, 8, On
+Hotkey, *$%9%, 9, On
+Hotkey, *$%0%, 0, On
+      }
 }
 
 GuiControlGet, ProcessCheck2 ; Retrieves 1 if it is checked, 0 if it is unchecked.
