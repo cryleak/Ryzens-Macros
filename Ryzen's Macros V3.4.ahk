@@ -23,15 +23,18 @@ if not A_IsAdmin
 #HotkeyInterval 99000000          ; You will get an error message if you reach this limit, so I increased it to a ridiculously high number, so that can't happen.     
 ListLines Off                     ; Useful for debugging. Improves performance with it off.
 SetDefaultMouseSpeed, 0           ; Could theoretically increase speed in some situations.
+SetBatchLines, -1                 ; Increases speed if your macro is multiple lines long. Increase CPU usage, so if you are lagging with these macros, even after reducing priority, remove this line.
 SetKeyDelay, -1, -1               ; Always increases speed. Always use, and no it won't reduce reliability by much...
 SetWinDelay, -1                   ; Window delay between window commands, it helps speed sometimes.
 SetControlDelay, -1               ; Control-modifying command delay, sometimes helps.
+Process, Priority, , H            ; Sets the task priority of these macros to high, which in theory should improve speeds. Remove this if you lag with it on.
 Process, Priority, GTA5.exe, H    ; Sets the task priority of GTA V to high, which in theory should improve FPS, mostly on lower end systems
 SetWorkingDir %A_ScriptDir%       ; Ensures a consistent starting directory. Helps for some shit.
 SetTimer, ProcessCheckTimer, 3000 ; Closes macros if GTA is closed if a checkbox is checked.
 Goto, DiscordPriority             ; Automatically excecutes DiscordPriority when you start the script, which sets Discords's priority to High, which should make it more usable now that we increased the priority of GTA to High, and it also changes some other applications to Low.
 Macro:
-Gui, Add, Text,, Interaction Menu Bind:
+Gui, Add, Picture, x0 y0 w675 h-1 +0x4000000, %A_ScriptDir%/image.png
+Gui, Add, Text,ym, Interaction Menu Bind:
 Gui, Add, Text,, Thermal Helmet Macro:
 Gui, Add, Text,, Fast Sniper Switch Macro:
 Gui, Add, Text,, Sniper Rifle Bind:
@@ -40,20 +43,12 @@ Gui, Add, Text,, EWO Look Behind Bind:
 Gui, Add, Text,, EWO Special Ability / Action Bind:
 Gui, Add, Text,, BST Macro:
 Gui, Add, Text,, Ammo Macro:
+Gui, Add, Text,, Ammo buy wait time (ms):
+Gui, Add, Text,, Ammo weapons to buy:
 Gui, Add, Text,, Fast Respawn Macro:
 Gui, Add, Text,, Suspend:
 Gui, Add, Text,, GTA Hax EWO Codes Macro:
-Gui, Add, Text,, Epic Roast Chat Macro:
-Gui, Add, Text,, Essay About GTA Chat Macro:
-Gui, Add, Text,, Custom Text Spam Chat Macro:
-Gui, Add, Text,, Custom Spam Text (30 character limit):
-Gui, Add, Text,, Shut Up Chat Macro:
-Gui, Add, Text,, Reload Outfit:
-Gui, Add, Text,, Show UI:
-Gui, Add, Text,, Toggle CEO Mode:
-Gui, Add, Text,, Ammo buy wait time (ms):
-Gui, Add, Text,, Close macros if GTA is closed?
-Gui, Add, Text,, CEO/VIP/MC mode:
+
 
 Gui, Add, Hotkey,vInteractionMenuKey ym,
 Gui, Add, Hotkey,vThermalHelmet,
@@ -64,10 +59,26 @@ Gui, Add, Hotkey,vEWOLookBehindKey,
 Gui, Add, Hotkey,vEWOSpecialAbilitySlashActionKey,
 Gui, Add, Hotkey,vBST,
 Gui, Add, Hotkey,vAmmo,
+Gui, Add, Edit,Number vSleepTime,
+Gui, Add, Edit,Number vBuyCycles,
 Gui, Add, Hotkey,vFastRespawn,
 Gui, Add, Hotkey,vSuspend,
 Gui, Add, Hotkey,vGTAHax,PrintScreen
-Gui, Add, Hotkey,vHelpWhatsThis,
+
+Gui, Add, Text,ys y10, Epic Roast Chat Macro:
+Gui, Add, Text,, Essay About GTA Chat Macro:
+Gui, Add, Text,, Custom Text Spam Chat Macro:
+Gui, Add, Text,, Custom Spam Text (30 character limit):
+Gui, Add, Text,, Shut Up Chat Macro:
+Gui, Add, Text,, Reload Outfit:
+Gui, Add, Text,, Show UI:
+Gui, Add, Text,, Toggle CEO Mode:
+Gui, Add, Text,, Close macros if GTA is closed?
+Gui, Add, Text,, CEO/VIP/MC mode:
+Gui, Add, Text,, AW Mode:
+Gui, Add, Text,, Use Night Vision for Thermal Macro?
+
+Gui, Add, Hotkey,vHelpWhatsThis yn y10,
 Gui, Add, Hotkey,vEssayAboutGTA,
 Gui, Add, Hotkey,vCustomTextSpam,
 Gui, Add, Edit,vCustomSpamText
@@ -75,9 +86,10 @@ Gui, Add, Hotkey,vShutUp,
 Gui, Add, Hotkey,vReloadOutfit,
 Gui, Add, Hotkey,vShowUI,
 Gui, Add, Hotkey,vToggleCEO,
-Gui, Add, Edit,vSleepTime
-Gui, Add, CheckBox, vProcessCheck2,
-Gui, Add, CheckBox, vCEOMode
+Gui, Add, CheckBox, vProcessCheck2 h20,
+Gui, Add, CheckBox, vCEOMode h20,
+Gui, Add, CheckBox, vAWMode h20,
+Gui, Add, CheckBox, vNightVision h20,
 IniWrite,1,%CFG%,Misc,CEO Mode (always on by default. Don't change)
 IniRead,Read_CEOMode,%CFG%,Misc,CEO Mode (always on by default. Don't change)
 GuiControl,,CEOMode,%Read_CEOMode%
@@ -110,6 +122,7 @@ IniRead,Read_ReloadOutfit,%CFG%,Misc,Reload Outfit
 IniRead,Read_ShowUI,%CFG%,Misc,Show UI
 IniRead,Read_ToggleCEO,%CFG%,Misc,Toggle CEO
 IniRead,Read_SleepTime,%CFG%,Misc,Ammo Buy Sleep Time
+IniRead,Read_BuyCycles,%CFG%,Misc,Ammo Buy Cycles
 IniRead,Read_ProcessCheck2,%CFG%,Misc,Process Check
 
 GuiControl,,InteractionMenuKey,%Read_InteractionMenuKey%
@@ -133,6 +146,7 @@ GuiControl,,ReloadOutfit,%Read_ReloadOutfit%
 GuiControl,,ShowUI,%Read_ShowUI%
 GuiControl,,ToggleCEO,%Read_ToggleCEO%
 GuiControl,,SleepTime,%Read_SleepTime%
+GuiControl,,BuyCycles,%Read_BuyCycles%
 GuiControl,,ProcessCheck2,%Read_ProcessCheck2%
 }
 
@@ -145,8 +159,8 @@ Menu, Tray, Add, Hide UI, HideWindow
 Menu, Tray, Add, Save Macros, SaveConfig
 Menu, Tray, Add
 Menu, Tray, Standard
-Menu, Tray, Tip, Ryzen's Macros Version 3.3 FPS Edition
-Gui, Show,, Ryzen's Macros Version 3.3 FPS Edition
+Menu, Tray, Tip, Ryzen's Macros Version 3.4
+Gui, Show,, Ryzen's Macros Version 3.4
 return
 
 ShowGUI:
@@ -183,7 +197,8 @@ IniWrite,%CustomSpamText%,%CFG%,Chat Macros,Custom Spam Text
 IniWrite,%ReloadOutfit%,%CFG%,Misc,Reload Outfit
 IniWrite,%ShowUI%,%CFG%,Misc,Show UI
 IniWrite,%ToggleCEO%,%CFG%,Misc,Toggle CEO
-IniWrite,%SleepTime%,%CFG%,Misc,Ammo Buy Sleep Time	   
+IniWrite,%SleepTime%,%CFG%,Misc,Ammo Buy Sleep Time
+IniWrite,%BuyCycles%,%CFG%,Misc,Ammo Buy Cycles
 IniWrite,%ProcessCheck2%,%CFG%,Misc,Process Check
 }
 
@@ -209,13 +224,19 @@ ThermalHelmet: ; Toggles thermal helmet. Hold the "L" key in order to use it if 
 GuiControlGet, CEOMode ; Retrieves 1 if it is checked, 0 if it is unchecked.
 If (CEOMode = 0)
 {
-send {%InteractionMenuKey%}{down 3}{enter}
+send {%InteractionMenuKey%}{down 3}{enter}{down}{enter}
 }
 else
 {
-send {%InteractionMenuKey%}{down 4}{enter}
+send {%InteractionMenuKey%}{down 4}{enter}{down}{enter}
 }
-send {down}{enter}{down 4}{space}{%InteractionMenuKey%}
+GuiControlGet, NightVision
+If (NightVision = 0) {
+send {down 4}{space}{%InteractionMenuKey%}
+}
+else {
+send {space}{%InteractionMenuKey%}
+}
 return
 
 FastSniperSwitch: ; Switches from sniper to marksman and back to sniper rapidly. You must have the normal sniper rifle removed from your loadout for this to work.
@@ -232,7 +253,8 @@ EWO: ; Kills yourself instantly. Now has a 5 minute cooldown unless using GTAHax
 sendinput {%EWOSpecialAbilitySlashActionKey% down}{%EWOLookBehindKey% down}{lbutton up}{rbutton up}{enter down}{g down}
 send {%InteractionMenuKey%}{up}
 sendinput {wheelup}{enter up}
-send {enter 4}
+sleep 25
+send {enter}
 sendinput {%EWOLookBehindKey% up}{< up}{g up}{%EWOSpecialAbilitySlashActionKey% up}
 setcapslockstate, off
 return
@@ -250,29 +272,24 @@ send {%InteractionMenuKey%}{enter}{down 4}{enter}{down}{enter}
 return
 
 Ammo: ; Buys ammo.
+BuyCycles -= 1
 GuiControlGet, CEOMode ; Retrieves 1 if it is checked, 0 if it is unchecked.
 If (CEOMode = 0)
 {
-send {%InteractionMenuKey%}{down 2}{enter}
+send {%InteractionMenuKey%}{down 2}{enter}{down 5}{enter}{up}{enter}
 }
 else
 {
-send {%InteractionMenuKey%}{down 3}{enter}
+send {%InteractionMenuKey%}{down 3}{enter}{down 5}{enter}{up}{enter}
 }
-send {down 5}{enter}{up}{enter}  ; cycle 1 
-send {up 2}{enter}{down 2} ; cycle 2
+Loop, %BuyCycles%
+{
+send {up 2}{enter}{down 2}
 sleep %SleepTime%
-send {enter} ; end of cycle 2 
-send {up 2}{enter}{down 2} ; cycle 3
-sleep %SleepTime%
-send {enter} ; end of cycle 3
-send {up 2}{enter}{down 2} ; cycle 4
-sleep %SleepTime%
-send {enter} ; end of cycle 4
-send {up 2}{enter}{down 2} ; cycle 5
-sleep %SleepTime%
-send {enter} ; end of cycle 5
+send {enter}
+}
 send {%InteractionMenuKey%}
+BuyCycles += 1
 return
 
 FastRespawn: ; Respawns extremely fast.
@@ -462,6 +479,54 @@ GUIControl,, CEOMode, 0
 return
 
 ProcessCheckTimer:
+GuiControlGet, AWMode ; Retrieves 1 if it is checked, 0 if it is unchecked.
+If (AWMode = 0)
+{
+1 := "1"
+Hotkey, *$%1%, 1, Off
+2 := "2"
+Hotkey, *$%2%, 2, Off
+3 := "3"
+Hotkey, *$%3%, 3, Off
+4 := "4"
+Hotkey, *$%4%, 4, Off
+5 := "5"
+Hotkey, *$%5%, 5, Off
+6 := "6"
+Hotkey, *$%6%, 6, Off
+7 := "7"
+Hotkey, *$%7%, 7, Off
+8 := "8"
+Hotkey, *$%8%, 8, Off
+9 := "9"
+Hotkey, *$%9%, 9, Off
+0 := "0"
+Hotkey, *$%0%, 0, Off
+}
+else
+{
+1 := "1"
+Hotkey, *$%1%, 1, On
+2 := "2"
+Hotkey, *$%2%, 2, On
+3 := "3"
+Hotkey, *$%3%, 3, On
+4 := "4"
+Hotkey, *$%4%, 4, On
+5 := "5"
+Hotkey, *$%5%, 5, On
+6 := "6"
+Hotkey, *$%6%, 6, On
+7 := "7"
+Hotkey, *$%7%, 7, On
+8 := "8"
+Hotkey, *$%8%, 8, On
+9 := "9"
+Hotkey, *$%9%, 9, On
+0 := "0"
+Hotkey, *$%0%, 0, On
+}
+
 GuiControlGet, ProcessCheck2 ; Retrieves 1 if it is checked, 0 if it is unchecked.
 If (ProcessCheck2 = 0)
 {
@@ -482,8 +547,69 @@ MsgBox, 0, Macros will close now. RIP., GTA is no longer running. Macros will cl
 return
 }
 
+1:
+send 1{tab}
+return
+
+2:
+send 242{tab}
+return
+
+3:
+send 3{tab}
+return
+
+4:
+send 4{tab}
+return
+
+5:
+send 5{tab}
+return
+
+6:
+send 6{tab}
+return
+
+7:
+send 7{tab}
+return
+
+8:
+send 8{tab}
+return
+
+9:
+send 9{tab}
+return
+
+0:
+send 0{tab}
+return
+
 DiscordPriority: ; Sets the process priority of various applications.
 SetDiscordPriority:
+{
+processName := "Discord.exe"
+
+PIDs := EnumProcessesByName(processName)
+for k, PID in PIDs
+   Process, Priority, % PID, H
+
+EnumProcessesByName(procName) {
+   if !DllCall("Wtsapi32\WTSEnumerateProcesses", Ptr, 0, UInt, 0, UInt, 1, PtrP, pProcessInfo, PtrP, count)
+      throw Exception("WTSEnumerateProcesses failed. A_LastError: " . A_LastError)
+   
+   addr := pProcessInfo, PIDs := []
+   Loop % count  {
+      if StrGet( NumGet(addr + 8) ) = procName
+         PID := NumGet(addr + 4, "UInt"), PIDs.Push(PID)
+      addr += A_PtrSize = 4 ? 16 : 24
+   }
+   DllCall("Wtsapi32\WTSFreeMemory", Ptr, pProcessInfo)
+   Return PIDs
+}
+}
 {
 processName := "SocialClubHelper.exe"
 
