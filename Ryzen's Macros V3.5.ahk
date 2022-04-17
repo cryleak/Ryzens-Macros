@@ -7,6 +7,8 @@
 ;                                                               GO TO THE BOTTOM OF THE SCRIPT FOR HELP, INFO AND A QUICK TUTORIAL
 ;                                                               GO TO THE BOTTOM OF THE SCRIPT FOR HELP, INFO AND A QUICK TUTORIAL
 CFG = GTA Binds.ini
+None = F23
+None := F23
 ; All of this shit apparently theoretically increase speed according to the person know as Quxck. It probably only helps if you have high FPS,
 ; but i have noticed a difference between SetKeyDelay 10, 10 (the default) and -1, -1 (the fastest) even at a "low" FPS of 60FPS.
 ; Just use them because they probably improve speed, at least a little bit.
@@ -212,7 +214,6 @@ Gui, Submit
 
 SaveConfig:
 Gui, Submit, NoHide
-
 {
 IniWrite,%InteractionMenuKey%,%CFG%,Keybinds,Interaction Menu Key
 IniWrite,%ThermalHelmet%,%CFG%,PVP Macros,Thermal Helmet
@@ -260,7 +261,7 @@ Hotkey, %ShutUp%, ShutUp
 Hotkey, %ReloadOutfit%, ReloadOutfit
 Hotkey, %ShowUI%, ShowUI
 Hotkey, %ToggleCEO%, ToggleCEO
-#Include *i PutYourOwnScriptsHere.ahk
+#Include *i PutYourOwnScriptsHere.ahk¨
 return
 ;                                                                            ———Macro Code———
 ThermalHelmet: ; Toggles thermal helmet. Hold the "L" key in order to use it if you are not in a CEO or MC.
@@ -520,6 +521,7 @@ else
 GUIControl,, CEOMode, 0
 }
 return
+
 ProcessCheckTimer:
 GuiControlGet, TabWeapon
 GuiControlGet, AWMode
@@ -527,14 +529,23 @@ If (TabWeapon = 0)
 {
 Hotkey, *$%RPGSpam%, RPGSpam, Off
 Hotkey, *$%1%, 1, Off
+		
 Hotkey, *$%2%, 2, Off
+		
 Hotkey, *$%3%, 3, Off
+		
 Hotkey, *$%4%, 4, Off
+		
 Hotkey, *$%5%, 5, Off
+		
 Hotkey, *$%6%, 6, Off
+		
 Hotkey, *$%7%, 7, Off
+		
 Hotkey, *$%8%, 8, Off
+		
 Hotkey, *$%9%, 9, Off
+		
 Hotkey, *$%0%, 0, Off
 }
 else
@@ -556,16 +567,25 @@ else
    else{
 Hotkey, *$%RPGSpam%, RPGSpam, On
 Hotkey, *$%1%, 1, On
+		
 Hotkey, *$%2%, 2, On
+		
 Hotkey, *$%3%, 3, On
+		
 Hotkey, *$%4%, 4, On
+		
 Hotkey, *$%5%, 5, On
+		
 Hotkey, *$%6%, 6, On
+		
 Hotkey, *$%7%, 7, On
+		
 Hotkey, *$%8%, 8, On
+		
 Hotkey, *$%9%, 9, On
-Hotkey, *$%0%, 0, On
-      }
+		
+Hotkey, *$%0%, 0, On							 
+      }								
 }
 
 GuiControlGet, ProcessCheck2 ; Retrieves 1 if it is checked, 0 if it is unchecked.

@@ -7,6 +7,8 @@
 ;                                                               GO TO THE BOTTOM OF THE SCRIPT FOR HELP, INFO AND A QUICK TUTORIAL
 ;                                                               GO TO THE BOTTOM OF THE SCRIPT FOR HELP, INFO AND A QUICK TUTORIAL
 CFG = GTA Binds.ini
+None = F23
+None := F23
 ; All of this shit apparently theoretically increase speed according to the person know as Quxck. It probably only helps if you have high FPS,
 ; but i have noticed a difference between SetKeyDelay 10, 10 (the default) and -1, -1 (the fastest) even at a "low" FPS of 60FPS.
 ; Just use them because they probably improve speed, at least a little bit.
@@ -46,18 +48,6 @@ Gui, Add, Text,, Ammo weapons to buy:
 Gui, Add, Text,, Fast Respawn Macro:
 Gui, Add, Text,, Suspend:
 Gui, Add, Text,, GTA Hax EWO Codes Macro:
-			
-		   
-			
-				
-		 
-		  
-	   
-		 
-		   
-		  
-			  
-		 
 
 
 Gui, Add, Hotkey,vInteractionMenuKey ym,
@@ -200,17 +190,14 @@ GuiControl,,StickyBind,%Read_StickyBind%
 GuiControl,,TabWeapon,%Read_TabWeapon%
 }
 
-															   
-															   
-										 
 Menu, Tray, NoStandard
 Menu, Tray, Add, Show UI, ShowGUI
 Menu, Tray, Add, Hide UI, HideWindow
 Menu, Tray, Add, Save Macros, SaveConfig
 Menu, Tray, Add
 Menu, Tray, Standard
-Menu, Tray, Tip, Ryzen's Macros Version 3.5
-Gui, Show,, Ryzen's Macros Version 3.5
+Menu, Tray, Tip, Ryzen's Macros Version 3.5 FPS Edition
+Gui, Show,, Ryzen's Macros Version 3.5 FPS Edition
 return
 
 ShowGUI:
@@ -225,7 +212,6 @@ Gui, Submit
 
 SaveConfig:
 Gui, Submit, NoHide
-
 {
 IniWrite,%InteractionMenuKey%,%CFG%,Keybinds,Interaction Menu Key
 IniWrite,%ThermalHelmet%,%CFG%,PVP Macros,Thermal Helmet
@@ -273,7 +259,7 @@ Hotkey, %ShutUp%, ShutUp
 Hotkey, %ReloadOutfit%, ReloadOutfit
 Hotkey, %ShowUI%, ShowUI
 Hotkey, %ToggleCEO%, ToggleCEO
-#Include *i PutYourOwnScriptsHere.ahk
+#Include *i PutYourOwnScriptsHere.ahk¨
 return
 ;                                                                            ———Macro Code———
 ThermalHelmet: ; Toggles thermal helmet. Hold the "L" key in order to use it if you are not in a CEO or MC.
@@ -596,17 +582,8 @@ Hotkey, *$%8%, 8, On
 		
 Hotkey, *$%9%, 9, On
 		
-Hotkey, *$%0%, 0, On
- 
-
-																		   
-			   
- 
-								 
-      }
-	
- 
-								
+Hotkey, *$%0%, 0, On							 
+      }								
 }
 
 GuiControlGet, ProcessCheck2 ; Retrieves 1 if it is checked, 0 if it is unchecked.
