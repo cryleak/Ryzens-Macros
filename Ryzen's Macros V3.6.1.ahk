@@ -1,6 +1,6 @@
 ﻿CFG = GTA Binds.ini
-None = F23
 None := F23
+ := F23
 if not A_IsAdmin
 	Run *RunAs "%A_ScriptFullPath%"
 #SingleInstance, force            ; You can't start multiple instances of the macro with this on.
@@ -100,7 +100,7 @@ Gui, Add, Checkbox, gCrossHair5 vCrossHair h20,
 Gui, Add, Checkbox, g2Screen2 v2Screen h20,
 
 Gui, Font, s13 q5
-Gui, Add, Text,x1350 y200, Save and restart the macros if you want to unbind something!
+Gui, Add, Text,x1350 y200, Go into Config.ini and set the bind to F23 if you want to unbind something!
 Gui, Add, Text,x1350 y225, AW MODE IS UNDER CONSTRUCTION!
 
 IniWrite,1,%CFG%,Misc,CEO Mode (always on by default. Don't change)
@@ -108,9 +108,11 @@ IniRead,Read_CEOMode,%CFG%,Misc,CEO Mode (always on by default. Don't change)
 GuiControl,,CEOMode,%Read_CEOMode%
 
 DisableCapsLock := "CapsLock"
-Hotkey, *$%DisableCapsLock%, DisableCapsLock  
+Hotkey, *$%DisableCapsLock%, DisableCapsLock
 Enter := "Enter"
 Hotkey, *$%Enter%, Enter
+Delete := "Del"
+Hotkey, *$%Delete%, Delete
 
 IfExist, %CFG%
 { 
@@ -813,4 +815,8 @@ Gui, QuickMacroCrosshair: Hide
 else {
 }
 #Include *i PutYourOwnScriptsHere.ahk
+return
+
+Delete:
+send {f23}
 return
