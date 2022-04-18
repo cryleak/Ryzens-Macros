@@ -32,10 +32,9 @@ SetControlDelay, -1               ; Control-modifying command delay, sometimes h
 Process, Priority, , H            ; Sets the task priority of these macros to high, which in theory should improve speeds. Remove this if you lag with it on.
 Process, Priority, GTA5.exe, H    ; Sets the task priority of GTA V to high, which in theory should improve FPS, mostly on lower end systems
 SetWorkingDir %A_ScriptDir%       ; Ensures a consistent starting directory. Helps for some shit.
-SetTimer, ProcessCheckTimer, 3000 ; Closes macros if GTA is closed if a checkbox is checked.
 Goto, DiscordPriority             ; Automatically excecutes DiscordPriority when you start the script, which sets Discords's priority to High, which should make it more usable now that we increased the priority of GTA to High, and it also changes some other applications to Low.
 Macro:
-Gui, Add, Picture, x0 y0 w675 h-1 +0x4000000, %A_ScriptDir%/image.png
+Gui, Add, Picture, x0 y0 w675 h-1 +0x4000000, %A_ScriptDir%/assets/image.png
 Gui, Add, Text,ym, Interaction Menu Bind:
 Gui, Add, Text,, Thermal Helmet Macro:
 Gui, Add, Text,, Fast Sniper Switch Macro:
@@ -50,7 +49,6 @@ Gui, Add, Text,, Ammo weapons to buy:
 Gui, Add, Text,, Fast Respawn Macro:
 Gui, Add, Text,, Suspend:
 Gui, Add, Text,, GTA Hax EWO Codes Macro:
-
 
 Gui, Add, Hotkey,vInteractionMenuKey ym,
 Gui, Add, Hotkey,vThermalHelmet,
@@ -80,7 +78,6 @@ Gui, Add, Text,, CEO/VIP/MC mode:
 Gui, Add, Text,, AW Mode:
 Gui, Add, Text,, Use Night Vision for Thermal Macro?
 
-
 Gui, Add, Hotkey,vHelpWhatsThis yn y10,
 Gui, Add, Hotkey,vEssayAboutGTA,
 Gui, Add, Hotkey,vCustomTextSpam,
@@ -89,9 +86,9 @@ Gui, Add, Hotkey,vShutUp,
 Gui, Add, Hotkey,vReloadOutfit,
 Gui, Add, Hotkey,vShowUI,
 Gui, Add, Hotkey,vToggleCEO,
-Gui, Add, CheckBox, vProcessCheck2 h20,
+Gui, Add, CheckBox, gProcessCheck3 vProcessCheck2 h20,
 Gui, Add, CheckBox, vCEOMode h20,
-Gui, Add, CheckBox, vAWMode h20,
+Gui, Add, CheckBox, gAWMode2 vAWMode h20,
 Gui, Add, CheckBox, vNightVision h20,
 Gui, Add, Button, gSaveConfig,Save config and start the macros!
 Gui, Add, Button, gHideWindow,Hide window and start the macros!
@@ -100,15 +97,18 @@ Gui, Add, Button, gExitMacros,Exit macros
 Gui, Add, Text,ys y10, AW Mode ONLY RPG Spam
 Gui, Add, Text,, RPG In-Game Bind:
 Gui, Add, Text,, Sticky bomb In-Game Bind:
-Gui, Add, Text,, Be able to use weapons after respawning? (AW mode only)
+Gui, Add, Text,, Be able to use weapons after respawning (AW mode only)
+Gui, Add, Text,, Crosshair (AW mode only)
 
 Gui, Add, Hotkey, vRPGSpam yn y10,
 Gui, Add, Hotkey, vRPGBind,
 Gui, Add, Hotkey, vStickyBind,
-Gui, Add, Checkbox, vTabWeapon,
+Gui, Add, Checkbox, gAWMode2 vTabWeapon,
+Gui, Add, Checkbox, gCrossHair5 vCrossHair,
 
 Gui, Font, s13
-Gui, Add, Text,x1350 y150, AW MODE IS UNDER CONSTRUCTION!
+Gui, Add, Text,x1350 y150, Save and restart the macros if you want to unbind something!
+Gui, Add, Text,x1350 y175, AW MODE IS UNDER CONSTRUCTION!
 
 IniWrite,1,%CFG%,Misc,CEO Mode (always on by default. Don't change)
 IniRead,Read_CEOMode,%CFG%,Misc,CEO Mode (always on by default. Don't change)
@@ -118,16 +118,6 @@ DisableCapsLock := "CapsLock"
 Hotkey, *$%DisableCapsLock%, DisableCapsLock  
 Enter := "Enter"
 Hotkey, *$%Enter%, Enter
-1 := "1"
-2 := "2"
-3 := "3"
-4 := "4"
-5 := "5"
-6 := "6"
-7 := "7"
-8 := "8"
-9 := "9"
-0 := "0"
 
 IfExist, %CFG%
 { 
@@ -160,6 +150,7 @@ IniRead,Read_RPGSpam,%CFG%,PVP Macros,RPG Spam
 IniRead,Read_RPGBind,%CFG%,Keybinds,RPG Bind
 IniRead,Read_StickyBind,%CFG%,Keybinds,Sticky Bind
 IniRead,Read_TabWeapon,%CFG%,Misc,Tab Weapon
+IniRead,Read_Crosshair,%CFG%,Misc,Crosshair
 
 GuiControl,,InteractionMenuKey,%Read_InteractionMenuKey%
 GuiControl,,ThermalHelmet,%Read_ThermalHelmet%
@@ -190,6 +181,7 @@ GuiControl,,RPGSpam,%Read_RPGSpam%
 GuiControl,,RPGBind,%Read_RPGBind%
 GuiControl,,StickyBind,%Read_StickyBind%
 GuiControl,,TabWeapon,%Read_TabWeapon%
+GuiControl,,Crosshair,%Read_Crosshair%
 }
 
 Menu, Tray, NoStandard
@@ -200,6 +192,13 @@ Menu, Tray, Add
 Menu, Tray, Standard
 Menu, Tray, Tip, Ryzen's Macros Version 3.5
 Gui, Show,, Ryzen's Macros Version 3.5
+GuiControlGet, AWMode
+If (AWMode = 0) {
+MsgBox, 0, Welcome!, Welcome to Ryzen's Macros. Please note that AW Mode is currently OFF. Add me on Discord (smilla kult#4725) if you have any issues. Good luck.
+}
+else {
+MsgBox, 0, Welcome!, Welcome to Ryzen's Macros. Please note that AW Mode is currently ON. Add me on Discord (smilla kult#4725) if you have any issues. Good luck.
+}
 return
 
 ShowGUI:
@@ -244,6 +243,7 @@ IniWrite,%RPGSpam%,%CFG%,PVP Macros,RPG Spam
 IniWrite,%RPGBind%,%CFG%,Keybinds,RPG Bind
 IniWrite,%StickyBind%,%CFG%,Keybinds,Sticky Bind
 IniWrite,%TabWeapon%,%CFG%,Misc,Tab Weapon
+IniWrite,%Crosshair%,%CFG%,Misc,Crosshair
 }
 
 Hotkey, *$%ThermalHelmet%, ThermalHelmet
@@ -261,8 +261,7 @@ Hotkey, %ShutUp%, ShutUp
 Hotkey, %ReloadOutfit%, ReloadOutfit
 Hotkey, %ShowUI%, ShowUI
 Hotkey, %ToggleCEO%, ToggleCEO
-#Include *i PutYourOwnScriptsHere.ahk¨
-return
+Goto, LaunchCycle
 ;                                                                            ———Macro Code———
 ThermalHelmet: ; Toggles thermal helmet. Hold the "L" key in order to use it if you are not in a CEO or MC.
 GuiControlGet, CEOMode ; Retrieves 1 if it is checked, 0 if it is unchecked.
@@ -499,6 +498,74 @@ send {CapsLock}
 setcapslockstate, off
 return
 
+Crosshair5:
+GuiControlGet, Crosshair
+	if(crossHair = 1) {
+Global crossHairW := 21
+Global crossHairH := 21
+
+Global backgroundColor := 0xff00cc
+
+SysGet, screenW, 78
+SysGet, screenH, 79
+
+Global crossHairX := (screenW / 4) - (crossHairH / 2)
+Global crossHairY := (screenH / 2) - (crossHairH / 2)
+
+IfNotExist, %A_WorkingDir%\assets
+	FileCreateDir, %A_WorkingDir%\assets
+
+FileInstall, assets\crosshair.png, %A_WorkingDir%\assets\crosshair.png, false
+
+Gui, QuickMacroCrosshair: New, +AlwaysOnTop -Border -Caption
+Gui, Color, backgroundColor
+Gui, Add, Picture, x0 y0 w%crossHairW% h%crossHairH%,  %A_WorkingDir%\assets\crosshair.png
+Gui, Show, w%crossHairW% h%crossHairH% x%crossHairX% y%crossHairY%, QuickMacroCrosshair
+WinSet, TransColor, backgroundColor, QuickMacroCrosshair
+	} else {
+Gui, QuickMacroCrosshair: Hide
+	}
+return
+
+ProcessCheck3:
+GuiControlGet, ProcessCheck2
+if (ProcessCheck2 = 0) {
+SetTimer, ProcessCheckTimer, Off
+} else {
+SetTimer, ProcessCheckTimer, 3000
+}
+return
+
+AWMode2:
+GuiControlGet, TabWeapon
+GuiControlGet, AWMode
+If (TabWeapon = 0)
+{
+Hotkey, *$%RPGSpam%, RPGSpam, Off
+Hotkey, *$%SniperBind%, SniperBind, Off
+Hotkey, *$%RPGBind%, RPGBind, Off
+Hotkey, *$%StickyBind%, StickyBind, Off
+}
+else
+{
+  If (AWMode = 0)
+   {
+    Hotkey, *$%RPGSpam%, RPGSpam, Off
+    Hotkey, *$%SniperBind%, SniperBind, Off
+    Hotkey, *$%RPGBind%, RPGBind, Off
+    Hotkey, *$%StickyBind%, StickyBind, Off
+    MsgBox, 0, AW Mode, AW Mode is now DEACTIVATED
+  }
+   else{
+Hotkey, *$%RPGSpam%, RPGSpam, On
+Hotkey, *$%SniperBind%, SniperBind, On
+Hotkey, *$%RPGBind%, RPGBind, On
+Hotkey, *$%StickyBind%, StickyBind, On 
+MsgBox, 0, AW Mode, AW Mode has been ACTIVATED
+      }								
+}
+return
+
 Enter:
 sendinput {enter down}
 sleep 50
@@ -523,71 +590,6 @@ GUIControl,, CEOMode, 0
 return
 
 ProcessCheckTimer:
-GuiControlGet, TabWeapon
-GuiControlGet, AWMode
-If (TabWeapon = 0)
-{
-Hotkey, *$%RPGSpam%, RPGSpam, Off
-Hotkey, *$%1%, 1, Off
-		
-Hotkey, *$%2%, 2, Off
-		
-Hotkey, *$%3%, 3, Off
-		
-Hotkey, *$%4%, 4, Off
-		
-Hotkey, *$%5%, 5, Off
-		
-Hotkey, *$%6%, 6, Off
-		
-Hotkey, *$%7%, 7, Off
-		
-Hotkey, *$%8%, 8, Off
-		
-Hotkey, *$%9%, 9, Off
-		
-Hotkey, *$%0%, 0, Off
-}
-else
-{
-  If (AWMode = 0)
-   {
-    Hotkey, *$%RPGSpam%, RPGSpam, Off
-    Hotkey, *$%1%, 1, Off
-    Hotkey, *$%2%, 2, Off
-    Hotkey, *$%3%, 3, Off
-    Hotkey, *$%4%, 4, Off
-    Hotkey, *$%5%, 5, Off
-    Hotkey, *$%6%, 6, Off
-    Hotkey, *$%7%, 7, Off
-    Hotkey, *$%8%, 8, Off
-    Hotkey, *$%9%, 9, Off
-    Hotkey, *$%0%, 0, Off
-  }
-   else{
-Hotkey, *$%RPGSpam%, RPGSpam, On
-Hotkey, *$%1%, 1, On
-		
-Hotkey, *$%2%, 2, On
-		
-Hotkey, *$%3%, 3, On
-		
-Hotkey, *$%4%, 4, On
-		
-Hotkey, *$%5%, 5, On
-		
-Hotkey, *$%6%, 6, On
-		
-Hotkey, *$%7%, 7, On
-		
-Hotkey, *$%8%, 8, On
-		
-Hotkey, *$%9%, 9, On
-		
-Hotkey, *$%0%, 0, On							 
-      }								
-}
-
 GuiControlGet, ProcessCheck2 ; Retrieves 1 if it is checked, 0 if it is unchecked.
 If (ProcessCheck2 = 0)
 {
@@ -605,52 +607,25 @@ If (!pid1)
 MsgBox, 0, Macros will close now. RIP., GTA is no longer running. Macros will close now. RIP.
    ExitApp
  }
-return
 }
+return
+
+SniperBind:
+send {%SniperBind%}{tab}
+return
+
+RPGBind:
+send {%RPGBind%}{tab}
+return
+
+StickyBind:
+send {%StickyBind%}{tab}
+return
 
 RPGSpam:
 send {%StickyBind%}{%RPGBind%}{tab}
 return
 
-1:
-send 1{tab}
-return
-
-2:
-send 2{tab}
-return
-
-3:
-send 3{tab}
-return
-
-4:
-send 4{tab}
-return
-
-5:
-send 5{tab}
-return
-
-6:
-send 6{tab}
-return
-
-7:
-send 7{tab}
-return
-
-8:
-send 8{tab}
-return
-
-9:
-send 9{tab}
-return
-
-0:
-send 0{tab}
-return
 
 DiscordPriority: ; Sets the process priority of various applications.
 SetDiscordPriority:
@@ -746,6 +721,72 @@ WinClose, snipercrashfix.exe
 WinActivate ahk_class grcWindow
 Goto, Macro
 
+LaunchCycle:
+GuiControlGet, TabWeapon
+GuiControlGet, AWMode
+If (TabWeapon = 0)
+   {
+Hotkey, *$%RPGSpam%, RPGSpam, Off
+Hotkey, *$%SniperBind%, SniperBind, Off
+Hotkey, *$%RPGBind%, RPGBind, Off
+Hotkey, *$%StickyBind%, StickyBind, Off
+   }
+else
+   {
+  If (AWMode = 0)
+   {
+    Hotkey, *$%RPGSpam%, RPGSpam, Off
+    Hotkey, *$%SniperBind%, SniperBind, Off
+    Hotkey, *$%RPGBind%, RPGBind, Off
+    Hotkey, *$%StickyBind%, StickyBind, Off
+  }
+   else{
+Hotkey, *$%RPGSpam%, RPGSpam, On
+Hotkey, *$%SniperBind%, SniperBind, On
+Hotkey, *$%RPGBind%, RPGBind, On
+Hotkey, *$%StickyBind%, StickyBind, On 
+      }								
+      }
+GuiControlGet, ProcessCheck2
+if (ProcessCheck2 = 0) {
+SetTimer, ProcessCheckTimer, Off
+   } else {
+SetTimer, ProcessCheckTimer, 3000
+   }
+GuiControlGet, Crosshair
+GuiControlGet, AWMode
+	if(crossHair = 1) {
+Global crossHairW := 21
+Global crossHairH := 21
+
+Global backgroundColor := 0xff00cc
+
+SysGet, screenW, 78
+SysGet, screenH, 79
+
+Global crossHairX := (screenW / 4) - (crossHairH / 2)
+Global crossHairY := (screenH / 2) - (crossHairH / 2)
+
+IfNotExist, %A_WorkingDir%\assets
+	FileCreateDir, %A_WorkingDir%\assets
+
+FileInstall, assets\crosshair.png, %A_WorkingDir%\assets\crosshair.png, false
+
+Gui, QuickMacroCrosshair: New, +AlwaysOnTop -Border -Caption
+Gui, Color, backgroundColor
+Gui, Add, Picture, x0 y0 w%crossHairW% h%crossHairH%,  %A_WorkingDir%\assets\crosshair.png
+Gui, Show, w%crossHairW% h%crossHairH% x%crossHairX% y%crossHairY%, QuickMacroCrosshair
+WinSet, TransColor, backgroundColor, QuickMacroCrosshair
+	} else {
+Gui, QuickMacroCrosshair: Hide
+	}
+If (AWMode = 0) {
+Gui, QuickMacroCrosshair: Hide
+}
+else {
+}
+#Include *i PutYourOwnScriptsHere.ahk
+return
 ;                                                                                        ———END OF CODE. INFO AND OTHER STUFF BELOW———
 
 ; Info:
