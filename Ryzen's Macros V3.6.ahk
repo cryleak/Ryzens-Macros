@@ -190,8 +190,8 @@ Menu, Tray, Add, Hide UI, HideWindow
 Menu, Tray, Add, Save Macros, SaveConfig
 Menu, Tray, Add
 Menu, Tray, Standard
-Menu, Tray, Tip, Ryzen's Macros Version 3.5
-Gui, Show,, Ryzen's Macros Version 3.5
+Menu, Tray, Tip, Ryzen's Macros Version 3.6
+Gui, Show,, Ryzen's Macros Version 3.6
 GuiControlGet, AWMode
 If (AWMode = 0) {
 MsgBox, 0, Welcome!, Welcome to Ryzen's Macros. Please note that AW Mode is currently OFF. Add me on Discord (smilla kult#4725) if you have any issues. Good luck.
