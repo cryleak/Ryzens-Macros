@@ -24,24 +24,24 @@ if not A_IsAdmin
 #KeyHistory 0                     ; Useful for debugging, displays what keys you have pressed. Reduces performance when on though.
 #HotkeyInterval 99000000          ; You will get an error message if you reach this limit, so I increased it to a ridiculously high number, so that can't happen.     
 ListLines Off                     ; Useful for debugging. Improves performance with it off.
+SetTitleMatchMode, 2
 SetDefaultMouseSpeed, 0           ; Could theoretically increase speed in some situations.
-SetBatchLines, -1                 ; Increases speed if your macro is multiple lines long. Increase CPU usage, so if you are lagging with these macros, even after reducing priority, remove this line.
 SetKeyDelay, -1, -1               ; Always increases speed. Always use, and no it won't reduce reliability by much...
 SetWinDelay, -1                   ; Window delay between window commands, it helps speed sometimes.
 SetControlDelay, -1               ; Control-modifying command delay, sometimes helps.
-Process, Priority, , H            ; Sets the task priority of these macros to high, which in theory should improve speeds. Remove this if you lag with it on.
 Process, Priority, GTA5.exe, H    ; Sets the task priority of GTA V to high, which in theory should improve FPS, mostly on lower end systems
 SetWorkingDir %A_ScriptDir%       ; Ensures a consistent starting directory. Helps for some shit.
 Goto, DiscordPriority             ; Automatically excecutes DiscordPriority when you start the script, which sets Discords's priority to High, which should make it more usable now that we increased the priority of GTA to High, and it also changes some other applications to Low.
 Macro:
+Gui, Font, q5
 Gui, Add, Picture, x0 y0 w675 h-1 +0x4000000, %A_ScriptDir%/assets/image.png
 Gui, Add, Text,ym, Interaction Menu Bind:
 Gui, Add, Text,, Thermal Helmet Macro:
 Gui, Add, Text,, Fast Sniper Switch Macro:
-Gui, Add, Text,, Sniper Rifle Bind:
+Gui, Add, Text,, Sniper Rifle (in-game) Bind:
 Gui, Add, Text,, Instant EWO Macro:
-Gui, Add, Text,, EWO Look Behind Bind:
-Gui, Add, Text,, EWO Special Ability / Action Bind:
+Gui, Add, Text,, EWO Look Behind (in-game) Bind:
+Gui, Add, Text,, EWO Special Ability (in-game) Bind:
 Gui, Add, Text,, BST Macro:
 Gui, Add, Text,, Ammo Macro:
 Gui, Add, Text,, Ammo buy wait time (ms):
@@ -95,20 +95,22 @@ Gui, Add, Button, gHideWindow,Hide window and start the macros!
 Gui, Add, Button, gExitMacros,Exit macros
 
 Gui, Add, Text,ys y10, AW Mode ONLY RPG Spam
-Gui, Add, Text,, RPG In-Game Bind:
-Gui, Add, Text,, Sticky bomb In-Game Bind:
+Gui, Add, Text,, RPG (in-game) Bind:
+Gui, Add, Text,, Sticky bomb (in-game) Bind:
 Gui, Add, Text,, Be able to use weapons after respawning (AW mode only)
 Gui, Add, Text,, Crosshair (AW mode only)
+Gui, Add, Text,, Do you have a 2 screen setup?
 
 Gui, Add, Hotkey, vRPGSpam yn y10,
 Gui, Add, Hotkey, vRPGBind,
 Gui, Add, Hotkey, vStickyBind,
-Gui, Add, Checkbox, gAWMode2 vTabWeapon,
-Gui, Add, Checkbox, gCrossHair5 vCrossHair,
+Gui, Add, Checkbox, gAWMode2 vTabWeapon h20,
+Gui, Add, Checkbox, gCrossHair5 vCrossHair h20,
+Gui, Add, Checkbox, g2Screen2 v2Screen h20,
 
-Gui, Font, s13
-Gui, Add, Text,x1350 y150, Save and restart the macros if you want to unbind something!
-Gui, Add, Text,x1350 y175, AW MODE IS UNDER CONSTRUCTION!
+Gui, Font, s13 q5
+Gui, Add, Text,x1350 y200, Save and restart the macros if you want to unbind something!
+Gui, Add, Text,x1350 y225, AW MODE IS UNDER CONSTRUCTION!
 
 IniWrite,1,%CFG%,Misc,CEO Mode (always on by default. Don't change)
 IniRead,Read_CEOMode,%CFG%,Misc,CEO Mode (always on by default. Don't change)
@@ -151,6 +153,7 @@ IniRead,Read_RPGBind,%CFG%,Keybinds,RPG Bind
 IniRead,Read_StickyBind,%CFG%,Keybinds,Sticky Bind
 IniRead,Read_TabWeapon,%CFG%,Misc,Tab Weapon
 IniRead,Read_Crosshair,%CFG%,Misc,Crosshair
+IniRead,Read_2Screen,%CFG%,Misc,2 Screen Setup
 
 GuiControl,,InteractionMenuKey,%Read_InteractionMenuKey%
 GuiControl,,ThermalHelmet,%Read_ThermalHelmet%
@@ -182,6 +185,7 @@ GuiControl,,RPGBind,%Read_RPGBind%
 GuiControl,,StickyBind,%Read_StickyBind%
 GuiControl,,TabWeapon,%Read_TabWeapon%
 GuiControl,,Crosshair,%Read_Crosshair%
+GuiControl,,2Screen,%Read_2Screen%
 }
 
 Menu, Tray, NoStandard
@@ -190,8 +194,8 @@ Menu, Tray, Add, Hide UI, HideWindow
 Menu, Tray, Add, Save Macros, SaveConfig
 Menu, Tray, Add
 Menu, Tray, Standard
-Menu, Tray, Tip, Ryzen's Macros Version 3.6
-Gui, Show,, Ryzen's Macros Version 3.6
+Menu, Tray, Tip, Ryzen's Macros Version 3.6.1 FPS Edition
+Gui, Show,, Ryzen's Macros Version 3.6.1 FPS Edition
 GuiControlGet, AWMode
 If (AWMode = 0) {
 MsgBox, 0, Welcome!, Welcome to Ryzen's Macros. Please note that AW Mode is currently OFF. Add me on Discord (smilla kult#4725) if you have any issues. Good luck.
@@ -244,6 +248,7 @@ IniWrite,%RPGBind%,%CFG%,Keybinds,RPG Bind
 IniWrite,%StickyBind%,%CFG%,Keybinds,Sticky Bind
 IniWrite,%TabWeapon%,%CFG%,Misc,Tab Weapon
 IniWrite,%Crosshair%,%CFG%,Misc,Crosshair
+IniWrite,%2Screen%,%CFG%,Misc,2 Screen Setup
 }
 
 Hotkey, *$%ThermalHelmet%, ThermalHelmet
@@ -498,6 +503,19 @@ send {CapsLock}
 setcapslockstate, off
 return
 
+2Screen2:
+GuiControlGet, 2Screen
+If (2Screen = 0) {
+Global crossHairX := (screenW / 2) - (crossHairH / 2)
+Global crossHairY := (screenH / 2) - (crossHairH / 2)
+WinMove, QuickMacroCrosshair,, %CrossHairX%, %CRossHairY%
+}
+else {
+Global crossHairX := (screenW / 4) - (crossHairH / 2)
+Global crossHairY := (screenH / 2) - (crossHairH / 2)
+WinMove, QuickMacroCrosshair,, %CrossHairX%, %CRossHairY%
+}
+
 Crosshair5:
 GuiControlGet, Crosshair
 	if(crossHair = 1) {
@@ -509,8 +527,17 @@ Global backgroundColor := 0xff00cc
 SysGet, screenW, 78
 SysGet, screenH, 79
 
+GuiControlGet, 2Screen
+If (2Screen = 0) {
+Global crossHairX := (screenW / 2) - (crossHairH / 2)
+Global crossHairY := (screenH / 2) - (crossHairH / 2)
+WinMove, QuickMacroCrosshair,, %CrossHairX%, %CRossHairY%
+}
+else {
 Global crossHairX := (screenW / 4) - (crossHairH / 2)
 Global crossHairY := (screenH / 2) - (crossHairH / 2)
+WinMove, QuickMacroCrosshair,, %CrossHairX%, %CRossHairY%
+}
 
 IfNotExist, %A_WorkingDir%\assets
 	FileCreateDir, %A_WorkingDir%\assets
@@ -630,27 +657,6 @@ return
 DiscordPriority: ; Sets the process priority of various applications.
 SetDiscordPriority:
 {
-processName := "Discord.exe"
-
-PIDs := EnumProcessesByName(processName)
-for k, PID in PIDs
-   Process, Priority, % PID, H
-
-EnumProcessesByName(procName) {
-   if !DllCall("Wtsapi32\WTSEnumerateProcesses", Ptr, 0, UInt, 0, UInt, 1, PtrP, pProcessInfo, PtrP, count)
-      throw Exception("WTSEnumerateProcesses failed. A_LastError: " . A_LastError)
-   
-   addr := pProcessInfo, PIDs := []
-   Loop % count  {
-      if StrGet( NumGet(addr + 8) ) = procName
-         PID := NumGet(addr + 4, "UInt"), PIDs.Push(PID)
-      addr += A_PtrSize = 4 ? 16 : 24
-   }
-   DllCall("Wtsapi32\WTSFreeMemory", Ptr, pProcessInfo)
-   Return PIDs
-}
-}
-{
 processName := "SocialClubHelper.exe"
 
 PIDs := EnumProcessesByName2(processName)
@@ -764,8 +770,17 @@ Global backgroundColor := 0xff00cc
 SysGet, screenW, 78
 SysGet, screenH, 79
 
+GuiControlGet, 2Screen
+If (2Screen = 0) {
+Global crossHairX := (screenW / 2) - (crossHairH / 2)
+Global crossHairY := (screenH / 2) - (crossHairH / 2)
+WinMove, QuickMacroCrosshair,, %CrossHairX%, %CRossHairY%
+}
+else {
 Global crossHairX := (screenW / 4) - (crossHairH / 2)
 Global crossHairY := (screenH / 2) - (crossHairH / 2)
+WinMove, QuickMacroCrosshair,, %CrossHairX%, %CRossHairY%
+}
 
 IfNotExist, %A_WorkingDir%\assets
 	FileCreateDir, %A_WorkingDir%\assets

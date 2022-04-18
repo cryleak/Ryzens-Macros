@@ -1,17 +1,6 @@
-﻿;                                                               GO TO THE BOTTOM OF THE SCRIPT FOR HELP, INFO AND A QUICK TUTORIAL
-;                                                               GO TO THE BOTTOM OF THE SCRIPT FOR HELP, INFO AND A QUICK TUTORIAL
-;                                                               GO TO THE BOTTOM OF THE SCRIPT FOR HELP, INFO AND A QUICK TUTORIAL
-;                                                               GO TO THE BOTTOM OF THE SCRIPT FOR HELP, INFO AND A QUICK TUTORIAL
-;                                                               GO TO THE BOTTOM OF THE SCRIPT FOR HELP, INFO AND A QUICK TUTORIAL
-;                                                               GO TO THE BOTTOM OF THE SCRIPT FOR HELP, INFO AND A QUICK TUTORIAL
-;                                                               GO TO THE BOTTOM OF THE SCRIPT FOR HELP, INFO AND A QUICK TUTORIAL
-;                                                               GO TO THE BOTTOM OF THE SCRIPT FOR HELP, INFO AND A QUICK TUTORIAL
-CFG = GTA Binds.ini
+﻿CFG = GTA Binds.ini
 None = F23
 None := F23
-; All of this shit apparently theoretically increase speed according to the person know as Quxck. It probably only helps if you have high FPS,
-; but i have noticed a difference between SetKeyDelay 10, 10 (the default) and -1, -1 (the fastest) even at a "low" FPS of 60FPS.
-; Just use them because they probably improve speed, at least a little bit.
 if not A_IsAdmin
 	Run *RunAs "%A_ScriptFullPath%"
 #SingleInstance, force            ; You can't start multiple instances of the macro with this on.
@@ -24,22 +13,26 @@ if not A_IsAdmin
 #KeyHistory 0                     ; Useful for debugging, displays what keys you have pressed. Reduces performance when on though.
 #HotkeyInterval 99000000          ; You will get an error message if you reach this limit, so I increased it to a ridiculously high number, so that can't happen.     
 ListLines Off                     ; Useful for debugging. Improves performance with it off.
+SetTitleMatchMode, 2
 SetDefaultMouseSpeed, 0           ; Could theoretically increase speed in some situations.
+SetBatchLines, -1                 ; Increases speed if your macro is multiple lines long. Increase CPU usage, so if you are lagging with these macros, even after reducing priority, remove this line.
 SetKeyDelay, -1, -1               ; Always increases speed. Always use, and no it won't reduce reliability by much...
 SetWinDelay, -1                   ; Window delay between window commands, it helps speed sometimes.
 SetControlDelay, -1               ; Control-modifying command delay, sometimes helps.
+Process, Priority, , H            ; Sets the task priority of these macros to high, which in theory should improve speeds. Remove this if you lag with it on.
 Process, Priority, GTA5.exe, H    ; Sets the task priority of GTA V to high, which in theory should improve FPS, mostly on lower end systems
 SetWorkingDir %A_ScriptDir%       ; Ensures a consistent starting directory. Helps for some shit.
 Goto, DiscordPriority             ; Automatically excecutes DiscordPriority when you start the script, which sets Discords's priority to High, which should make it more usable now that we increased the priority of GTA to High, and it also changes some other applications to Low.
 Macro:
+Gui, Font, q5
 Gui, Add, Picture, x0 y0 w675 h-1 +0x4000000, %A_ScriptDir%/assets/image.png
 Gui, Add, Text,ym, Interaction Menu Bind:
 Gui, Add, Text,, Thermal Helmet Macro:
 Gui, Add, Text,, Fast Sniper Switch Macro:
-Gui, Add, Text,, Sniper Rifle Bind:
+Gui, Add, Text,, Sniper Rifle (in-game) Bind:
 Gui, Add, Text,, Instant EWO Macro:
-Gui, Add, Text,, EWO Look Behind Bind:
-Gui, Add, Text,, EWO Special Ability / Action Bind:
+Gui, Add, Text,, EWO Look Behind (in-game) Bind:
+Gui, Add, Text,, EWO Special Ability (in-game) Bind:
 Gui, Add, Text,, BST Macro:
 Gui, Add, Text,, Ammo Macro:
 Gui, Add, Text,, Ammo buy wait time (ms):
@@ -93,20 +86,22 @@ Gui, Add, Button, gHideWindow,Hide window and start the macros!
 Gui, Add, Button, gExitMacros,Exit macros
 
 Gui, Add, Text,ys y10, AW Mode ONLY RPG Spam
-Gui, Add, Text,, RPG In-Game Bind:
-Gui, Add, Text,, Sticky bomb In-Game Bind:
+Gui, Add, Text,, RPG (in-game) Bind:
+Gui, Add, Text,, Sticky bomb (in-game) Bind:
 Gui, Add, Text,, Be able to use weapons after respawning (AW mode only)
 Gui, Add, Text,, Crosshair (AW mode only)
+Gui, Add, Text,, Do you have a 2 screen setup?
 
 Gui, Add, Hotkey, vRPGSpam yn y10,
 Gui, Add, Hotkey, vRPGBind,
 Gui, Add, Hotkey, vStickyBind,
-Gui, Add, Checkbox, gAWMode2 vTabWeapon,
-Gui, Add, Checkbox, gCrossHair5 vCrossHair,
+Gui, Add, Checkbox, gAWMode2 vTabWeapon h20,
+Gui, Add, Checkbox, gCrossHair5 vCrossHair h20,
+Gui, Add, Checkbox, g2Screen2 v2Screen h20,
 
-Gui, Font, s13
-Gui, Add, Text,x1350 y150, Save and restart the macros if you want to unbind something!
-Gui, Add, Text,x1350 y175, AW MODE IS UNDER CONSTRUCTION!
+Gui, Font, s13 q5
+Gui, Add, Text,x1350 y200, Save and restart the macros if you want to unbind something!
+Gui, Add, Text,x1350 y225, AW MODE IS UNDER CONSTRUCTION!
 
 IniWrite,1,%CFG%,Misc,CEO Mode (always on by default. Don't change)
 IniRead,Read_CEOMode,%CFG%,Misc,CEO Mode (always on by default. Don't change)
@@ -149,6 +144,7 @@ IniRead,Read_RPGBind,%CFG%,Keybinds,RPG Bind
 IniRead,Read_StickyBind,%CFG%,Keybinds,Sticky Bind
 IniRead,Read_TabWeapon,%CFG%,Misc,Tab Weapon
 IniRead,Read_Crosshair,%CFG%,Misc,Crosshair
+IniRead,Read_2Screen,%CFG%,Misc,2 Screen Setup
 
 GuiControl,,InteractionMenuKey,%Read_InteractionMenuKey%
 GuiControl,,ThermalHelmet,%Read_ThermalHelmet%
@@ -180,6 +176,7 @@ GuiControl,,RPGBind,%Read_RPGBind%
 GuiControl,,StickyBind,%Read_StickyBind%
 GuiControl,,TabWeapon,%Read_TabWeapon%
 GuiControl,,Crosshair,%Read_Crosshair%
+GuiControl,,2Screen,%Read_2Screen%
 }
 
 Menu, Tray, NoStandard
@@ -188,8 +185,8 @@ Menu, Tray, Add, Hide UI, HideWindow
 Menu, Tray, Add, Save Macros, SaveConfig
 Menu, Tray, Add
 Menu, Tray, Standard
-Menu, Tray, Tip, Ryzen's Macros Version 3.6 FPS Edition
-Gui, Show,, Ryzen's Macros Version 3.6 FPS Edition
+Menu, Tray, Tip, Ryzen's Macros Version 3.6.1
+Gui, Show,, Ryzen's Macros Version 3.6.1
 GuiControlGet, AWMode
 If (AWMode = 0) {
 MsgBox, 0, Welcome!, Welcome to Ryzen's Macros. Please note that AW Mode is currently OFF. Add me on Discord (smilla kult#4725) if you have any issues. Good luck.
@@ -242,6 +239,7 @@ IniWrite,%RPGBind%,%CFG%,Keybinds,RPG Bind
 IniWrite,%StickyBind%,%CFG%,Keybinds,Sticky Bind
 IniWrite,%TabWeapon%,%CFG%,Misc,Tab Weapon
 IniWrite,%Crosshair%,%CFG%,Misc,Crosshair
+IniWrite,%2Screen%,%CFG%,Misc,2 Screen Setup
 }
 
 Hotkey, *$%ThermalHelmet%, ThermalHelmet
@@ -496,6 +494,19 @@ send {CapsLock}
 setcapslockstate, off
 return
 
+2Screen2:
+GuiControlGet, 2Screen
+If (2Screen = 0) {
+Global crossHairX := (screenW / 2) - (crossHairH / 2)
+Global crossHairY := (screenH / 2) - (crossHairH / 2)
+WinMove, QuickMacroCrosshair,, %CrossHairX%, %CRossHairY%
+}
+else {
+Global crossHairX := (screenW / 4) - (crossHairH / 2)
+Global crossHairY := (screenH / 2) - (crossHairH / 2)
+WinMove, QuickMacroCrosshair,, %CrossHairX%, %CRossHairY%
+}
+
 Crosshair5:
 GuiControlGet, Crosshair
 	if(crossHair = 1) {
@@ -507,8 +518,17 @@ Global backgroundColor := 0xff00cc
 SysGet, screenW, 78
 SysGet, screenH, 79
 
+GuiControlGet, 2Screen
+If (2Screen = 0) {
+Global crossHairX := (screenW / 2) - (crossHairH / 2)
+Global crossHairY := (screenH / 2) - (crossHairH / 2)
+WinMove, QuickMacroCrosshair,, %CrossHairX%, %CRossHairY%
+}
+else {
 Global crossHairX := (screenW / 4) - (crossHairH / 2)
 Global crossHairY := (screenH / 2) - (crossHairH / 2)
+WinMove, QuickMacroCrosshair,, %CrossHairX%, %CRossHairY%
+}
 
 IfNotExist, %A_WorkingDir%\assets
 	FileCreateDir, %A_WorkingDir%\assets
@@ -628,6 +648,27 @@ return
 DiscordPriority: ; Sets the process priority of various applications.
 SetDiscordPriority:
 {
+processName := "Discord.exe"
+
+PIDs := EnumProcessesByName(processName)
+for k, PID in PIDs
+   Process, Priority, % PID, H
+
+EnumProcessesByName(procName) {
+   if !DllCall("Wtsapi32\WTSEnumerateProcesses", Ptr, 0, UInt, 0, UInt, 1, PtrP, pProcessInfo, PtrP, count)
+      throw Exception("WTSEnumerateProcesses failed. A_LastError: " . A_LastError)
+   
+   addr := pProcessInfo, PIDs := []
+   Loop % count  {
+      if StrGet( NumGet(addr + 8) ) = procName
+         PID := NumGet(addr + 4, "UInt"), PIDs.Push(PID)
+      addr += A_PtrSize = 4 ? 16 : 24
+   }
+   DllCall("Wtsapi32\WTSFreeMemory", Ptr, pProcessInfo)
+   Return PIDs
+}
+}
+{
 processName := "SocialClubHelper.exe"
 
 PIDs := EnumProcessesByName2(processName)
@@ -741,8 +782,17 @@ Global backgroundColor := 0xff00cc
 SysGet, screenW, 78
 SysGet, screenH, 79
 
+GuiControlGet, 2Screen
+If (2Screen = 0) {
+Global crossHairX := (screenW / 2) - (crossHairH / 2)
+Global crossHairY := (screenH / 2) - (crossHairH / 2)
+WinMove, QuickMacroCrosshair,, %CrossHairX%, %CRossHairY%
+}
+else {
 Global crossHairX := (screenW / 4) - (crossHairH / 2)
 Global crossHairY := (screenH / 2) - (crossHairH / 2)
+WinMove, QuickMacroCrosshair,, %CrossHairX%, %CRossHairY%
+}
 
 IfNotExist, %A_WorkingDir%\assets
 	FileCreateDir, %A_WorkingDir%\assets
@@ -764,64 +814,3 @@ else {
 }
 #Include *i PutYourOwnScriptsHere.ahk
 return
-;                                                                                        ———END OF CODE. INFO AND OTHER STUFF BELOW———
-
-; Info:
-; Welcome to these fast and useless for freeroam macros! This is (no longer) a heavily modified version of the macros found on the Motmus Discord server. The macros were pretty bad, so I decided to rewrite basically all the macros, only the system to bind keys has been kept.
-; Contact me on Discord for more help, but please check the information below first, and don't be so lazy that you can't read my wall of text. (smilla kult#4725)
-
-
-; NOTES:
-; Chat macros are way slower when using Flawless widescreen with GTA V. I don't know why this is, but it makes them far slower. Watch out for that, I guess. Also makes EWO slower.
-; The only way I could fix the above issue is by getting the source code of AHK, and manually removing the SendInput fallback. But I'm not that kind of coder, im the stupid kind.
-; I know the standard binds are absolute dogshit, but that is because I'm left handed. If someone wants to suggest good default binds for right handed people, which is basically everyone but you already know that, let me know, i'll change them, and credit you.
-; These macros are for PVP ONLY. They may also be useful for non-PVP purposes, but this is not a macro with 5000 different hotkeys to do every thing imaginable.
-; DO NOT delete the "Libraries" folder or else the script will crash when you try to use GTAHax.
-
-; KNOWN ISSUES:
-; None right now.
-
-
-; Changelog:
-; 3.0:
-; Upped the version number by an absolutely STAGGERING 0.8 versions!!!!!!!!!!!! Wow!!!!
-; Keybinding system completely rewritten! You now have an interface that lets you set binds and save binds. Very nice indeed.
-; You can now change your interaction menu key, the look back key (useful for EWO), and your Special Ability (as its called in the menu) aka the one that makes you do emotes and shit (also useful for EWO).
-; No, this system will not add a delay to anything. There is no delay between any of the methods of binding keys. The macros will also behave excactly the same as they did before,
-; aside from the fact you can now change them more easily, and that you can choose interaction menu binds and EWO macro binds, so this should make it easier to use if anything.
-; 2.2:
-; Upped the version number, as per tradition again.
-; Made GTAHax public, as I have found a way of making it far easier to use. The macro now automatically sets the priority of Discord to Above Normal. It also sets SocialClubHelper.exe, and Launcher.exe to Low.
-; Removed all weapon macros because they are useless.
-; MASSIVELY improved the formatting of the entire script, the keybinding system is sorted to the actual text now, and it is easier to edit. Moved the descriptions of the macros to where the macros are located in the file.
-; Fixed some spelling errors on the chat macros.
-; Improved ammo macros.
-; Disabled CapsLock because it is gay.
-; Added to Github!
-; 2.1:
-; Upped the version number, as per tradition again.
-; Added FastRespawn. Added Suspend, which is not a macro, but it suspends the hotkeys. In other words, it cancels the macros and disables them until you press the button again.
-; Chat macros have been slightly modified. Made Thermal Helmet macro faster.
-; 2.0:
-; Upped the version number, as per tradition again.
-; Gone public! Almost completely rewritten!
-; Added 3 new chat macros, removed old chat macros. Added RPG, Stickybomb, Pistol, and Sniper. Added the GTAHax macro, which applies the no EWO cooldown code.
-; All macros are significantly faster! All macros are also more reliable!
-; The EWO macro in particular is now ridiculously fast.
-; 1.0.1-1.3.1:
-; Upped the version number, as per tradition.
-; Not much, almost none of the code present in this version is still here. The code was terrible anyways.
-; 1.0:
-; Upped the version number.
-; Initial release.
-
-
-; QNA:
-; Q: How do I add new macros?
-; A: Go into the libraries folder included in the ZIP file, and right click on Extra Scripts.ahk. Click on "edit". Now, figure it out on your own it's not that hard i have an example there already
-; Q: How do I change my weapon loadout? 
-; A: Go to your CEO office or any other place with a "Weapon Locker" and then remove weapons that you don't need/want.
-; Q: How do I remove macros? 
-; A: Uh.... Fuck this it is way harder now just contact me on discord if you want to remove macros. Unless you're talking about the extra scripts, then you do the following:
-; Go up to the "Hotkey Code" Section, and remove the specific (Hotkey, %EXAMPLE%, EXAMPLE;) that you don't want.
-; Now, remove that code, and then, go up to the "Assign Hotkeys" section and remove the corressponding bind, or else the macro will not start.
