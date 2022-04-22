@@ -571,7 +571,7 @@ Hotkey, *$%RPGSpam%, RPGSpam, Off
 Hotkey, *$%SniperBind%, SniperBind, Off
 Hotkey, *$%RPGBind%, RPGBind, Off
 Hotkey, *$%StickyBind%, StickyBind, Off
-Hotkey, *$%PistolBind%, Pistol, Off
+Hotkey, *$%PistolBind%, PistolBind, Off
 }
 else
 {
@@ -581,14 +581,14 @@ else
     Hotkey, *$%SniperBind%, SniperBind, Off
     Hotkey, *$%RPGBind%, RPGBind, Off
     Hotkey, *$%StickyBind%, StickyBind, Off
-    Hotkey, *$%PistolBind%, Pistol, Off
+    Hotkey, *$%PistolBind%, PistolBind, Off
   }
    else{
 Hotkey, *$%RPGSpam%, RPGSpam, On
 Hotkey, *$%SniperBind%, SniperBind, On
 Hotkey, *$%RPGBind%, RPGBind, On
 Hotkey, *$%StickyBind%, StickyBind, On 
-Hotkey, *$%PistolBind%, Pistol, On
+Hotkey, *$%PistolBind%, PistolBind, On
       }								
 }
 return
@@ -602,7 +602,7 @@ Hotkey, *$%RPGSpam%, RPGSpam, Off
 Hotkey, *$%SniperBind%, SniperBind, Off
 Hotkey, *$%RPGBind%, RPGBind, Off
 Hotkey, *$%StickyBind%, StickyBind, Off
-Hotkey, *$%PistolBind%, Pistol, Off
+Hotkey, *$%PistolBind%, PistolBind, Off
 }
 else
 {
@@ -612,7 +612,7 @@ else
     Hotkey, *$%SniperBind%, SniperBind, Off
     Hotkey, *$%RPGBind%, RPGBind, Off
     Hotkey, *$%StickyBind%, StickyBind, Off
-    Hotkey, *$%PistolBind%, Pistol, Off
+    Hotkey, *$%PistolBind%, PistolBind, Off
     MsgBox, 0, AW Mode, AW Mode is now DEACTIVATED
   }
    else{
@@ -620,7 +620,7 @@ Hotkey, *$%RPGSpam%, RPGSpam, On
 Hotkey, *$%SniperBind%, SniperBind, On
 Hotkey, *$%RPGBind%, RPGBind, On
 Hotkey, *$%StickyBind%, StickyBind, On 
-Hotkey, *$%PistolBind%, Pistol, On
+Hotkey, *$%PistolBind%, PistolBind, On
 MsgBox, 0, AW Mode, AW Mode has been ACTIVATED
       }								
 }
@@ -773,7 +773,7 @@ Hotkey, *$%RPGSpam%, RPGSpam, Off
 Hotkey, *$%SniperBind%, SniperBind, Off
 Hotkey, *$%RPGBind%, RPGBind, Off
 Hotkey, *$%StickyBind%, StickyBind, Off
-Hotkey, *$%PistolBind%, Pistol, Off
+Hotkey, *$%PistolBind%, PistolBind, Off
    }
 else
    {
@@ -783,14 +783,14 @@ else
     Hotkey, *$%SniperBind%, SniperBind, Off
     Hotkey, *$%RPGBind%, RPGBind, Off
     Hotkey, *$%StickyBind%, StickyBind, Off
-    Hotkey, *$%PistolBind%, Pistol, Off
+    Hotkey, *$%PistolBind%, PistolBind, Off
   }
    else{
 Hotkey, *$%RPGSpam%, RPGSpam, On
 Hotkey, *$%SniperBind%, SniperBind, On
 Hotkey, *$%RPGBind%, RPGBind, On
 Hotkey, *$%StickyBind%, StickyBind, On 
-Hotkey, *$%PistolBind%, Pistol, On
+Hotkey, *$%PistolBind%, PistolBind, On
       }								
       }
 GuiControlGet, ProcessCheck2
