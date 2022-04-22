@@ -19,6 +19,7 @@ SetBatchLines, -1                 ; Increases speed if your macro is multiple li
 SetKeyDelay, -1, -1               ; Always increases speed. Always use, and no it won't reduce reliability by much...
 SetWinDelay, -1                   ; Window delay between window commands, it helps speed sometimes.
 SetControlDelay, -1               ; Control-modifying command delay, sometimes helps.
+Process, Priority, , H            ; Sets the task priority of these macros to high, which in theory should improve speeds. Remove this if you lag with it on.
 Process, Priority, GTA5.exe, H    ; Sets the task priority of GTA V to high, which in theory should improve FPS, mostly on lower end systems
 SetWorkingDir %A_ScriptDir%       ; Ensures a consistent starting directory. Helps for some shit.
 Goto, DiscordPriority             ; Automatically excecutes DiscordPriority when you start the script, which sets Discords's priority to High, which should make it more usable now that we increased the priority of GTA to High, and it also changes some other applications to Low.
@@ -772,6 +773,7 @@ Hotkey, *$%RPGSpam%, RPGSpam, Off
 Hotkey, *$%SniperBind%, SniperBind, Off
 Hotkey, *$%RPGBind%, RPGBind, Off
 Hotkey, *$%StickyBind%, StickyBind, Off
+Hotkey, *$%PistolBind%, Pistol, Off
    }
 else
    {
@@ -781,12 +783,14 @@ else
     Hotkey, *$%SniperBind%, SniperBind, Off
     Hotkey, *$%RPGBind%, RPGBind, Off
     Hotkey, *$%StickyBind%, StickyBind, Off
+    Hotkey, *$%PistolBind%, Pistol, Off
   }
    else{
 Hotkey, *$%RPGSpam%, RPGSpam, On
 Hotkey, *$%SniperBind%, SniperBind, On
 Hotkey, *$%RPGBind%, RPGBind, On
 Hotkey, *$%StickyBind%, StickyBind, On 
+Hotkey, *$%PistolBind%, Pistol, On
       }								
       }
 GuiControlGet, ProcessCheck2
