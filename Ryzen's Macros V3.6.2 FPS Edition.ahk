@@ -14,8 +14,8 @@ if not A_IsAdmin
 #HotkeyInterval 99000000          ; You will get an error message if you reach this limit, so I increased it to a ridiculously high number, so that can't happen.     
 ListLines Off                     ; Useful for debugging. Improves performance with it off.
 SetTitleMatchMode, 2
-SetBatchLines, -1
 SetDefaultMouseSpeed, 0           ; Could theoretically increase speed in some situations.
+SetBatchLines, -1                 ; Increases speed if your macro is multiple lines long. Increase CPU usage, so if you are lagging with these macros, even after reducing priority, remove this line.
 SetKeyDelay, -1, -1               ; Always increases speed. Always use, and no it won't reduce reliability by much...
 SetWinDelay, -1                   ; Window delay between window commands, it helps speed sometimes.
 SetControlDelay, -1               ; Control-modifying command delay, sometimes helps.
@@ -570,6 +570,7 @@ Hotkey, *$%RPGSpam%, RPGSpam, Off
 Hotkey, *$%SniperBind%, SniperBind, Off
 Hotkey, *$%RPGBind%, RPGBind, Off
 Hotkey, *$%StickyBind%, StickyBind, Off
+Hotkey, *$%PistolBind%, Pistol, Off
 }
 else
 {
@@ -579,12 +580,14 @@ else
     Hotkey, *$%SniperBind%, SniperBind, Off
     Hotkey, *$%RPGBind%, RPGBind, Off
     Hotkey, *$%StickyBind%, StickyBind, Off
+    Hotkey, *$%PistolBind%, Pistol, Off
   }
    else{
 Hotkey, *$%RPGSpam%, RPGSpam, On
 Hotkey, *$%SniperBind%, SniperBind, On
 Hotkey, *$%RPGBind%, RPGBind, On
 Hotkey, *$%StickyBind%, StickyBind, On 
+Hotkey, *$%PistolBind%, Pistol, On
       }								
 }
 return
@@ -598,6 +601,7 @@ Hotkey, *$%RPGSpam%, RPGSpam, Off
 Hotkey, *$%SniperBind%, SniperBind, Off
 Hotkey, *$%RPGBind%, RPGBind, Off
 Hotkey, *$%StickyBind%, StickyBind, Off
+Hotkey, *$%PistolBind%, Pistol, Off
 }
 else
 {
@@ -607,6 +611,7 @@ else
     Hotkey, *$%SniperBind%, SniperBind, Off
     Hotkey, *$%RPGBind%, RPGBind, Off
     Hotkey, *$%StickyBind%, StickyBind, Off
+    Hotkey, *$%PistolBind%, Pistol, Off
     MsgBox, 0, AW Mode, AW Mode is now DEACTIVATED
   }
    else{
@@ -614,6 +619,7 @@ Hotkey, *$%RPGSpam%, RPGSpam, On
 Hotkey, *$%SniperBind%, SniperBind, On
 Hotkey, *$%RPGBind%, RPGBind, On
 Hotkey, *$%StickyBind%, StickyBind, On 
+Hotkey, *$%PistolBind%, Pistol, On
 MsgBox, 0, AW Mode, AW Mode has been ACTIVATED
       }								
 }

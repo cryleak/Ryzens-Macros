@@ -571,6 +571,7 @@ Hotkey, *$%RPGSpam%, RPGSpam, Off
 Hotkey, *$%SniperBind%, SniperBind, Off
 Hotkey, *$%RPGBind%, RPGBind, Off
 Hotkey, *$%StickyBind%, StickyBind, Off
+Hotkey, *$%PistolBind%, Pistol, Off
 }
 else
 {
@@ -580,12 +581,14 @@ else
     Hotkey, *$%SniperBind%, SniperBind, Off
     Hotkey, *$%RPGBind%, RPGBind, Off
     Hotkey, *$%StickyBind%, StickyBind, Off
+    Hotkey, *$%PistolBind%, Pistol, Off
   }
    else{
 Hotkey, *$%RPGSpam%, RPGSpam, On
 Hotkey, *$%SniperBind%, SniperBind, On
 Hotkey, *$%RPGBind%, RPGBind, On
 Hotkey, *$%StickyBind%, StickyBind, On 
+Hotkey, *$%PistolBind%, Pistol, On
       }								
 }
 return
@@ -599,6 +602,7 @@ Hotkey, *$%RPGSpam%, RPGSpam, Off
 Hotkey, *$%SniperBind%, SniperBind, Off
 Hotkey, *$%RPGBind%, RPGBind, Off
 Hotkey, *$%StickyBind%, StickyBind, Off
+Hotkey, *$%PistolBind%, Pistol, Off
 }
 else
 {
@@ -608,6 +612,7 @@ else
     Hotkey, *$%SniperBind%, SniperBind, Off
     Hotkey, *$%RPGBind%, RPGBind, Off
     Hotkey, *$%StickyBind%, StickyBind, Off
+    Hotkey, *$%PistolBind%, Pistol, Off
     MsgBox, 0, AW Mode, AW Mode is now DEACTIVATED
   }
    else{
@@ -615,6 +620,7 @@ Hotkey, *$%RPGSpam%, RPGSpam, On
 Hotkey, *$%SniperBind%, SniperBind, On
 Hotkey, *$%RPGBind%, RPGBind, On
 Hotkey, *$%StickyBind%, StickyBind, On 
+Hotkey, *$%PistolBind%, Pistol, On
 MsgBox, 0, AW Mode, AW Mode has been ACTIVATED
       }								
 }
