@@ -14,6 +14,7 @@ if not A_IsAdmin
 #HotkeyInterval 99000000          ; You will get an error message if you reach this limit, so I increased it to a ridiculously high number, so that can't happen.     
 ListLines Off                     ; Useful for debugging. Improves performance with it off.
 SetTitleMatchMode, 2
+SetBatchLines, -1
 SetDefaultMouseSpeed, 0           ; Could theoretically increase speed in some situations.
 SetKeyDelay, -1, -1               ; Always increases speed. Always use, and no it won't reduce reliability by much...
 SetWinDelay, -1                   ; Window delay between window commands, it helps speed sometimes.
@@ -86,6 +87,7 @@ Gui, Add, Button, gExitMacros,Exit macros
 Gui, Add, Text,ys y10, AW Mode ONLY RPG Spam
 Gui, Add, Text,, RPG (in-game) Bind:
 Gui, Add, Text,, Sticky bomb (in-game) Bind:
+Gui, Add, Text,, Pistol (in-game) Bind:
 Gui, Add, Text,, Be able to use weapons after respawning (AW mode only)
 Gui, Add, Text,, Crosshair (AW mode only)
 Gui, Add, Text,, Do you have a 2 screen setup?
@@ -93,7 +95,8 @@ Gui, Add, Text,, Do you have a 2 screen setup?
 Gui, Add, Hotkey, vRPGSpam yn y10,
 Gui, Add, Hotkey, vRPGBind,
 Gui, Add, Hotkey, vStickyBind,
-Gui, Add, Checkbox, gAWMode2 vTabWeapon h20,
+Gui, Add, Hotkey, vPistolBind,
+Gui, Add, Checkbox, gTabWeapon2 vTabWeapon h20,
 Gui, Add, Checkbox, gCrossHair5 vCrossHair h20,
 Gui, Add, Checkbox, g2Screen2 v2Screen h20,
 
@@ -142,6 +145,7 @@ IniRead,Read_NightVision,%CFG%,Misc,Use Night Vision Thermal
 IniRead,Read_RPGSpam,%CFG%,PVP Macros,RPG Spam
 IniRead,Read_RPGBind,%CFG%,Keybinds,RPG Bind
 IniRead,Read_StickyBind,%CFG%,Keybinds,Sticky Bind
+IniRead,Read_PistolBind,%CFG%,Keybinds,Pistol Bind
 IniRead,Read_TabWeapon,%CFG%,Misc,Tab Weapon
 IniRead,Read_Crosshair,%CFG%,Misc,Crosshair
 IniRead,Read_2Screen,%CFG%,Misc,2 Screen Setup
@@ -174,6 +178,7 @@ GuiControl,,NightVision,%Read_NightVision%
 GuiControl,,RPGSpam,%Read_RPGSpam%
 GuiControl,,RPGBind,%Read_RPGBind%
 GuiControl,,StickyBind,%Read_StickyBind%
+GuiControl,,PistolBind,%Read_PistolBind%
 GuiControl,,TabWeapon,%Read_TabWeapon%
 GuiControl,,Crosshair,%Read_Crosshair%
 GuiControl,,2Screen,%Read_2Screen%
@@ -185,8 +190,8 @@ Menu, Tray, Add, Hide UI, HideWindow
 Menu, Tray, Add, Save Macros, SaveConfig
 Menu, Tray, Add
 Menu, Tray, Standard
-Menu, Tray, Tip, Ryzen's Macros Version 3.6.1 FPS Edition
-Gui, Show,, Ryzen's Macros Version 3.6.1 FPS Edition
+Menu, Tray, Tip, Ryzen's Macros Version 3.6.2 FPS Edition
+Gui, Show,, Ryzen's Macros Version 3.6.2 FPS Edition
 GuiControlGet, AWMode
 If (AWMode = 0) {
 MsgBox, 0, Welcome!, Welcome to Ryzen's Macros. Please note that AW Mode is currently OFF. Add me on Discord (smilla kult#4725) if you have any issues. Good luck.
@@ -237,6 +242,7 @@ IniWrite,%NightVision%,%CFG%,Misc,Use Night Vision Thermal
 IniWrite,%RPGSpam%,%CFG%,PVP Macros,RPG Spam
 IniWrite,%RPGBind%,%CFG%,Keybinds,RPG Bind
 IniWrite,%StickyBind%,%CFG%,Keybinds,Sticky Bind
+IniWrite,%PistolBind%,%CFG%,Keybinds,Pistol Bind
 IniWrite,%TabWeapon%,%CFG%,Misc,Tab Weapon
 IniWrite,%Crosshair%,%CFG%,Misc,Crosshair
 IniWrite,%2Screen%,%CFG%,Misc,2 Screen Setup
@@ -338,6 +344,7 @@ return
 Suspend: ; Suspends the entire macro until you press it again.
 Suspend
 return
+
 ;                                             EXTREMELY LONG AND CONFUSING MACROS BELOW, DON'T MESS WITH THEM UNLESS YOU WANT TO HAVE A BRAIN HEMMORAGE WHEN YOU TRY TO UNDERSTAND HOW THEY WORK
 
 
@@ -554,6 +561,34 @@ SetTimer, ProcessCheckTimer, 3000
 }
 return
 
+TabWeapon2:
+GuiControlGet, TabWeapon
+GuiControlGet, AWMode
+If (TabWeapon = 0)
+{
+Hotkey, *$%RPGSpam%, RPGSpam, Off
+Hotkey, *$%SniperBind%, SniperBind, Off
+Hotkey, *$%RPGBind%, RPGBind, Off
+Hotkey, *$%StickyBind%, StickyBind, Off
+}
+else
+{
+  If (AWMode = 0)
+   {
+    Hotkey, *$%RPGSpam%, RPGSpam, Off
+    Hotkey, *$%SniperBind%, SniperBind, Off
+    Hotkey, *$%RPGBind%, RPGBind, Off
+    Hotkey, *$%StickyBind%, StickyBind, Off
+  }
+   else{
+Hotkey, *$%RPGSpam%, RPGSpam, On
+Hotkey, *$%SniperBind%, SniperBind, On
+Hotkey, *$%RPGBind%, RPGBind, On
+Hotkey, *$%StickyBind%, StickyBind, On 
+      }								
+}
+return
+
 AWMode2:
 GuiControlGet, TabWeapon
 GuiControlGet, AWMode
@@ -638,6 +673,10 @@ return
 
 StickyBind:
 send {%StickyBind%}{tab}
+return
+
+PistolBind:
+send {%PistolBind%}{tab}
 return
 
 RPGSpam:
