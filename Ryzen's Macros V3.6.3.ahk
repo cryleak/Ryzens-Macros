@@ -59,7 +59,7 @@ Gui, Add, Hotkey,vGTAHax,PrintScreen
 Gui, Add, Text,ys y10, Epic Roast Chat Macro:
 Gui, Add, Text,, Essay About GTA Chat Macro:
 Gui, Add, Text,, Custom Text Spam Chat Macro:
-Gui, Add, Text,, Custom Spam Text (30 character limit):
+Gui, Add, Text,, Custom Spam Text (slow if above 30 characters)
 Gui, Add, Text,, Shut Up Chat Macro:
 Gui, Add, Text,, Reload Outfit:
 Gui, Add, Text,, Show UI:
@@ -191,8 +191,8 @@ Menu, Tray, Add, Hide UI, HideWindow
 Menu, Tray, Add, Save Macros, SaveConfig
 Menu, Tray, Add
 Menu, Tray, Standard
-Menu, Tray, Tip, Ryzen's Macros Version 3.6.2 FPS Edition
-Gui, Show,, Ryzen's Macros Version 3.6.2 FPS Edition
+Menu, Tray, Tip, Ryzen's Macros Version 3.6.3
+Gui, Show,, Ryzen's Macros Version 3.6.3
 GuiControlGet, AWMode
 If (AWMode = 0) {
 MsgBox, 0, Welcome!, Welcome to Ryzen's Macros. Please note that AW Mode is currently OFF. Add me on Discord (smilla kult#4725) if you have any issues. Good luck.
@@ -471,10 +471,18 @@ send {enter}
 return
 
 CustomTextSpam: ; Spams whatever your clipboard is. Copy anything to your clipboard for it to work.
+Length := StrLen(CustomSpamText)
+if (Length >= 31)
+{
+send t%CustomSpamText%{enter}
+}
+else if Length <= 30
+{
 sendinput {%CustomTextSpam% up}
 send t{shift up}
 sendinput {raw}%CustomSpamText%
 Send {enter}
+}
 return
 
 ShutUp: ; Spams "shut up"
@@ -693,6 +701,27 @@ return
 
 DiscordPriority: ; Sets the process priority of various applications.
 SetDiscordPriority:
+{
+processName := "Discord.exe"
+
+PIDs := EnumProcessesByName(processName)
+for k, PID in PIDs
+   Process, Priority, % PID, H
+
+EnumProcessesByName(procName) {
+   if !DllCall("Wtsapi32\WTSEnumerateProcesses", Ptr, 0, UInt, 0, UInt, 1, PtrP, pProcessInfo, PtrP, count)
+      throw Exception("WTSEnumerateProcesses failed. A_LastError: " . A_LastError)
+   
+   addr := pProcessInfo, PIDs := []
+   Loop % count  {
+      if StrGet( NumGet(addr + 8) ) = procName
+         PID := NumGet(addr + 4, "UInt"), PIDs.Push(PID)
+      addr += A_PtrSize = 4 ? 16 : 24
+   }
+   DllCall("Wtsapi32\WTSFreeMemory", Ptr, pProcessInfo)
+   Return PIDs
+}
+}
 {
 processName := "SocialClubHelper.exe"
 
