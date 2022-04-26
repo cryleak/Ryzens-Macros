@@ -1,6 +1,4 @@
 ﻿CFG = GTA Binds.ini
-None := F23
- := F23
 if not A_IsAdmin
 	Run *RunAs "%A_ScriptFullPath%"
 #SingleInstance, force            ; You can't start multiple instances of the macro with this on.
@@ -19,12 +17,14 @@ SetBatchLines, -1                 ; Increases speed if your macro is multiple li
 SetKeyDelay, -1, -1               ; Always increases speed. Always use, and no it won't reduce reliability by much...
 SetWinDelay, -1                   ; Window delay between window commands, it helps speed sometimes.
 SetControlDelay, -1               ; Control-modifying command delay, sometimes helps.
+Process, Priority, , H            ; Sets the task priority of these macros to high, which in theory should improve speeds. Remove this if you lag with it on.
 Process, Priority, GTA5.exe, H    ; Sets the task priority of GTA V to high, which in theory should improve FPS, mostly on lower end systems
 SetWorkingDir %A_ScriptDir%       ; Ensures a consistent starting directory. Helps for some shit.
 Goto, DiscordPriority             ; Automatically excecutes DiscordPriority when you start the script, which sets Discords's priority to High, which should make it more usable now that we increased the priority of GTA to High, and it also changes some other applications to Low.
 Macro:
 Gui, Font, q5
-Gui, Add, Picture, x0 y0 w675 h-1 +0x4000000, %A_ScriptDir%/assets/image.png
+Goto, Picture2
+Back:
 Gui, Add, Text,ym, Interaction Menu Bind:
 Gui, Add, Text,, Thermal Helmet Macro:
 Gui, Add, Text,, Fast Sniper Switch Macro:
@@ -67,6 +67,7 @@ Gui, Add, Text,, Close macros if GTA is closed?
 Gui, Add, Text,, CEO/VIP/MC mode:
 Gui, Add, Text,, AW Mode:
 Gui, Add, Text,, Use Night Vision for Thermal Macro?
+Gui, Add, Text,, Have a beatifual GUI picture?
 
 Gui, Add, Hotkey,vHelpWhatsThis yn y10,
 Gui, Add, Hotkey,vEssayAboutGTA,
@@ -80,6 +81,7 @@ Gui, Add, CheckBox, gProcessCheck3 vProcessCheck2 h20,
 Gui, Add, CheckBox, vCEOMode h20,
 Gui, Add, CheckBox, gAWMode2 vAWMode h20,
 Gui, Add, CheckBox, vNightVision h20,
+Gui, Add, CheckBox, vPicture h20,
 Gui, Add, Button, gSaveConfig,Save config and start the macros!
 Gui, Add, Button, gHideWindow,Hide window and start the macros!
 Gui, Add, Button, gExitMacros,Exit macros
@@ -100,10 +102,8 @@ Gui, Add, Checkbox, gTabWeapon2 vTabWeapon h20,
 Gui, Add, Checkbox, gCrossHair5 vCrossHair h20,
 Gui, Add, Checkbox, g2Screen2 v2Screen h20,
 
-Gui, Font, s13 q5
-Gui, Add, Text,x1350 y200, Go into Config.ini and set the bind to F23 if you want to unbind something!
-Gui, Add, Text,x1350 y225, AW MODE IS UNDER CONSTRUCTION!
-
+Goto, Picture3
+Back2:
 IniWrite,1,%CFG%,Misc,CEO Mode (always on by default. Don't change)
 IniRead,Read_CEOMode,%CFG%,Misc,CEO Mode (always on by default. Don't change)
 GuiControl,,CEOMode,%Read_CEOMode%
@@ -175,6 +175,7 @@ GuiControl,,BuyCycles,%Read_BuyCycles%
 GuiControl,,ProcessCheck2,%Read_ProcessCheck2%
 GuiControl,,AWMode,%Read_AWMode%
 GuiControl,,NightVision,%Read_NightVision%
+GuiControl,,Picture,%Read_Picture%
 GuiControl,,RPGSpam,%Read_RPGSpam%
 GuiControl,,RPGBind,%Read_RPGBind%
 GuiControl,,StickyBind,%Read_StickyBind%
@@ -190,8 +191,8 @@ Menu, Tray, Add, Hide UI, HideWindow
 Menu, Tray, Add, Save Macros, SaveConfig
 Menu, Tray, Add
 Menu, Tray, Standard
-Menu, Tray, Tip, Ryzen's Macros Version 3.6.3 FPS Edition
-Gui, Show,, Ryzen's Macros Version 3.6.3 FPS Edition
+Menu, Tray, Tip, Ryzen's Macros Version 3.7
+Gui, Show,, Ryzen's Macros Version 3.7
 GuiControlGet, AWMode
 If (AWMode = 0) {
 MsgBox, 0, Welcome!, Welcome to Ryzen's Macros. Please note that AW Mode is currently OFF. Add me on Discord (smilla kult#4725) if you have any issues. Good luck.
@@ -239,6 +240,7 @@ IniWrite,%BuyCycles%,%CFG%,Misc,Ammo Buy Cycles
 IniWrite,%ProcessCheck2%,%CFG%,Misc,Process Check
 IniWrite,%AWMode%,%CFG%,Misc,AW Mode On
 IniWrite,%NightVision%,%CFG%,Misc,Use Night Vision Thermal
+IniWrite,%Picture%,%CFG%,Misc,Picture
 IniWrite,%RPGSpam%,%CFG%,PVP Macros,RPG Spam
 IniWrite,%RPGBind%,%CFG%,Keybinds,RPG Bind
 IniWrite,%StickyBind%,%CFG%,Keybinds,Sticky Bind
@@ -248,21 +250,21 @@ IniWrite,%Crosshair%,%CFG%,Misc,Crosshair
 IniWrite,%2Screen%,%CFG%,Misc,2 Screen Setup
 }
 
-Hotkey, *$%ThermalHelmet%, ThermalHelmet
-Hotkey, *$%FastSniperSwitch%, FastSniperSwitch
-Hotkey, *$%EWO%, EWO
-Hotkey, *$%BST%, BST
-Hotkey, *$%Ammo%, Ammo
-Hotkey, *$%FastRespawn%, FastRespawn
-Hotkey, %Suspend%, Suspend
-Hotkey, %GTAHax%, GTAHax
-Hotkey, %HelpWhatsThis%, HelpWhatsThis
-Hotkey, %EssayAboutGTA%, EssayAboutGTA
-Hotkey, %CustomTextSpam%, CustomTextSpam
-Hotkey, %ShutUp%, ShutUp
-Hotkey, %ReloadOutfit%, ReloadOutfit
-Hotkey, %ShowUI%, ShowUI
-Hotkey, %ToggleCEO%, ToggleCEO
+Hotkey, *$%ThermalHelmet%, ThermalHelmet, UseErrorLevel
+Hotkey, *$%FastSniperSwitch%, FastSniperSwitch, UseErrorLevel
+Hotkey, *$%EWO%, EWO, UseErrorLevel
+Hotkey, *$%BST%, BST, UseErrorLevel
+Hotkey, *$%Ammo%, Ammo, UseErrorLevel
+Hotkey, *$%FastRespawn%, FastRespawn, UseErrorLevel
+Hotkey, %Suspend%, Suspend, UseErrorLevel
+Hotkey, %GTAHax%, GTAHax, UseErrorLevel
+Hotkey, %HelpWhatsThis%, HelpWhatsThis, UseErrorLevel
+Hotkey, %EssayAboutGTA%, EssayAboutGTA, UseErrorLevel
+Hotkey, %CustomTextSpam%, CustomTextSpam, UseErrorLevel
+Hotkey, %ShutUp%, ShutUp, UseErrorLevel
+Hotkey, %ReloadOutfit%, ReloadOutfit, UseErrorLevel
+Hotkey, %ShowUI%, ShowUI, UseErrorLevel
+Hotkey, %ToggleCEO%, ToggleCEO, UseErrorLevel
 Goto, LaunchCycle
 ;                                                                            ———Macro Code———
 ThermalHelmet: ; Toggles thermal helmet. Hold the "L" key in order to use it if you are not in a CEO or MC.
@@ -376,11 +378,11 @@ Sleep 1500
 DllCall("SetCursorPos", int, 300, int, 298) ;Line 1
 send {LButton}{BackSpace}262145
 DllCall("SetCursorPos", int, 300, int, 328) ;Line 2
-send {LButton}{BackSpace}28057
+send {LButton}{BackSpace}28073
 DllCall("SetCursorPos", int, 324, int, 585) ;Write
 send {LButton}
 DllCall("SetCursorPos", int, 300, int, 328) ;Line 2
-Send {LButton}{BackSpace}8
+Send {LButton}{BackSpace}4
 DllCall("SetCursorPos", int, 324, int, 585) ;Write
 send {LButton}
 sleep 100
@@ -574,28 +576,28 @@ GuiControlGet, TabWeapon
 GuiControlGet, AWMode
 If (TabWeapon = 0)
 {
-Hotkey, *$%RPGSpam%, RPGSpam, Off
-Hotkey, *$%SniperBind%, SniperBind, Off
-Hotkey, *$%RPGBind%, RPGBind, Off
-Hotkey, *$%StickyBind%, StickyBind, Off
-Hotkey, *$%PistolBind%, PistolBind, Off
+Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel Off
+Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel Off
+Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel Off
+Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
+Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
 }
 else
 {
   If (AWMode = 0)
    {
-    Hotkey, *$%RPGSpam%, RPGSpam, Off
-    Hotkey, *$%SniperBind%, SniperBind, Off
-    Hotkey, *$%RPGBind%, RPGBind, Off
-    Hotkey, *$%StickyBind%, StickyBind, Off
-    Hotkey, *$%PistolBind%, PistolBind, Off
+    Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel Off
+    Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel Off
+    Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel Off
+    Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
+    Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
   }
    else{
-Hotkey, *$%RPGSpam%, RPGSpam, On
-Hotkey, *$%SniperBind%, SniperBind, On
-Hotkey, *$%RPGBind%, RPGBind, On
-Hotkey, *$%StickyBind%, StickyBind, On 
-Hotkey, *$%PistolBind%, PistolBind, On
+Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel On
+Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel On
+Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel On
+Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel On 
+Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel On
       }								
 }
 return
@@ -605,29 +607,29 @@ GuiControlGet, TabWeapon
 GuiControlGet, AWMode
 If (TabWeapon = 0)
 {
-Hotkey, *$%RPGSpam%, RPGSpam, Off
-Hotkey, *$%SniperBind%, SniperBind, Off
-Hotkey, *$%RPGBind%, RPGBind, Off
-Hotkey, *$%StickyBind%, StickyBind, Off
-Hotkey, *$%PistolBind%, PistolBind, Off
+Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel Off
+Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel Off
+Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel Off
+Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
+Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
 }
 else
 {
   If (AWMode = 0)
    {
-    Hotkey, *$%RPGSpam%, RPGSpam, Off
-    Hotkey, *$%SniperBind%, SniperBind, Off
-    Hotkey, *$%RPGBind%, RPGBind, Off
-    Hotkey, *$%StickyBind%, StickyBind, Off
-    Hotkey, *$%PistolBind%, PistolBind, Off
+    Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel Off
+    Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel Off
+    Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel Off
+    Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
+    Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
     MsgBox, 0, AW Mode, AW Mode is now DEACTIVATED
   }
    else{
-Hotkey, *$%RPGSpam%, RPGSpam, On
-Hotkey, *$%SniperBind%, SniperBind, On
-Hotkey, *$%RPGBind%, RPGBind, On
-Hotkey, *$%StickyBind%, StickyBind, On 
-Hotkey, *$%PistolBind%, PistolBind, On
+Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel On
+Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel On
+Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel On
+Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel On 
+Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel On
 MsgBox, 0, AW Mode, AW Mode has been ACTIVATED
       }								
 }
@@ -701,6 +703,27 @@ return
 DiscordPriority: ; Sets the process priority of various applications.
 SetDiscordPriority:
 {
+processName := "Discord.exe"
+
+PIDs := EnumProcessesByName(processName)
+for k, PID in PIDs
+   Process, Priority, % PID, H
+
+EnumProcessesByName(procName) {
+   if !DllCall("Wtsapi32\WTSEnumerateProcesses", Ptr, 0, UInt, 0, UInt, 1, PtrP, pProcessInfo, PtrP, count)
+      throw Exception("WTSEnumerateProcesses failed. A_LastError: " . A_LastError)
+   
+   addr := pProcessInfo, PIDs := []
+   Loop % count  {
+      if StrGet( NumGet(addr + 8) ) = procName
+         PID := NumGet(addr + 4, "UInt"), PIDs.Push(PID)
+      addr += A_PtrSize = 4 ? 16 : 24
+   }
+   DllCall("Wtsapi32\WTSFreeMemory", Ptr, pProcessInfo)
+   Return PIDs
+}
+}
+{
 processName := "SocialClubHelper.exe"
 
 PIDs := EnumProcessesByName2(processName)
@@ -772,34 +795,6 @@ WinActivate ahk_class grcWindow
 Goto, Macro
 
 LaunchCycle:
-GuiControlGet, TabWeapon
-GuiControlGet, AWMode
-If (TabWeapon = 0)
-   {
-Hotkey, *$%RPGSpam%, RPGSpam, Off
-Hotkey, *$%SniperBind%, SniperBind, Off
-Hotkey, *$%RPGBind%, RPGBind, Off
-Hotkey, *$%StickyBind%, StickyBind, Off
-Hotkey, *$%PistolBind%, PistolBind, Off
-   }
-else
-   {
-  If (AWMode = 0)
-   {
-    Hotkey, *$%RPGSpam%, RPGSpam, Off
-    Hotkey, *$%SniperBind%, SniperBind, Off
-    Hotkey, *$%RPGBind%, RPGBind, Off
-    Hotkey, *$%StickyBind%, StickyBind, Off
-    Hotkey, *$%PistolBind%, PistolBind, Off
-  }
-   else{
-Hotkey, *$%RPGSpam%, RPGSpam, On
-Hotkey, *$%SniperBind%, SniperBind, On
-Hotkey, *$%RPGBind%, RPGBind, On
-Hotkey, *$%StickyBind%, StickyBind, On 
-Hotkey, *$%PistolBind%, PistolBind, On
-      }								
-      }
 GuiControlGet, ProcessCheck2
 if (ProcessCheck2 = 0) {
 SetTimer, ProcessCheckTimer, Off
@@ -847,8 +842,62 @@ Gui, QuickMacroCrosshair: Hide
 }
 else {
 }
+Goto, TabSave
+
+TabSave:
+GuiControlGet, TabWeapon
+GuiControlGet, AWMode
+If (TabWeapon = 0)
+   {
+Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel Off
+Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel Off
+Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel Off
+Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
+Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
+   }
+else
+   {
+  If (AWMode = 0)
+   {
+    Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel Off
+    Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel Off
+    Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel Off
+    Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
+    Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
+  }
+   else{
+Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel On
+Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel On
+Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel On
+Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel On
+Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel On
+      }								
+      }
 #Include *i PutYourOwnScriptsHere.ahk
 return
+
+Picture2:
+IniRead,Read_Picture,%CFG%,Misc,Picture
+If (Read_Picture = 0) {
+Goto, Back
+}
+else{
+Gui, Add, Picture, x0 y0 w770 h-1 +0x4000000, %A_ScriptDir%/assets/image.png
+Goto, Back
+}
+
+Picture3:
+IniRead,Read_Picture,%CFG%,Misc,Picture
+If (Read_Picture = 0) {
+Gui, Font, s13 q5
+Gui, Add, Text,x740 y200, AW MODE IS UNDER CONSTRUCTION!
+Goto, Back2
+}
+else{
+Gui, Font, s13 q5
+Gui, Add, Text,x1510 y200, AW MODE IS UNDER CONSTRUCTION!
+Goto, Back2
+}
 
 Delete:
 send {f23}
