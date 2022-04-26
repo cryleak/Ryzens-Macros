@@ -1,4 +1,5 @@
 ﻿CFG = GTA Binds.ini
+CrosshairDone := 0
 if not A_IsAdmin
 	Run *RunAs "%A_ScriptFullPath%"
 #SingleInstance, force            ; You can't start multiple instances of the macro with this on.
@@ -264,7 +265,7 @@ Hotkey, %ShutUp%, ShutUp, UseErrorLevel
 Hotkey, %ReloadOutfit%, ReloadOutfit, UseErrorLevel
 Hotkey, %ShowUI%, ShowUI, UseErrorLevel
 Hotkey, %ToggleCEO%, ToggleCEO, UseErrorLevel
-Goto, LaunchCycle
+Goto, Crosshair500
 ;                                                                            ———Macro Code———
 ThermalHelmet: ; Toggles thermal helmet. Hold the "L" key in order to use it if you are not in a CEO or MC.
 GuiControlGet, CEOMode ; Retrieves 1 if it is checked, 0 if it is unchecked.
@@ -778,7 +779,11 @@ if (ProcessCheck2 = 0) {
 SetTimer, ProcessCheckTimer, Off
    } else {
 SetTimer, ProcessCheckTimer, 3000
-   }
+}
+Goto, TabSave
+
+Crosshair500:
+If (CrosshairDone = 0) {
 GuiControlGet, Crosshair
 GuiControlGet, AWMode
 	if(crossHair = 1) {
@@ -820,7 +825,9 @@ Gui, QuickMacroCrosshair: Hide
 }
 else {
 }
-Goto, TabSave
+}
+CrosshairDone := 1
+Goto, LaunchCycle
 
 TabSave:
 GuiControlGet, TabWeapon
