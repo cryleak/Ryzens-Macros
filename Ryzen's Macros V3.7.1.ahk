@@ -195,10 +195,10 @@ Menu, Tray, Tip, Ryzen's Macros Version 3.7.1
 Gui, Show,, Ryzen's Macros Version 3.7.1
 GuiControlGet, AWMode
 If (AWMode = 0) {
-MsgBox, 0, Welcome!, Welcome to Ryzen's Macros. Please note that AW Mode is currently OFF. Add me on Discord (smilla kult#4725) if you have any issues. Good luck.
+MsgBox, 0, Welcome!, Welcome to Ryzen's Macros. Please note that AW Mode is currently OFF. Add me on Discord (Eqavious Pringle#6666) if you have any issues. Good luck.
 }
 else {
-MsgBox, 0, Welcome!, Welcome to Ryzen's Macros. Please note that AW Mode is currently ON. Add me on Discord (smilla kult#4725) if you have any issues. Good luck.
+MsgBox, 0, Welcome!, Welcome to Ryzen's Macros. Please note that AW Mode is currently ON. Add me on Discord (Eqavious Pringle#6666) if you have any issues. Good luck.
 }
 return
 
@@ -313,7 +313,6 @@ GuiControlGet, CEOMode ; Retrieves 1 if it is checked, 0 if it is unchecked.
 If (CEOMode = 0)
 {
 MsgBox, 0, ur retarded, why the fuck are you trying to use bst when ur not in a ceo
-ControlSetText, Button1, &Add 
 return
 }
 else
