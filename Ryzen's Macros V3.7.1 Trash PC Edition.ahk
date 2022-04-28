@@ -2,25 +2,25 @@
 CrosshairDone := 0
 if not A_IsAdmin
 	Run *RunAs "%A_ScriptFullPath%"
-#SingleInstance, force            ; You can't start multiple instances of the macro with this on.
-#IfWinActive ahk_class grcWindow  ; Disables hotkeys when alt-tabbed or GTA is closed. Restart macro if you decide to restart GTA with this enabled.
-#IfWinActive Grand Theft Auto V   ; Same as above, just makes it more reliable.
-#MaxThreadsPerHotkey 1            ; Absolute cancer if above 1. Doesn't increase speed.
-#MaxThreads 99999                 ; Allows you to run multiple macros at once, at least I think so...
-#MaxThreadsBuffer On              ; Doesn't matter as long as MaxThreadsPerHotkey is 1, otherwise turn it off or you will get cancer.
-#MaxHotkeysPerInterval 99000000   ; You will get an error message if you reach this limit, so I increased it to a ridiculously high number, so that can't happen.
-#KeyHistory 0                     ; Useful for debugging, displays what keys you have pressed. Reduces performance when on though.
-#HotkeyInterval 99000000          ; You will get an error message if you reach this limit, so I increased it to a ridiculously high number, so that can't happen.     
-ListLines Off                     ; Useful for debugging. Improves performance with it off.
+#SingleInstance, force
+#IfWinActive ahk_class grcWindow
+#IfWinActive Grand Theft Auto V
+#MaxThreadsPerHotkey 1
+#MaxThreads 99999
+#MaxThreadsBuffer On
+#MaxHotkeysPerInterval 99000000
+#KeyHistory 0 
+#HotkeyInterval 99000000
+ListLines Off
 SetTitleMatchMode, 2
-SetDefaultMouseSpeed, 0           ; Could theoretically increase speed in some situations.
-SetBatchLines, -1                 ; Increases speed if your macro is multiple lines long. Increase CPU usage, so if you are lagging with these macros, even after reducing priority, remove this line.
-SetKeyDelay, -1, -1               ; Always increases speed. Always use, and no it won't reduce reliability by much...
-SetWinDelay, -1                   ; Window delay between window commands, it helps speed sometimes.
-SetControlDelay, -1               ; Control-modifying command delay, sometimes helps.
-Process, Priority, GTA5.exe, H    ; Sets the task priority of GTA V to high, which in theory should improve FPS, mostly on lower end systems
-SetWorkingDir %A_ScriptDir%       ; Ensures a consistent starting directory. Helps for some shit.
-Goto, DiscordPriority             ; Automatically excecutes DiscordPriority when you start the script, which sets Discords's priority to High, which should make it more usable now that we increased the priority of GTA to High, and it also changes some other applications to Low.
+SetDefaultMouseSpeed, 0
+SetBatchLines, -1
+SetKeyDelay, -1, -1
+SetWinDelay, -1
+SetControlDelay, -1
+Process, Priority, GTA5.exe, H
+SetWorkingDir %A_ScriptDir%
+Goto, DiscordPriority
 Macro:
 Gui, Font, q5
 Goto, Picture2
@@ -85,7 +85,7 @@ Gui, Add, CheckBox, vNightVision h20,
 Gui, Add, CheckBox, vPicture h20,
 Gui, Add, Checkbox, gCrossHair5 vCrossHair h20,
 Gui, Add, Button, gSaveConfig,Save config and start the macros!
-Gui, Add, Button, gHideWindow,Hide window and start the macros!
+Gui, Add, Button, gHideWindow,Hide window
 Gui, Add, Button, gExitMacros,Exit macros
 
 Gui, Add, Text,ys y10, AW Mode ONLY RPG Spam
@@ -207,9 +207,11 @@ return
 
 ExitMacros:
 ExitApp
+return
 
 HideWindow:
-Gui, Submit
+Gui, Hide
+return
 
 SaveConfig:
 Gui, Submit, NoHide
@@ -267,15 +269,13 @@ Hotkey, %ShowUI%, ShowUI, UseErrorLevel
 Hotkey, %ToggleCEO%, ToggleCEO, UseErrorLevel
 Hotkey, %Jobs%, Jobs, UseErrorLevel
 Goto, Crosshair500
-;                                                                            ———Macro Code———
-ThermalHelmet: ; Toggles thermal helmet. Hold the "L" key in order to use it if you are not in a CEO or MC.
-GuiControlGet, CEOMode ; Retrieves 1 if it is checked, 0 if it is unchecked.
-If (CEOMode = 0)
-{
+
+ThermalHelmet:
+GuiControlGet, CEOMode
+If (CEOMode = 0) {
 send {%InteractionMenuKey%}{down 3}{enter}{down}{enter}
 }
-else
-{
+else {
 send {%InteractionMenuKey%}{down 4}{enter}{down}{enter}
 }
 GuiControlGet, NightVision
@@ -287,7 +287,7 @@ send {space}{%InteractionMenuKey%}
 }
 return
 
-FastSniperSwitch: ; Switches from sniper to marksman and back to sniper rapidly. You must have the normal sniper rifle removed from your loadout for this to work.
+FastSniperSwitch:
 send {%SniperBind%}
 sleep 20
 send {lbutton}
@@ -297,7 +297,7 @@ sleep 20
 send {lbutton}
 return
 
-EWO: ; Kills yourself instantly. Now has a 5 minute cooldown unless using GTAHax or something similar.
+EWO:
 sendinput {%EWOSpecialAbilitySlashActionKey% down}{%EWOLookBehindKey% down}{lbutton up}{rbutton up}{enter down}{g down}
 send {%InteractionMenuKey%}{up}
 sendinput {wheelup}{enter up}
@@ -307,32 +307,27 @@ sendinput {%EWOLookBehindKey% up}{< up}{g up}{%EWOSpecialAbilitySlashActionKey% 
 setcapslockstate, off
 return
 
-BST: ; Drops BST. Must be in CEO obviously.
-GuiControlGet, CEOMode ; Retrieves 1 if it is checked, 0 if it is unchecked.
-If (CEOMode = 0)
-{
+BST:
+GuiControlGet, CEOMode
+If (CEOMode = 0) {
 MsgBox, 0, ur retarded, why the fuck are you trying to use bst when ur not in a ceo
 return
 }
-else
-{
+else {
 send {%InteractionMenuKey%}{enter}{down 4}{enter}{down}{enter}
 }
 return
 
 Ammo: ; Buys ammo.
 BuyCycles -= 1
-GuiControlGet, CEOMode ; Retrieves 1 if it is checked, 0 if it is unchecked.
-If (CEOMode = 0)
-{
+GuiControlGet, CEOMode
+If (CEOMode = 0) {
 send {%InteractionMenuKey%}{down 2}{enter}{down 5}{enter}{up}{enter}
 }
-else
-{
+else {
 send {%InteractionMenuKey%}{down 3}{enter}{down 5}{enter}{up}{enter}
 }
-Loop, %BuyCycles%
-{
+Loop, %BuyCycles% {
 send {up 2}{enter}{down 2}
 sleep %SleepTime%
 send {enter}
@@ -341,51 +336,27 @@ send {%InteractionMenuKey%}
 BuyCycles += 1
 return
 
-FastRespawn: ; Respawns extremely fast.
+FastRespawn:
 send {lbutton 30}
 return
 
-Suspend: ; Suspends the entire macro until you press it again.
+Suspend:
 Suspend
 return
 
-;                                             EXTREMELY LONG AND CONFUSING MACROS BELOW, DON'T MESS WITH THEM UNLESS YOU WANT TO HAVE A BRAIN HEMMORAGE WHEN YOU TRY TO UNDERSTAND HOW THEY WORK
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GTAHax: ; Applies the EWO no cooldown code using GTAHax.
+GTAHax:
 sendinput {%GTAHax% up}
 Run, GTAHaXUI.exe, %A_ScriptDir%, , Max
 Sleep 1500
-DllCall("SetCursorPos", int, 300, int, 298) ;Line 1
+DllCall("SetCursorPos", int, 300, int, 298)
 send {LButton}{BackSpace}262145
-DllCall("SetCursorPos", int, 300, int, 328) ;Line 2
+DllCall("SetCursorPos", int, 300, int, 328)
 send {LButton}{BackSpace}28073
-DllCall("SetCursorPos", int, 324, int, 585) ;Write
+DllCall("SetCursorPos", int, 324, int, 585)
 send {LButton}
-DllCall("SetCursorPos", int, 300, int, 328) ;Line 2
+DllCall("SetCursorPos", int, 300, int, 328) 
 Send {LButton}{BackSpace}4
-DllCall("SetCursorPos", int, 324, int, 585) ;Write
+DllCall("SetCursorPos", int, 324, int, 585) 
 send {LButton}
 sleep 100
 WinClose, who the fuck even uses this shit
@@ -393,7 +364,7 @@ sleep 100
 WinActivate ahk_class grcWindow
 return
 
-HelpWhatsThis: ; Spams "don't care + didn't ask + cry about it + stay mad + get real + L + mald seethe cope harder + hoes mad + basic + skill issue + ratio + you fell off + the audacity + triggered + any askers + redpilled + get a life + ok and? + cringe + touch grass + donowalled + not based + you’re a (insert stereotype) + not funny didn't laugh + you're* + grammar issue + go outside + get good + reported + ad hominem + GG! + ur mom"
+HelpWhatsThis:
 sendinput {%HelpWhatsThis% up}
 send td
 sendinput on’t care {Numpadadd} didn't ask {Numpadadd} cry a
@@ -428,7 +399,7 @@ sendinput {space}ad hominem {Numpadadd} GG{shift down}1{shift up} {Numpadadd} ur
 send {enter}
 return
 
-EssayAboutGTA: ; Complains about how bad the FPS is in GTA Online.
+EssayAboutGTA:
 sendinput {%EssayAboutGTA% up}
 send tw
 sendinput hy is my fps so shlt this game
@@ -475,16 +446,15 @@ return
 
 CustomTextSpam: ; Spams whatever your clipboard is. Copy anything to your clipboard for it to work.
 Length := StrLen(CustomSpamText)
-if (Length >= 31)
-{
-send t%CustomSpamText%{enter}
+if (Length >= 31) {
+sendraw t%CustomSpamText%{enter}
 }
 else if Length <= 30
 {
 sendinput {%CustomTextSpam% up}
 send t{shift up}
 sendinput {raw}%CustomSpamText%
-Send {enter}
+Send {enter} 
 }
 return
 
@@ -497,12 +467,10 @@ return
 
 ReloadOutfit:
 GuiControlGet, CEOMode ; Retrieves 1 if it is checked, 0 if it is unchecked.
-If (CEOMode = 0)
-{
+If (CEOMode = 0) {
 send {%InteractionMenuKey%}{down 3}{enter}
 }
-else
-{
+else {
 send {%InteractionMenuKey%}{down 4}{enter}
 }
 send {down 3}{enter 2}{%InteractionMenuKey%}
@@ -576,16 +544,14 @@ return
 TabWeapon2:
 GuiControlGet, TabWeapon
 GuiControlGet, AWMode
-If (TabWeapon = 0)
-{
+If (TabWeapon = 0) {
 Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel Off
 Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel Off
 Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel Off
 Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
 Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
 }
-else
-{
+else {
   If (AWMode = 0)
    {
     Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel Off
@@ -594,7 +560,7 @@ else
     Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
     Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
   }
-   else{
+   else {
 Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel On
 Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel On
 Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel On
@@ -607,16 +573,14 @@ return
 AWMode2:
 GuiControlGet, TabWeapon
 GuiControlGet, AWMode
-If (TabWeapon = 0)
-{
+If (TabWeapon = 0) {
 Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel Off
 Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel Off
 Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel Off
 Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
 Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
 }
-else
-{
+else {
   If (AWMode = 0)
    {
     Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel Off
@@ -626,7 +590,7 @@ else
     Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
     MsgBox, 0, AW Mode, AW Mode is now DEACTIVATED
   }
-   else{
+   else {
 Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel On
 Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel On
 Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel On
@@ -644,12 +608,10 @@ return
 ToggleCEO:
 send {%ToggleCEO%}
 GuiControlGet, CEOMode ; Retrieves 1 if it is checked, 0 if it is unchecked.
-If (CEOMode = 0)
-{
+If (CEOMode = 0) {
 GUIControl,, CEOMode, 1
 }
-else
-{
+else {
 GUIControl,, CEOMode, 0
 }
 return
@@ -843,16 +805,14 @@ Goto, LaunchCycle
 TabSave:
 GuiControlGet, TabWeapon
 GuiControlGet, AWMode
-If (TabWeapon = 0)
-   {
+If (TabWeapon = 0) {
 Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel Off
 Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel Off
 Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel Off
 Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
 Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
    }
-else
-   {
+else {
   If (AWMode = 0)
    {
     Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel Off
@@ -861,7 +821,7 @@ else
     Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
     Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
   }
-   else{
+   else {
 Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel On
 Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel On
 Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel On
@@ -877,7 +837,7 @@ IniRead,Read_Picture,%CFG%,Misc,Picture
 If (Read_Picture = 0) {
 Goto, Back
 }
-else{
+else {
 Gui, Add, Picture, x0 y0 w770 h-1 +0x4000000, %A_ScriptDir%/assets/image.png
 Goto, Back
 }
