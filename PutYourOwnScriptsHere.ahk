@@ -26,6 +26,3 @@ send {down 4} ; CEO Macro here
 return ; Use this at the end of it
 }
 
-*X::
-send 42{tab}
-return

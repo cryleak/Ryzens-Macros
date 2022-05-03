@@ -214,8 +214,8 @@ Menu, Tray, Add, Pause Script,        StandardTrayMenu
 Menu, Tray, Add, Exit,                StandardTrayMenu
 Menu, Tray, Default, Open
 
-Menu, Tray, Tip, Ryzen's Macros Version 3.7.1
-Gui, Show,, Ryzen's Macros Version 3.7.1
+Menu, Tray, Tip, Ryzen's Macros Version 3.8
+Gui, Show,, Ryzen's Macros Version 3.8
 GuiControlGet, AWMode
 If (AWMode = 0) {
 MsgBox, 0, Welcome!, Welcome to Ryzen's Macros. Please note that AW Mode is currently OFF. Add me on Discord (Eqavious Pringle#6666) if you have any issues. Good luck.
@@ -770,6 +770,9 @@ if (MCCEO2 = 0) {
    send {%InteractionMenuKey%}{enter}{up}{enter}
    sleep 200
    send {%InteractionMenuKey%}{down 7}{enter 2}
+   Loop, 20 {
+      send {backspace}{enter 2}
+}
    sleep 25
    MCCEO2 := 1
 }
@@ -777,6 +780,9 @@ if (MCCEO2 = 0) {
    send {%InteractionMenuKey%}{enter}{up}{enter}
    sleep 200
    send {%InteractionMenuKey%}{down 6}{enter 2}
+   Loop, 20 {
+      send {backspace}{enter 2}
+}
    sleep 25
    MCCEO2 := 0
 }

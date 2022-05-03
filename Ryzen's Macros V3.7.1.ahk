@@ -766,10 +766,14 @@ send {%InteractionMenuKey%}
 return
 
 MCCEO:
+sendinput {lbutton up}
 if (MCCEO2 = 0) {
    send {%InteractionMenuKey%}{enter}{up}{enter}
    sleep 200
    send {%InteractionMenuKey%}{down 7}{enter 2}
+   Loop, 20 {
+      send {backspace}{enter 2}
+}
    sleep 25
    MCCEO2 := 1
 }
@@ -777,6 +781,9 @@ if (MCCEO2 = 0) {
    send {%InteractionMenuKey%}{enter}{up}{enter}
    sleep 200
    send {%InteractionMenuKey%}{down 6}{enter 2}
+   Loop, 20 {
+      send {backspace}{enter 2}
+}
    sleep 25
    MCCEO2 := 0
 }
