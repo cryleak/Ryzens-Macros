@@ -214,8 +214,8 @@ Menu, Tray, Add, Pause Script,        StandardTrayMenu
 Menu, Tray, Add, Exit,                StandardTrayMenu
 Menu, Tray, Default, Open
 
-Menu, Tray, Tip, Ryzen's Macros Version 3.8
-Gui, Show,, Ryzen's Macros Version 3.8
+Menu, Tray, Tip, Ryzen's Macros Version 3.7.1
+Gui, Show,, Ryzen's Macros Version 3.7.1
 GuiControlGet, AWMode
 If (AWMode = 0) {
 MsgBox, 0, Welcome!, Welcome to Ryzen's Macros. Please note that AW Mode is currently OFF. Add me on Discord (Eqavious Pringle#6666) if you have any issues. Good luck.
@@ -313,12 +313,12 @@ IniWrite,%Paste%,%CFG%,Misc,Allow Copy Paste
 IniWrite,%MCCEO%,%CFG%,Misc,MC CEO Toggle
 }
 
-Hotkey, *$%ThermalHelmet%, ThermalHelmet, UseErrorLevel
-Hotkey, *$%FastSniperSwitch%, FastSniperSwitch, UseErrorLevel
-Hotkey, *$%EWO%, EWO, UseErrorLevel
-Hotkey, *$%BST%, BST, UseErrorLevel
-Hotkey, *$%Ammo%, Ammo, UseErrorLevel
-Hotkey, *$%FastRespawn%, FastRespawn, UseErrorLevel
+Hotkey, *%ThermalHelmet%, ThermalHelmet, UseErrorLevel
+Hotkey, *%FastSniperSwitch%, FastSniperSwitch, UseErrorLevel
+Hotkey, *%EWO%, EWO, UseErrorLevel
+Hotkey, *%BST%, BST, UseErrorLevel
+Hotkey, *%Ammo%, Ammo, UseErrorLevel
+Hotkey, *%FastRespawn%, FastRespawn, UseErrorLevel
 Hotkey, %Suspend%, Suspend, UseErrorLevel
 Hotkey, %GTAHax%, GTAHax, UseErrorLevel
 Hotkey, %HelpWhatsThis%, HelpWhatsThis, UseErrorLevel
@@ -330,6 +330,7 @@ Hotkey, %ShowUI%, ShowUI, UseErrorLevel
 Hotkey, %ToggleCEO%, ToggleCEO, UseErrorLevel
 Hotkey, %Jobs%, Jobs, UseErrorLevel
 Hotkey, %MCCEO%, MCCEO, UseErrorLevel
+Hotkey, *3, SniperBind2, UseErrorLevel
 Goto, Crosshair500
 
 ThermalHelmet:
@@ -427,6 +428,10 @@ sleep 100
 WinClose, who the fuck even uses this shit
 sleep 100
 WinActivate ahk_class grcWindow
+return
+
+SniperBind2:
+send 2{tab}
 return
 
 HelpWhatsThis:
@@ -637,7 +642,6 @@ Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel Off
 Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel Off
 Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel Off
 Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
-Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
 }
 else {
   If (AWMode = 0)
@@ -646,14 +650,12 @@ else {
     Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel Off
     Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel Off
     Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
-    Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
   }
    else {
 Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel On
 Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel On
 Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel On
 Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel On 
-Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel On
       }								
 }
 return
@@ -666,7 +668,6 @@ Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel Off
 Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel Off
 Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel Off
 Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
-Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
 }
 else {
   If (AWMode = 0)
@@ -675,7 +676,6 @@ else {
     Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel Off
     Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel Off
     Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
-    Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
     MsgBox, 0, AW Mode, AW Mode is now DEACTIVATED
   }
    else {
@@ -683,7 +683,6 @@ Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel On
 Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel On
 Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel On
 Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel On 
-Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel On
 MsgBox, 0, AW Mode, AW Mode has been ACTIVATED
       }								
 }
@@ -940,7 +939,6 @@ Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel Off
 Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel Off
 Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel Off
 Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
-Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
    }
 else {
   If (AWMode = 0)
@@ -949,16 +947,15 @@ else {
     Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel Off
     Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel Off
     Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
-    Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
   }
    else {
 Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel On
 Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel On
 Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel On
 Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel On
-Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel On
       }								
       }
+#Include *i PutYourOwnScriptsHere.ahk
 GuiControlGet, Paste
 If (Paste = 0) {
    Hotkey, *$^v, Paste, Off
@@ -966,7 +963,6 @@ If (Paste = 0) {
 else {
    Hotkey, *$^v, Paste, On
 }
-#Include *i PutYourOwnScriptsHere.ahk
 return
 
 Picture2:

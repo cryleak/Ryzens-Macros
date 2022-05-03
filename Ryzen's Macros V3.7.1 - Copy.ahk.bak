@@ -1,26 +1,10 @@
 ﻿CFG = GTA Binds.ini
 CrosshairDone := 0
-MCCEO2 := 0
 if not A_IsAdmin
 	Run *RunAs "%A_ScriptFullPath%"
 #SingleInstance, force
 #IfWinActive ahk_class grcWindow
 #IfWinActive Grand Theft Auto V
-#MaxThreadsPerHotkey 1
-#MaxThreads 99999
-#MaxThreadsBuffer On
-#MaxHotkeysPerInterval 99000000
-#KeyHistory 0 
-#HotkeyInterval 99000000
-ListLines Off
-SetTitleMatchMode, 2
-SetDefaultMouseSpeed, 0
-SetBatchLines, -1
-SetKeyDelay, -1, -1
-SetWinDelay, -1
-SetControlDelay, -1
-Process, Priority, , H 
-Process, Priority, GTA5.exe, H
 SetWorkingDir %A_ScriptDir%
 Goto, DiscordPriority
 Macro:
@@ -106,10 +90,8 @@ Gui, Add, Checkbox, g2Screen2 v2Screen h20,
 
 Gui, Add, Text,x1510 y200, Turn off all Job Blips Fast:
 Gui, Add, Text,x1510 y230, Make it so you can copy paste?
-Gui, Add, Text,x1510 y260, MC CEO toggle
 Gui, Add, Hotkey, vJobs x1793 y200
 Gui, Add, Checkbox, gPaste2 vPaste x1793 y230
-Gui, Add, Hotkey, vMCCEO x1793 y260
 Goto, Picture3
 Back2:
 IniWrite,1,%CFG%,Misc,CEO Mode (always on by default. Don't change)
@@ -154,7 +136,6 @@ IniRead,Read_Crosshair,%CFG%,Misc,Crosshair
 IniRead,Read_2Screen,%CFG%,Misc,2 Screen Setup
 IniRead,Read_Jobs,%CFG%,Misc,Disable All Job Blips
 IniRead,Read_Paste,%CFG%,Misc,Allow Copy Paste
-IniRead,Read_MCCEO,%CFG%,Misc,MC CEO Toggle
 
 GuiControl,,InteractionMenuKey,%Read_InteractionMenuKey%
 GuiControl,,ThermalHelmet,%Read_ThermalHelmet%
@@ -191,31 +172,16 @@ GuiControl,,Crosshair,%Read_Crosshair%
 GuiControl,,2Screen,%Read_2Screen%
 GuiControl,,Jobs,%Read_Jobs%
 GuiControl,,Paste,%Read_Paste%
-GuiControl,,MCCEO,%Read_MCCEO%
 }
-
-DetectHiddenWindows, ON
-Gui0 := WinExist( A_ScriptFullpath " ahk_pid " DllCall( "GetCurrentProcessId" ) )
-DetectHiddenWindows, OFF
 
 Menu, Tray, NoStandard
 Menu, Tray, Add, Show UI, ShowGUI
 Menu, Tray, Add, Hide UI, HideWindow
 Menu, Tray, Add, Save Macros, SaveConfig
 Menu, Tray, Add
-Menu, Tray, Add, Open,                StandardTrayMenu
-Menu, Tray, Add, Help,                StandardTrayMenu
-Menu, Tray, Add
-Menu, Tray, Add, Window Spy,          StandardTrayMenu
-Menu, Tray, Add, Reload This Script,  StandardTrayMenu
-Menu, Tray, Add
-Menu, Tray, Add, Suspend Hotkeys,     StandardTrayMenu
-Menu, Tray, Add, Pause Script,        StandardTrayMenu
-Menu, Tray, Add, Exit,                StandardTrayMenu
-Menu, Tray, Default, Open
-
-Menu, Tray, Tip, Ryzen's Macros Version 3.8
-Gui, Show,, Ryzen's Macros Version 3.8
+Menu, Tray, Standard
+Menu, Tray, Tip, Ryzen's Macros Version 3.7.1
+Gui, Show,, Ryzen's Macros Version 3.7.1
 GuiControlGet, AWMode
 If (AWMode = 0) {
 MsgBox, 0, Welcome!, Welcome to Ryzen's Macros. Please note that AW Mode is currently OFF. Add me on Discord (Eqavious Pringle#6666) if you have any issues. Good luck.
@@ -232,35 +198,6 @@ else {
 }
 return
 
-StandardTrayMenu:
-
- If ( A_ThisMenuItem = "Open" )
-   DllCall( "PostMessage", UInt,Gui0, UInt,0x111, UInt,65406, UInt,0 )
-
- If ( A_ThisMenuItem = "Help" )
-   DllCall( "PostMessage", UInt,Gui0, UInt,0x111, UInt,65411, UInt,0 )
-
- If ( A_ThisMenuItem = "Window Spy" )
-   DllCall( "PostMessage", UInt,Gui0, UInt,0x111, UInt,65402, UInt,0 )
-
- If ( A_ThisMenuItem = "Reload This Script" )
-   DllCall( "PostMessage", UInt,Gui0, UInt,0x111, UInt,65400, UInt,0 )
-
- If ( A_ThisMenuItem = "Suspend Hotkeys" ) {
-   Menu, Tray, ToggleCheck, %A_ThisMenuItem%
-   DllCall( "PostMessage", UInt,Gui0, UInt,0x111, UInt,65404, UInt,0 )
- }
-
- If ( A_ThisMenuItem = "Pause Script" ) {
-   Menu, Tray, ToggleCheck, %A_ThisMenuItem%
-   DllCall( "PostMessage", UInt,Gui0, UInt,0x111, UInt,65403, UInt,0 )
- }
-
- If ( A_ThisMenuItem = "Exit" )
-   DllCall( "PostMessage", UInt,Gui0, UInt,0x111, UInt,65405, UInt,0 )
-
-return
-
 ShowGUI:
 Gui, Show
 return
@@ -272,6 +209,7 @@ return
 HideWindow:
 Gui, Hide
 return
+
 SaveConfig:
 Gui, Submit, NoHide
 {
@@ -310,7 +248,6 @@ IniWrite,%Crosshair%,%CFG%,Misc,Crosshair
 IniWrite,%2Screen%,%CFG%,Misc,2 Screen Setup
 IniWrite,%Jobs%,%CFG%,Misc,Disable All Job Blips
 IniWrite,%Paste%,%CFG%,Misc,Allow Copy Paste
-IniWrite,%MCCEO%,%CFG%,Misc,MC CEO Toggle
 }
 
 Hotkey, *$%ThermalHelmet%, ThermalHelmet, UseErrorLevel
@@ -329,11 +266,9 @@ Hotkey, %ReloadOutfit%, ReloadOutfit, UseErrorLevel
 Hotkey, %ShowUI%, ShowUI, UseErrorLevel
 Hotkey, %ToggleCEO%, ToggleCEO, UseErrorLevel
 Hotkey, %Jobs%, Jobs, UseErrorLevel
-Hotkey, %MCCEO%, MCCEO, UseErrorLevel
 Goto, Crosshair500
 
 ThermalHelmet:
-sendinput {lbutton up}
 GuiControlGet, CEOMode
 If (CEOMode = 0) {
 send {%InteractionMenuKey%}{down 3}{enter}{down}{enter}
@@ -361,17 +296,12 @@ send {lbutton}
 return
 
 EWO:
-sendinput {%EWOSpecialAbilitySlashActionKey% down}{%EWOLookBehindKey% down}{lbutton up}{rbutton up}{enter down}{g down}
-send {%InteractionMenuKey%}{up}
-sendinput {wheelup}{enter up}
-sleep 25
-send {enter}
-sendinput {%EWOLookBehindKey% up}{< up}{g up}{%EWOSpecialAbilitySlashActionKey% up}
-setcapslockstate, off
+Send, {m}
+Sleep, 110
+Send, {End}{Up}{Up}{c down}{Enter}{C up}
 return
 
 BST:
-sendinput {lbutton up}
 GuiControlGet, CEOMode
 If (CEOMode = 0) {
 MsgBox, 0, ur retarded, why the fuck are you trying to use bst when ur not in a ceo
@@ -383,7 +313,6 @@ send {%InteractionMenuKey%}{enter}{down 4}{enter}{down}{enter}
 return
 
 Ammo: ; Buys ammo.
-sendinput {lbutton up}
 BuyCycles -= 1
 GuiControlGet, CEOMode
 If (CEOMode = 0) {
@@ -393,7 +322,7 @@ else {
 send {%InteractionMenuKey%}{down 3}{enter}{down 5}{enter}{up}{enter}
 }
 Loop, %BuyCycles% {
-send {down 2}{enter}{down 2}
+send {up 2}{Right}{down 2}
 sleep %SleepTime%
 send {enter}
 }
@@ -525,14 +454,7 @@ Send {enter}
 return
 
 Paste:
-Length2 := StrLen(Clipboard)
-if (Length2 >= 31) {
-sendraw %Clipboard%
-}
-else if Length2 <= 30
-{
 sendinput {raw}%Clipboard%
-}
 return
 
 ShutUp: ; Spams "shut up"
@@ -553,7 +475,6 @@ else {
 return
 
 ReloadOutfit:
-sendinput {lbutton up}
 GuiControlGet, CEOMode ; Retrieves 1 if it is checked, 0 if it is unchecked.
 If (CEOMode = 0) {
 send {%InteractionMenuKey%}{down 3}{enter}
@@ -694,14 +615,12 @@ Gui, Show
 return
 
 ToggleCEO:
-sendinput {lbutton up}
+send {%ToggleCEO%}
 GuiControlGet, CEOMode ; Retrieves 1 if it is checked, 0 if it is unchecked.
 If (CEOMode = 0) {
-   send {%InteractionMenuKey%}{down 6}{enter 2}
 GUIControl,, CEOMode, 1
 }
 else {
-   send {%InteractionMenuKey%}{enter}{up}{enter}
 GUIControl,, CEOMode, 0
 }
 return
@@ -748,7 +667,6 @@ send {%StickyBind%}{%RPGBind%}{tab}
 return
 
 Jobs:
-sendinput {lbutton up}
 GuiControlGet, CEOMode ; Retrieves 1 if it is checked, 0 if it is unchecked.
 If (CEOMode = 0) {
 send {%InteractionMenuKey%}{down 8}
@@ -763,23 +681,6 @@ Loop, 14 {
 send {down}{Enter}
 }
 send {%InteractionMenuKey%}
-return
-
-MCCEO:
-if (MCCEO2 = 0) {
-   send {%InteractionMenuKey%}{enter}{up}{enter}
-   sleep 200
-   send {%InteractionMenuKey%}{down 7}{enter 2}
-   sleep 25
-   MCCEO2 := 1
-}
-   else {
-   send {%InteractionMenuKey%}{enter}{up}{enter}
-   sleep 200
-   send {%InteractionMenuKey%}{down 6}{enter 2}
-   sleep 25
-   MCCEO2 := 0
-}
 return
 
 DiscordPriority: ; Sets the process priority of various applications.
@@ -959,6 +860,7 @@ Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel On
 Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel On
       }								
       }
+#Include *i PutYourOwnScriptsHere.ahk
 GuiControlGet, Paste
 If (Paste = 0) {
    Hotkey, *$^v, Paste, Off
@@ -966,7 +868,6 @@ If (Paste = 0) {
 else {
    Hotkey, *$^v, Paste, On
 }
-#Include *i PutYourOwnScriptsHere.ahk
 return
 
 Picture2:
