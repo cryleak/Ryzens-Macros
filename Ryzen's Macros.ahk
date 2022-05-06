@@ -268,8 +268,8 @@ Menu, Tray, Add, Pause Script,        StandardTrayMenu
 Menu, Tray, Add, Exit,                StandardTrayMenu
 Menu, Tray, Default, Open
 
-Menu, Tray, Tip, Ryzen's Macros Version 3.8
-Gui, Show,, Ryzen's Macros Version 3.8
+Menu, Tray, Tip, Ryzen's Macros Version 3.9
+Gui, Show,, Ryzen's Macros Version 3.9
 GuiControlGet, AWMode
 If (AWMode = 0) {
 MsgBox, 0, Welcome!, Welcome to Ryzen's Macros. Please note that AW Mode is currently OFF. Add me on Discord (Eqavious Pringle#6666) if you have any issues. Good luck.
