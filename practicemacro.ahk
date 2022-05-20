@@ -20,7 +20,7 @@ SetBatchLines, -1
 SetKeyDelay, -1, -1
 SetWinDelay, -1
 SetControlDelay, -1
-SetMouseDelay, -1
+SetMouseDelay, 9
 Process, Priority, , N
 SetWorkingDir %A_ScriptDir%
 Goto, DiscordPriority
@@ -36,7 +36,6 @@ Gui, Add, Text,, Instant EWO Macro:
 Gui, Add, Text,, EWO Look Behind (in-game) Bind:
 Gui, Add, Text,, EWO Special Ability (in-game) Bind:
 Gui, Add, Text,, BST Macro:
-Gui, Add, Text,, BST Macro MC Mode:
 Gui, Add, Text,, BST Less Reliable But Faster?
 Gui, Add, Text,, Ammo Macro:
 Gui, Add, Text,, Ammo buy wait time (ms):
@@ -53,7 +52,6 @@ Gui, Add, Hotkey,vEWO,
 Gui, Add, Hotkey,vEWOLookBehindKey,
 Gui, Add, Hotkey,vEWOSpecialAbilitySlashActionKey,
 Gui, Add, Hotkey,vBST,
-Gui, Add, Checkbox,vBSTMC h20,
 Gui, Add, Checkbox,vBSTSpeed h20,
 Gui, Add, Hotkey,vAmmo,
 Gui, Add, Edit,Number vSleepTime,
@@ -78,6 +76,7 @@ Gui, Add, Text,, Use Night Vision for Thermal Macro?
 Gui, Add, Text,, Have a beautiful GUI picture?
 Gui, Add, Text,, Crosshair:
 Gui, Add, Text,, Smoothen EWO animation? (slower)
+Gui, Add, Text,, Amount to smoothen by (more = slower)
 Gui, Add, Text,, Enable custom macros?
 
 Gui, Add, Hotkey,vHelpWhatsThis yn y10,
@@ -96,6 +95,7 @@ Gui, Add, CheckBox, vNightVision h20,
 Gui, Add, CheckBox, vPicture h20,
 Gui, Add, Checkbox, gCrossHair5 vCrossHair h20,
 Gui, Add, Checkbox, vSmoothEWO h20,
+Gui, Add, Edit, vSmoothEWOTime h20,
 Gui, Add, Checkbox, vIncludeMacros gIncludeMacros2 h20,
 Gui, Add, Button, gSaveConfig,Save config and start the macros!
 Gui, Add, Button, gHideWindow,Hide window
@@ -139,6 +139,9 @@ Gui, Add, Hotkey, vIncludeHotkeyChat1 x1793 y470
 Gui, Add, Hotkey, vIncludeHotkeyChat2 x1793 y500
 Goto, Picture3
 Back2:
+IniWrite,1,%CFG%,Misc,CEO Mode (always on by default. Don't change)
+IniRead,Read_CEOMode,%CFG%,Misc,CEO Mode (always on by default. Don't change)
+GuiControl,,CEOMode,%Read_CEOMode%
 
 Hotkey, *$CapsLock, DisableCapsLock
 
@@ -182,6 +185,7 @@ IniRead,Read_Jobs,%CFG%,Misc,Disable All Job Blips
 IniRead,Read_Paste,%CFG%,Misc,Allow Copy Paste
 IniRead,Read_MCCEO,%CFG%,Misc,MC CEO Toggle
 IniRead,Read_SmoothEWO,%CFG%,Misc,Smooth EWO
+IniRead,Read_SmoothEWOTime,%CFG%,Misc,Smooth EWO Time
 IniRead,Read_IncludeMacros,%CFG%,Misc,Include Macros
 IniRead,Read_IncludeHotkey1,%CFG%,Misc,Include Hotkey #1
 IniRead,Read_IncludeHotkey2,%CFG%,Misc,Include Hotkey #2
@@ -240,6 +244,7 @@ GuiControl,,Jobs,%Read_Jobs%
 GuiControl,,Paste,%Read_Paste%
 GuiControl,,MCCEO,%Read_MCCEO%
 GuiControl,,SmoothEWO,%Read_SmoothEWO%
+GuiControl,,SmoothEWOTime,%Read_SmoothEWOTime%
 GuiControl,,IncludeMacros,%Read_IncludeMacros%
 GuiControl,,IncludeHotkey1,%Read_IncludeHotkey1%
 GuiControl,,IncludeHotkey2,%Read_IncludeHotkey2%
@@ -249,8 +254,6 @@ GuiControl,,IncludeHotkey2,%Read_IncludeHotkey5%
 GuiControl,,IncludeHotkey2,%Read_IncludeHotkey6%
 GuiControl,,IncludeHotkeyChat1,%Read_IncludeHotkeyChat1%
 GuiControl,,IncludeHotkeyChat2,%Read_IncludeHotkeyChat2%
-GuiControl,,BSTMC,0
-GuiControl,,CEOMode,1
 }
 
 DetectHiddenWindows, ON
@@ -374,6 +377,7 @@ IniWrite,%Jobs%,%CFG%,Misc,Disable All Job Blips
 IniWrite,%Paste%,%CFG%,Misc,Allow Copy Paste
 IniWrite,%MCCEO%,%CFG%,Misc,MC CEO Toggle
 IniWrite,%SmoothEWO%,%CFG%,Misc,Smooth EWO
+IniWrite,%SmoothEWOTime%,%CFG%,Misc,Smooth EWO Time
 IniWrite,%IncludeMacros%,%CFG%,Misc,Include Macros
 IniWrite,%IncludeHotkey1%,%CFG%,Misc,Include Hotkey #1
 IniWrite,%IncludeHotkey2%,%CFG%,Misc,Include Hotkey #2
@@ -387,7 +391,7 @@ IniWrite,%IncludeHotkeyChat2%,%CFG%,Misc,Include Hotkey Chat #2
 
 Hotkey, *$%ThermalHelmet%, ThermalHelmet, UseErrorLevel
 Hotkey, *$%FastSniperSwitch%, FastSniperSwitch, UseErrorLevel
-Hotkey, *$%EWO%, EWO, UseErrorLevel
+Hotkey, *$lbutton, EWO, UseErrorLevel
 Hotkey, *$%BST%, BST, UseErrorLevel
 Hotkey, *$%Ammo%, Ammo, UseErrorLevel
 Hotkey, *$%FastRespawn%, FastRespawn, UseErrorLevel
@@ -436,40 +440,40 @@ send {space}{%InteractionMenuKey%}
 return
 
 FastSniperSwitch:
-send {%SniperBind%}
-sendinput {lbutton down}
-sleep 9
-sendinput {lbutton up}
-send {%SniperBind%}
+send {%SniperBind%}{lbutton}{%SniperBind%}
 sendinput {lbutton down}
 sleep 30
 sendinput {lbutton up}
 return
 
 EWO:
+send {lbutton}
+sleep 50
 GuiControlGet, SmoothEWO
-sendinput {lshift up}{lbutton up}{rbutton up}{enter down}
 if (SmoothEWO = 1) {
+   sendinput {lshift up}{%EWOLookBehindKey% down}
+   sendinput {lbutton up}{rbutton up}{enter down}{g down}
    send {%InteractionMenuKey%}
-   sleep 45
-   sendinput {%EWOLookBehindKey% down}
-   sleep 35
-   sendinput {wheelup}
-   sleep 35
-   sendinput {wheelup}{%EWOSpecialAbilitySlashActionKey% down}
-   sleep 45
-   send {enter}
+   sleep %SmoothEWOTime%
+   sleep %SmoothEWOTime%
+   sleep %SmoothEWOTime%
+   send {up}
+   sleep %SmoothEWOTime%
+   send {up}
+   sleep %SmoothEWOTime%
+   sendinput {%EWOSpecialAbilitySlashActionKey% down}
+   sleep %SmoothEWOTime%
+   sendinput {enter up}
 } else {
-sendinput {up down}{%EWOSpecialAbilitySlashActionKey% down}{%EWOLookBehindKey% down}{g down}{%InteractionMenuKey% down}
-send {f24 down}{23 down}{f22 down}{f21 down}
+sendinput  {lshift up}{%EWOSpecialAbilitySlashActionKey% down}{%EWOLookBehindKey% down}{lbutton up}{rbutton up}{enter down}{g down}
+send {%InteractionMenuKey%}{up}
 sendinput {wheelup}{enter up}
 }
 sleep 25
 send {enter}
-sendinput {%InteractionMenuKey% up}{%EWOLookBehindKey% up}{< up}{g up}{up up}
+sendinput {%EWOLookBehindKey% up}{< up}{g up}{%EWOSpecialAbilitySlashActionKey% up}
 sleep 25
 send {%InteractionMenuKey%}
-sendinput {f24 up}{f23 up}{f22 up}{f21 up}{%EWOSpecialAbilitySlashActionKey% up}
 setcapslockstate, off
 return
 
@@ -477,20 +481,17 @@ BST:
 sendinput {lbutton up}
 GuiControlGet, CEOMode
 GuiControlGet, BSTSpeed
-GuiControlGet, BSTMC
 If (CEOMode = 0) {
    MsgBox, 0, ur retarded, why the fuck are you trying to use bst when ur not in a ceo
 }
 else {
-   if (BSTMC = 1) {
-      send {%InteractionMenuKey%}{enter}{down}{enter}{up}{enter}
-   }
-   else if (BSTSpeed = 1) {
-         send {%InteractionMenuKey%}{enter}{up 3}{enter}{down}{enter}
+   if (BSTSpeed = 1) {
+         send {%InteractionMenuKey%}{enter}{up 3}
 }
 else {
-         send {%InteractionMenuKey%}{enter}{down 4}{enter}{down}{enter}
+         send {%InteractionMenuKey%}{enter}{down 4}
       }
+      send {enter}{down}{enter}
 }
 return
 
@@ -514,12 +515,7 @@ BuyCycles += 1
 return
 
 FastRespawn:
-Loop, 30 {
-send {lbutton down}
-sleep 20
-send {lbutton up}
-sleep 5
-}
+send {lbutton 30}
 return
 
 Suspend:
@@ -675,10 +671,7 @@ send {down 3}{enter 2}{%InteractionMenuKey%}
 return
 
 DisableCapsLock: ; Disables CapsLock, so you can't press it.
-send {CapsLock down}
-sleep 75
-send {CapsLock up}
-sleep 25
+send {CapsLock}
 setcapslockstate, off
 return
 
@@ -1037,6 +1030,12 @@ EnumProcessesByName4(procName) {
    Return PIDs
 }
 }
+Run, snipercrashfix.exe, %A_ScriptDir%\Recommended to use, , Max
+Sleep 750
+send {enter}
+sleep 250
+WinKill, snipercrashfix.exe
+WinActivate ahk_class grcWindow
 Goto, Macro
 
 LaunchCycle:
