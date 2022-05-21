@@ -1,5 +1,6 @@
 ﻿;@Ahk2Exe-AddResource gta.ico
 CFG = GTA Binds.ini
+MacroVersion = 3.10.1
 CrosshairDone := 0
 MCCEO2 := 0
 if not A_IsAdmin
@@ -100,6 +101,7 @@ Gui, Add, Checkbox, vIncludeMacros gIncludeMacros2 h20,
 Gui, Add, Button, gSaveConfig,Save config and start the macros!
 Gui, Add, Button, gHideWindow,Hide window
 Gui, Add, Button, gExitMacros,Exit macros
+Gui, Add, Button, gFlawless, Apply Flawless Widescreen fix!
 
 Gui, Add, Text,ys y10, AW Mode ONLY RPG Spam
 Gui, Add, Text,, RPG (in-game) Bind:
@@ -273,8 +275,8 @@ Menu, Tray, Add, Pause Script,        StandardTrayMenu
 Menu, Tray, Add, Exit,                StandardTrayMenu
 Menu, Tray, Default, Open
 
-Menu, Tray, Tip, Ryzen's Macros Version 3.10
-Gui, Show,, Ryzen's Macros Version 3.10
+Menu, Tray, Tip, Ryzen's Macros Version %MacroVersion%
+Gui, Show,, Ryzen's Macros Version %MacroVersion%
 GuiControlGet, AWMode
 If (AWMode = 0) {
 MsgBox, 0, Welcome!, Welcome to Ryzen's Macros. Please note that AW Mode is currently OFF. Add me on Discord (Eqavious Pringle#6666) if you have any issues. Good luck.
@@ -319,6 +321,13 @@ StandardTrayMenu:
    DllCall( "PostMessage", UInt,Gui0, UInt,0x111, UInt,65405, UInt,0 )
 
 return
+
+Flawless:
+MsgBox, 0, Info, This fixes slow chat macros and slower overall macros when Flawless Widescreen is running.
+   MsgBox, 0, IMPORTANT!, Make sure you have applied the settings you want to use already inside Flawless Widescreen!
+      Process, Close, FlawlessWidescreen.exe
+         MsgBox, 0, Fix applied, Fix applied please DM me if it doesn't work.
+Return
 
 ShowGUI:
 Gui, Show
@@ -415,66 +424,66 @@ Hotkey, *%IncludeHotkeyChat2%, IncludeHotkeyChat02, UseErrorLevel
 goto, LaunchCycle
 
 ThermalHelmet:
-sendinput {lbutton up}
+SendInput {lbutton up}
 GuiControlGet, CEOMode
 If (CEOMode = 0) {
-send {%InteractionMenuKey%}{down 3}{enter}{down}{enter}
+Send {%InteractionMenuKey%}{down 3}{enter}{down}{enter}
 }
 else {
-send {%InteractionMenuKey%}{down 4}{enter}{down}{enter}
+Send {%InteractionMenuKey%}{down 4}{enter}{down}{enter}
 }
 GuiControlGet, NightVision
 If (NightVision = 0) {
-send {down 4}
+Send {down 4}
 sleep 50
-send {space}{%InteractionMenuKey%}
+Send {space}{%InteractionMenuKey%}
 }
 else {
 sleep 50
-send {space}{%InteractionMenuKey%}
+Send {space}{%InteractionMenuKey%}
 }
 return
 
 FastSniperSwitch:
-send {%SniperBind%}
-sendinput {lbutton down}
+Send {%SniperBind%}
+SendInput {lbutton down}
 sleep 9
-sendinput {lbutton up}
-send {%SniperBind%}
-sendinput {lbutton down}
+SendInput {lbutton up}
+Send {%SniperBind%}
+SendInput {lbutton down}
 sleep 30
-sendinput {lbutton up}
+SendInput {lbutton up}
 return
 
 EWO:
 GuiControlGet, SmoothEWO
-sendinput {lshift up}{lbutton up}{rbutton up}{enter down}
+SendInput {lshift up}{lbutton up}{rbutton up}{enter down}
 if (SmoothEWO = 1) {
-   send {%InteractionMenuKey%}
+   Send {%InteractionMenuKey%}
    sleep 45
-   sendinput {%EWOLookBehindKey% down}
+   SendInput {%EWOLookBehindKey% down}
    sleep 35
-   sendinput {wheelup}
+   SendInput {wheelup}
    sleep 35
-   sendinput {wheelup}{%EWOSpecialAbilitySlashActionKey% down}
+   SendInput {wheelup}{%EWOSpecialAbilitySlashActionKey% down}
    sleep 45
-   send {enter}
+   Send {enter}
 } else {
-sendinput {up down}{%EWOSpecialAbilitySlashActionKey% down}{%EWOLookBehindKey% down}{g down}{%InteractionMenuKey% down}
-send {f24 down}{23 down}{f22 down}{f21 down}
-sendinput {wheelup}{enter up}
+SendInput {up down}{%EWOSpecialAbilitySlashActionKey% down}{%EWOLookBehindKey% down}{g down}{%InteractionMenuKey% down}
+Send {f24 down}{23 down}{f22 down}{f21 down}
+SendInput {wheelup}{enter up}
 }
 sleep 25
-send {enter}
-sendinput {%InteractionMenuKey% up}{%EWOLookBehindKey% up}{< up}{g up}{up up}
+Send {enter}
+SendInput {%InteractionMenuKey% up}{%EWOLookBehindKey% up}{< up}{g up}{up up}
 sleep 25
-send {%InteractionMenuKey%}
-sendinput {f24 up}{f23 up}{f22 up}{f21 up}{%EWOSpecialAbilitySlashActionKey% up}
+Send {%InteractionMenuKey%}
+SendInput {f24 up}{f23 up}{f22 up}{f21 up}{%EWOSpecialAbilitySlashActionKey% up}
 setcapslockstate, off
 return
 
 BST:
-sendinput {lbutton up}
+SendInput {lbutton up}
 GuiControlGet, CEOMode
 GuiControlGet, BSTSpeed
 GuiControlGet, BSTMC
@@ -483,42 +492,42 @@ If (CEOMode = 0) {
 }
 else {
    if (BSTMC = 1) {
-      send {%InteractionMenuKey%}{enter}{down}{enter}{up}{enter}
+      Send {%InteractionMenuKey%}{enter}{down}{enter}{up}{enter}
    }
    else if (BSTSpeed = 1) {
-         send {%InteractionMenuKey%}{enter}{up 3}{enter}{down}{enter}
+         Send {%InteractionMenuKey%}{enter}{up 3}{enter}{down}{enter}
 }
 else {
-         send {%InteractionMenuKey%}{enter}{down 4}{enter}{down}{enter}
+         Send {%InteractionMenuKey%}{enter}{down 4}{enter}{down}{enter}
       }
 }
 return
 
 Ammo: ; Buys ammo.
-sendinput {lbutton up}
+SendInput {lbutton up}
 BuyCycles -= 1
 GuiControlGet, CEOMode
 If (CEOMode = 0) {
-send {%InteractionMenuKey%}{down 2}{enter}{down 5}{enter}{up}{enter}
+Send {%InteractionMenuKey%}{down 2}{enter}{down 5}{enter}{up}{enter}
 }
 else {
-send {%InteractionMenuKey%}{down 3}{enter}{down 5}{enter}{up}{enter}
+Send {%InteractionMenuKey%}{down 3}{enter}{down 5}{enter}{up}{enter}
 }
 Loop, %BuyCycles% {
-send {up 2}{enter}{down 2}
+Send {up 2}{enter}{down 2}
 sleep %SleepTime%
-send {enter}
+Send {enter}
 }
-send {%InteractionMenuKey%}
+Send {%InteractionMenuKey%}
 BuyCycles += 1
 return
 
 FastRespawn:
 Loop, 30 {
-send {lbutton down}
-sleep 20
-send {lbutton up}
-sleep 5
+Send {lbutton down}
+sleep 30
+Send {lbutton up}
+sleep 10
 }
 return
 
@@ -527,19 +536,19 @@ Suspend
 return
 
 GTAHax:
-sendinput {%GTAHax% up}
+SendInput {%GTAHax% up}
 Run, GTAHaXUI.exe, %A_ScriptDir%, , Max
 Sleep 1500
 DllCall("SetCursorPos", int, 300, int, 298)
-send {LButton}{BackSpace}262145
+Send {LButton}{BackSpace}262145
 DllCall("SetCursorPos", int, 300, int, 328)
-send {LButton}{BackSpace}28073
+Send {LButton}{BackSpace}28073
 DllCall("SetCursorPos", int, 324, int, 585)
-send {LButton}
+Send {LButton}
 DllCall("SetCursorPos", int, 300, int, 328) 
 Send {LButton}{BackSpace}4
 DllCall("SetCursorPos", int, 324, int, 585) 
-send {LButton}
+Send {LButton}
 sleep 100
 WinClose, ahk_exe GTAHaXUI.exe
 sleep 100
@@ -547,109 +556,109 @@ WinActivate ahk_class grcWindow
 return
 
 HelpWhatsThis:
-sendinput {%HelpWhatsThis% up}
-send td
-sendinput on’t care {Numpadadd} didn't ask {Numpadadd} cry a
-send b
-sendinput out it {Numpadadd} stay mad {Numpadadd} get real {Numpadadd} L {Numpadadd} 
-send {space}
-sendinput mald {Numpadadd} seethe {Numpadadd} cope harder {Numpadadd}
-send {space}
-sendinput hoes mad {Numpadadd} basic {Numpadadd} skill issue
-send {space}
-sendinput {numpadadd}{space}ratio
-send {enter}t{Numpadadd} 
-sendinput {space}you fell off {Numpadadd} the audacity 
-send {space}
-sendinput {Numpadadd}{space}triggered {Numpadadd} any askers {Numpadadd} red
-send pi
-sendinput lled {Numpadadd} get a life {Numpadadd} ok and? 
-send {space}
-sendinput {Numpadadd} cringe {Numpadadd} touch grass {Numpadadd} donow
-send a
-sendinput lled {Numpadadd} not based
-send {enter}t{Numpadadd} 
-sendinput {space}you’re a (insert stereotype)
-send {space}
-sendinput {Numpadadd} not funny didn't laugh {Numpadadd} you
-send ’
-sendinput re* {Numpadadd} grammar issue {Numpadadd} go outsi
-send d
-sendinput e {Numpadadd} get good {Numpadadd} reported
-send {enter}t{Numpadadd}
-sendinput {space}ad hominem {Numpadadd} GG{shift down}1{shift up} {Numpadadd} ur mom
-send {enter}
+SendInput {%HelpWhatsThis% up}
+Send td
+SendInput on’t care {Numpadadd} didn't ask {Numpadadd} cry a
+Send b
+SendInput out it {Numpadadd} stay mad {Numpadadd} get real {Numpadadd} L {Numpadadd} 
+Send {space}
+SendInput mald {Numpadadd} seethe {Numpadadd} cope harder {Numpadadd}
+Send {space}
+SendInput hoes mad {Numpadadd} basic {Numpadadd} skill issue
+Send {space}
+SendInput {numpadadd}{space}ratio
+Send {enter}t{Numpadadd} 
+SendInput {space}you fell off {Numpadadd} the audacity 
+Send {space}
+SendInput {Numpadadd}{space}triggered {Numpadadd} any askers {Numpadadd} red
+Send pi
+SendInput lled {Numpadadd} get a life {Numpadadd} ok and? 
+Send {space}
+SendInput {Numpadadd} cringe {Numpadadd} touch grass {Numpadadd} donow
+Send a
+SendInput lled {Numpadadd} not based
+Send {enter}t{Numpadadd} 
+SendInput {space}you’re a (insert stereotype)
+Send {space}
+SendInput {Numpadadd} not funny didn't laugh {Numpadadd} you
+Send ’
+SendInput re* {Numpadadd} grammar issue {Numpadadd} go outsi
+Send d
+SendInput e {Numpadadd} get good {Numpadadd} reported
+Send {enter}t{Numpadadd}
+SendInput {space}ad hominem {Numpadadd} GG{shift down}1{shift up} {Numpadadd} ur mom
+Send {enter}
 return
 
 EssayAboutGTA:
-sendinput {%EssayAboutGTA% up}
-send tw
-sendinput hy is my fps so shlt this game
-send {space}
-sendinput has terrible optimization its{space}
-send c
-sendinput hinese as shlt man i hate this
-send {space}
-sendinput game im gonna swat the r* headq
-send u
-sendinput arters man i
-send {enter}ts
-sendinput wear to god this game is so ba
-send d
-sendinput {space}why do we all still play it i
-send d
-sendinput k but how can they not afford{space}
-send s
-sendinput ome dedicated servers they are a
-send {space}
-sendinput multi billion 
-send {enter}td
-sendinput ollar company also why does it
-send {space}
-sendinput still use p2p technology for s
-send e
-sendinput rvers thats been out of date s
-send i
-sendinput nce gta 4 man it honestly baffl
-send l
-sendinput es me how
-send {enter}to
-sendinput utdated gta online is and how{space}
-send b
-sendinput ad the fps is its so cpu bo 
-send u
-sendinput nd its stupid and thanks for{space}
-send l
-sendinput istening to my essay about how
-send {space}
-sendinput bad gta online is
-send {enter}
+SendInput {%EssayAboutGTA% up}
+Send tw
+SendInput hy is my fps so shlt this game
+Send {space}
+SendInput has terrible optimization its{space}
+Send c
+SendInput hinese as shlt man i hate this
+Send {space}
+SendInput game im gonna swat the r* headq
+Send u
+SendInput arters man i
+Send {enter}ts
+SendInput wear to god this game is so ba
+Send d
+SendInput {space}why do we all still play it i
+Send d
+SendInput k but how can they not afford{space}
+Send s
+SendInput ome dedicated servers they are a
+Send {space}
+SendInput multi billion 
+Send {enter}td
+SendInput ollar company also why does it
+Send {space}
+SendInput still use p2p technology for s
+Send e
+SendInput rvers thats been out of date s
+Send i
+SendInput nce gta 4 man it honestly baffl
+Send l
+SendInput es me how
+Send {enter}to
+SendInput utdated gta online is and how{space}
+Send b
+SendInput ad the fps is its so cpu bo 
+Send u
+SendInput nd its stupid and thanks for{space}
+Send l
+SendInput istening to my essay about how
+Send {space}
+SendInput bad gta online is
+Send {enter}
 return
 
 CustomTextSpam: ; Spams whatever your clipboard is. Copy anything to your clipboard for it to work.
 Length := StrLen(CustomSpamText)
 if (Length >= 31) {
 sendraw t%CustomSpamText%
-send {enter}
+Send {enter}
 }
 else if Length <= 30
 {
-sendinput {%CustomTextSpam% up}
-send t{shift up}
-sendinput {raw}%CustomSpamText%
+SendInput {%CustomTextSpam% up}
+Send t{shift up}
+SendInput {raw}%CustomSpamText%
 Send {enter} 
 }
 return
 
 Paste:
-sendinput {raw}%Clipboard%
+SendInput {raw}%Clipboard%
 return
 
 ShutUp: ; Spams "shut up"
-sendinput {%ShutUp% up}
-send t{shift up}
-sendinput {raw}shut up
-send {enter}
+SendInput {%ShutUp% up}
+Send t{shift up}
+SendInput {raw}shut up
+Send {enter}
 return
 
 Paste2:
@@ -663,21 +672,21 @@ else {
 return
 
 ReloadOutfit:
-sendinput {lbutton up}
+SendInput {lbutton up}
 GuiControlGet, CEOMode ; Retrieves 1 if it is checked, 0 if it is unchecked.
 If (CEOMode = 0) {
-send {%InteractionMenuKey%}{down 3}{enter}
+Send {%InteractionMenuKey%}{down 3}{enter}
 }
 else {
-send {%InteractionMenuKey%}{down 4}{enter}
+Send {%InteractionMenuKey%}{down 4}{enter}
 }
-send {down 3}{enter 2}{%InteractionMenuKey%}
+Send {down 3}{enter 2}{%InteractionMenuKey%}
 return
 
 DisableCapsLock: ; Disables CapsLock, so you can't press it.
-send {CapsLock down}
+Send {CapsLock down}
 sleep 75
-send {CapsLock up}
+Send {CapsLock up}
 sleep 25
 setcapslockstate, off
 return
@@ -846,14 +855,14 @@ Gui, Show
 return
 
 ToggleCEO:
-sendinput {lbutton up}
+SendInput {lbutton up}
 GuiControlGet, CEOMode ; Retrieves 1 if it is checked, 0 if it is unchecked.
 If (CEOMode = 0) {
-   send {%InteractionMenuKey%}{down 6}{enter 2}
+   Send {%InteractionMenuKey%}{down 6}{enter 2}
 GUIControl,, CEOMode, 1
 }
 else {
-   send {%InteractionMenuKey%}{enter}{up}{enter}
+   Send {%InteractionMenuKey%}{enter}{up}{enter}
 GUIControl,, CEOMode, 0
 }
 return
@@ -880,23 +889,23 @@ MsgBox, 0, Macros will close now. RIP., GTA is no longer running. Macros will cl
 return
 
 SniperBind:
-send {%SniperBind%}{tab}
+Send {%SniperBind%}{tab}
 return
 
 RPGBind:
-send {%RPGBind%}{tab}
+Send {%RPGBind%}{tab}
 return
 
 StickyBind:
-send {%StickyBind%}{tab}
+Send {%StickyBind%}{tab}
 return
 
 PistolBind:
-send {%PistolBind%}{tab}
+Send {%PistolBind%}{tab}
 return
 
 RPGSpam:
-send {%StickyBind%}{%RPGBind%}{tab}
+Send {%StickyBind%}{%RPGBind%}{tab}
 return
 
 ToggleCrosshair:
@@ -910,41 +919,41 @@ If (Crosshair = 1) {
 goto, Crosshair6
 
 Jobs:
-sendinput {lbutton up}
+SendInput {lbutton up}
 GuiControlGet, CEOMode ; Retrieves 1 if it is checked, 0 if it is unchecked.
 If (CEOMode = 0) {
-send {%InteractionMenuKey%}{down 8}
+Send {%InteractionMenuKey%}{down 8}
 }
 else {
-send {%InteractionMenuKey%}{down 7}
+Send {%InteractionMenuKey%}{down 7}
 }
-send {enter}{down}{enter}
+Send {enter}{down}{enter}
 sleep 25
-send {left}
+Send {left}
 Loop, 14 {
-send {down}{Enter}
+Send {down}{Enter}
 }
-send {%InteractionMenuKey%}
+Send {%InteractionMenuKey%}
 return
 
 MCCEO:
-sendinput {lbutton up}
+SendInput {lbutton up}
 if (MCCEO2 = 0) {
-   send {%InteractionMenuKey%}{enter}{up}{enter}
+   Send {%InteractionMenuKey%}{enter}{up}{enter}
    sleep 200
-   send {%InteractionMenuKey%}{down 7}{enter 2}
+   Send {%InteractionMenuKey%}{down 7}{enter 2}
    Loop, 20 {
-      send {backspace}{enter 2}
+      Send {backspace}{enter 2}
 }
    sleep 25
    MCCEO2 := 1
 }
    else {
-   send {%InteractionMenuKey%}{enter}{up}{enter}
+   Send {%InteractionMenuKey%}{enter}{up}{enter}
    sleep 200
-   send {%InteractionMenuKey%}{down 6}{enter 2}
+   Send {%InteractionMenuKey%}{down 6}{enter 2}
    Loop, 20 {
-      send {backspace}{enter 2}
+      Send {backspace}{enter 2}
 }
    sleep 25
    MCCEO2 := 0
@@ -1202,59 +1211,59 @@ Hotkey, *%IncludeHotkeyChat2%, IncludeHotkeyChat02, UseErrorLevel Off
 return
 
 IncludeHotkey01:
-send %IncludeMacro1%
+Send %IncludeMacro1%
 return
 
 IncludeHotkey02:
-send %IncludeMacro2%
+Send %IncludeMacro2%
 return
 
 IncludeHotkey03:
-send %IncludeMacro3%
+Send %IncludeMacro3%
 return
 
 IncludeHotkey04:
-send %IncludeMacro4%
+Send %IncludeMacro4%
 return
 
 IncludeHotkey05:
-send %IncludeMacro5%
+Send %IncludeMacro5%
 return
 
 IncludeHotkey06:
-send %IncludeMacro6%
+Send %IncludeMacro6%
 return
 
 IncludeHotkeyChat01:
 Length3 := StrLen(IncludeMacroChat1)
 if (Length3 >= 31) {
-sendinput {%IncludeHotkeyChat1% up}
-send t
+SendInput {%IncludeHotkeyChat1% up}
+Send t
 sendraw %IncludeMacroChat1%
-send {enter}
+Send {enter}
 }
 else if Length3 <= 30
 {
-sendinput {%IncludeHotkeyChat1% up}
-send t{shift up}
-sendinput {raw}%IncludeMacroChat1%
-send {enter}
+SendInput {%IncludeHotkeyChat1% up}
+Send t{shift up}
+SendInput {raw}%IncludeMacroChat1%
+Send {enter}
 }
 return
 
 IncludeHotkeyChat02:
 Length4 := StrLen(IncludeMacroChat2)
 if (Length4 >= 31) {
-sendinput {%IncludeHotkeyChat2% up}
-send t
+SendInput {%IncludeHotkeyChat2% up}
+Send t
 sendraw %IncludeMacroChat2%
-send {enter}
+Send {enter}
 }
 else if Length4 <= 30
 {
-sendinput {%IncludeHotkeyChat2% up}
-send t{shift up}
-sendinput {raw}%IncludeMacroChat2%
-send {enter}
+SendInput {%IncludeHotkeyChat2% up}
+Send t{shift up}
+SendInput {raw}%IncludeMacroChat2%
+Send {enter}
 }
 return
