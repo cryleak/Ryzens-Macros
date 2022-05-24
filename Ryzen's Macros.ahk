@@ -1,6 +1,6 @@
 ﻿;@Ahk2Exe-AddResource gta.ico
 CFG = GTA Binds.ini
-MacroVersion = 3.10.1
+MacroVersion = 3.10.2
 CrosshairDone := 0
 MCCEO2 := 0
 if not A_IsAdmin
@@ -42,6 +42,7 @@ Gui, Add, Text,, BST Less Reliable But Faster?
 Gui, Add, Text,, Ammo Macro:
 Gui, Add, Text,, Ammo buy wait time (ms):
 Gui, Add, Text,, Ammo weapons to buy:
+Gui, Add, Text,, Reverse Ammo Macro buy order?
 Gui, Add, Text,, Fast Respawn Macro:
 Gui, Add, Text,, Suspend:
 Gui, Add, Text,, GTA Hax EWO Codes Macro:
@@ -59,6 +60,7 @@ Gui, Add, Checkbox,vBSTSpeed h20,
 Gui, Add, Hotkey,vAmmo,
 Gui, Add, Edit,Number vSleepTime,
 Gui, Add, Edit,Number vBuyCycles,
+Gui, Add, Checkbox,vReverse h20,
 Gui, Add, Hotkey,vFastRespawn,
 Gui, Add, Hotkey,vSuspend,
 Gui, Add, Hotkey,vGTAHax,PrintScreen
@@ -116,143 +118,122 @@ Gui, Add, Hotkey, vStickyBind,
 Gui, Add, Hotkey, vPistolBind,
 Gui, Add, Checkbox, gTabWeapon2 vTabWeapon h20,
 Gui, Add, Checkbox, g2Screen2 v2Screen h20,
-
-Gui, Add, Text,x1510 y200, Turn off all Job Blips Fast:
-Gui, Add, Text,x1510 y230, Make it so you can copy paste?
-Gui, Add, Text,x1510 y260, MC CEO toggle
-Gui, Add, Text,x1510 y290, Custom Macro #1 Hotkey:
-Gui, Add, Text,x1510 y320, Custom Macro #2 Hotkey:
-Gui, Add, Text,x1510 y350, Custom Macro #3 Hotkey:
-Gui, Add, Text,x1510 y380, Custom Macro #4 Hotkey:
-Gui, Add, Text,x1510 y410, Custom Macro #5 Hotkey:
-Gui, Add, Text,x1510 y440, Custom Macro #6 Hotkey:
-Gui, Add, Text,x1510 y470, Custom Chat Macro #1 Hotkey:
-Gui, Add, Text,x1510 y500, Custom Chat Macro #2 Hotkey:
-Gui, Add, Hotkey, vJobs x1793 y200
-Gui, Add, Checkbox, gPaste2 vPaste x1793 y230
-Gui, Add, Hotkey, vMCCEO x1793 y260
-Gui, Add, Hotkey, vIncludeHotkey1 x1793 y290
-Gui, Add, Hotkey, vIncludeHotkey2 x1793 y320
-Gui, Add, Hotkey, vIncludeHotkey3 x1793 y350
-Gui, Add, Hotkey, vIncludeHotkey4 x1793 y380
-Gui, Add, Hotkey, vIncludeHotkey5 x1793 y410
-Gui, Add, Hotkey, vIncludeHotkey6 x1793 y440
-Gui, Add, Hotkey, vIncludeHotkeyChat1 x1793 y470
-Gui, Add, Hotkey, vIncludeHotkeyChat2 x1793 y500
 Goto, Picture3
 Back2:
 
 Hotkey, *$CapsLock, DisableCapsLock
 
-IfExist, %CFG%
+IfExist, %CFG% 
 { 
-IniRead,Read_InteractionMenuKey,%CFG%,Keybinds,Interaction Menu Key
-IniRead,Read_ThermalHelmet,%CFG%,PVP Macros,Thermal Helmet
-IniRead,Read_FastSniperSwitch,%CFG%,PVP Macros,Fast Sniper Switch
-IniRead,Read_SniperBind,%CFG%,Keybinds,Sniper Bind
-IniRead,Read_EWO,%CFG%,PVP Macros,EWO
-IniRead,Read_EWOLookBehindKey,%CFG%,Keybinds,EWO Look Behind Button
-IniRead,Read_EWOSpecialAbilitySlashActionKey,%CFG%,Keybinds,EWO Special Ability/Action Key
-IniRead,Read_BST,%CFG%,PVP Macros,BST
-IniRead,Read_BSTSpeed,%CFG%,PVP Macros,BST Speed
-IniRead,Read_Ammo,%CFG%,PVP Macros,Buy Ammo
-IniRead,Read_FastRespawn,%CFG%,Misc,Fast Respawn
-IniRead,Read_Suspend,%CFG%,Misc,Suspend Macro
-IniRead,Read_GTAHax,%CFG%,Misc,GTAHax EWO Codes
-IniRead,Read_HelpWhatsThis,%CFG%,Chat Macros,idkwtfthisis
-IniRead,Read_EssayAboutGTA,%CFG%,Chat Macros,Essay About GTA
-IniRead,Read_CustomTextSpam,%CFG%,Chat Macros,Custom Text Spam
-IniRead,Read_ShutUp,%CFG%,Chat Macros,Shut Up Spam
-IniRead,Read_CustomSpamText,%CFG%,Chat Macros,Custom Spam Text
-IniRead,Read_ReloadOutfit,%CFG%,Misc,Reload Outfit
-IniRead,Read_ShowUI,%CFG%,Misc,Show UI
-IniRead,Read_ToggleCEO,%CFG%,Misc,Toggle CEO
-IniRead,Read_ToggleCrosshair,%CFG%,Misc,Toggle Crosshair
-IniRead,Read_SleepTime,%CFG%,Misc,Ammo Buy Sleep Time
-IniRead,Read_BuyCycles,%CFG%,Misc,Ammo Buy Cycles
-IniRead,Read_ProcessCheck2,%CFG%,Misc,Process Check
-IniRead,Read_AWMode,%CFG%,Misc,AW Mode On
-IniRead,Read_NightVision,%CFG%,Misc,Use Night Vision Thermal
-IniRead,Read_RPGSpam,%CFG%,PVP Macros,RPG Spam
-IniRead,Read_RPGBind,%CFG%,Keybinds,RPG Bind
-IniRead,Read_StickyBind,%CFG%,Keybinds,Sticky Bind
-IniRead,Read_PistolBind,%CFG%,Keybinds,Pistol Bind
-IniRead,Read_TabWeapon,%CFG%,Misc,Tab Weapon
-IniRead,Read_Crosshair,%CFG%,Misc,Crosshair
-IniRead,Read_2Screen,%CFG%,Misc,2 Screen Setup
-IniRead,Read_Jobs,%CFG%,Misc,Disable All Job Blips
-IniRead,Read_Paste,%CFG%,Misc,Allow Copy Paste
-IniRead,Read_MCCEO,%CFG%,Misc,MC CEO Toggle
-IniRead,Read_SmoothEWO,%CFG%,Misc,Smooth EWO
-IniRead,Read_IncludeMacros,%CFG%,Misc,Include Macros
-IniRead,Read_IncludeHotkey1,%CFG%,Misc,Include Hotkey #1
-IniRead,Read_IncludeHotkey2,%CFG%,Misc,Include Hotkey #2
-IniRead,Read_IncludeHotkey3,%CFG%,Misc,Include Hotkey #3
-IniRead,Read_IncludeHotkey4,%CFG%,Misc,Include Hotkey #4
-IniRead,Read_IncludeHotkey5,%CFG%,Misc,Include Hotkey #5
-IniRead,Read_IncludeHotkey6,%CFG%,Misc,Include Hotkey #6
-IniRead,Read_IncludeHotkeyChat1,%CFG%,Misc,Include Hotkey Chat #1
-IniRead,Read_IncludeHotkeyChat2,%CFG%,Misc,Include Hotkey Chat #1
+   IniRead,Read_InteractionMenuKey,%CFG%,Keybinds,Interaction Menu Key
+   IniRead,Read_ThermalHelmet,%CFG%,PVP Macros,Thermal Helmet
+   IniRead,Read_FastSniperSwitch,%CFG%,PVP Macros,Fast Sniper Switch
+   IniRead,Read_SniperBind,%CFG%,Keybinds,Sniper Bind
+   IniRead,Read_EWO,%CFG%,PVP Macros,EWO
+   IniRead,Read_EWOLookBehindKey,%CFG%,Keybinds,EWO Look Behind Button
+   IniRead,Read_EWOSpecialAbilitySlashActionKey,%CFG%,Keybinds,EWO Special Ability/Action Key
+   IniRead,Read_BST,%CFG%,PVP Macros,BST
+   IniRead,Read_BSTSpeed,%CFG%,PVP Macros,BST Speed
+   IniRead,Read_Ammo,%CFG%,PVP Macros,Buy Ammo
+   IniRead,Read_FastRespawn,%CFG%,Misc,Fast Respawn
+   IniRead,Read_Suspend,%CFG%,Misc,Suspend Macro
+   IniRead,Read_GTAHax,%CFG%,Misc,GTAHax EWO Codes
+   IniRead,Read_HelpWhatsThis,%CFG%,Chat Macros,idkwtfthisis
+   IniRead,Read_EssayAboutGTA,%CFG%,Chat Macros,Essay About GTA
+   IniRead,Read_CustomTextSpam,%CFG%,Chat Macros,Custom Text Spam
+   IniRead,Read_ShutUp,%CFG%,Chat Macros,Shut Up Spam
+   IniRead,Read_CustomSpamText,%CFG%,Chat Macros,Custom Spam Text
+   IniRead,Read_ReloadOutfit,%CFG%,Misc,Reload Outfit
+   IniRead,Read_ShowUI,%CFG%,Misc,Show UI
+   IniRead,Read_ToggleCEO,%CFG%,Misc,Toggle CEO
+   IniRead,Read_ToggleCrosshair,%CFG%,Misc,Toggle Crosshair
+   IniRead,Read_SleepTime,%CFG%,Misc,Ammo Buy Sleep Time
+   IniRead,Read_BuyCycles,%CFG%,Misc,Ammo Buy Cycles
+   IniRead,Read_Reverse,%CFG%,Misc,Reverse Ammo Macro order
+   IniRead,Read_ProcessCheck2,%CFG%,Misc,Process Check
+   IniRead,Read_AWMode,%CFG%,Misc,AW Mode On
+   IniRead,Read_NightVision,%CFG%,Misc,Use Night Vision Thermal
+   IniRead,Read_RPGSpam,%CFG%,PVP Macros,RPG Spam
+   IniRead,Read_RPGBind,%CFG%,Keybinds,RPG Bind
+   IniRead,Read_StickyBind,%CFG%,Keybinds,Sticky Bind
+   IniRead,Read_PistolBind,%CFG%,Keybinds,Pistol Bind
+   IniRead,Read_TabWeapon,%CFG%,Misc,Tab Weapon
+   IniRead,Read_Crosshair,%CFG%,Misc,Crosshair
+   IniRead,Read_2Screen,%CFG%,Misc,2 Screen Setup
+   IniRead,Read_Jobs,%CFG%,Misc,Disable All Job Blips
+   IniRead,Read_Paste,%CFG%,Misc,Allow Copy Paste
+   IniRead,Read_MCCEO,%CFG%,Misc,MC CEO Toggle
+   IniRead,Read_SmoothEWO,%CFG%,Misc,Smooth EWO
+   IniRead,Read_IncludeMacros,%CFG%,Misc,Include Macros
+   IniRead,Read_IncludeHotkey1,%CFG%,Misc,Include Hotkey #1
+   IniRead,Read_IncludeHotkey2,%CFG%,Misc,Include Hotkey #2
+   IniRead,Read_IncludeHotkey3,%CFG%,Misc,Include Hotkey #3
+   IniRead,Read_IncludeHotkey4,%CFG%,Misc,Include Hotkey #4
+   IniRead,Read_IncludeHotkey5,%CFG%,Misc,Include Hotkey #5
+   IniRead,Read_IncludeHotkey6,%CFG%,Misc,Include Hotkey #6
+   IniRead,Read_IncludeHotkeyChat1,%CFG%,Misc,Include Hotkey Chat #1
+   IniRead,Read_IncludeHotkeyChat2,%CFG%,Misc,Include Hotkey Chat #1
 
-IniRead,IncludeMacro1,CustomShit.ini,Macro1
-IniRead,IncludeMacro2,CustomShit.ini,Macro2
-IniRead,IncludeMacro3,CustomShit.ini,Macro3
-IniRead,IncludeMacro4,CustomShit.ini,Macro4
-IniRead,IncludeMacro5,CustomShit.ini,Macro5
-IniRead,IncludeMacro6,CustomShit.ini,Macro6
-IniRead,IncludeMacroChat1,CustomShit.ini,ChatMacro1
-IniRead,IncludeMacroChat2,CustomShit.ini,ChatMacro2
+   IniRead,IncludeMacro1,CustomShit.ini,Macro1
+   IniRead,IncludeMacro2,CustomShit.ini,Macro2
+   IniRead,IncludeMacro3,CustomShit.ini,Macro3
+   IniRead,IncludeMacro4,CustomShit.ini,Macro4
+   IniRead,IncludeMacro5,CustomShit.ini,Macro5
+   IniRead,IncludeMacro6,CustomShit.ini,Macro6
+   IniRead,IncludeMacroChat1,CustomShit.ini,ChatMacro1
+   IniRead,IncludeMacroChat2,CustomShit.ini,ChatMacro2
 
-GuiControl,,InteractionMenuKey,%Read_InteractionMenuKey%
-GuiControl,,ThermalHelmet,%Read_ThermalHelmet%
-GuiControl,,FastSniperSwitch,%Read_FastSniperSwitch%
-GuiControl,,SniperBind,%Read_SniperBind%
-GuiControl,,EWO,%Read_EWO%
-GuiControl,,EWOLookBehindKey,%Read_EWOLookBehindKey%
-GuiControl,,EWOSpecialAbilitySlashActionKey,%Read_EWOSpecialAbilitySlashActionKey%
-GuiControl,,BST,%Read_BST%
-GuiControl,,BSTSpeed,%Read_BSTSpeed%
-GuiControl,,Ammo,%Read_Ammo%
-GuiControl,,FastRespawn,%Read_FastRespawn%
-GuiControl,,Suspend,%Read_Suspend%
-GuiControl,,GTAHax,%Read_GTAHax%
-GuiControl,,HelpWhatsThis,%Read_HelpWhatsThis%
-GuiControl,,EssayAboutGTA,%Read_EssayAboutGTA%
-GuiControl,,CustomTextSpam,%Read_CustomTextSpam%
-GuiControl,,ShutUp,%Read_ShutUp%
-GuiControl,,CustomSpamText,%Read_CustomSpamText%
-GuiControl,,ReloadOutfit,%Read_ReloadOutfit%
-GuiControl,,ShowUI,%Read_ShowUI%
-GuiControl,,ToggleCEO,%Read_ToggleCEO%
-GuiControl,,ToggleCrosshair,%Read_ToggleCrosshair%
-GuiControl,,SleepTime,%Read_SleepTime%
-GuiControl,,BuyCycles,%Read_BuyCycles%
-GuiControl,,ProcessCheck2,%Read_ProcessCheck2%
-GuiControl,,AWMode,%Read_AWMode%
-GuiControl,,NightVision,%Read_NightVision%
-GuiControl,,Picture,%Read_Picture%
-GuiControl,,RPGSpam,%Read_RPGSpam%
-GuiControl,,RPGBind,%Read_RPGBind%
-GuiControl,,StickyBind,%Read_StickyBind%
-GuiControl,,PistolBind,%Read_PistolBind%
-GuiControl,,TabWeapon,%Read_TabWeapon%
-GuiControl,,Crosshair,%Read_Crosshair%
-GuiControl,,2Screen,%Read_2Screen%
-GuiControl,,Jobs,%Read_Jobs%
-GuiControl,,Paste,%Read_Paste%
-GuiControl,,MCCEO,%Read_MCCEO%
-GuiControl,,SmoothEWO,%Read_SmoothEWO%
-GuiControl,,IncludeMacros,%Read_IncludeMacros%
-GuiControl,,IncludeHotkey1,%Read_IncludeHotkey1%
-GuiControl,,IncludeHotkey2,%Read_IncludeHotkey2%
-GuiControl,,IncludeHotkey2,%Read_IncludeHotkey3%
-GuiControl,,IncludeHotkey2,%Read_IncludeHotkey4%
-GuiControl,,IncludeHotkey2,%Read_IncludeHotkey5%
-GuiControl,,IncludeHotkey2,%Read_IncludeHotkey6%
-GuiControl,,IncludeHotkeyChat1,%Read_IncludeHotkeyChat1%
-GuiControl,,IncludeHotkeyChat2,%Read_IncludeHotkeyChat2%
-GuiControl,,BSTMC,0
-GuiControl,,CEOMode,1
+   GuiControl,,InteractionMenuKey,%Read_InteractionMenuKey%
+   GuiControl,,ThermalHelmet,%Read_ThermalHelmet%
+   GuiControl,,FastSniperSwitch,%Read_FastSniperSwitch%
+   GuiControl,,SniperBind,%Read_SniperBind%
+   GuiControl,,EWO,%Read_EWO%
+   GuiControl,,EWOLookBehindKey,%Read_EWOLookBehindKey%
+   GuiControl,,EWOSpecialAbilitySlashActionKey,%Read_EWOSpecialAbilitySlashActionKey%
+   GuiControl,,BST,%Read_BST%
+   GuiControl,,BSTSpeed,%Read_BSTSpeed%
+   GuiControl,,Ammo,%Read_Ammo%
+   GuiControl,,FastRespawn,%Read_FastRespawn%
+   GuiControl,,Suspend,%Read_Suspend%
+   GuiControl,,GTAHax,%Read_GTAHax%
+   GuiControl,,HelpWhatsThis,%Read_HelpWhatsThis%
+   GuiControl,,EssayAboutGTA,%Read_EssayAboutGTA%
+   GuiControl,,CustomTextSpam,%Read_CustomTextSpam%
+   GuiControl,,ShutUp,%Read_ShutUp%
+   GuiControl,,CustomSpamText,%Read_CustomSpamText%
+   GuiControl,,ReloadOutfit,%Read_ReloadOutfit%
+   GuiControl,,ShowUI,%Read_ShowUI%
+   GuiControl,,ToggleCEO,%Read_ToggleCEO%
+   GuiControl,,ToggleCrosshair,%Read_ToggleCrosshair%
+   GuiControl,,SleepTime,%Read_SleepTime%
+   GuiControl,,BuyCycles,%Read_BuyCycles%
+   GuiControl,,Reverse,%Read_Reverse%
+   GuiControl,,ProcessCheck2,%Read_ProcessCheck2%
+   GuiControl,,AWMode,%Read_AWMode%
+   GuiControl,,NightVision,%Read_NightVision%
+   GuiControl,,Picture,%Read_Picture%
+   GuiControl,,RPGSpam,%Read_RPGSpam%
+   GuiControl,,RPGBind,%Read_RPGBind%
+   GuiControl,,StickyBind,%Read_StickyBind%
+   GuiControl,,PistolBind,%Read_PistolBind%
+   GuiControl,,TabWeapon,%Read_TabWeapon%
+   GuiControl,,Crosshair,%Read_Crosshair%
+   GuiControl,,2Screen,%Read_2Screen%
+   GuiControl,,Jobs,%Read_Jobs%
+   GuiControl,,Paste,%Read_Paste%
+   GuiControl,,MCCEO,%Read_MCCEO%
+   GuiControl,,SmoothEWO,%Read_SmoothEWO%
+   GuiControl,,IncludeMacros,%Read_IncludeMacros%
+   GuiControl,,IncludeHotkey1,%Read_IncludeHotkey1%
+   GuiControl,,IncludeHotkey2,%Read_IncludeHotkey2%
+   GuiControl,,IncludeHotkey2,%Read_IncludeHotkey3%
+   GuiControl,,IncludeHotkey2,%Read_IncludeHotkey4%
+   GuiControl,,IncludeHotkey2,%Read_IncludeHotkey5%
+   GuiControl,,IncludeHotkey2,%Read_IncludeHotkey6%
+   GuiControl,,IncludeHotkeyChat1,%Read_IncludeHotkeyChat1%
+   GuiControl,,IncludeHotkeyChat2,%Read_IncludeHotkeyChat2%
+   GuiControl,,BSTMC,0
+   GuiControl,,CEOMode,1
 }
 
 DetectHiddenWindows, ON
@@ -326,7 +307,7 @@ Flawless:
 MsgBox, 0, Info, This fixes slow chat macros and slower overall macros when Flawless Widescreen is running.
    MsgBox, 0, IMPORTANT!, Make sure you have applied the settings you want to use already inside Flawless Widescreen!
       Process, Close, FlawlessWidescreen.exe
-         MsgBox, 0, Fix applied, Fix applied please DM me if it doesn't work.
+         MsgBox, 0, Fix applied, Fix applied`, please DM me if it doesn't work.
 Return
 
 ShowGUI:
@@ -344,54 +325,55 @@ return
 SaveConfig:
 Gui, Submit, NoHide
 {
-IniWrite,%InteractionMenuKey%,%CFG%,Keybinds,Interaction Menu Key
-IniWrite,%ThermalHelmet%,%CFG%,PVP Macros,Thermal Helmet
-IniWrite,%FastSniperSwitch%,%CFG%,PVP Macros,Fast Sniper Switch
-IniWrite,%SniperBind%,%CFG%,Keybinds,Sniper Bind
-IniWrite,%EWO%,%CFG%,PVP Macros,EWO
-IniWrite,%EWOLookBehindKey%,%CFG%,Keybinds,EWO Look Behind Button
-IniWrite,%EWOSpecialAbilitySlashActionKey%,%CFG%,Keybinds,EWO Special Ability/Action Key
-IniWrite,%BST%,%CFG%,PVP Macros,BST
-IniWrite,%BSTSpeed%,%CFG%,PVP Macros,BST Speed
-IniWrite,%Ammo%,%CFG%,PVP Macros,Buy Ammo
-IniWrite,%FastRespawn%,%CFG%,Misc,Fast Respawn
-IniWrite,%Suspend%,%CFG%,Misc,Suspend Macro
-IniWrite,%GTAHax%,%CFG%,Misc,GTAHax EWO Codes
-IniWrite,%HelpWhatsThis%,%CFG%,Chat Macros,idkwtfthisis
-IniWrite,%EssayAboutGTA%,%CFG%,Chat Macros,Essay About GTA
-IniWrite,%CustomTextSpam%,%CFG%,Chat Macros,Custom Text Spam
-IniWrite,%ShutUp%,%CFG%,Chat Macros,Shut Up Spam
-IniWrite,%CustomSpamText%,%CFG%,Chat Macros,Custom Spam Text
-IniWrite,%ReloadOutfit%,%CFG%,Misc,Reload Outfit
-IniWrite,%ShowUI%,%CFG%,Misc,Show UI
-IniWrite,%ToggleCEO%,%CFG%,Misc,Toggle CEO
-IniWrite,%ToggleCrosshair%,%CFG%,Misc,Toggle Crosshair
-IniWrite,%SleepTime%,%CFG%,Misc,Ammo Buy Sleep Time
-IniWrite,%BuyCycles%,%CFG%,Misc,Ammo Buy Cycles
-IniWrite,%ProcessCheck2%,%CFG%,Misc,Process Check
-IniWrite,%AWMode%,%CFG%,Misc,AW Mode On
-IniWrite,%NightVision%,%CFG%,Misc,Use Night Vision Thermal
-IniWrite,%Picture%,%CFG%,Misc,Picture
-IniWrite,%RPGSpam%,%CFG%,PVP Macros,RPG Spam
-IniWrite,%RPGBind%,%CFG%,Keybinds,RPG Bind
-IniWrite,%StickyBind%,%CFG%,Keybinds,Sticky Bind
-IniWrite,%PistolBind%,%CFG%,Keybinds,Pistol Bind
-IniWrite,%TabWeapon%,%CFG%,Misc,Tab Weapon
-IniWrite,%Crosshair%,%CFG%,Misc,Crosshair
-IniWrite,%2Screen%,%CFG%,Misc,2 Screen Setup
-IniWrite,%Jobs%,%CFG%,Misc,Disable All Job Blips
-IniWrite,%Paste%,%CFG%,Misc,Allow Copy Paste
-IniWrite,%MCCEO%,%CFG%,Misc,MC CEO Toggle
-IniWrite,%SmoothEWO%,%CFG%,Misc,Smooth EWO
-IniWrite,%IncludeMacros%,%CFG%,Misc,Include Macros
-IniWrite,%IncludeHotkey1%,%CFG%,Misc,Include Hotkey #1
-IniWrite,%IncludeHotkey2%,%CFG%,Misc,Include Hotkey #2
-IniWrite,%IncludeHotkey3%,%CFG%,Misc,Include Hotkey #3
-IniWrite,%IncludeHotkey4%,%CFG%,Misc,Include Hotkey #4
-IniWrite,%IncludeHotkey5%,%CFG%,Misc,Include Hotkey #5
-IniWrite,%IncludeHotkey6%,%CFG%,Misc,Include Hotkey #6
-IniWrite,%IncludeHotkeyChat1%,%CFG%,Misc,Include Hotkey Chat #1
-IniWrite,%IncludeHotkeyChat2%,%CFG%,Misc,Include Hotkey Chat #2
+   IniWrite,%InteractionMenuKey%,%CFG%,Keybinds,Interaction Menu Key
+   IniWrite,%ThermalHelmet%,%CFG%,PVP Macros,Thermal Helmet
+   IniWrite,%FastSniperSwitch%,%CFG%,PVP Macros,Fast Sniper Switch
+   IniWrite,%SniperBind%,%CFG%,Keybinds,Sniper Bind
+   IniWrite,%EWO%,%CFG%,PVP Macros,EWO
+   IniWrite,%EWOLookBehindKey%,%CFG%,Keybinds,EWO Look Behind Button
+   IniWrite,%EWOSpecialAbilitySlashActionKey%,%CFG%,Keybinds,EWO Special Ability/Action Key
+   IniWrite,%BST%,%CFG%,PVP Macros,BST
+   IniWrite,%BSTSpeed%,%CFG%,PVP Macros,BST Speed
+   IniWrite,%Ammo%,%CFG%,PVP Macros,Buy Ammo
+   IniWrite,%FastRespawn%,%CFG%,Misc,Fast Respawn
+   IniWrite,%Suspend%,%CFG%,Misc,Suspend Macro
+   IniWrite,%GTAHax%,%CFG%,Misc,GTAHax EWO Codes
+   IniWrite,%HelpWhatsThis%,%CFG%,Chat Macros,idkwtfthisis
+   IniWrite,%EssayAboutGTA%,%CFG%,Chat Macros,Essay About GTA
+   IniWrite,%CustomTextSpam%,%CFG%,Chat Macros,Custom Text Spam
+   IniWrite,%ShutUp%,%CFG%,Chat Macros,Shut Up Spam
+   IniWrite,%CustomSpamText%,%CFG%,Chat Macros,Custom Spam Text
+   IniWrite,%ReloadOutfit%,%CFG%,Misc,Reload Outfit
+   IniWrite,%ShowUI%,%CFG%,Misc,Show UI
+   IniWrite,%ToggleCEO%,%CFG%,Misc,Toggle CEO
+   IniWrite,%ToggleCrosshair%,%CFG%,Misc,Toggle Crosshair
+   IniWrite,%SleepTime%,%CFG%,Misc,Ammo Buy Sleep Time
+   IniWrite,%BuyCycles%,%CFG%,Misc,Ammo Buy Cycles
+   IniWrite,%Reverse%,%CFG%,Misc,Reverse Ammo Macro order
+   IniWrite,%ProcessCheck2%,%CFG%,Misc,Process Check
+   IniWrite,%AWMode%,%CFG%,Misc,AW Mode On
+   IniWrite,%NightVision%,%CFG%,Misc,Use Night Vision Thermal
+   IniWrite,%Picture%,%CFG%,Misc,Picture
+   IniWrite,%RPGSpam%,%CFG%,PVP Macros,RPG Spam
+   IniWrite,%RPGBind%,%CFG%,Keybinds,RPG Bind
+   IniWrite,%StickyBind%,%CFG%,Keybinds,Sticky Bind
+   IniWrite,%PistolBind%,%CFG%,Keybinds,Pistol Bind
+   IniWrite,%TabWeapon%,%CFG%,Misc,Tab Weapon
+   IniWrite,%Crosshair%,%CFG%,Misc,Crosshair
+   IniWrite,%2Screen%,%CFG%,Misc,2 Screen Setup
+   IniWrite,%Jobs%,%CFG%,Misc,Disable All Job Blips
+   IniWrite,%Paste%,%CFG%,Misc,Allow Copy Paste
+   IniWrite,%MCCEO%,%CFG%,Misc,MC CEO Toggle
+   IniWrite,%SmoothEWO%,%CFG%,Misc,Smooth EWO
+   IniWrite,%IncludeMacros%,%CFG%,Misc,Include Macros
+   IniWrite,%IncludeHotkey1%,%CFG%,Misc,Include Hotkey #1
+   IniWrite,%IncludeHotkey2%,%CFG%,Misc,Include Hotkey #2
+   IniWrite,%IncludeHotkey3%,%CFG%,Misc,Include Hotkey #3
+   IniWrite,%IncludeHotkey4%,%CFG%,Misc,Include Hotkey #4
+   IniWrite,%IncludeHotkey5%,%CFG%,Misc,Include Hotkey #5
+   IniWrite,%IncludeHotkey6%,%CFG%,Misc,Include Hotkey #6
+   IniWrite,%IncludeHotkeyChat1%,%CFG%,Misc,Include Hotkey Chat #1
+   IniWrite,%IncludeHotkeyChat2%,%CFG%,Misc,Include Hotkey Chat #2
 }
 
 Hotkey, *$%ThermalHelmet%, ThermalHelmet, UseErrorLevel
@@ -459,19 +441,19 @@ EWO:
 GuiControlGet, SmoothEWO
 SendInput {lshift up}{lbutton up}{rbutton up}{enter down}
 if (SmoothEWO = 1) {
-   Send {%InteractionMenuKey%}
+   SendInput {enter down}{%InteractionMenuKey% down}
    sleep 45
    SendInput {%EWOLookBehindKey% down}
    sleep 35
    SendInput {wheelup}
    sleep 35
    SendInput {wheelup}{%EWOSpecialAbilitySlashActionKey% down}
-   sleep 45
-   Send {enter}
-} else {
-SendInput {up down}{%EWOSpecialAbilitySlashActionKey% down}{%EWOLookBehindKey% down}{g down}{%InteractionMenuKey% down}
-Send {f24 down}{23 down}{f22 down}{f21 down}
-SendInput {wheelup}{enter up}
+   sleep 60
+   SendInput {enter up}
+   } else {
+   SendInput {up down}{%EWOSpecialAbilitySlashActionKey% down}{%EWOLookBehindKey% down}{g down}{%InteractionMenuKey% down}
+   Send {f24 down}{23 down}{f22 down}{f21 down}
+   SendInput {wheelup}{enter up}
 }
 sleep 25
 Send {enter}
@@ -507,28 +489,35 @@ Ammo: ; Buys ammo.
 SendInput {lbutton up}
 BuyCycles -= 1
 GuiControlGet, CEOMode
-If (CEOMode = 0) {
-Send {%InteractionMenuKey%}{down 2}{enter}{down 5}{enter}{up}{enter}
+GuiControlGet, Reverse
+If (Reverse = 1) {
+Reverse2 = left
+} else {
+   Reverse2 = enter
 }
-else {
-Send {%InteractionMenuKey%}{down 3}{enter}{down 5}{enter}{up}{enter}
+If (CEOMode = 0) {
+   Send {%InteractionMenuKey%}{down 2}
+   }
+   else {
+      Send {%InteractionMenuKey%}{down 3}
+      }
+send {enter}{down 5}{enter}
+if (Reverse = 1) {
+send {down}{%Reverse2%}{down 2}{enter}
+} else {
+send {up}{enter}
 }
 Loop, %BuyCycles% {
-Send {up 2}{enter}{down 2}
-sleep %SleepTime%
-Send {enter}
+   Send {up 2}{%Reverse2%}{down 2}
+   sleep %SleepTime%
+   Send {enter}
 }
 Send {%InteractionMenuKey%}
 BuyCycles += 1
 return
 
 FastRespawn:
-Loop, 30 {
-Send {lbutton down}
-sleep 30
-Send {lbutton up}
-sleep 10
-}
+Run, clicker.exe, %A_ScriptDir%
 return
 
 Suspend:
@@ -1175,11 +1164,54 @@ Goto, Back
 Picture3:
 IniRead,Read_Picture,%CFG%,Misc,Picture
 If (Read_Picture = 0) {
+Gui, Add, Text,x740 y200, Turn off all Job Blips Fast:
+Gui, Add, Text,x740 y230, Make it so you can copy paste?
+Gui, Add, Text,x740 y260, MC CEO toggle
+Gui, Add, Text,x740 y290, Custom Macro #1 Hotkey:
+Gui, Add, Text,x740 y320, Custom Macro #2 Hotkey:
+Gui, Add, Text,x740 y350, Custom Macro #3 Hotkey:
+Gui, Add, Text,x740 y380, Custom Macro #4 Hotkey:
+Gui, Add, Text,x740 y410, Custom Macro #5 Hotkey:
+Gui, Add, Text,x740 y440, Custom Macro #6 Hotkey:
+Gui, Add, Text,x740 y470, Custom Chat Macro #1 Hotkey:
+Gui, Add, Text,x740 y500, Custom Chat Macro #2 Hotkey:
+Gui, Add, Hotkey, vJobs x1053 y200
+Gui, Add, Checkbox, gPaste2 vPaste x1053 y230
+Gui, Add, Hotkey, vMCCEO x1053 y260
+Gui, Add, Hotkey, vIncludeHotkey1 x1053 y290
+Gui, Add, Hotkey, vIncludeHotkey2 x1053 y320
+Gui, Add, Hotkey, vIncludeHotkey3 x1053 y350
+Gui, Add, Hotkey, vIncludeHotkey4 x1053 y380
+Gui, Add, Hotkey, vIncludeHotkey5 x1053 y410
+Gui, Add, Hotkey, vIncludeHotkey6 x1053 y440
+Gui, Add, Hotkey, vIncludeHotkeyChat1 x1053 y470
+Gui, Add, Hotkey, vIncludeHotkeyChat2 x1053 y500
 Gui, Font, s13 q5
 Gui, Add, Text,x740 y170, AW MODE IS UNDER CONSTRUCTION!
 Goto, Back2
-}
-else{
+} else {
+Gui, Add, Text,x1510 y200, Turn off all Job Blips Fast:
+Gui, Add, Text,x1510 y230, Make it so you can copy paste?
+Gui, Add, Text,x1510 y260, MC CEO toggle
+Gui, Add, Text,x1510 y290, Custom Macro #1 Hotkey:
+Gui, Add, Text,x1510 y320, Custom Macro #2 Hotkey:
+Gui, Add, Text,x1510 y350, Custom Macro #3 Hotkey:
+Gui, Add, Text,x1510 y380, Custom Macro #4 Hotkey:
+Gui, Add, Text,x1510 y410, Custom Macro #5 Hotkey:
+Gui, Add, Text,x1510 y440, Custom Macro #6 Hotkey:
+Gui, Add, Text,x1510 y470, Custom Chat Macro #1 Hotkey:
+Gui, Add, Text,x1510 y500, Custom Chat Macro #2 Hotkey:
+Gui, Add, Hotkey, vJobs x1793 y200
+Gui, Add, Checkbox, gPaste2 vPaste x1793 y230
+Gui, Add, Hotkey, vMCCEO x1793 y260
+Gui, Add, Hotkey, vIncludeHotkey1 x1793 y290
+Gui, Add, Hotkey, vIncludeHotkey2 x1793 y320
+Gui, Add, Hotkey, vIncludeHotkey3 x1793 y350
+Gui, Add, Hotkey, vIncludeHotkey4 x1793 y380
+Gui, Add, Hotkey, vIncludeHotkey5 x1793 y410
+Gui, Add, Hotkey, vIncludeHotkey6 x1793 y440
+Gui, Add, Hotkey, vIncludeHotkeyChat1 x1793 y470
+Gui, Add, Hotkey, vIncludeHotkeyChat2 x1793 y500
 Gui, Font, s13 q5
 Gui, Add, Text,x1510 y170, AW MODE IS UNDER CONSTRUCTION!
 Goto, Back2
