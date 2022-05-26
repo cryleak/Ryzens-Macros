@@ -14,10 +14,20 @@ SetControlDelay, -1
 Gui, Add, Text,,Enable the shit:
 Gui, Add, Text,,Right click in order to eat?
 Gui, Add, Checkbox, gEnable vIsEnabled h20 ym,
-Gui, Add, Checkbox, vRightClick h20,
+Gui, Add, Checkbox, gRightClick vRightClick h20,
+Gui, Add, Button, gRightClick, Spara inställningar
 Gui, Show,, gold farming simulator 2022
+IniRead,Read_RightClick,tinyconfig.ini,OnlyThingHere,Right Click
+GuiControl,,RightClick,%Read_RightClick%
 
-IniWrite, %RightClick%, tinyconfig.ini, OnlyThingHere, 
+RightClick:
+GuiControlGet, RightClick
+if (RightClick = 1) {
+IniWrite,1,tinyconfig.ini,OnlyThingHere,Right Click
+} else {
+IniWrite,0,tinyconfig.ini,OnlyThingHere,Right Click
+}
+return
 
 Enable:
 loop {

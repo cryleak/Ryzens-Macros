@@ -1,6 +1,6 @@
 ﻿;@Ahk2Exe-AddResource gta.ico
 CFG = GTA Binds.ini
-MacroVersion = 3.10.2
+MacroVersion = 3.10.3
 CrosshairDone := 0
 MCCEO2 := 0
 if not A_IsAdmin
@@ -24,11 +24,9 @@ SetControlDelay, -1
 SetMouseDelay, -1
 Process, Priority, , N
 SetWorkingDir %A_ScriptDir%
-Goto, DiscordPriority
-Macro:
+Gosub, DiscordPriority
 Gui, Font, q5
-Goto, Picture2
-Back:
+Gosub, Picture2
 Gui, Add, Text,ym, Interaction Menu Bind:
 Gui, Add, Text,, Thermal Helmet Macro:
 Gui, Add, Text,, Fast Sniper Switch Macro:
@@ -36,6 +34,7 @@ Gui, Add, Text,, Sniper Rifle (in-game) Bind:
 Gui, Add, Text,, Instant EWO Macro:
 Gui, Add, Text,, EWO Look Behind (in-game) Bind:
 Gui, Add, Text,, EWO Special Ability (in-game) Bind:
+Gui, Add, Text,, EWO Melee (in-game) Bind:
 Gui, Add, Text,, BST Macro:
 Gui, Add, Text,, BST Macro MC Mode:
 Gui, Add, Text,, BST Less Reliable But Faster?
@@ -54,6 +53,7 @@ Gui, Add, Hotkey,vSniperBind,
 Gui, Add, Hotkey,vEWO,
 Gui, Add, Hotkey,vEWOLookBehindKey,
 Gui, Add, Hotkey,vEWOSpecialAbilitySlashActionKey,
+Gui, Add, Hotkey,vEWOMelee, r
 Gui, Add, Hotkey,vBST,
 Gui, Add, Checkbox,vBSTMC h20,
 Gui, Add, Checkbox,vBSTSpeed h20,
@@ -101,6 +101,7 @@ Gui, Add, Checkbox, gCrossHair5 vCrossHair h20,
 Gui, Add, Checkbox, vSmoothEWO h20,
 Gui, Add, Checkbox, vIncludeMacros gIncludeMacros2 h20,
 Gui, Add, Button, gSaveConfig,Save config and start the macros!
+Gui, Add, Button, gApply,Apply changes and don't save
 Gui, Add, Button, gHideWindow,Hide window
 Gui, Add, Button, gExitMacros,Exit macros
 Gui, Add, Button, gFlawless, Apply Flawless Widescreen fix!
@@ -118,8 +119,8 @@ Gui, Add, Hotkey, vStickyBind,
 Gui, Add, Hotkey, vPistolBind,
 Gui, Add, Checkbox, gTabWeapon2 vTabWeapon h20,
 Gui, Add, Checkbox, g2Screen2 v2Screen h20,
-Goto, Picture3
-Back2:
+Gosub, NotExist1
+Gosub, Picture3
 
 Hotkey, *$CapsLock, DisableCapsLock
 
@@ -132,6 +133,7 @@ IfExist, %CFG%
    IniRead,Read_EWO,%CFG%,PVP Macros,EWO
    IniRead,Read_EWOLookBehindKey,%CFG%,Keybinds,EWO Look Behind Button
    IniRead,Read_EWOSpecialAbilitySlashActionKey,%CFG%,Keybinds,EWO Special Ability/Action Key
+   IniRead,Read_EWOMelee,%CFG%,Keybinds,EWO Melee Key
    IniRead,Read_BST,%CFG%,PVP Macros,BST
    IniRead,Read_BSTSpeed,%CFG%,PVP Macros,BST Speed
    IniRead,Read_Ammo,%CFG%,PVP Macros,Buy Ammo
@@ -190,6 +192,7 @@ IfExist, %CFG%
    GuiControl,,EWO,%Read_EWO%
    GuiControl,,EWOLookBehindKey,%Read_EWOLookBehindKey%
    GuiControl,,EWOSpecialAbilitySlashActionKey,%Read_EWOSpecialAbilitySlashActionKey%
+   GuiControl,,EWOMelee,%Read_EWOMelee%
    GuiControl,,BST,%Read_BST%
    GuiControl,,BSTSpeed,%Read_BSTSpeed%
    GuiControl,,Ammo,%Read_Ammo%
@@ -232,9 +235,9 @@ IfExist, %CFG%
    GuiControl,,IncludeHotkey2,%Read_IncludeHotkey6%
    GuiControl,,IncludeHotkeyChat1,%Read_IncludeHotkeyChat1%
    GuiControl,,IncludeHotkeyChat2,%Read_IncludeHotkeyChat2%
-   GuiControl,,BSTMC,0
-   GuiControl,,CEOMode,1
 }
+GuiControl,,BSTMC,0
+GuiControl,,CEOMode,1
 
 DetectHiddenWindows, ON
 Gui0 := WinExist( A_ScriptFullpath " ahk_pid " DllCall( "GetCurrentProcessId" ) )
@@ -260,10 +263,10 @@ Menu, Tray, Tip, Ryzen's Macros Version %MacroVersion%
 Gui, Show,, Ryzen's Macros Version %MacroVersion%
 GuiControlGet, AWMode
 If (AWMode = 0) {
-MsgBox, 0, Welcome!, Welcome to Ryzen's Macros. Please note that AW Mode is currently OFF. Add me on Discord (Eqavious Pringle#6666) if you have any issues. Good luck.
+MsgBox, 0, Welcome!, Welcome to Ryzen's Macros. Please note that AW Mode is currently OFF. Add me on Discord (cryleak#3961) if you have any issues. Good luck.
 }
 else {
-MsgBox, 0, Welcome!, Welcome to Ryzen's Macros. Please note that AW Mode is currently ON. Add me on Discord (Eqavious Pringle#6666) if you have any issues. Good luck.
+MsgBox, 0, Welcome!, Welcome to Ryzen's Macros. Please note that AW Mode is currently ON. Add me on Discord (cryleak#3961) if you have any issues. Good luck.
 }
 GuiControlGet, Paste
 If (Paste = 0) {
@@ -314,6 +317,11 @@ ShowGUI:
 Gui, Show
 return
 
+Apply:
+Gosub,DisableAll
+Gui,Submit,NoHide
+Return
+
 ExitMacros:
 ExitApp
 return
@@ -323,7 +331,8 @@ Gui, Hide
 return
 
 SaveConfig:
-Gui, Submit, NoHide
+Gosub,DisableAll
+Gui,Submit,NoHide
 {
    IniWrite,%InteractionMenuKey%,%CFG%,Keybinds,Interaction Menu Key
    IniWrite,%ThermalHelmet%,%CFG%,PVP Macros,Thermal Helmet
@@ -332,6 +341,7 @@ Gui, Submit, NoHide
    IniWrite,%EWO%,%CFG%,PVP Macros,EWO
    IniWrite,%EWOLookBehindKey%,%CFG%,Keybinds,EWO Look Behind Button
    IniWrite,%EWOSpecialAbilitySlashActionKey%,%CFG%,Keybinds,EWO Special Ability/Action Key
+   IniWrite,%EWOMelee%,%CFG%,Keybinds,EWO Melee Key
    IniWrite,%BST%,%CFG%,PVP Macros,BST
    IniWrite,%BSTSpeed%,%CFG%,PVP Macros,BST Speed
    IniWrite,%Ammo%,%CFG%,PVP Macros,Buy Ammo
@@ -376,34 +386,34 @@ Gui, Submit, NoHide
    IniWrite,%IncludeHotkeyChat2%,%CFG%,Misc,Include Hotkey Chat #2
 }
 
-Hotkey, *$%ThermalHelmet%, ThermalHelmet, UseErrorLevel
-Hotkey, *$%FastSniperSwitch%, FastSniperSwitch, UseErrorLevel
-Hotkey, *$%EWO%, EWO, UseErrorLevel
-Hotkey, *$%BST%, BST, UseErrorLevel
-Hotkey, *$%Ammo%, Ammo, UseErrorLevel
-Hotkey, *$%FastRespawn%, FastRespawn, UseErrorLevel
-Hotkey, *$%ToggleCrosshair%, ToggleCrosshair, UseErrorLevel
-Hotkey, %Suspend%, Suspend, UseErrorLevel
-Hotkey, %GTAHax%, GTAHax, UseErrorLevel
-Hotkey, %HelpWhatsThis%, HelpWhatsThis, UseErrorLevel
-Hotkey, %EssayAboutGTA%, EssayAboutGTA, UseErrorLevel
-Hotkey, %CustomTextSpam%, CustomTextSpam, UseErrorLevel
-Hotkey, %ShutUp%, ShutUp, UseErrorLevel
-Hotkey, %ReloadOutfit%, ReloadOutfit, UseErrorLevel
-Hotkey, %ShowUI%, ShowUI, UseErrorLevel
-Hotkey, %ToggleCEO%, ToggleCEO, UseErrorLevel
-Hotkey, %Jobs%, Jobs, UseErrorLevel
-Hotkey, %MCCEO%, MCCEO, UseErrorLevel
-Gui, Submit, NoHide
-Hotkey, *%IncludeHotkey1%, IncludeHotkey01, UseErrorLevel
-Hotkey, *%IncludeHotkey2%, IncludeHotkey02, UseErrorLevel
-Hotkey, *%IncludeHotkey3%, IncludeHotkey03, UseErrorLevel
-Hotkey, *%IncludeHotkey4%, IncludeHotkey04, UseErrorLevel
-Hotkey, *%IncludeHotkey5%, IncludeHotkey05, UseErrorLevel
-Hotkey, *%IncludeHotkey6%, IncludeHotkey06, UseErrorLevel
-Hotkey, *%IncludeHotkeyChat1%, IncludeHotkeyChat01, UseErrorLevel
-Hotkey, *%IncludeHotkeyChat2%, IncludeHotkeyChat02, UseErrorLevel
-goto, LaunchCycle
+Hotkey, *$%ThermalHelmet%, ThermalHelmet, UseErrorLevel On
+Hotkey, *$%FastSniperSwitch%, FastSniperSwitch, UseErrorLevel On
+Hotkey, *$%EWO%, EWO, UseErrorLevel On
+Hotkey, *$%BST%, BST, UseErrorLevel On
+Hotkey, *$%Ammo%, Ammo, UseErrorLevel On
+Hotkey, *$%FastRespawn%, FastRespawn, UseErrorLevel On
+Hotkey, *$%ToggleCrosshair%, ToggleCrosshair, UseErrorLevel On
+Hotkey, %Suspend%, Suspend, UseErrorLevel On
+Hotkey, %GTAHax%, GTAHax, UseErrorLevel On
+Hotkey, %HelpWhatsThis%, HelpWhatsThis, UseErrorLevel On
+Hotkey, %EssayAboutGTA%, EssayAboutGTA, UseErrorLevel On
+Hotkey, %CustomTextSpam%, CustomTextSpam, UseErrorLevel On
+Hotkey, %ShutUp%, ShutUp, UseErrorLevel On
+Hotkey, %ReloadOutfit%, ReloadOutfit, UseErrorLevel On
+Hotkey, %ShowUI%, ShowUI, UseErrorLevel On
+Hotkey, %ToggleCEO%, ToggleCEO, UseErrorLevel On
+Hotkey, %Jobs%, Jobs, UseErrorLevel On
+Hotkey, %MCCEO%, MCCEO, UseErrorLevel On
+Hotkey, *%IncludeHotkey1%, IncludeHotkey01, UseErrorLevel On
+Hotkey, *%IncludeHotkey2%, IncludeHotkey02, UseErrorLevel On
+Hotkey, *%IncludeHotkey3%, IncludeHotkey03, UseErrorLevel On
+Hotkey, *%IncludeHotkey4%, IncludeHotkey04, UseErrorLevel On
+Hotkey, *%IncludeHotkey5%, IncludeHotkey05, UseErrorLevel On
+Hotkey, *%IncludeHotkey6%, IncludeHotkey06, UseErrorLevel On
+Hotkey, *%IncludeHotkeyChat1%, IncludeHotkeyChat01, UseErrorLevel On
+Hotkey, *%IncludeHotkeyChat2%, IncludeHotkeyChat02, UseErrorLevel On
+LaunchCycle()
+Return
 
 ThermalHelmet:
 SendInput {lbutton up}
@@ -451,7 +461,7 @@ if (SmoothEWO = 1) {
    sleep 60
    SendInput {enter up}
    } else {
-   SendInput {up down}{%EWOSpecialAbilitySlashActionKey% down}{%EWOLookBehindKey% down}{g down}{%InteractionMenuKey% down}
+   SendInput {%EWOMelee% down}{up down}{%EWOSpecialAbilitySlashActionKey% down}{%EWOLookBehindKey% down}{g down}{%InteractionMenuKey% down}
    Send {f24 down}{23 down}{f22 down}{f21 down}
    SendInput {wheelup}{enter up}
 }
@@ -460,7 +470,7 @@ Send {enter}
 SendInput {%InteractionMenuKey% up}{%EWOLookBehindKey% up}{< up}{g up}{up up}
 sleep 25
 Send {%InteractionMenuKey%}
-SendInput {f24 up}{f23 up}{f22 up}{f21 up}{%EWOSpecialAbilitySlashActionKey% up}
+SendInput {f24 up}{f23 up}{f22 up}{f21 up}{%EWOSpecialAbilitySlashActionKey% up}{%EWOMelee% up}
 setcapslockstate, off
 return
 
@@ -949,8 +959,7 @@ if (MCCEO2 = 0) {
 }
 return
 
-DiscordPriority: ; Sets the process priority of various applications.
-SetDiscordPriority:
+DiscordPriority:
 {
 processName := "Discord.exe"
 
@@ -1035,133 +1044,132 @@ EnumProcessesByName4(procName) {
    Return PIDs
 }
 }
-Goto, Macro
+Return
 
-LaunchCycle:
-GuiControlGet, ProcessCheck2
-if (ProcessCheck2 = 0) {
-SetTimer, ProcessCheckTimer, Off
-   } else {
-SetTimer, ProcessCheckTimer, 3000
-}
-Goto, TabSave
-
-Crosshair500:
-Gui, Submit, NoHide
-GuiControlGet, IncludeMacros
-if (IncludeMacros = 1) {
-Hotkey, *%IncludeHotkey1%, IncludeHotkey01, UseErrorLevel On
-Hotkey, *%IncludeHotkey2%, IncludeHotkey02, UseErrorLevel On
-Hotkey, *%IncludeHotkey3%, IncludeHotkey03, UseErrorLevel On
-Hotkey, *%IncludeHotkey4%, IncludeHotkey04, UseErrorLevel On
-Hotkey, *%IncludeHotkey5%, IncludeHotkey05, UseErrorLevel On
-Hotkey, *%IncludeHotkey6%, IncludeHotkey06, UseErrorLevel On
-Hotkey, *%IncludeHotkeyChat1%, IncludeHotkeyChat01, UseErrorLevel On
-Hotkey, *%IncludeHotkeyChat2%, IncludeHotkeyChat02, UseErrorLevel On
-}
-else {
-Hotkey, *%IncludeHotkey1%, IncludeHotkey01, UseErrorLevel Off
-Hotkey, *%IncludeHotkey2%, IncludeHotkey02, UseErrorLevel Off
-Hotkey, *%IncludeHotkey3%, IncludeHotkey03, UseErrorLevel Off
-Hotkey, *%IncludeHotkey4%, IncludeHotkey04, UseErrorLevel Off
-Hotkey, *%IncludeHotkey5%, IncludeHotkey05, UseErrorLevel Off
-Hotkey, *%IncludeHotkey6%, IncludeHotkey06, UseErrorLevel Off
-Hotkey, *%IncludeHotkeyChat1%, IncludeHotkeyChat01, UseErrorLevel Off
-Hotkey, *%IncludeHotkeyChat2%, IncludeHotkeyChat02, UseErrorLevel Off
-}
-If (CrosshairDone = 0) {
-GuiControlGet, Crosshair
-GuiControlGet, AWMode
-	if(crossHair = 1) {
-Global crossHairW := 21
-Global crossHairH := 21
-
-Global backgroundColor := 0xff00cc
-
-SysGet, screenW, 78
-SysGet, screenH, 79
-
-GuiControlGet, 2Screen
-If (2Screen = 0) {
-Global crossHairX := (screenW / 2) - (crossHairH / 2)
-Global crossHairY := (screenH / 2) - (crossHairH / 2)
-WinMove, QuickMacroCrosshair,, %CrossHairX%, %CRossHairY%
-}
-else {
-Global crossHairX := (screenW / 4) - (crossHairH / 2)
-Global crossHairY := (screenH / 2) - (crossHairH / 2)
-WinMove, QuickMacroCrosshair,, %CrossHairX%, %CRossHairY%
-}
-
-IfNotExist, %A_WorkingDir%\assets
-	FileCreateDir, %A_WorkingDir%\assets
-
-FileInstall, assets\crosshair.png, %A_WorkingDir%\assets\crosshair.png, false
-
-Gui, QuickMacroCrosshair: New, +AlwaysOnTop -Border -Caption
-Gui, Color, backgroundColor
-Gui, Add, Picture, x0 y0 w%crossHairW% h%crossHairH%,  %A_WorkingDir%\assets\crosshair.png
-Gui, Show, w%crossHairW% h%crossHairH% x%crossHairX% y%crossHairY%, QuickMacroCrosshair
-WinSet, TransColor, backgroundColor, QuickMacroCrosshair
-	} else {
-Gui, QuickMacroCrosshair: Hide
-	}
-If (AWMode = 0) {
-Gui, QuickMacroCrosshair: Hide
-}
-else {
-}
-}
-CrosshairDone := 1
-return
-
-TabSave:
-GuiControlGet, TabWeapon
-GuiControlGet, AWMode
-If (TabWeapon = 0) {
-Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel Off
-Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel Off
-Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel Off
-Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
-Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
-   }
-else {
-  If (AWMode = 0)
-   {
-    Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel Off
-    Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel Off
-    Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel Off
-    Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
-    Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
-  }
-   else {
-Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel On
-Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel On
-Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel On
-Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel On
-Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel On
-      }								
+LaunchCycle() {
+      GuiControlGet, ProcessCheck2
+      if (ProcessCheck2 = 0) {
+      SetTimer, ProcessCheckTimer, Off
+         } else {
+      SetTimer, ProcessCheckTimer, 3000
       }
-GuiControlGet, Paste
-If (Paste = 0) {
-   Hotkey, *$^v, Paste, Off
-}
-else {
-   Hotkey, *$^v, Paste, On
-}
-Goto, Crosshair500
+      GuiControlGet, TabWeapon
+      GuiControlGet, AWMode
+      If (TabWeapon = 0) {
+      Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel Off
+      Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel Off
+      Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel Off
+      Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
+      Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
+         }
+      else {
+      If (AWMode = 0)
+         {
+         Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel Off
+         Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel Off
+         Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel Off
+         Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
+         Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
+      }
+         else {
+      Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel On
+      Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel On
+      Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel On
+      Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel On
+      Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel On
+            }								
+            }
+      GuiControlGet, Paste
+      If (Paste = 0) {
+         Hotkey, *$^v, Paste, Off
+      }
+      else {
+         Hotkey, *$^v, Paste, On
+      }
+      Gui, Submit, NoHide
+      GuiControlGet, IncludeMacros
+      if (IncludeMacros = 1) {
+      Hotkey, *%IncludeHotkey1%, IncludeHotkey01, UseErrorLevel On
+      Hotkey, *%IncludeHotkey2%, IncludeHotkey02, UseErrorLevel On
+      Hotkey, *%IncludeHotkey3%, IncludeHotkey03, UseErrorLevel On
+      Hotkey, *%IncludeHotkey4%, IncludeHotkey04, UseErrorLevel On
+      Hotkey, *%IncludeHotkey5%, IncludeHotkey05, UseErrorLevel On
+      Hotkey, *%IncludeHotkey6%, IncludeHotkey06, UseErrorLevel On
+      Hotkey, *%IncludeHotkeyChat1%, IncludeHotkeyChat01, UseErrorLevel On
+      Hotkey, *%IncludeHotkeyChat2%, IncludeHotkeyChat02, UseErrorLevel On
+      }
+      else {
+      Hotkey, *%IncludeHotkey1%, IncludeHotkey01, UseErrorLevel Off
+      Hotkey, *%IncludeHotkey2%, IncludeHotkey02, UseErrorLevel Off
+      Hotkey, *%IncludeHotkey3%, IncludeHotkey03, UseErrorLevel Off
+      Hotkey, *%IncludeHotkey4%, IncludeHotkey04, UseErrorLevel Off
+      Hotkey, *%IncludeHotkey5%, IncludeHotkey05, UseErrorLevel Off
+      Hotkey, *%IncludeHotkey6%, IncludeHotkey06, UseErrorLevel Off
+      Hotkey, *%IncludeHotkeyChat1%, IncludeHotkeyChat01, UseErrorLevel Off
+      Hotkey, *%IncludeHotkeyChat2%, IncludeHotkeyChat02, UseErrorLevel Off
+      }
+      If (CrosshairDone = 0) {
+      GuiControlGet, Crosshair
+      GuiControlGet, AWMode
+         if(crossHair = 1) {
+      Global crossHairW := 21
+      Global crossHairH := 21
+
+      Global backgroundColor := 0xff00cc
+
+      SysGet, screenW, 78
+      SysGet, screenH, 79
+
+      GuiControlGet, 2Screen
+      If (2Screen = 0) {
+      Global crossHairX := (screenW / 2) - (crossHairH / 2)
+      Global crossHairY := (screenH / 2) - (crossHairH / 2)
+      WinMove, QuickMacroCrosshair,, %CrossHairX%, %CRossHairY%
+      }
+      else {
+      Global crossHairX := (screenW / 4) - (crossHairH / 2)
+      Global crossHairY := (screenH / 2) - (crossHairH / 2)
+      WinMove, QuickMacroCrosshair,, %CrossHairX%, %CRossHairY%
+      }
+
+      IfNotExist, %A_WorkingDir%\assets
+         FileCreateDir, %A_WorkingDir%\assets
+
+      FileInstall, assets\crosshair.png, %A_WorkingDir%\assets\crosshair.png, false
+
+      Gui, QuickMacroCrosshair: New, +AlwaysOnTop -Border -Caption
+      Gui, Color, backgroundColor
+      Gui, Add, Picture, x0 y0 w%crossHairW% h%crossHairH%,  %A_WorkingDir%\assets\crosshair.png
+      Gui, Show, w%crossHairW% h%crossHairH% x%crossHairX% y%crossHairY%, QuickMacroCrosshair
+      WinSet, TransColor, backgroundColor, QuickMacroCrosshair
+         } else {
+      Gui, QuickMacroCrosshair: Hide
+         }
+      If (AWMode = 0) {
+      Gui, QuickMacroCrosshair: Hide
+      }
+      else {
+      }
+      }
+      CrosshairDone := 1
+      return
+      }
 
 Picture2:
+IfExist, %CFG%
+{
 IniRead,Read_Picture,%CFG%,Misc,Picture
 If (Read_Picture = 0) {
-Goto, Back
 }
 else {
 Gui, Add, Picture, x0 y0 w770 h-1 +0x4000000, %A_ScriptDir%/assets/image.png
-Goto, Back
 }
+}
+Return
 
 Picture3:
+IfNotExist, %CFG%
+{
 IniRead,Read_Picture,%CFG%,Misc,Picture
 If (Read_Picture = 0) {
 Gui, Add, Text,x740 y200, Turn off all Job Blips Fast:
@@ -1188,8 +1196,7 @@ Gui, Add, Hotkey, vIncludeHotkeyChat1 x1053 y470
 Gui, Add, Hotkey, vIncludeHotkeyChat2 x1053 y500
 Gui, Font, s13 q5
 Gui, Add, Text,x740 y170, AW MODE IS UNDER CONSTRUCTION!
-Goto, Back2
-} else {
+}} else {
 Gui, Add, Text,x1510 y200, Turn off all Job Blips Fast:
 Gui, Add, Text,x1510 y230, Make it so you can copy paste?
 Gui, Add, Text,x1510 y260, MC CEO toggle
@@ -1214,8 +1221,8 @@ Gui, Add, Hotkey, vIncludeHotkeyChat1 x1793 y470
 Gui, Add, Hotkey, vIncludeHotkeyChat2 x1793 y500
 Gui, Font, s13 q5
 Gui, Add, Text,x1510 y170, AW MODE IS UNDER CONSTRUCTION!
-Goto, Back2
 }
+Return
 
 IncludeMacros2:
 Gui, Submit, NoHide
@@ -1299,3 +1306,101 @@ SendInput {raw}%IncludeMacroChat2%
 Send {enter}
 }
 return
+
+DisableAll:
+   Hotkey, *$%ThermalHelmet%, ThermalHelmet, UseErrorLevel Off
+   Hotkey, *$%FastSniperSwitch%, FastSniperSwitch, UseErrorLevel Off
+   Hotkey, *$%EWO%, EWO, UseErrorLevel Off
+   Hotkey, *$%BST%, BST, UseErrorLevel Off
+   Hotkey, *$%Ammo%, Ammo, UseErrorLevel Off
+   Hotkey, *$%FastRespawn%, FastRespawn, UseErrorLevel Off
+   Hotkey, *$%ToggleCrosshair%, ToggleCrosshair, UseErrorLevel Off
+   Hotkey, %Suspend%, Suspend, UseErrorLevel Off
+   Hotkey, %GTAHax%, GTAHax, UseErrorLevel Off
+   Hotkey, %HelpWhatsThis%, HelpWhatsThis, UseErrorLevel Off
+   Hotkey, %EssayAboutGTA%, EssayAboutGTA, UseErrorLevel Off
+   Hotkey, %CustomTextSpam%, CustomTextSpam, UseErrorLevel Off
+   Hotkey, %ShutUp%, ShutUp, UseErrorLevel Off
+   Hotkey, %ReloadOutfit%, ReloadOutfit, UseErrorLevel Off
+   Hotkey, %ShowUI%, ShowUI, UseErrorLevel Off
+   Hotkey, %ToggleCEO%, ToggleCEO, UseErrorLevel Off
+   Hotkey, %Jobs%, Jobs, UseErrorLevel Off
+   Hotkey, %MCCEO%, MCCEO, UseErrorLevel Off
+   Hotkey, *%IncludeHotkey1%, IncludeHotkey01, UseErrorLevel Off
+   Hotkey, *%IncludeHotkey2%, IncludeHotkey02, UseErrorLevel Off
+   Hotkey, *%IncludeHotkey3%, IncludeHotkey03, UseErrorLevel Off
+   Hotkey, *%IncludeHotkey4%, IncludeHotkey04, UseErrorLevel Off
+   Hotkey, *%IncludeHotkey5%, IncludeHotkey05, UseErrorLevel Off
+   Hotkey, *%IncludeHotkey6%, IncludeHotkey06, UseErrorLevel Off
+   Hotkey, *%IncludeHotkeyChat1%, IncludeHotkeyChat01, UseErrorLevel Off
+   Hotkey, *%IncludeHotkeyChat2%, IncludeHotkeyChat02, UseErrorLevel Off
+   Hotkey, *%IncludeHotkey1%, IncludeHotkey01, UseErrorLevel Off
+   Hotkey, *%IncludeHotkey2%, IncludeHotkey02, UseErrorLevel Off
+   Hotkey, *%IncludeHotkey3%, IncludeHotkey03, UseErrorLevel Off
+   Hotkey, *%IncludeHotkey4%, IncludeHotkey04, UseErrorLevel Off
+   Hotkey, *%IncludeHotkey5%, IncludeHotkey05, UseErrorLevel Off
+   Hotkey, *%IncludeHotkey6%, IncludeHotkey06, UseErrorLevel Off
+   Hotkey, *%IncludeHotkeyChat1%, IncludeHotkeyChat01, UseErrorLevel Off
+   Hotkey, *%IncludeHotkeyChat2%, IncludeHotkeyChat02, UseErrorLevel Off
+   Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel Off
+   Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel Off
+   Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel Off
+   Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
+   Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
+   Return
+
+   NotExist1:
+   IfNotExist, %CFG% 
+   {
+   GuiControl,,InteractionMenuKey,M
+   GuiControl,,ThermalHelmet,
+   GuiControl,,FastSniperSwitch,
+   GuiControl,,SniperBind,9
+   GuiControl,,EWO,
+   GuiControl,,EWOLookBehindKey,c
+   GuiControl,,EWOSpecialAbilitySlashActionKey,CapsLock
+   GuiControl,,EWOMelee,r
+   GuiControl,,BST,
+   GuiControl,,BSTSpeed,0
+   GuiControl,,Ammo,
+   GuiControl,,FastRespawn,
+   GuiControl,,Suspend,
+   GuiControl,,GTAHax,
+   GuiControl,,HelpWhatsThis,
+   GuiControl,,EssayAboutGTA,
+   GuiControl,,CustomTextSpam,
+   GuiControl,,ShutUp,
+   GuiControl,,CustomSpamText,Ryzen_5_3600XT is hot
+   GuiControl,,ReloadOutfit,
+   GuiControl,,ShowUI,
+   GuiControl,,ToggleCEO,
+   GuiControl,,ToggleCrosshair,
+   GuiControl,,SleepTime,200
+   GuiControl,,BuyCycles,4
+   GuiControl,,Reverse,0
+   GuiControl,,ProcessCheck2,0
+   GuiControl,,AWMode,0
+   GuiControl,,NightVision,0
+   GuiControl,,Picture,0
+   GuiControl,,RPGSpam,
+   GuiControl,,RPGBind,4
+   GuiControl,,StickyBind,5
+   GuiControl,,PistolBind,6
+   GuiControl,,TabWeapon,0
+   GuiControl,,Crosshair,0
+   GuiControl,,2Screen,0
+   GuiControl,,Jobs,
+   GuiControl,,Paste,0
+   GuiControl,,MCCEO,
+   GuiControl,,SmoothEWO,0
+   GuiControl,,IncludeMacros,
+   GuiControl,,IncludeHotkey1,
+   GuiControl,,IncludeHotkey2,
+   GuiControl,,IncludeHotkey2,
+   GuiControl,,IncludeHotkey2,
+   GuiControl,,IncludeHotkey2,
+   GuiControl,,IncludeHotkey2,
+   GuiControl,,IncludeHotkeyChat1,
+   GuiControl,,IncludeHotkeyChat2,
+   }
+   Return
