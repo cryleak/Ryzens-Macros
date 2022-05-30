@@ -1,6 +1,6 @@
 ﻿;@Ahk2Exe-AddResource gta.ico
 CFG = GTA Binds.ini
-MacroVersion = 3.10.3
+MacroVersion = 3.10.3-HOTFIX
 CrosshairDone := 0
 MCCEO2 := 0
 if not A_IsAdmin
@@ -53,7 +53,7 @@ Gui, Add, Hotkey,vSniperBind,
 Gui, Add, Hotkey,vEWO,
 Gui, Add, Hotkey,vEWOLookBehindKey,
 Gui, Add, Hotkey,vEWOSpecialAbilitySlashActionKey,
-Gui, Add, Hotkey,vEWOMelee, r
+Gui, Add, Hotkey,vEWOMelee,
 Gui, Add, Hotkey,vBST,
 Gui, Add, Checkbox,vBSTMC h20,
 Gui, Add, Checkbox,vBSTSpeed h20,
@@ -106,7 +106,7 @@ Gui, Add, Button, gHideWindow,Hide window
 Gui, Add, Button, gExitMacros,Exit macros
 Gui, Add, Button, gFlawless, Apply Flawless Widescreen fix!
 
-Gui, Add, Text,ys y10, AW Mode ONLY RPG Spam
+Gui, Add, Text,ys y10, RPG Spam:
 Gui, Add, Text,, RPG (in-game) Bind:
 Gui, Add, Text,, Sticky bomb (in-game) Bind:
 Gui, Add, Text,, Pistol (in-game) Bind:
@@ -412,7 +412,12 @@ Hotkey, *%IncludeHotkey5%, IncludeHotkey05, UseErrorLevel On
 Hotkey, *%IncludeHotkey6%, IncludeHotkey06, UseErrorLevel On
 Hotkey, *%IncludeHotkeyChat1%, IncludeHotkeyChat01, UseErrorLevel On
 Hotkey, *%IncludeHotkeyChat2%, IncludeHotkeyChat02, UseErrorLevel On
-LaunchCycle()
+Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel
+Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel
+Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel
+Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel
+Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel
+Gosub, LaunchCycle
 Return
 
 ThermalHelmet:
@@ -467,10 +472,8 @@ if (SmoothEWO = 1) {
 }
 sleep 25
 Send {enter}
-SendInput {%InteractionMenuKey% up}{%EWOLookBehindKey% up}{< up}{g up}{up up}
-sleep 25
+SendInput {%InteractionMenuKey% up}{%EWOLookBehindKey% up}{< up}{g up}{up up}{f24 up}{f23 up}{f22 up}{f21 up}{%EWOSpecialAbilitySlashActionKey% up}{%EWOMelee% up}
 Send {%InteractionMenuKey%}
-SendInput {f24 up}{f23 up}{f22 up}{f21 up}{%EWOSpecialAbilitySlashActionKey% up}{%EWOMelee% up}
 setcapslockstate, off
 return
 
@@ -793,23 +796,12 @@ TabWeapon2:
 GuiControlGet, TabWeapon
 GuiControlGet, AWMode
 If (TabWeapon = 0) {
-Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel Off
 Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel Off
 Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel Off
 Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
 Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
-}
-else {
-  If (AWMode = 0)
-   {
-    Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel Off
-    Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel Off
-    Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel Off
-    Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
-    Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
-  }
-   else {
-Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel On
+} else {
+   if (AWMode = 1) {
 Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel On
 Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel On
 Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel On 
@@ -822,31 +814,27 @@ AWMode2:
 GuiControlGet, TabWeapon
 GuiControlGet, AWMode
 If (TabWeapon = 0) {
-Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel Off
 Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel Off
 Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel Off
 Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
 Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
 }
-else {
-  If (AWMode = 0)
-   {
-    Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel Off
+If (AWMode = 0) {
     Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel Off
     Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel Off
     Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
     Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
     MsgBox, 0, AW Mode, AW Mode is now DEACTIVATED
-  }
-   else {
-Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel On
+   } else if (AWMode = 1) and (TabWeapon = 1) {
 Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel On
 Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel On
 Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel On 
 Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel On
 MsgBox, 0, AW Mode, AW Mode has been ACTIVATED
       }								
-}
+      else if (AWMode = 1) {
+         MsgBox, 0, AW Mode, AW Mode has been ACTIVATED
+      }
 return
 
 ShowUI:
@@ -1046,7 +1034,7 @@ EnumProcessesByName4(procName) {
 }
 Return
 
-LaunchCycle() {
+LaunchCycle: 
       GuiControlGet, ProcessCheck2
       if (ProcessCheck2 = 0) {
       SetTimer, ProcessCheckTimer, Off
@@ -1056,28 +1044,29 @@ LaunchCycle() {
       GuiControlGet, TabWeapon
       GuiControlGet, AWMode
       If (TabWeapon = 0) {
-      Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel Off
       Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel Off
       Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel Off
       Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
       Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
          }
-      else {
-      If (AWMode = 0)
-         {
-         Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel Off
+      else If (AWMode = 0) {
+
          Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel Off
          Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel Off
          Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
          Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
       }
-         else {
-      Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel On
+         else if (TabWeapon = 1) and (AWMode = 1) {
       Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel On
       Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel On
       Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel On
       Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel On
-            }								
+            }
+            else if (AWMode = 1) and (TabWeapon = 0){
+         Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel Off
+         Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel Off
+         Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
+         Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
             }
       GuiControlGet, Paste
       If (Paste = 0) {
@@ -1153,7 +1142,6 @@ LaunchCycle() {
       }
       CrosshairDone := 1
       return
-      }
 
 Picture2:
 IfExist, %CFG%
@@ -1342,7 +1330,6 @@ DisableAll:
    Hotkey, *%IncludeHotkey6%, IncludeHotkey06, UseErrorLevel Off
    Hotkey, *%IncludeHotkeyChat1%, IncludeHotkeyChat01, UseErrorLevel Off
    Hotkey, *%IncludeHotkeyChat2%, IncludeHotkeyChat02, UseErrorLevel Off
-   Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel Off
    Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel Off
    Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel Off
    Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
