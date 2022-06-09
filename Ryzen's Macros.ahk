@@ -1,6 +1,5 @@
-﻿;@Ahk2Exe-AddResource gta.ico
-CFG = GTA Binds.ini
-MacroVersion = 3.10.3-HOTFIX
+﻿CFG = GTA Binds.ini
+MacroVersion = 3.10.4
 CrosshairDone := 0
 MCCEO2 := 0
 if not A_IsAdmin
@@ -122,8 +121,6 @@ Gui, Add, Checkbox, g2Screen2 v2Screen h20,
 Gosub, NotExist1
 Gosub, Picture3
 
-Hotkey, *$CapsLock, DisableCapsLock
-
 IfExist, %CFG% 
 { 
    IniRead,Read_InteractionMenuKey,%CFG%,Keybinds,Interaction Menu Key
@@ -229,10 +226,10 @@ IfExist, %CFG%
    GuiControl,,IncludeMacros,%Read_IncludeMacros%
    GuiControl,,IncludeHotkey1,%Read_IncludeHotkey1%
    GuiControl,,IncludeHotkey2,%Read_IncludeHotkey2%
-   GuiControl,,IncludeHotkey2,%Read_IncludeHotkey3%
-   GuiControl,,IncludeHotkey2,%Read_IncludeHotkey4%
-   GuiControl,,IncludeHotkey2,%Read_IncludeHotkey5%
-   GuiControl,,IncludeHotkey2,%Read_IncludeHotkey6%
+   GuiControl,,IncludeHotkey3,%Read_IncludeHotkey3%
+   GuiControl,,IncludeHotkey4,%Read_IncludeHotkey4%
+   GuiControl,,IncludeHotkey5,%Read_IncludeHotkey5%
+   GuiControl,,IncludeHotkey6,%Read_IncludeHotkey6%
    GuiControl,,IncludeHotkeyChat1,%Read_IncludeHotkeyChat1%
    GuiControl,,IncludeHotkeyChat2,%Read_IncludeHotkeyChat2%
 }
@@ -270,10 +267,10 @@ MsgBox, 0, Welcome!, Welcome to Ryzen's Macros. Please note that AW Mode is curr
 }
 GuiControlGet, Paste
 If (Paste = 0) {
-   Hotkey, *$^v, Paste, Off
+   Hotkey, *^v, Paste, Off
 }
 else {
-   Hotkey, *$^v, Paste, On
+   Hotkey, *^v, Paste, On
 }
 return
 
@@ -386,24 +383,24 @@ Gui,Submit,NoHide
    IniWrite,%IncludeHotkeyChat2%,%CFG%,Misc,Include Hotkey Chat #2
 }
 
-Hotkey, *$%ThermalHelmet%, ThermalHelmet, UseErrorLevel On
-Hotkey, *$%FastSniperSwitch%, FastSniperSwitch, UseErrorLevel On
-Hotkey, *$%EWO%, EWO, UseErrorLevel On
-Hotkey, *$%BST%, BST, UseErrorLevel On
-Hotkey, *$%Ammo%, Ammo, UseErrorLevel On
-Hotkey, *$%FastRespawn%, FastRespawn, UseErrorLevel On
-Hotkey, *$%ToggleCrosshair%, ToggleCrosshair, UseErrorLevel On
-Hotkey, %Suspend%, Suspend, UseErrorLevel On
-Hotkey, %GTAHax%, GTAHax, UseErrorLevel On
-Hotkey, %HelpWhatsThis%, HelpWhatsThis, UseErrorLevel On
-Hotkey, %EssayAboutGTA%, EssayAboutGTA, UseErrorLevel On
-Hotkey, %CustomTextSpam%, CustomTextSpam, UseErrorLevel On
-Hotkey, %ShutUp%, ShutUp, UseErrorLevel On
-Hotkey, %ReloadOutfit%, ReloadOutfit, UseErrorLevel On
-Hotkey, %ShowUI%, ShowUI, UseErrorLevel On
-Hotkey, %ToggleCEO%, ToggleCEO, UseErrorLevel On
-Hotkey, %Jobs%, Jobs, UseErrorLevel On
-Hotkey, %MCCEO%, MCCEO, UseErrorLevel On
+Hotkey, *%ThermalHelmet%, ThermalHelmet, UseErrorLevel On
+Hotkey, *%FastSniperSwitch%, FastSniperSwitch, UseErrorLevel On
+Hotkey, *%EWO%, EWO, UseErrorLevel On
+Hotkey, *%BST%, BST, UseErrorLevel On
+Hotkey, *%Ammo%, Ammo, UseErrorLevel On
+Hotkey, *%FastRespawn%, FastRespawn, UseErrorLevel On
+Hotkey, *%ToggleCrosshair%, ToggleCrosshair, UseErrorLevel On
+Hotkey, *%Suspend%, Suspend, UseErrorLevel On
+Hotkey, *%GTAHax%, GTAHax, UseErrorLevel On
+Hotkey, *%HelpWhatsThis%, HelpWhatsThis, UseErrorLevel On
+Hotkey, *%EssayAboutGTA%, EssayAboutGTA, UseErrorLevel On
+Hotkey, *%CustomTextSpam%, CustomTextSpam, UseErrorLevel On
+Hotkey, *%ShutUp%, ShutUp, UseErrorLevel On
+Hotkey, *%ReloadOutfit%, ReloadOutfit, UseErrorLevel On
+Hotkey, *%ShowUI%, ShowUI, UseErrorLevel On
+Hotkey, *%ToggleCEO%, ToggleCEO, UseErrorLevel On
+Hotkey, *%Jobs%, Jobs, UseErrorLevel On
+Hotkey, *%MCCEO%, MCCEO, UseErrorLevel On
 Hotkey, *%IncludeHotkey1%, IncludeHotkey01, UseErrorLevel On
 Hotkey, *%IncludeHotkey2%, IncludeHotkey02, UseErrorLevel On
 Hotkey, *%IncludeHotkey3%, IncludeHotkey03, UseErrorLevel On
@@ -412,11 +409,7 @@ Hotkey, *%IncludeHotkey5%, IncludeHotkey05, UseErrorLevel On
 Hotkey, *%IncludeHotkey6%, IncludeHotkey06, UseErrorLevel On
 Hotkey, *%IncludeHotkeyChat1%, IncludeHotkeyChat01, UseErrorLevel On
 Hotkey, *%IncludeHotkeyChat2%, IncludeHotkeyChat02, UseErrorLevel On
-Hotkey, *$%RPGSpam%, RPGSpam, UseErrorLevel
-Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel
-Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel
-Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel
-Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel
+Hotkey, *%RPGSpam%, RPGSpam, UseErrorLevel On
 Gosub, LaunchCycle
 Return
 
@@ -424,29 +417,29 @@ ThermalHelmet:
 SendInput {lbutton up}
 GuiControlGet, CEOMode
 If (CEOMode = 0) {
-Send {%InteractionMenuKey%}{down 3}{enter}{down}{enter}
+Send {Blind}{%InteractionMenuKey%}{down 3}{enter}{down}{enter}
 }
 else {
-Send {%InteractionMenuKey%}{down 4}{enter}{down}{enter}
+Send {Blind}{%InteractionMenuKey%}{down 4}{enter}{down}{enter}
 }
 GuiControlGet, NightVision
 If (NightVision = 0) {
-Send {down 4}
+Send {Blind}{down 4}
 sleep 50
-Send {space}{%InteractionMenuKey%}
+Send {Blind}{space}{%InteractionMenuKey%}
 }
 else {
 sleep 50
-Send {space}{%InteractionMenuKey%}
+Send {Blind}{space}{%InteractionMenuKey%}
 }
 return
 
 FastSniperSwitch:
-Send {%SniperBind%}
+Send {Blind}{%SniperBind%}
 SendInput {lbutton down}
 sleep 9
 SendInput {lbutton up}
-Send {%SniperBind%}
+Send {Blind}{%SniperBind%}
 SendInput {lbutton down}
 sleep 30
 SendInput {lbutton up}
@@ -454,27 +447,33 @@ return
 
 EWO:
 GuiControlGet, SmoothEWO
-SendInput {lshift up}{lbutton up}{rbutton up}{enter down}
+SendInput {lctrl up}{rctrl up}{rshift up}{lshift up}{lbutton up}{rbutton up}
 if (SmoothEWO = 1) {
-   SendInput {enter down}{%InteractionMenuKey% down}
+   SmoothEWOTime2 = %SmoothEWOTime%
+   SmoothEWOTime2 *= 3
+   Send {Blind}{%InteractionMenuKey%}
+   sleep 15
+   Send {Blind}{%EWOSpecialAbilitySlashActionKey%}
+   sleep 15
+   Send {Blind}{shift down}
+   sleep 15
+   Send {Blind}{%EWOLookBehindKey% down}
+   Send {Blind}{shift up}
+   Send {Blind}{up}
+   sleep 35
+   Send {Blind}{up}
    sleep 45
-   SendInput {%EWOLookBehindKey% down}
-   sleep 35
-   SendInput {wheelup}
-   sleep 35
-   SendInput {wheelup}{%EWOSpecialAbilitySlashActionKey% down}
-   sleep 60
-   SendInput {enter up}
+   Send {Blind}{enter}
    } else {
-   SendInput {%EWOMelee% down}{up down}{%EWOSpecialAbilitySlashActionKey% down}{%EWOLookBehindKey% down}{g down}{%InteractionMenuKey% down}
-   Send {f24 down}{23 down}{f22 down}{f21 down}
+   SendInput {enter down}{%EWOMelee% down}{up down}{%EWOLookBehindKey% down}{g down}{%InteractionMenuKey% down}
+   Send {Blind}{%EWOSpecialAbilitySlashActionKey%}{f24 down}
    SendInput {wheelup}{enter up}
 }
 sleep 25
-Send {enter}
-SendInput {%InteractionMenuKey% up}{%EWOLookBehindKey% up}{< up}{g up}{up up}{f24 up}{f23 up}{f22 up}{f21 up}{%EWOSpecialAbilitySlashActionKey% up}{%EWOMelee% up}
-Send {%InteractionMenuKey%}
-setcapslockstate, off
+Send {Blind}{enter}
+SendInput {%InteractionMenuKey% up}{%EWOLookBehindKey% up}{< up}{g up}{up up}{f24 up}{f23 up}{f22 up}{f21 up}{%EWOMelee% up}
+Send {Blind}{%InteractionMenuKey%}
+SetCapsLockState, Off
 return
 
 BST:
@@ -487,13 +486,13 @@ If (CEOMode = 0) {
 }
 else {
    if (BSTMC = 1) {
-      Send {%InteractionMenuKey%}{enter}{down}{enter}{up}{enter}
+      Send {Blind}{%InteractionMenuKey%}{enter}{down}{enter}{up}{enter}
    }
    else if (BSTSpeed = 1) {
-         Send {%InteractionMenuKey%}{enter}{up 3}{enter}{down}{enter}
+         Send {Blind}{%InteractionMenuKey%}{enter}{up 3}{enter}{down}{enter}
 }
 else {
-         Send {%InteractionMenuKey%}{enter}{down 4}{enter}{down}{enter}
+         Send {Blind}{%InteractionMenuKey%}{enter}{down 4}{enter}{down}{enter}
       }
 }
 return
@@ -509,23 +508,18 @@ Reverse2 = left
    Reverse2 = enter
 }
 If (CEOMode = 0) {
-   Send {%InteractionMenuKey%}{down 2}
+   Send {Blind}{%InteractionMenuKey%}{down 2}
    }
    else {
-      Send {%InteractionMenuKey%}{down 3}
+      Send {Blind}{%InteractionMenuKey%}{down 3}
       }
-send {enter}{down 5}{enter}
-if (Reverse = 1) {
-send {down}{%Reverse2%}{down 2}{enter}
-} else {
-send {up}{enter}
-}
+Send {Blind}{enter}{down 5}{enter}{up}{enter}
 Loop, %BuyCycles% {
-   Send {up 2}{%Reverse2%}{down 2}
+   Send {Blind}{up 2}{%Reverse2%}{down 2}
    sleep %SleepTime%
-   Send {enter}
+   Send {Blind}{enter}
 }
-Send {%InteractionMenuKey%}
+Send {Blind}{%InteractionMenuKey%}
 BuyCycles += 1
 return
 
@@ -538,19 +532,20 @@ Suspend
 return
 
 GTAHax:
+CoordMode, Mouse, Client
 SendInput {%GTAHax% up}
 Run, GTAHaXUI.exe, %A_ScriptDir%, , Max
 Sleep 1500
-DllCall("SetCursorPos", int, 300, int, 298)
-Send {LButton}{BackSpace}262145
-DllCall("SetCursorPos", int, 300, int, 328)
-Send {LButton}{BackSpace}28073
-DllCall("SetCursorPos", int, 324, int, 585)
-Send {LButton}
-DllCall("SetCursorPos", int, 300, int, 328) 
-Send {LButton}{BackSpace}4
-DllCall("SetCursorPos", int, 324, int, 585) 
-Send {LButton}
+Mousemove,125,62
+Send {lbutton}{BackSpace}262145
+Mousemove,125,90
+Send {lbutton}{BackSpace}28073
+Mousemove,125,350
+Send {lbutton}
+Mousemove,125,90
+Send {lbutton}{BackSpace}4
+Mousemove,125,350
+Send {lbutton}
 sleep 100
 WinClose, ahk_exe GTAHaXUI.exe
 sleep 100
@@ -559,96 +554,96 @@ return
 
 HelpWhatsThis:
 SendInput {%HelpWhatsThis% up}
-Send td
+Send {Blind}td
 SendInput on’t care {Numpadadd} didn't ask {Numpadadd} cry a
-Send b
+Send {Blind}b
 SendInput out it {Numpadadd} stay mad {Numpadadd} get real {Numpadadd} L {Numpadadd} 
-Send {space}
+Send {Blind}{space}
 SendInput mald {Numpadadd} seethe {Numpadadd} cope harder {Numpadadd}
-Send {space}
+Send {Blind}{space}
 SendInput hoes mad {Numpadadd} basic {Numpadadd} skill issue
-Send {space}
+Send {Blind}{space}
 SendInput {numpadadd}{space}ratio
-Send {enter}t{Numpadadd} 
+Send {Blind}{enter}t{Numpadadd} 
 SendInput {space}you fell off {Numpadadd} the audacity 
-Send {space}
+Send {Blind}{space}
 SendInput {Numpadadd}{space}triggered {Numpadadd} any askers {Numpadadd} red
-Send pi
+Send {Blind}pi
 SendInput lled {Numpadadd} get a life {Numpadadd} ok and? 
-Send {space}
+Send {Blind}{space}
 SendInput {Numpadadd} cringe {Numpadadd} touch grass {Numpadadd} donow
-Send a
+Send {Blind}a
 SendInput lled {Numpadadd} not based
-Send {enter}t{Numpadadd} 
+Send {Blind}{enter}t{Numpadadd} 
 SendInput {space}you’re a (insert stereotype)
-Send {space}
+Send {Blind}{space}
 SendInput {Numpadadd} not funny didn't laugh {Numpadadd} you
-Send ’
+Send {Blind}’
 SendInput re* {Numpadadd} grammar issue {Numpadadd} go outsi
-Send d
+Send {Blind}d
 SendInput e {Numpadadd} get good {Numpadadd} reported
-Send {enter}t{Numpadadd}
+Send {Blind}{enter}t{Numpadadd}
 SendInput {space}ad hominem {Numpadadd} GG{shift down}1{shift up} {Numpadadd} ur mom
-Send {enter}
+Send {Blind}{enter}
 return
 
 EssayAboutGTA:
 SendInput {%EssayAboutGTA% up}
-Send tw
+Send {Blind}tw
 SendInput hy is my fps so shlt this game
-Send {space}
+Send {Blind}{space}
 SendInput has terrible optimization its{space}
-Send c
+Send {Blind}c
 SendInput hinese as shlt man i hate this
-Send {space}
+Send {Blind}{space}
 SendInput game im gonna swat the r* headq
-Send u
+Send {Blind}u
 SendInput arters man i
-Send {enter}ts
+Send {Blind}{enter}ts
 SendInput wear to god this game is so ba
-Send d
+Send {Blind}d
 SendInput {space}why do we all still play it i
-Send d
+Send {Blind}d
 SendInput k but how can they not afford{space}
-Send s
+Send {Blind}s
 SendInput ome dedicated servers they are a
-Send {space}
+Send {Blind}{space}
 SendInput multi billion 
-Send {enter}td
+Send {Blind}{enter}td
 SendInput ollar company also why does it
-Send {space}
+Send {Blind}{space}
 SendInput still use p2p technology for s
-Send e
+Send {Blind}e
 SendInput rvers thats been out of date s
-Send i
+Send {Blind}i
 SendInput nce gta 4 man it honestly baffl
-Send l
+Send {Blind}l
 SendInput es me how
-Send {enter}to
+Send {Blind}{enter}to
 SendInput utdated gta online is and how{space}
-Send b
+Send {Blind}b
 SendInput ad the fps is its so cpu bo 
-Send u
+Send {Blind}u
 SendInput nd its stupid and thanks for{space}
-Send l
+Send {Blind}l
 SendInput istening to my essay about how
-Send {space}
+Send {Blind}{space}
 SendInput bad gta online is
-Send {enter}
+Send {Blind}{enter}
 return
 
 CustomTextSpam: ; Spams whatever your clipboard is. Copy anything to your clipboard for it to work.
 Length := StrLen(CustomSpamText)
 if (Length >= 31) {
 sendraw t%CustomSpamText%
-Send {enter}
+Send {Blind}{enter}
 }
 else if Length <= 30
 {
 SendInput {%CustomTextSpam% up}
-Send t{shift up}
+Send {Blind}t{shift up}
 SendInput {raw}%CustomSpamText%
-Send {enter} 
+Send {Blind}{enter} 
 }
 return
 
@@ -657,19 +652,18 @@ SendInput {raw}%Clipboard%
 return
 
 ShutUp: ; Spams "shut up"
-SendInput {%ShutUp% up}
-Send t{shift up}
-SendInput {raw}shut up
-Send {enter}
+Send {Blind}t{shift up}
+sendinput shut up
+Send {Blind}{enter}
 return
 
 Paste2:
 GuiControlGet, Paste
 If (Paste = 0) {
-   Hotkey, *$^v, Paste, Off
+   Hotkey, *^v, Paste, Off
 }
 else {
-   Hotkey, *$^v, Paste, On
+   Hotkey, *^v, Paste, On
 }
 return
 
@@ -677,20 +671,12 @@ ReloadOutfit:
 SendInput {lbutton up}
 GuiControlGet, CEOMode ; Retrieves 1 if it is checked, 0 if it is unchecked.
 If (CEOMode = 0) {
-Send {%InteractionMenuKey%}{down 3}{enter}
+Send {Blind}{%InteractionMenuKey%}{down 3}{enter}
 }
 else {
-Send {%InteractionMenuKey%}{down 4}{enter}
+Send {Blind}{%InteractionMenuKey%}{down 4}{enter}
 }
-Send {down 3}{enter 2}{%InteractionMenuKey%}
-return
-
-DisableCapsLock: ; Disables CapsLock, so you can't press it.
-Send {CapsLock down}
-sleep 75
-Send {CapsLock up}
-sleep 25
-setcapslockstate, off
+Send {Blind}{down 3}{enter 2}{%InteractionMenuKey%}
 return
 
 2Screen2:
@@ -796,16 +782,16 @@ TabWeapon2:
 GuiControlGet, TabWeapon
 GuiControlGet, AWMode
 If (TabWeapon = 0) {
-Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel Off
-Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel Off
-Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
-Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
+Hotkey, *%SniperBind%, SniperBind, UseErrorLevel Off
+Hotkey, *%RPGBind%, RPGBind, UseErrorLevel Off
+Hotkey, *%StickyBind%, StickyBind, UseErrorLevel Off
+Hotkey, *%PistolBind%, PistolBind, UseErrorLevel Off
 } else {
    if (AWMode = 1) {
-Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel On
-Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel On
-Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel On 
-Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel On
+Hotkey, *%SniperBind%, SniperBind, UseErrorLevel On
+Hotkey, *%RPGBind%, RPGBind, UseErrorLevel On
+Hotkey, *%StickyBind%, StickyBind, UseErrorLevel On 
+Hotkey, *%PistolBind%, PistolBind, UseErrorLevel On
       }								
 }
 return
@@ -814,22 +800,22 @@ AWMode2:
 GuiControlGet, TabWeapon
 GuiControlGet, AWMode
 If (TabWeapon = 0) {
-Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel Off
-Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel Off
-Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
-Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
+Hotkey, *%SniperBind%, SniperBind, UseErrorLevel Off
+Hotkey, *%RPGBind%, RPGBind, UseErrorLevel Off
+Hotkey, *%StickyBind%, StickyBind, UseErrorLevel Off
+Hotkey, *%PistolBind%, PistolBind, UseErrorLevel Off
 }
 If (AWMode = 0) {
-    Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel Off
-    Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel Off
-    Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
-    Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
+    Hotkey, *%SniperBind%, SniperBind, UseErrorLevel Off
+    Hotkey, *%RPGBind%, RPGBind, UseErrorLevel Off
+    Hotkey, *%StickyBind%, StickyBind, UseErrorLevel Off
+    Hotkey, *%PistolBind%, PistolBind, UseErrorLevel Off
     MsgBox, 0, AW Mode, AW Mode is now DEACTIVATED
    } else if (AWMode = 1) and (TabWeapon = 1) {
-Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel On
-Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel On
-Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel On 
-Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel On
+Hotkey, *%SniperBind%, SniperBind, UseErrorLevel On
+Hotkey, *%RPGBind%, RPGBind, UseErrorLevel On
+Hotkey, *%StickyBind%, StickyBind, UseErrorLevel On 
+Hotkey, *%PistolBind%, PistolBind, UseErrorLevel On
 MsgBox, 0, AW Mode, AW Mode has been ACTIVATED
       }								
       else if (AWMode = 1) {
@@ -845,11 +831,11 @@ ToggleCEO:
 SendInput {lbutton up}
 GuiControlGet, CEOMode ; Retrieves 1 if it is checked, 0 if it is unchecked.
 If (CEOMode = 0) {
-   Send {%InteractionMenuKey%}{down 6}{enter 2}
+   Send {Blind}{%InteractionMenuKey%}{down 6}{enter 2}
 GUIControl,, CEOMode, 1
 }
 else {
-   Send {%InteractionMenuKey%}{enter}{up}{enter}
+   Send {Blind}{%InteractionMenuKey%}{enter}{up}{enter}
 GUIControl,, CEOMode, 0
 }
 return
@@ -876,23 +862,23 @@ MsgBox, 0, Macros will close now. RIP., GTA is no longer running. Macros will cl
 return
 
 SniperBind:
-Send {%SniperBind%}{tab}
+Send {Blind}{%SniperBind%}{tab}
 return
 
 RPGBind:
-Send {%RPGBind%}{tab}
+Send {Blind}{%RPGBind%}{tab}
 return
 
 StickyBind:
-Send {%StickyBind%}{tab}
+Send {Blind}{%StickyBind%}{tab}
 return
 
 PistolBind:
-Send {%PistolBind%}{tab}
+Send {Blind}{%PistolBind%}{tab}
 return
 
 RPGSpam:
-Send {%StickyBind%}{%RPGBind%}{tab}
+Send {Blind}{%StickyBind%}{%RPGBind%}{tab}
 return
 
 ToggleCrosshair:
@@ -909,38 +895,38 @@ Jobs:
 SendInput {lbutton up}
 GuiControlGet, CEOMode ; Retrieves 1 if it is checked, 0 if it is unchecked.
 If (CEOMode = 0) {
-Send {%InteractionMenuKey%}{down 8}
+Send {Blind}{%InteractionMenuKey%}{down 8}
 }
 else {
-Send {%InteractionMenuKey%}{down 7}
+Send {Blind}{%InteractionMenuKey%}{down 7}
 }
-Send {enter}{down}{enter}
+Send {Blind}{enter}{down}{enter}
 sleep 25
-Send {left}
+Send {Blind}{left}
 Loop, 14 {
-Send {down}{Enter}
+Send {Blind}{down}{Enter}
 }
-Send {%InteractionMenuKey%}
+Send {Blind}{%InteractionMenuKey%}
 return
 
 MCCEO:
 SendInput {lbutton up}
 if (MCCEO2 = 0) {
-   Send {%InteractionMenuKey%}{enter}{up}{enter}
+   Send {Blind}{%InteractionMenuKey%}{enter}{up}{enter}
    sleep 200
-   Send {%InteractionMenuKey%}{down 7}{enter 2}
+   Send {Blind}{%InteractionMenuKey%}{down 7}{enter 2}
    Loop, 20 {
-      Send {backspace}{enter 2}
+      Send {Blind}{backspace}{enter 2}
 }
    sleep 25
    MCCEO2 := 1
 }
    else {
-   Send {%InteractionMenuKey%}{enter}{up}{enter}
+   Send {Blind}{%InteractionMenuKey%}{enter}{up}{enter}
    sleep 200
-   Send {%InteractionMenuKey%}{down 6}{enter 2}
+   Send {Blind}{%InteractionMenuKey%}{down 6}{enter 2}
    Loop, 20 {
-      Send {backspace}{enter 2}
+      Send {Blind}{backspace}{enter 2}
 }
    sleep 25
    MCCEO2 := 0
@@ -1044,36 +1030,36 @@ LaunchCycle:
       GuiControlGet, TabWeapon
       GuiControlGet, AWMode
       If (TabWeapon = 0) {
-      Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel Off
-      Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel Off
-      Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
-      Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
+      Hotkey, *%SniperBind%, SniperBind, UseErrorLevel Off
+      Hotkey, *%RPGBind%, RPGBind, UseErrorLevel Off
+      Hotkey, *%StickyBind%, StickyBind, UseErrorLevel Off
+      Hotkey, *%PistolBind%, PistolBind, UseErrorLevel Off
          }
       else If (AWMode = 0) {
 
-         Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel Off
-         Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel Off
-         Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
-         Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
+         Hotkey, *%SniperBind%, SniperBind, UseErrorLevel Off
+         Hotkey, *%RPGBind%, RPGBind, UseErrorLevel Off
+         Hotkey, *%StickyBind%, StickyBind, UseErrorLevel Off
+         Hotkey, *%PistolBind%, PistolBind, UseErrorLevel Off
       }
          else if (TabWeapon = 1) and (AWMode = 1) {
-      Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel On
-      Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel On
-      Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel On
-      Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel On
+      Hotkey, *%SniperBind%, SniperBind, UseErrorLevel On
+      Hotkey, *%RPGBind%, RPGBind, UseErrorLevel On
+      Hotkey, *%StickyBind%, StickyBind, UseErrorLevel On
+      Hotkey, *%PistolBind%, PistolBind, UseErrorLevel On
             }
             else if (AWMode = 1) and (TabWeapon = 0){
-         Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel Off
-         Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel Off
-         Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
-         Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
+         Hotkey, *%SniperBind%, SniperBind, UseErrorLevel Off
+         Hotkey, *%RPGBind%, RPGBind, UseErrorLevel Off
+         Hotkey, *%StickyBind%, StickyBind, UseErrorLevel Off
+         Hotkey, *%PistolBind%, PistolBind, UseErrorLevel Off
             }
       GuiControlGet, Paste
       If (Paste = 0) {
-         Hotkey, *$^v, Paste, Off
+         Hotkey, *^v, Paste, Off
       }
       else {
-         Hotkey, *$^v, Paste, On
+         Hotkey, *^v, Paste, On
       }
       Gui, Submit, NoHide
       GuiControlGet, IncludeMacros
@@ -1156,10 +1142,10 @@ Gui, Add, Picture, x0 y0 w770 h-1 +0x4000000, %A_ScriptDir%/assets/image.png
 Return
 
 Picture3:
-IfNotExist, %CFG%
-{
 IniRead,Read_Picture,%CFG%,Misc,Picture
-If (Read_Picture = 0) {
+GuiControl,,Picture,%Read_Picture%
+GuiControlGet, Picture
+If (Picture = 0) {
 Gui, Add, Text,x740 y200, Turn off all Job Blips Fast:
 Gui, Add, Text,x740 y230, Make it so you can copy paste?
 Gui, Add, Text,x740 y260, MC CEO toggle
@@ -1184,7 +1170,7 @@ Gui, Add, Hotkey, vIncludeHotkeyChat1 x1053 y470
 Gui, Add, Hotkey, vIncludeHotkeyChat2 x1053 y500
 Gui, Font, s13 q5
 Gui, Add, Text,x740 y170, AW MODE IS UNDER CONSTRUCTION!
-}} else {
+} else {
 Gui, Add, Text,x1510 y200, Turn off all Job Blips Fast:
 Gui, Add, Text,x1510 y230, Make it so you can copy paste?
 Gui, Add, Text,x1510 y260, MC CEO toggle
@@ -1238,43 +1224,43 @@ Hotkey, *%IncludeHotkeyChat2%, IncludeHotkeyChat02, UseErrorLevel Off
 return
 
 IncludeHotkey01:
-Send %IncludeMacro1%
+Send {Blind}%IncludeMacro1%
 return
 
 IncludeHotkey02:
-Send %IncludeMacro2%
+Send {Blind}%IncludeMacro2%
 return
 
 IncludeHotkey03:
-Send %IncludeMacro3%
+Send {Blind}%IncludeMacro3%
 return
 
 IncludeHotkey04:
-Send %IncludeMacro4%
+Send {Blind}%IncludeMacro4%
 return
 
 IncludeHotkey05:
-Send %IncludeMacro5%
+Send {Blind}%IncludeMacro5%
 return
 
 IncludeHotkey06:
-Send %IncludeMacro6%
+Send {Blind}%IncludeMacro6%
 return
 
 IncludeHotkeyChat01:
 Length3 := StrLen(IncludeMacroChat1)
 if (Length3 >= 31) {
 SendInput {%IncludeHotkeyChat1% up}
-Send t
+Send {Blind}t
 sendraw %IncludeMacroChat1%
-Send {enter}
+Send {Blind}{enter}
 }
 else if Length3 <= 30
 {
 SendInput {%IncludeHotkeyChat1% up}
-Send t{shift up}
+Send {Blind}t{shift up}
 SendInput {raw}%IncludeMacroChat1%
-Send {enter}
+Send {Blind}{enter}
 }
 return
 
@@ -1282,38 +1268,39 @@ IncludeHotkeyChat02:
 Length4 := StrLen(IncludeMacroChat2)
 if (Length4 >= 31) {
 SendInput {%IncludeHotkeyChat2% up}
-Send t
+Send {Blind}t
 sendraw %IncludeMacroChat2%
-Send {enter}
+Send {Blind}{enter}
 }
 else if Length4 <= 30
 {
 SendInput {%IncludeHotkeyChat2% up}
-Send t{shift up}
+Send {Blind}t{shift up}
 SendInput {raw}%IncludeMacroChat2%
-Send {enter}
+Send {Blind}{enter}
 }
 return
 
 DisableAll:
-   Hotkey, *$%ThermalHelmet%, ThermalHelmet, UseErrorLevel Off
-   Hotkey, *$%FastSniperSwitch%, FastSniperSwitch, UseErrorLevel Off
-   Hotkey, *$%EWO%, EWO, UseErrorLevel Off
-   Hotkey, *$%BST%, BST, UseErrorLevel Off
-   Hotkey, *$%Ammo%, Ammo, UseErrorLevel Off
-   Hotkey, *$%FastRespawn%, FastRespawn, UseErrorLevel Off
-   Hotkey, *$%ToggleCrosshair%, ToggleCrosshair, UseErrorLevel Off
-   Hotkey, %Suspend%, Suspend, UseErrorLevel Off
-   Hotkey, %GTAHax%, GTAHax, UseErrorLevel Off
-   Hotkey, %HelpWhatsThis%, HelpWhatsThis, UseErrorLevel Off
-   Hotkey, %EssayAboutGTA%, EssayAboutGTA, UseErrorLevel Off
-   Hotkey, %CustomTextSpam%, CustomTextSpam, UseErrorLevel Off
-   Hotkey, %ShutUp%, ShutUp, UseErrorLevel Off
-   Hotkey, %ReloadOutfit%, ReloadOutfit, UseErrorLevel Off
-   Hotkey, %ShowUI%, ShowUI, UseErrorLevel Off
-   Hotkey, %ToggleCEO%, ToggleCEO, UseErrorLevel Off
-   Hotkey, %Jobs%, Jobs, UseErrorLevel Off
-   Hotkey, %MCCEO%, MCCEO, UseErrorLevel Off
+   Hotkey, *%RPGSpam%, RPGSpam, UseErrorLevel Off
+   Hotkey, *%ThermalHelmet%, ThermalHelmet, UseErrorLevel Off
+   Hotkey, *%FastSniperSwitch%, FastSniperSwitch, UseErrorLevel Off
+   Hotkey, *%EWO%, EWO, UseErrorLevel Off
+   Hotkey, *%BST%, BST, UseErrorLevel Off
+   Hotkey, *%Ammo%, Ammo, UseErrorLevel Off
+   Hotkey, *%FastRespawn%, FastRespawn, UseErrorLevel Off
+   Hotkey, *%ToggleCrosshair%, ToggleCrosshair, UseErrorLevel Off
+   Hotkey, *%Suspend%, Suspend, UseErrorLevel Off
+   Hotkey, *%GTAHax%, GTAHax, UseErrorLevel Off
+   Hotkey, *%HelpWhatsThis%, HelpWhatsThis, UseErrorLevel Off
+   Hotkey, *%EssayAboutGTA%, EssayAboutGTA, UseErrorLevel Off
+   Hotkey, *%CustomTextSpam%, CustomTextSpam, UseErrorLevel Off
+   Hotkey, *%ShutUp%, ShutUp, UseErrorLevel Off
+   Hotkey, *%ReloadOutfit%, ReloadOutfit, UseErrorLevel Off
+   Hotkey, *%ShowUI%, ShowUI, UseErrorLevel Off
+   Hotkey, *%ToggleCEO%, ToggleCEO, UseErrorLevel Off
+   Hotkey, *%Jobs%, Jobs, UseErrorLevel Off
+   Hotkey, *%MCCEO%, MCCEO, UseErrorLevel Off
    Hotkey, *%IncludeHotkey1%, IncludeHotkey01, UseErrorLevel Off
    Hotkey, *%IncludeHotkey2%, IncludeHotkey02, UseErrorLevel Off
    Hotkey, *%IncludeHotkey3%, IncludeHotkey03, UseErrorLevel Off
@@ -1330,10 +1317,10 @@ DisableAll:
    Hotkey, *%IncludeHotkey6%, IncludeHotkey06, UseErrorLevel Off
    Hotkey, *%IncludeHotkeyChat1%, IncludeHotkeyChat01, UseErrorLevel Off
    Hotkey, *%IncludeHotkeyChat2%, IncludeHotkeyChat02, UseErrorLevel Off
-   Hotkey, *$%SniperBind%, SniperBind, UseErrorLevel Off
-   Hotkey, *$%RPGBind%, RPGBind, UseErrorLevel Off
-   Hotkey, *$%StickyBind%, StickyBind, UseErrorLevel Off
-   Hotkey, *$%PistolBind%, PistolBind, UseErrorLevel Off
+   Hotkey, *%SniperBind%, SniperBind, UseErrorLevel Off
+   Hotkey, *%RPGBind%, RPGBind, UseErrorLevel Off
+   Hotkey, *%StickyBind%, StickyBind, UseErrorLevel Off
+   Hotkey, *%PistolBind%, PistolBind, UseErrorLevel Off
    Return
 
    NotExist1:
@@ -1380,6 +1367,7 @@ DisableAll:
    GuiControl,,Paste,0
    GuiControl,,MCCEO,
    GuiControl,,SmoothEWO,0
+   GuiControl,,SmoothEWOTime,15
    GuiControl,,IncludeMacros,
    GuiControl,,IncludeHotkey1,
    GuiControl,,IncludeHotkey2,
