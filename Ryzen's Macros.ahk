@@ -23,9 +23,9 @@ SetControlDelay, -1
 SetMouseDelay, -1
 Process, Priority, , N
 SetWorkingDir %A_ScriptDir%
+Gui, Font,, Segoe UI Semibold
 Gosub, DiscordPriority
 Gui, Font, q5
-Gosub, Picture2
 Gui, Add, Text,ym, Interaction Menu Bind:
 Gui, Add, Text,, Thermal Helmet Macro:
 Gui, Add, Text,, Fast Sniper Switch Macro:
@@ -67,7 +67,7 @@ Gui, Add, Hotkey,vGTAHax,PrintScreen
 Gui, Add, Text,ys y10, Epic Roast Chat Macro:
 Gui, Add, Text,, Essay About GTA Chat Macro:
 Gui, Add, Text,, Custom Text Spam Chat Macro:
-Gui, Add, Text,, Custom Spam Text (slow if above 30 characters)
+Gui, Add, Text,, Custom Spam Text (max 140 characters)
 Gui, Add, Text,, Shut Up Chat Macro:
 Gui, Add, Text,, Reload Outfit:
 Gui, Add, Text,, Show UI:
@@ -77,15 +77,13 @@ Gui, Add, Text,, Close macros if GTA is closed?
 Gui, Add, Text,, CEO/VIP/MC mode:
 Gui, Add, Text,, AW Mode:
 Gui, Add, Text,, Use Night Vision for Thermal Macro?
-Gui, Add, Text,, Have a beautiful GUI picture?
 Gui, Add, Text,, Crosshair:
 Gui, Add, Text,, Smoothen EWO animation? (slower)
-Gui, Add, Text,, Enable custom macros?
 
 Gui, Add, Hotkey,vHelpWhatsThis yn y10,
 Gui, Add, Hotkey,vEssayAboutGTA,
 Gui, Add, Hotkey,vCustomTextSpam,
-Gui, Add, Edit,vCustomSpamText
+Gui, Add, Edit, Limit140 vCustomSpamText
 Gui, Add, Hotkey,vShutUp,
 Gui, Add, Hotkey,vReloadOutfit,
 Gui, Add, Hotkey,vShowUI,
@@ -95,10 +93,8 @@ Gui, Add, CheckBox, gProcessCheck3 vProcessCheck2 h20,
 Gui, Add, CheckBox, vCEOMode h20,
 Gui, Add, CheckBox, gAWMode2 vAWMode h20,
 Gui, Add, CheckBox, vNightVision h20,
-Gui, Add, CheckBox, vPicture h20,
 Gui, Add, Checkbox, gCrossHair5 vCrossHair h20,
 Gui, Add, Checkbox, vSmoothEWO h20,
-Gui, Add, Checkbox, vIncludeMacros gIncludeMacros2 h20,
 Gui, Add, Button, gSaveConfig,Save config and start the macros!
 Gui, Add, Button, gApply,Apply changes and don't save
 Gui, Add, Button, gHideWindow,Hide window
@@ -119,7 +115,30 @@ Gui, Add, Hotkey, vPistolBind,
 Gui, Add, Checkbox, gTabWeapon2 vTabWeapon h20,
 Gui, Add, Checkbox, g2Screen2 v2Screen h20,
 Gosub, NotExist1
-Gosub, Picture3
+Gui, Add, Text,x775 y200, Turn off all Job Blips Fast:
+Gui, Add, Text,x775 y230, Make it so you can copy paste?
+Gui, Add, Text,x775 y260, MC CEO toggle
+Gui, Add, Text,x775 y290, Custom Macro #1 Hotkey:
+Gui, Add, Text,x775 y320, Custom Macro #2 Hotkey:
+Gui, Add, Text,x775 y350, Custom Macro #3 Hotkey:
+Gui, Add, Text,x775 y380, Custom Macro #4 Hotkey:
+Gui, Add, Text,x775 y410, Custom Macro #5 Hotkey:
+Gui, Add, Text,x775 y440, Custom Macro #6 Hotkey:
+Gui, Add, Text,x775 y470, Custom Chat Macro #1 Hotkey:
+Gui, Add, Text,x775 y500, Custom Chat Macro #2 Hotkey:
+Gui, Add, Hotkey, vJobs x1080 y200
+Gui, Add, Checkbox, gPaste2 vPaste x1080 y230
+Gui, Add, Hotkey, vMCCEO x1080 y260
+Gui, Add, Hotkey, vIncludeHotkey1 x1080 y290
+Gui, Add, Hotkey, vIncludeHotkey2 x1080 y320
+Gui, Add, Hotkey, vIncludeHotkey3 x1080 y350
+Gui, Add, Hotkey, vIncludeHotkey4 x1080 y380
+Gui, Add, Hotkey, vIncludeHotkey5 x1080 y410
+Gui, Add, Hotkey, vIncludeHotkey6 x1080 y440
+Gui, Add, Hotkey, vIncludeHotkeyChat1 x1080 y470
+Gui, Add, Hotkey, vIncludeHotkeyChat2 x1080 y500
+Gui, Font, s13 q5
+Gui, Add, Text,x775 y170, AW MODE IS UNDER CONSTRUCTION!
 
 IfExist, %CFG% 
 { 
@@ -211,7 +230,6 @@ IfExist, %CFG%
    GuiControl,,ProcessCheck2,%Read_ProcessCheck2%
    GuiControl,,AWMode,%Read_AWMode%
    GuiControl,,NightVision,%Read_NightVision%
-   GuiControl,,Picture,%Read_Picture%
    GuiControl,,RPGSpam,%Read_RPGSpam%
    GuiControl,,RPGBind,%Read_RPGBind%
    GuiControl,,StickyBind,%Read_StickyBind%
@@ -235,7 +253,6 @@ IfExist, %CFG%
 }
 GuiControl,,BSTMC,0
 GuiControl,,CEOMode,1
-
 DetectHiddenWindows, ON
 Gui0 := WinExist( A_ScriptFullpath " ahk_pid " DllCall( "GetCurrentProcessId" ) )
 DetectHiddenWindows, OFF
@@ -360,7 +377,6 @@ Gui,Submit,NoHide
    IniWrite,%ProcessCheck2%,%CFG%,Misc,Process Check
    IniWrite,%AWMode%,%CFG%,Misc,AW Mode On
    IniWrite,%NightVision%,%CFG%,Misc,Use Night Vision Thermal
-   IniWrite,%Picture%,%CFG%,Misc,Picture
    IniWrite,%RPGSpam%,%CFG%,PVP Macros,RPG Spam
    IniWrite,%RPGBind%,%CFG%,Keybinds,RPG Bind
    IniWrite,%StickyBind%,%CFG%,Keybinds,Sticky Bind
@@ -447,10 +463,10 @@ return
 
 EWO:
 GuiControlGet, SmoothEWO
-SendInput {lctrl up}{rctrl up}{rshift up}{lshift up}{lbutton up}{rbutton up}
+SendInput {lbutton up}{rbutton up}
 if (SmoothEWO = 1) {
-   SmoothEWOTime2 = %SmoothEWOTime%
-   SmoothEWOTime2 *= 3
+ ;  SmoothEWOTime2 = %SmoothEWOTime%
+ ;  SmoothEWOTime2 *= 3
    Send {Blind}{%InteractionMenuKey%}
    sleep 15
    Send {Blind}{%EWOSpecialAbilitySlashActionKey%}
@@ -465,15 +481,15 @@ if (SmoothEWO = 1) {
    sleep 45
    Send {Blind}{enter}
    } else {
-   SendInput {enter down}{%EWOMelee% down}{up down}{%EWOLookBehindKey% down}{g down}{%InteractionMenuKey% down}
-   Send {Blind}{%EWOSpecialAbilitySlashActionKey%}{f24 down}
+   SendInput {%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}
+   Send {Blind}{f24 down}{f23 down}{f22 down}
    SendInput {wheelup}{enter up}
 }
 sleep 25
 Send {Blind}{enter}
-SendInput {%InteractionMenuKey% up}{%EWOLookBehindKey% up}{< up}{g up}{up up}{f24 up}{f23 up}{f22 up}{f21 up}{%EWOMelee% up}
-Send {Blind}{%InteractionMenuKey%}
+SendInput {%EWOLookBehindKey% up}{%EWOSpecialAbilitySlashActionKey% up}{%EWOMelee% up}{%InteractionMenuKey% up}{up up}{g up}{f24 up}{f23 up}{f22 up}{%EWO% up}
 SetCapsLockState, Off
+sleep 25
 return
 
 BST:
@@ -505,7 +521,7 @@ GuiControlGet, Reverse
 If (Reverse = 1) {
 Reverse2 = left
 } else {
-   Reverse2 = enter
+   Reverse2 = right
 }
 If (CEOMode = 0) {
    Send {Blind}{%InteractionMenuKey%}{down 2}
@@ -635,16 +651,45 @@ return
 CustomTextSpam: ; Spams whatever your clipboard is. Copy anything to your clipboard for it to work.
 Length := StrLen(CustomSpamText)
 if (Length >= 31) {
-sendraw t%CustomSpamText%
-Send {Blind}{enter}
+Iterations = 1
+StringSplit, ArrayYes, CustomSpamText
+send {Blind}t{shift up}
+Loop, 30 {
+   SendInput % ArrayYes%Iterations%
+   Iterations += 1
+}   
+Send %ArrayYes31%
+Iterations += 1
+Loop, 30 {
+   SendInput % ArrayYes%Iterations%
+   Iterations += 1 
+}
+Send %ArrayYes62%
+Iterations += 1 
+Loop, 30 {
+   SendInput % ArrayYes%Iterations%
+   Iterations += 1 
+}
+Send %ArrayYes93%
+Iterations += 1 
+Loop, 30 {
+   SendInput % ArrayYes%Iterations%
+   Iterations += 1 
+}
+Send %ArrayYes122%
+Iterations += 1
+Loop, 18 {
+   SendInput % ArrayYes%Iterations%
+   Iterations += 1 
+}
 }
 else if Length <= 30
 {
-SendInput {%CustomTextSpam% up}
 Send {Blind}t{shift up}
 SendInput {raw}%CustomSpamText%
 Send {Blind}{enter} 
 }
+send {Blind}{enter}
 return
 
 Paste:
@@ -1062,27 +1107,6 @@ LaunchCycle:
          Hotkey, *^v, Paste, On
       }
       Gui, Submit, NoHide
-      GuiControlGet, IncludeMacros
-      if (IncludeMacros = 1) {
-      Hotkey, *%IncludeHotkey1%, IncludeHotkey01, UseErrorLevel On
-      Hotkey, *%IncludeHotkey2%, IncludeHotkey02, UseErrorLevel On
-      Hotkey, *%IncludeHotkey3%, IncludeHotkey03, UseErrorLevel On
-      Hotkey, *%IncludeHotkey4%, IncludeHotkey04, UseErrorLevel On
-      Hotkey, *%IncludeHotkey5%, IncludeHotkey05, UseErrorLevel On
-      Hotkey, *%IncludeHotkey6%, IncludeHotkey06, UseErrorLevel On
-      Hotkey, *%IncludeHotkeyChat1%, IncludeHotkeyChat01, UseErrorLevel On
-      Hotkey, *%IncludeHotkeyChat2%, IncludeHotkeyChat02, UseErrorLevel On
-      }
-      else {
-      Hotkey, *%IncludeHotkey1%, IncludeHotkey01, UseErrorLevel Off
-      Hotkey, *%IncludeHotkey2%, IncludeHotkey02, UseErrorLevel Off
-      Hotkey, *%IncludeHotkey3%, IncludeHotkey03, UseErrorLevel Off
-      Hotkey, *%IncludeHotkey4%, IncludeHotkey04, UseErrorLevel Off
-      Hotkey, *%IncludeHotkey5%, IncludeHotkey05, UseErrorLevel Off
-      Hotkey, *%IncludeHotkey6%, IncludeHotkey06, UseErrorLevel Off
-      Hotkey, *%IncludeHotkeyChat1%, IncludeHotkeyChat01, UseErrorLevel Off
-      Hotkey, *%IncludeHotkeyChat2%, IncludeHotkeyChat02, UseErrorLevel Off
-      }
       If (CrosshairDone = 0) {
       GuiControlGet, Crosshair
       GuiControlGet, AWMode
@@ -1128,100 +1152,6 @@ LaunchCycle:
       }
       CrosshairDone := 1
       return
-
-Picture2:
-IfExist, %CFG%
-{
-IniRead,Read_Picture,%CFG%,Misc,Picture
-If (Read_Picture = 0) {
-}
-else {
-Gui, Add, Picture, x0 y0 w770 h-1 +0x4000000, %A_ScriptDir%/assets/image.png
-}
-}
-Return
-
-Picture3:
-IniRead,Read_Picture,%CFG%,Misc,Picture
-GuiControl,,Picture,%Read_Picture%
-GuiControlGet, Picture
-If (Picture = 0) {
-Gui, Add, Text,x740 y200, Turn off all Job Blips Fast:
-Gui, Add, Text,x740 y230, Make it so you can copy paste?
-Gui, Add, Text,x740 y260, MC CEO toggle
-Gui, Add, Text,x740 y290, Custom Macro #1 Hotkey:
-Gui, Add, Text,x740 y320, Custom Macro #2 Hotkey:
-Gui, Add, Text,x740 y350, Custom Macro #3 Hotkey:
-Gui, Add, Text,x740 y380, Custom Macro #4 Hotkey:
-Gui, Add, Text,x740 y410, Custom Macro #5 Hotkey:
-Gui, Add, Text,x740 y440, Custom Macro #6 Hotkey:
-Gui, Add, Text,x740 y470, Custom Chat Macro #1 Hotkey:
-Gui, Add, Text,x740 y500, Custom Chat Macro #2 Hotkey:
-Gui, Add, Hotkey, vJobs x1053 y200
-Gui, Add, Checkbox, gPaste2 vPaste x1053 y230
-Gui, Add, Hotkey, vMCCEO x1053 y260
-Gui, Add, Hotkey, vIncludeHotkey1 x1053 y290
-Gui, Add, Hotkey, vIncludeHotkey2 x1053 y320
-Gui, Add, Hotkey, vIncludeHotkey3 x1053 y350
-Gui, Add, Hotkey, vIncludeHotkey4 x1053 y380
-Gui, Add, Hotkey, vIncludeHotkey5 x1053 y410
-Gui, Add, Hotkey, vIncludeHotkey6 x1053 y440
-Gui, Add, Hotkey, vIncludeHotkeyChat1 x1053 y470
-Gui, Add, Hotkey, vIncludeHotkeyChat2 x1053 y500
-Gui, Font, s13 q5
-Gui, Add, Text,x740 y170, AW MODE IS UNDER CONSTRUCTION!
-} else {
-Gui, Add, Text,x1510 y200, Turn off all Job Blips Fast:
-Gui, Add, Text,x1510 y230, Make it so you can copy paste?
-Gui, Add, Text,x1510 y260, MC CEO toggle
-Gui, Add, Text,x1510 y290, Custom Macro #1 Hotkey:
-Gui, Add, Text,x1510 y320, Custom Macro #2 Hotkey:
-Gui, Add, Text,x1510 y350, Custom Macro #3 Hotkey:
-Gui, Add, Text,x1510 y380, Custom Macro #4 Hotkey:
-Gui, Add, Text,x1510 y410, Custom Macro #5 Hotkey:
-Gui, Add, Text,x1510 y440, Custom Macro #6 Hotkey:
-Gui, Add, Text,x1510 y470, Custom Chat Macro #1 Hotkey:
-Gui, Add, Text,x1510 y500, Custom Chat Macro #2 Hotkey:
-Gui, Add, Hotkey, vJobs x1793 y200
-Gui, Add, Checkbox, gPaste2 vPaste x1793 y230
-Gui, Add, Hotkey, vMCCEO x1793 y260
-Gui, Add, Hotkey, vIncludeHotkey1 x1793 y290
-Gui, Add, Hotkey, vIncludeHotkey2 x1793 y320
-Gui, Add, Hotkey, vIncludeHotkey3 x1793 y350
-Gui, Add, Hotkey, vIncludeHotkey4 x1793 y380
-Gui, Add, Hotkey, vIncludeHotkey5 x1793 y410
-Gui, Add, Hotkey, vIncludeHotkey6 x1793 y440
-Gui, Add, Hotkey, vIncludeHotkeyChat1 x1793 y470
-Gui, Add, Hotkey, vIncludeHotkeyChat2 x1793 y500
-Gui, Font, s13 q5
-Gui, Add, Text,x1510 y170, AW MODE IS UNDER CONSTRUCTION!
-}
-Return
-
-IncludeMacros2:
-Gui, Submit, NoHide
-GuiControlGet, IncludeMacros
-if (IncludeMacros = 1) {
-Hotkey, *%IncludeHotkey1%, IncludeHotkey01, UseErrorLevel On
-Hotkey, *%IncludeHotkey2%, IncludeHotkey02, UseErrorLevel On
-Hotkey, *%IncludeHotkey3%, IncludeHotkey03, UseErrorLevel On
-Hotkey, *%IncludeHotkey4%, IncludeHotkey04, UseErrorLevel On
-Hotkey, *%IncludeHotkey5%, IncludeHotkey05, UseErrorLevel On
-Hotkey, *%IncludeHotkey6%, IncludeHotkey06, UseErrorLevel On
-Hotkey, *%IncludeHotkeyChat1%, IncludeHotkeyChat01, UseErrorLevel On
-Hotkey, *%IncludeHotkeyChat2%, IncludeHotkeyChat02, UseErrorLevel On
-}
-else {
-Hotkey, *%IncludeHotkey1%, IncludeHotkey01, UseErrorLevel Off
-Hotkey, *%IncludeHotkey2%, IncludeHotkey02, UseErrorLevel Off
-Hotkey, *%IncludeHotkey3%, IncludeHotkey03, UseErrorLevel Off
-Hotkey, *%IncludeHotkey4%, IncludeHotkey04, UseErrorLevel Off
-Hotkey, *%IncludeHotkey5%, IncludeHotkey05, UseErrorLevel Off
-Hotkey, *%IncludeHotkey6%, IncludeHotkey06, UseErrorLevel Off
-Hotkey, *%IncludeHotkeyChat1%, IncludeHotkeyChat01, UseErrorLevel Off
-Hotkey, *%IncludeHotkeyChat2%, IncludeHotkeyChat02, UseErrorLevel Off
-}
-return
 
 IncludeHotkey01:
 Send {Blind}%IncludeMacro1%
@@ -1309,14 +1239,6 @@ DisableAll:
    Hotkey, *%IncludeHotkey6%, IncludeHotkey06, UseErrorLevel Off
    Hotkey, *%IncludeHotkeyChat1%, IncludeHotkeyChat01, UseErrorLevel Off
    Hotkey, *%IncludeHotkeyChat2%, IncludeHotkeyChat02, UseErrorLevel Off
-   Hotkey, *%IncludeHotkey1%, IncludeHotkey01, UseErrorLevel Off
-   Hotkey, *%IncludeHotkey2%, IncludeHotkey02, UseErrorLevel Off
-   Hotkey, *%IncludeHotkey3%, IncludeHotkey03, UseErrorLevel Off
-   Hotkey, *%IncludeHotkey4%, IncludeHotkey04, UseErrorLevel Off
-   Hotkey, *%IncludeHotkey5%, IncludeHotkey05, UseErrorLevel Off
-   Hotkey, *%IncludeHotkey6%, IncludeHotkey06, UseErrorLevel Off
-   Hotkey, *%IncludeHotkeyChat1%, IncludeHotkeyChat01, UseErrorLevel Off
-   Hotkey, *%IncludeHotkeyChat2%, IncludeHotkeyChat02, UseErrorLevel Off
    Hotkey, *%SniperBind%, SniperBind, UseErrorLevel Off
    Hotkey, *%RPGBind%, RPGBind, UseErrorLevel Off
    Hotkey, *%StickyBind%, StickyBind, UseErrorLevel Off
@@ -1355,7 +1277,6 @@ DisableAll:
    GuiControl,,ProcessCheck2,0
    GuiControl,,AWMode,0
    GuiControl,,NightVision,0
-   GuiControl,,Picture,0
    GuiControl,,RPGSpam,
    GuiControl,,RPGBind,4
    GuiControl,,StickyBind,5
