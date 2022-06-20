@@ -1,5 +1,5 @@
 ﻿CFG = GTA Binds.ini
-MacroVersion = 3.10.4
+MacroVersion = 3.11
 CrosshairDone := 0
 MCCEO2 := 0
 if not A_IsAdmin
@@ -62,7 +62,6 @@ Gui, Add, Edit,Number vBuyCycles,
 Gui, Add, Checkbox,vReverse h20,
 Gui, Add, Hotkey,vFastRespawn,
 Gui, Add, Hotkey,vSuspend,
-Gui, Add, Hotkey,vGTAHax,PrintScreen
 
 Gui, Add, Text,ys y10, Epic Roast Chat Macro:
 Gui, Add, Text,, Essay About GTA Chat Macro:
@@ -79,6 +78,7 @@ Gui, Add, Text,, AW Mode:
 Gui, Add, Text,, Use Night Vision for Thermal Macro?
 Gui, Add, Text,, Crosshair:
 Gui, Add, Text,, Smoothen EWO animation? (slower)
+Gui, Add, Text,, Amount to smoothen by
 
 Gui, Add, Hotkey,vHelpWhatsThis yn y10,
 Gui, Add, Hotkey,vEssayAboutGTA,
@@ -95,11 +95,13 @@ Gui, Add, CheckBox, gAWMode2 vAWMode h20,
 Gui, Add, CheckBox, vNightVision h20,
 Gui, Add, Checkbox, gCrossHair5 vCrossHair h20,
 Gui, Add, Checkbox, vSmoothEWO h20,
-Gui, Add, Button, gSaveConfig,Save config and start the macros!
-Gui, Add, Button, gApply,Apply changes and don't save
-Gui, Add, Button, gHideWindow,Hide window
-Gui, Add, Button, gExitMacros,Exit macros
-Gui, Add, Button, gFlawless, Apply Flawless Widescreen fix!
+Gui, Add, Edit,Number vSmoothEWOTime,
+Gui, Add, Button, gSaveConfig h20,Save config and start the macros!
+Gui, Add, Button, gApply h20,Apply changes and don't save
+Gui, Add, Button, gHideWindow h20,Hide window
+Gui, Add, Button, gExitMacros h20,Exit macros
+Gui, Add, Button, gFlawless h20, Apply Flawless Widescreen fix!
+Gui, Add, Button, gGTAHax h20, Apply GTAHaX EWO Codes!
 
 Gui, Add, Text,ys y10, RPG Spam:
 Gui, Add, Text,, RPG (in-game) Bind:
@@ -115,30 +117,30 @@ Gui, Add, Hotkey, vPistolBind,
 Gui, Add, Checkbox, gTabWeapon2 vTabWeapon h20,
 Gui, Add, Checkbox, g2Screen2 v2Screen h20,
 Gosub, NotExist1
-Gui, Add, Text,x775 y200, Turn off all Job Blips Fast:
-Gui, Add, Text,x775 y230, Make it so you can copy paste?
-Gui, Add, Text,x775 y260, MC CEO toggle
-Gui, Add, Text,x775 y290, Custom Macro #1 Hotkey:
-Gui, Add, Text,x775 y320, Custom Macro #2 Hotkey:
-Gui, Add, Text,x775 y350, Custom Macro #3 Hotkey:
-Gui, Add, Text,x775 y380, Custom Macro #4 Hotkey:
-Gui, Add, Text,x775 y410, Custom Macro #5 Hotkey:
-Gui, Add, Text,x775 y440, Custom Macro #6 Hotkey:
-Gui, Add, Text,x775 y470, Custom Chat Macro #1 Hotkey:
-Gui, Add, Text,x775 y500, Custom Chat Macro #2 Hotkey:
-Gui, Add, Hotkey, vJobs x1080 y200
-Gui, Add, Checkbox, gPaste2 vPaste x1080 y230
-Gui, Add, Hotkey, vMCCEO x1080 y260
-Gui, Add, Hotkey, vIncludeHotkey1 x1080 y290
-Gui, Add, Hotkey, vIncludeHotkey2 x1080 y320
-Gui, Add, Hotkey, vIncludeHotkey3 x1080 y350
-Gui, Add, Hotkey, vIncludeHotkey4 x1080 y380
-Gui, Add, Hotkey, vIncludeHotkey5 x1080 y410
-Gui, Add, Hotkey, vIncludeHotkey6 x1080 y440
-Gui, Add, Hotkey, vIncludeHotkeyChat1 x1080 y470
-Gui, Add, Hotkey, vIncludeHotkeyChat2 x1080 y500
+Gui, Add, Text,x733 y200, Turn off all Job Blips Fast:
+Gui, Add, Text,x733 y230, Make it so you can copy paste?
+Gui, Add, Text,x733 y260, MC CEO toggle
+Gui, Add, Text,x733 y290, Custom Macro #1 Hotkey:
+Gui, Add, Text,x733 y320, Custom Macro #2 Hotkey:
+Gui, Add, Text,x733 y350, Custom Macro #3 Hotkey:
+Gui, Add, Text,x733 y380, Custom Macro #4 Hotkey:
+Gui, Add, Text,x733 y410, Custom Macro #5 Hotkey:
+Gui, Add, Text,x733 y440, Custom Macro #6 Hotkey:
+Gui, Add, Text,x733 y470, Custom Chat Macro #1 Hotkey:
+Gui, Add, Text,x733 y500, Custom Chat Macro #2 Hotkey:
+Gui, Add, Hotkey, vJobs x1040 y200
+Gui, Add, Checkbox, gPaste2 vPaste x1040 y230
+Gui, Add, Hotkey, vMCCEO x1040 y260
+Gui, Add, Hotkey, vIncludeHotkey1 x1040 y290
+Gui, Add, Hotkey, vIncludeHotkey2 x1040 y320
+Gui, Add, Hotkey, vIncludeHotkey3 x1040 y350
+Gui, Add, Hotkey, vIncludeHotkey4 x1040 y380
+Gui, Add, Hotkey, vIncludeHotkey5 x1040 y410
+Gui, Add, Hotkey, vIncludeHotkey6 x1040 y440
+Gui, Add, Hotkey, vIncludeHotkeyChat1 x1040 y470
+Gui, Add, Hotkey, vIncludeHotkeyChat2 x1040 y500
 Gui, Font, s13 q5
-Gui, Add, Text,x775 y170, AW MODE IS UNDER CONSTRUCTION!
+Gui, Add, Text,x733 y170, AW MODE IS UNDER CONSTRUCTION!
 
 IfExist, %CFG% 
 { 
@@ -155,7 +157,6 @@ IfExist, %CFG%
    IniRead,Read_Ammo,%CFG%,PVP Macros,Buy Ammo
    IniRead,Read_FastRespawn,%CFG%,Misc,Fast Respawn
    IniRead,Read_Suspend,%CFG%,Misc,Suspend Macro
-   IniRead,Read_GTAHax,%CFG%,Misc,GTAHax EWO Codes
    IniRead,Read_HelpWhatsThis,%CFG%,Chat Macros,idkwtfthisis
    IniRead,Read_EssayAboutGTA,%CFG%,Chat Macros,Essay About GTA
    IniRead,Read_CustomTextSpam,%CFG%,Chat Macros,Custom Text Spam
@@ -182,6 +183,7 @@ IfExist, %CFG%
    IniRead,Read_Paste,%CFG%,Misc,Allow Copy Paste
    IniRead,Read_MCCEO,%CFG%,Misc,MC CEO Toggle
    IniRead,Read_SmoothEWO,%CFG%,Misc,Smooth EWO
+   IniRead,Read_SmoothEWOTime,%CFG%,Misc,Smooth EWO Time
    IniRead,Read_IncludeMacros,%CFG%,Misc,Include Macros
    IniRead,Read_IncludeHotkey1,%CFG%,Misc,Include Hotkey #1
    IniRead,Read_IncludeHotkey2,%CFG%,Misc,Include Hotkey #2
@@ -214,7 +216,6 @@ IfExist, %CFG%
    GuiControl,,Ammo,%Read_Ammo%
    GuiControl,,FastRespawn,%Read_FastRespawn%
    GuiControl,,Suspend,%Read_Suspend%
-   GuiControl,,GTAHax,%Read_GTAHax%
    GuiControl,,HelpWhatsThis,%Read_HelpWhatsThis%
    GuiControl,,EssayAboutGTA,%Read_EssayAboutGTA%
    GuiControl,,CustomTextSpam,%Read_CustomTextSpam%
@@ -241,6 +242,7 @@ IfExist, %CFG%
    GuiControl,,Paste,%Read_Paste%
    GuiControl,,MCCEO,%Read_MCCEO%
    GuiControl,,SmoothEWO,%Read_SmoothEWO%
+   GuiControl,,SmoothEWOTime,%Read_SmoothEWOTime%
    GuiControl,,IncludeMacros,%Read_IncludeMacros%
    GuiControl,,IncludeHotkey1,%Read_IncludeHotkey1%
    GuiControl,,IncludeHotkey2,%Read_IncludeHotkey2%
@@ -361,7 +363,6 @@ Gui,Submit,NoHide
    IniWrite,%Ammo%,%CFG%,PVP Macros,Buy Ammo
    IniWrite,%FastRespawn%,%CFG%,Misc,Fast Respawn
    IniWrite,%Suspend%,%CFG%,Misc,Suspend Macro
-   IniWrite,%GTAHax%,%CFG%,Misc,GTAHax EWO Codes
    IniWrite,%HelpWhatsThis%,%CFG%,Chat Macros,idkwtfthisis
    IniWrite,%EssayAboutGTA%,%CFG%,Chat Macros,Essay About GTA
    IniWrite,%CustomTextSpam%,%CFG%,Chat Macros,Custom Text Spam
@@ -388,6 +389,7 @@ Gui,Submit,NoHide
    IniWrite,%Paste%,%CFG%,Misc,Allow Copy Paste
    IniWrite,%MCCEO%,%CFG%,Misc,MC CEO Toggle
    IniWrite,%SmoothEWO%,%CFG%,Misc,Smooth EWO
+   IniWrite,%SmoothEWOTime%,%CFG%,Misc,Smooth EWO Time
    IniWrite,%IncludeMacros%,%CFG%,Misc,Include Macros
    IniWrite,%IncludeHotkey1%,%CFG%,Misc,Include Hotkey #1
    IniWrite,%IncludeHotkey2%,%CFG%,Misc,Include Hotkey #2
@@ -407,7 +409,6 @@ Hotkey, *%Ammo%, Ammo, UseErrorLevel On
 Hotkey, *%FastRespawn%, FastRespawn, UseErrorLevel On
 Hotkey, *%ToggleCrosshair%, ToggleCrosshair, UseErrorLevel On
 Hotkey, *%Suspend%, Suspend, UseErrorLevel On
-Hotkey, *%GTAHax%, GTAHax, UseErrorLevel On
 Hotkey, *%HelpWhatsThis%, HelpWhatsThis, UseErrorLevel On
 Hotkey, *%EssayAboutGTA%, EssayAboutGTA, UseErrorLevel On
 Hotkey, *%CustomTextSpam%, CustomTextSpam, UseErrorLevel On
@@ -463,25 +464,14 @@ return
 
 EWO:
 GuiControlGet, SmoothEWO
-SendInput {lbutton up}{rbutton up}
 if (SmoothEWO = 1) {
- ;  SmoothEWOTime2 = %SmoothEWOTime%
- ;  SmoothEWOTime2 *= 3
-   Send {Blind}{%InteractionMenuKey%}
-   sleep 15
-   Send {Blind}{%EWOSpecialAbilitySlashActionKey%}
-   sleep 15
-   Send {Blind}{shift down}
-   sleep 15
-   Send {Blind}{%EWOLookBehindKey% down}
-   Send {Blind}{shift up}
-   Send {Blind}{up}
-   sleep 35
-   Send {Blind}{up}
-   sleep 45
-   Send {Blind}{enter}
+   SendInput {lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{%EWOLookBehindKey% down}
+   Send {Blind}{f24 down}{f23 down}{f22 down}
+   SendInput {wheelup}
+   sleep %SmoothEWOTime%
+   SendInput {enter up}
    } else {
-   SendInput {%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}
+   SendInput {lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{%EWOLookBehindKey% down}
    Send {Blind}{f24 down}{f23 down}{f22 down}
    SendInput {wheelup}{enter up}
 }
@@ -551,154 +541,169 @@ GTAHax:
 CoordMode, Mouse, Client
 SendInput {%GTAHax% up}
 Run, GTAHaXUI.exe, %A_ScriptDir%, , Max
-Sleep 1500
-Mousemove,125,62
-Send {lbutton}{BackSpace}262145
-Mousemove,125,90
-Send {lbutton}{BackSpace}28073
-Mousemove,125,350
-Send {lbutton}
-Mousemove,125,90
-Send {lbutton}{BackSpace}4
-Mousemove,125,350
-Send {lbutton}
+Sleep 1000
+ControlClick, Edit1, ahk_exe GTAHaXUI.exe,,,,D
+sleep 25
+ControlClick, Edit1, ahk_exe GTAHaXUI.exe,,,,U
+Send {Backspace}262145
+sleep 25
+ControlClick, Edit2, ahk_exe GTAHaXUI.exe,,,,D
+sleep 25
+ControlClick, Edit2, ahk_exe GTAHaXUI.exe,,,,U
+Send {Backspace}28073
+sleep 25
+Loop, 5 {
+ControlClick, Button1, ahk_exe GTAHaXUI.exe,,,,D
+sleep 25
+ControlClick, Button1, ahk_exe GTAHaXUI.exe,,,,U
+}
+ControlClick, Edit2, ahk_exe GTAHaXUI.exe,,,,D
+sleep 25
+ControlClick, Edit2, ahk_exe GTAHaXUI.exe,,,,U
+Send {Backspace}4
+sleep 25
+Loop, 5 {
+ControlClick, Button1, ahk_exe GTAHaXUI.exe,,,,D
+sleep 25
+ControlClick, Button1, ahk_exe GTAHaXUI.exe,,,,U
+}
 sleep 100
 WinClose, ahk_exe GTAHaXUI.exe
-sleep 100
-WinActivate ahk_class grcWindow
+WinActivate, Ryzen's Macros Version %MacroVersion%
 return
 
 HelpWhatsThis:
 SendInput {%HelpWhatsThis% up}
-Send {Blind}td
+Send {Blind}t
+Send d
 SendInput on’t care {Numpadadd} didn't ask {Numpadadd} cry a
-Send {Blind}b
+Send b
 SendInput out it {Numpadadd} stay mad {Numpadadd} get real {Numpadadd} L {Numpadadd} 
-Send {Blind}{space}
+Send {space}
 SendInput mald {Numpadadd} seethe {Numpadadd} cope harder {Numpadadd}
-Send {Blind}{space}
+Send {space}
 SendInput hoes mad {Numpadadd} basic {Numpadadd} skill issue
-Send {Blind}{space}
+Send {space}
 SendInput {numpadadd}{space}ratio
-Send {Blind}{enter}t{Numpadadd} 
+Send {enter}t{Numpadadd} 
 SendInput {space}you fell off {Numpadadd} the audacity 
-Send {Blind}{space}
+Send {space}
 SendInput {Numpadadd}{space}triggered {Numpadadd} any askers {Numpadadd} red
-Send {Blind}pi
+Send pi
 SendInput lled {Numpadadd} get a life {Numpadadd} ok and? 
-Send {Blind}{space}
+Send {space}
 SendInput {Numpadadd} cringe {Numpadadd} touch grass {Numpadadd} donow
-Send {Blind}a
+Send a
 SendInput lled {Numpadadd} not based
-Send {Blind}{enter}t{Numpadadd} 
+Send {enter}t{Numpadadd} 
 SendInput {space}you’re a (insert stereotype)
-Send {Blind}{space}
+Send {space}
 SendInput {Numpadadd} not funny didn't laugh {Numpadadd} you
-Send {Blind}’
+Send ’
 SendInput re* {Numpadadd} grammar issue {Numpadadd} go outsi
-Send {Blind}d
+Send d
 SendInput e {Numpadadd} get good {Numpadadd} reported
-Send {Blind}{enter}t{Numpadadd}
+Send {enter}t{Numpadadd}
 SendInput {space}ad hominem {Numpadadd} GG{shift down}1{shift up} {Numpadadd} ur mom
-Send {Blind}{enter}
+Send {enter}
 return
 
 EssayAboutGTA:
 SendInput {%EssayAboutGTA% up}
-Send {Blind}tw
+Send tw
 SendInput hy is my fps so shlt this game
-Send {Blind}{space}
+Send {space}
 SendInput has terrible optimization its{space}
-Send {Blind}c
+Send c
 SendInput hinese as shlt man i hate this
-Send {Blind}{space}
+Send {space}
 SendInput game im gonna swat the r* headq
-Send {Blind}u
+Send u
 SendInput arters man i
-Send {Blind}{enter}ts
+Send {enter}ts
 SendInput wear to god this game is so ba
-Send {Blind}d
+Send d
 SendInput {space}why do we all still play it i
-Send {Blind}d
+Send d
 SendInput k but how can they not afford{space}
-Send {Blind}s
+Send s
 SendInput ome dedicated servers they are a
-Send {Blind}{space}
+Send {space}
 SendInput multi billion 
-Send {Blind}{enter}td
+Send {enter}td
 SendInput ollar company also why does it
-Send {Blind}{space}
+Send {space}
 SendInput still use p2p technology for s
-Send {Blind}e
+Send e
 SendInput rvers thats been out of date s
-Send {Blind}i
+Send i
 SendInput nce gta 4 man it honestly baffl
-Send {Blind}l
+Send l
 SendInput es me how
-Send {Blind}{enter}to
+Send {enter}to
 SendInput utdated gta online is and how{space}
-Send {Blind}b
+Send b
 SendInput ad the fps is its so cpu bo 
-Send {Blind}u
+Send u
 SendInput nd its stupid and thanks for{space}
-Send {Blind}l
+Send l
 SendInput istening to my essay about how
-Send {Blind}{space}
+Send {space}
 SendInput bad gta online is
-Send {Blind}{enter}
+Send {enter}
 return
 
-CustomTextSpam: ; Spams whatever your clipboard is. Copy anything to your clipboard for it to work.
+CustomTextSpam:
 Length := StrLen(CustomSpamText)
 if (Length >= 31) {
-Iterations = 1
+Loop, 140 {
+ArrayYes%A_Index% =
+}
 StringSplit, ArrayYes, CustomSpamText
-send {Blind}t{shift up}
-Loop, 30 {
-   SendInput % ArrayYes%Iterations%
-   Iterations += 1
-}   
-Send %ArrayYes31%
-Iterations += 1
-Loop, 30 {
-   SendInput % ArrayYes%Iterations%
-   Iterations += 1 
-}
-Send %ArrayYes62%
-Iterations += 1 
-Loop, 30 {
-   SendInput % ArrayYes%Iterations%
-   Iterations += 1 
-}
-Send %ArrayYes93%
-Iterations += 1 
-Loop, 30 {
-   SendInput % ArrayYes%Iterations%
-   Iterations += 1 
-}
-Send %ArrayYes122%
-Iterations += 1
-Loop, 18 {
-   SendInput % ArrayYes%Iterations%
-   Iterations += 1 
-}
+Send {Blind}t{shift up}
+SendInput {Raw}%ArrayYes1%%ArrayYes2%%ArrayYes3%%ArrayYes4%%ArrayYes5%%ArrayYes6%%ArrayYes7%%ArrayYes8%%ArrayYes9%%ArrayYes10%%ArrayYes11%%ArrayYes12%%ArrayYes13%%ArrayYes14%%ArrayYes15%%ArrayYes16%%ArrayYes17%%ArrayYes18%%ArrayYes19%%ArrayYes20%%ArrayYes21%%ArrayYes22%%ArrayYes23%%ArrayYes24%%ArrayYes25%%ArrayYes26%%ArrayYes27%%ArrayYes28%%ArrayYes29%%ArrayYes30%
+SendRaw %ArrayYes31%
+SendInput {Raw}%ArrayYes32%%ArrayYes33%%ArrayYes34%%ArrayYes35%%ArrayYes36%%ArrayYes37%%ArrayYes38%%ArrayYes39%%ArrayYes40%%ArrayYes41%%ArrayYes42%%ArrayYes43%%ArrayYes44%%ArrayYes45%%ArrayYes46%%ArrayYes47%%ArrayYes48%%ArrayYes49%%ArrayYes50%%ArrayYes51%%ArrayYes52%%ArrayYes53%%ArrayYes54%%ArrayYes55%%ArrayYes56%%ArrayYes57%%ArrayYes58%%ArrayYes59%%ArrayYes60%%ArrayYes61%
+SendRaw %ArrayYes62%
+SendInput {Raw}%ArrayYes63%%ArrayYes64%%ArrayYes65%%ArrayYes66%%ArrayYes67%%ArrayYes68%%ArrayYes69%%ArrayYes70%%ArrayYes71%%ArrayYes72%%ArrayYes73%%ArrayYes74%%ArrayYes75%%ArrayYes76%%ArrayYes77%%ArrayYes78%%ArrayYes79%%ArrayYes80%%ArrayYes81%%ArrayYes82%%ArrayYes83%%ArrayYes84%%ArrayYes85%%ArrayYes86%%ArrayYes87%%ArrayYes88%%ArrayYes89%%ArrayYes90%%ArrayYes91%%ArrayYes92%
+SendRaw %ArrayYes93%
+SendInput {Raw}%ArrayYes94%%ArrayYes95%%ArrayYes96%%ArrayYes97%%ArrayYes98%%ArrayYes99%%ArrayYes100%%ArrayYes101%%ArrayYes102%%ArrayYes103%%ArrayYes104%%ArrayYes105%%ArrayYes106%%ArrayYes107%%ArrayYes108%%ArrayYes109%%ArrayYes110%%ArrayYes111%%ArrayYes112%%ArrayYes113%%ArrayYes114%%ArrayYes115%%ArrayYes116%%ArrayYes117%%ArrayYes118%%ArrayYes119%%ArrayYes120%%ArrayYes121%%ArrayYes122%%ArrayYes123%
+SendRaw %ArrayYes124%
+SendInput {Raw}%ArrayYes125%%ArrayYes126%%ArrayYes127%%ArrayYes128%%ArrayYes129%%ArrayYes130%%ArrayYes131%%ArrayYes132%%ArrayYes133%%ArrayYes134%%ArrayYes135%%ArrayYes136%%ArrayYes137%%ArrayYes138%%ArrayYes139%%ArrayYes140%
 }
 else if Length <= 30
 {
 Send {Blind}t{shift up}
-SendInput {raw}%CustomSpamText%
-Send {Blind}{enter} 
+SendInput {raw}%CustomSpamText% 
 }
-send {Blind}{enter}
+Send {Blind}{enter}
 return
 
 Paste:
+Length2 = StrLen(Clipboard)
+if (Length2 >= 31) {
+Loop, 140 {
+ArrayYesPaste%A_Index% =
+}
+StringSplit, ArrayYesPaste, Clipboard
+SendInput {Raw}%ArrayYesPaste1%%ArrayYesPaste2%%ArrayYesPaste3%%ArrayYesPaste4%%ArrayYesPaste5%%ArrayYesPaste6%%ArrayYesPaste7%%ArrayYesPaste8%%ArrayYesPaste9%%ArrayYesPaste10%%ArrayYesPaste11%%ArrayYesPaste12%%ArrayYesPaste13%%ArrayYesPaste14%%ArrayYesPaste15%%ArrayYesPaste16%%ArrayYesPaste17%%ArrayYesPaste18%%ArrayYesPaste19%%ArrayYesPaste20%%ArrayYesPaste21%%ArrayYesPaste22%%ArrayYesPaste23%%ArrayYesPaste24%%ArrayYesPaste25%%ArrayYesPaste26%%ArrayYesPaste27%%ArrayYesPaste28%%ArrayYesPaste29%%ArrayYesPaste30%
+SendRaw %ArrayYesPaste31%
+SendInput {Raw}%ArrayYesPaste32%%ArrayYesPaste33%%ArrayYesPaste34%%ArrayYesPaste35%%ArrayYesPaste36%%ArrayYesPaste37%%ArrayYesPaste38%%ArrayYesPaste39%%ArrayYesPaste40%%ArrayYesPaste41%%ArrayYesPaste42%%ArrayYesPaste43%%ArrayYesPaste44%%ArrayYesPaste45%%ArrayYesPaste46%%ArrayYesPaste47%%ArrayYesPaste48%%ArrayYesPaste49%%ArrayYesPaste50%%ArrayYesPaste51%%ArrayYesPaste52%%ArrayYesPaste53%%ArrayYesPaste54%%ArrayYesPaste55%%ArrayYesPaste56%%ArrayYesPaste57%%ArrayYesPaste58%%ArrayYesPaste59%%ArrayYesPaste60%%ArrayYesPaste61%
+SendRaw %ArrayYesPaste62%
+SendInput {Raw}%ArrayYesPaste63%%ArrayYesPaste64%%ArrayYesPaste65%%ArrayYesPaste66%%ArrayYesPaste67%%ArrayYesPaste68%%ArrayYesPaste69%%ArrayYesPaste70%%ArrayYesPaste71%%ArrayYesPaste72%%ArrayYesPaste73%%ArrayYesPaste74%%ArrayYesPaste75%%ArrayYesPaste76%%ArrayYesPaste77%%ArrayYesPaste78%%ArrayYesPaste79%%ArrayYesPaste80%%ArrayYesPaste81%%ArrayYesPaste82%%ArrayYesPaste83%%ArrayYesPaste84%%ArrayYesPaste85%%ArrayYesPaste86%%ArrayYesPaste87%%ArrayYesPaste88%%ArrayYesPaste89%%ArrayYesPaste90%%ArrayYesPaste91%%ArrayYesPaste92%
+SendRaw %ArrayYesPaste93%
+SendInput {Raw}%ArrayYesPaste94%%ArrayYesPaste95%%ArrayYesPaste96%%ArrayYesPaste97%%ArrayYesPaste98%%ArrayYesPaste99%%ArrayYesPaste100%%ArrayYesPaste101%%ArrayYesPaste102%%ArrayYesPaste103%%ArrayYesPaste104%%ArrayYesPaste105%%ArrayYesPaste106%%ArrayYesPaste107%%ArrayYesPaste108%%ArrayYesPaste109%%ArrayYesPaste110%%ArrayYesPaste111%%ArrayYesPaste112%%ArrayYesPaste113%%ArrayYesPaste114%%ArrayYesPaste115%%ArrayYesPaste116%%ArrayYesPaste117%%ArrayYesPaste118%%ArrayYesPaste119%%ArrayYesPaste120%%ArrayYesPaste121%%ArrayYesPaste122%%ArrayYesPaste123%
+SendRaw %ArrayYesPaste124%
+SendInput {Raw}%ArrayYesPaste125%%ArrayYesPaste126%%ArrayYesPaste127%%ArrayYesPaste128%%ArrayYesPaste129%%ArrayYesPaste130%%ArrayYesPaste131%%ArrayYesPaste132%%ArrayYesPaste133%%ArrayYesPaste134%%ArrayYesPaste135%%ArrayYesPaste136%%ArrayYesPaste137%%ArrayYesPaste138%%ArrayYesPaste139%%ArrayYesPaste140%
+}
+else {
 SendInput {raw}%Clipboard%
+}
 return
 
 ShutUp: ; Spams "shut up"
 Send {Blind}t{shift up}
-sendinput shut up
+SendInput shut up
 Send {Blind}{enter}
 return
 
@@ -1182,7 +1187,7 @@ Length3 := StrLen(IncludeMacroChat1)
 if (Length3 >= 31) {
 SendInput {%IncludeHotkeyChat1% up}
 Send {Blind}t
-sendraw %IncludeMacroChat1%
+SendInput {Raw} %IncludeMacroChat1%
 Send {Blind}{enter}
 }
 else if Length3 <= 30
@@ -1199,7 +1204,7 @@ Length4 := StrLen(IncludeMacroChat2)
 if (Length4 >= 31) {
 SendInput {%IncludeHotkeyChat2% up}
 Send {Blind}t
-sendraw %IncludeMacroChat2%
+SendInput {Raw} %IncludeMacroChat2%
 Send {Blind}{enter}
 }
 else if Length4 <= 30
@@ -1221,7 +1226,6 @@ DisableAll:
    Hotkey, *%FastRespawn%, FastRespawn, UseErrorLevel Off
    Hotkey, *%ToggleCrosshair%, ToggleCrosshair, UseErrorLevel Off
    Hotkey, *%Suspend%, Suspend, UseErrorLevel Off
-   Hotkey, *%GTAHax%, GTAHax, UseErrorLevel Off
    Hotkey, *%HelpWhatsThis%, HelpWhatsThis, UseErrorLevel Off
    Hotkey, *%EssayAboutGTA%, EssayAboutGTA, UseErrorLevel Off
    Hotkey, *%CustomTextSpam%, CustomTextSpam, UseErrorLevel Off
@@ -1261,7 +1265,6 @@ DisableAll:
    GuiControl,,Ammo,
    GuiControl,,FastRespawn,
    GuiControl,,Suspend,
-   GuiControl,,GTAHax,
    GuiControl,,HelpWhatsThis,
    GuiControl,,EssayAboutGTA,
    GuiControl,,CustomTextSpam,
@@ -1288,7 +1291,7 @@ DisableAll:
    GuiControl,,Paste,0
    GuiControl,,MCCEO,
    GuiControl,,SmoothEWO,0
-   GuiControl,,SmoothEWOTime,15
+   GuiControl,,SmoothEWOTime,125
    GuiControl,,IncludeMacros,
    GuiControl,,IncludeHotkey1,
    GuiControl,,IncludeHotkey2,
