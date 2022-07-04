@@ -1,9 +1,10 @@
-﻿CFG = GTA Binds.ini
-MacroVersion = 3.11
+﻿if not A_IsAdmin
+	Run *RunAs "%A_ScriptFullPath%"
+MacroVersion = 3.12
+CFG = GTA Binds.ini
 CrosshairDone := 0
 MCCEO2 := 0
-if not A_IsAdmin
-	Run *RunAs "%A_ScriptFullPath%"
+IniRead,DebugTesting,%CFG%,Debug,Debug Testing
 #SingleInstance, force
 #IfWinActive ahk_class grcWindow
 #IfWinActive Grand Theft Auto V
@@ -20,7 +21,6 @@ SetBatchLines, -1
 SetKeyDelay, -1, -1
 SetWinDelay, -1
 SetControlDelay, -1
-SetMouseDelay, -1
 Process, Priority, , N
 SetWorkingDir %A_ScriptDir%
 Gui, Font,, Segoe UI Semibold
@@ -43,7 +43,6 @@ Gui, Add, Text,, Ammo weapons to buy:
 Gui, Add, Text,, Reverse Ammo Macro buy order?
 Gui, Add, Text,, Fast Respawn Macro:
 Gui, Add, Text,, Suspend:
-Gui, Add, Text,, GTA Hax EWO Codes Macro:
 
 Gui, Add, Hotkey,vInteractionMenuKey ym,
 Gui, Add, Hotkey,vThermalHelmet,
@@ -78,7 +77,6 @@ Gui, Add, Text,, AW Mode:
 Gui, Add, Text,, Use Night Vision for Thermal Macro?
 Gui, Add, Text,, Crosshair:
 Gui, Add, Text,, Smoothen EWO animation? (slower)
-Gui, Add, Text,, Amount to smoothen by
 
 Gui, Add, Hotkey,vHelpWhatsThis yn y10,
 Gui, Add, Hotkey,vEssayAboutGTA,
@@ -95,13 +93,16 @@ Gui, Add, CheckBox, gAWMode2 vAWMode h20,
 Gui, Add, CheckBox, vNightVision h20,
 Gui, Add, Checkbox, gCrossHair5 vCrossHair h20,
 Gui, Add, Checkbox, vSmoothEWO h20,
-Gui, Add, Edit,Number vSmoothEWOTime,
 Gui, Add, Button, gSaveConfig h20,Save config and start the macros!
 Gui, Add, Button, gApply h20,Apply changes and don't save
 Gui, Add, Button, gHideWindow h20,Hide window
 Gui, Add, Button, gExitMacros h20,Exit macros
 Gui, Add, Button, gFlawless h20, Apply Flawless Widescreen fix!
 Gui, Add, Button, gGTAHax h20, Apply GTAHaX EWO Codes!
+If (DebugTesting = 1) {
+   Gui, Add, Button, gReload h20, Reload (testing only)
+   DebugText = beta
+   }
 
 Gui, Add, Text,ys y10, RPG Spam:
 Gui, Add, Text,, RPG (in-game) Bind:
@@ -183,7 +184,6 @@ IfExist, %CFG%
    IniRead,Read_Paste,%CFG%,Misc,Allow Copy Paste
    IniRead,Read_MCCEO,%CFG%,Misc,MC CEO Toggle
    IniRead,Read_SmoothEWO,%CFG%,Misc,Smooth EWO
-   IniRead,Read_SmoothEWOTime,%CFG%,Misc,Smooth EWO Time
    IniRead,Read_IncludeMacros,%CFG%,Misc,Include Macros
    IniRead,Read_IncludeHotkey1,%CFG%,Misc,Include Hotkey #1
    IniRead,Read_IncludeHotkey2,%CFG%,Misc,Include Hotkey #2
@@ -202,6 +202,7 @@ IfExist, %CFG%
    IniRead,IncludeMacro6,CustomShit.ini,Macro6
    IniRead,IncludeMacroChat1,CustomShit.ini,ChatMacro1
    IniRead,IncludeMacroChat2,CustomShit.ini,ChatMacro2
+
 
    GuiControl,,InteractionMenuKey,%Read_InteractionMenuKey%
    GuiControl,,ThermalHelmet,%Read_ThermalHelmet%
@@ -242,7 +243,6 @@ IfExist, %CFG%
    GuiControl,,Paste,%Read_Paste%
    GuiControl,,MCCEO,%Read_MCCEO%
    GuiControl,,SmoothEWO,%Read_SmoothEWO%
-   GuiControl,,SmoothEWOTime,%Read_SmoothEWOTime%
    GuiControl,,IncludeMacros,%Read_IncludeMacros%
    GuiControl,,IncludeHotkey1,%Read_IncludeHotkey1%
    GuiControl,,IncludeHotkey2,%Read_IncludeHotkey2%
@@ -275,8 +275,13 @@ Menu, Tray, Add, Pause Script,        StandardTrayMenu
 Menu, Tray, Add, Exit,                StandardTrayMenu
 Menu, Tray, Default, Open
 
-Menu, Tray, Tip, Ryzen's Macros Version %MacroVersion%
-Gui, Show,, Ryzen's Macros Version %MacroVersion%
+If (DebugTesting = 1) {
+   Menu, Tray, Tip, Ryzen's Macros Version %MacroVersion%-%DebugText%
+   Gui, Show,, Ryzen's Macros Version %MacroVersion%-%DebugText%
+} else {
+   Menu, Tray, Tip, Ryzen's Macros Version %MacroVersion%
+   Gui, Show,, Ryzen's Macros Version %MacroVersion%
+}
 GuiControlGet, AWMode
 If (AWMode = 0) {
 MsgBox, 0, Welcome!, Welcome to Ryzen's Macros. Please note that AW Mode is currently OFF. Add me on Discord (cryleak#3961) if you have any issues. Good luck.
@@ -320,6 +325,10 @@ StandardTrayMenu:
  If ( A_ThisMenuItem = "Exit" )
    DllCall( "PostMessage", UInt,Gui0, UInt,0x111, UInt,65405, UInt,0 )
 
+return
+
+Reload:
+Reload
 return
 
 Flawless:
@@ -389,7 +398,6 @@ Gui,Submit,NoHide
    IniWrite,%Paste%,%CFG%,Misc,Allow Copy Paste
    IniWrite,%MCCEO%,%CFG%,Misc,MC CEO Toggle
    IniWrite,%SmoothEWO%,%CFG%,Misc,Smooth EWO
-   IniWrite,%SmoothEWOTime%,%CFG%,Misc,Smooth EWO Time
    IniWrite,%IncludeMacros%,%CFG%,Misc,Include Macros
    IniWrite,%IncludeHotkey1%,%CFG%,Misc,Include Hotkey #1
    IniWrite,%IncludeHotkey2%,%CFG%,Misc,Include Hotkey #2
@@ -452,32 +460,39 @@ Send {Blind}{space}{%InteractionMenuKey%}
 return
 
 FastSniperSwitch:
-Send {Blind}{%SniperBind%}
-SendInput {lbutton down}
-sleep 9
-SendInput {lbutton up}
-Send {Blind}{%SniperBind%}
-SendInput {lbutton down}
+SendInput {%FastSniperSwitch% up}
+Send {Blind}1
 sleep 30
-SendInput {lbutton up}
+Send {Blind}{lbutton down}
+sleep 20
+Send {Blind}{lbutton up}1
+sleep 30
+Send {Blind}{lbutton down}
+sleep 100
+Send {Blind}{lbutton up}
 return
 
 EWO:
 GuiControlGet, SmoothEWO
 if (SmoothEWO = 1) {
-   SendInput {lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{%EWOLookBehindKey% down}
-   Send {Blind}{f24 down}{f23 down}{f22 down}
-   SendInput {wheelup}
-   sleep %SmoothEWOTime%
-   SendInput {enter up}
+   sleep 50
+   SendInput {Blind}{lbutton up}{rbutton up}{%InteractionMenuKey% down}{enter down}
+   sleep 60
+   SendInput {Blind}{%EWOLookBehindKey% down}
+   sleep 10
+   SendInput {Blind}{wheelup}
+   sleep 50
+   SendInput {Blind}{wheelup}{%EWOSpecialAbilitySlashActionKey% down}
+   sleep 70
+   SendInput {Blind}{enter up}
    } else {
-   SendInput {lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{%EWOLookBehindKey% down}
+   SendInput {Blind}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{%EWOLookBehindKey% down}
    Send {Blind}{f24 down}{f23 down}{f22 down}
-   SendInput {wheelup}{enter up}
+   SendInput {Blind}{wheelup}{enter up}
 }
 sleep 25
 Send {Blind}{enter}
-SendInput {%EWOLookBehindKey% up}{%EWOSpecialAbilitySlashActionKey% up}{%EWOMelee% up}{%InteractionMenuKey% up}{up up}{g up}{f24 up}{f23 up}{f22 up}{%EWO% up}
+SendInput {Blind}{%EWOLookBehindKey% up}{%EWOSpecialAbilitySlashActionKey% up}{%EWOMelee% up}{%InteractionMenuKey% up}{up up}{g up}{f24 up}{f23 up}{f22 up}{%EWO% up}
 SetCapsLockState, Off
 sleep 25
 return
@@ -504,7 +519,7 @@ else {
 return
 
 Ammo: ; Buys ammo.
-SendInput {lbutton up}
+SendInput {%Ammo% up}{lbutton up}
 BuyCycles -= 1
 GuiControlGet, CEOMode
 GuiControlGet, Reverse
@@ -530,7 +545,7 @@ BuyCycles += 1
 return
 
 FastRespawn:
-Run, clicker.exe, %A_ScriptDir%
+send {lbutton 30}
 return
 
 Suspend:
@@ -655,7 +670,7 @@ return
 
 CustomTextSpam:
 Length := StrLen(CustomSpamText)
-if (Length >= 31) {
+if (Length >= 32) {
 Loop, 140 {
 ArrayYes%A_Index% =
 }
@@ -671,10 +686,14 @@ SendInput {Raw}%ArrayYes94%%ArrayYes95%%ArrayYes96%%ArrayYes97%%ArrayYes98%%Arra
 SendRaw %ArrayYes124%
 SendInput {Raw}%ArrayYes125%%ArrayYes126%%ArrayYes127%%ArrayYes128%%ArrayYes129%%ArrayYes130%%ArrayYes131%%ArrayYes132%%ArrayYes133%%ArrayYes134%%ArrayYes135%%ArrayYes136%%ArrayYes137%%ArrayYes138%%ArrayYes139%%ArrayYes140%
 }
-else if Length <= 30
+else if Length <= 31 
 {
-Send {Blind}t{shift up}
-SendInput {raw}%CustomSpamText% 
+Loop, 31 {
+ArrayYes%A_Index% =
+}
+StringSplit, ArrayYes, CustomSpamText
+Send {Blind}t%ArrayYes1%
+SendInput {Raw}%ArrayYes2%%ArrayYes3%%ArrayYes4%%ArrayYes5%%ArrayYes6%%ArrayYes7%%ArrayYes8%%ArrayYes9%%ArrayYes10%%ArrayYes11%%ArrayYes12%%ArrayYes13%%ArrayYes14%%ArrayYes15%%ArrayYes16%%ArrayYes17%%ArrayYes18%%ArrayYes19%%ArrayYes20%%ArrayYes21%%ArrayYes22%%ArrayYes23%%ArrayYes24%%ArrayYes25%%ArrayYes26%%ArrayYes27%%ArrayYes28%%ArrayYes29%%ArrayYes31%
 }
 Send {Blind}{enter}
 return
@@ -1291,7 +1310,6 @@ DisableAll:
    GuiControl,,Paste,0
    GuiControl,,MCCEO,
    GuiControl,,SmoothEWO,0
-   GuiControl,,SmoothEWOTime,125
    GuiControl,,IncludeMacros,
    GuiControl,,IncludeHotkey1,
    GuiControl,,IncludeHotkey2,

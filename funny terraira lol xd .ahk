@@ -4,10 +4,4 @@ SetKeyDelay, 25, 25
 SetBatchLines, -1
 
 F6::
-Send {enter}
-Loop, 17 {
-sendinput aaaaaaaaaa
-Send {shift up}
-}
-SendInput aaaaaaa
-Send {shift up}{enter}
+Send {Blind}{enter}{space}{enter}
