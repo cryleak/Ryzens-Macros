@@ -291,10 +291,10 @@ MsgBox, 0, Welcome!, Welcome to Ryzen's Macros. Please note that AW Mode is curr
 }
 GuiControlGet, Paste
 If (Paste = 0) {
-   Hotkey, *^v, Paste, Off
+   Hotkey, ^v, Paste, Off
 }
 else {
-   Hotkey, *^v, Paste, On
+   Hotkey, ^v, Paste, On
 }
 return
 
@@ -476,23 +476,23 @@ EWO:
 GuiControlGet, SmoothEWO
 if (SmoothEWO = 1) {
    sleep 50
-   SendInput {Blind}{lbutton up}{rbutton up}{%InteractionMenuKey% down}{enter down}
-   sleep 60
+   SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%InteractionMenuKey% down}{enter down}
+   sleep 40
    SendInput {Blind}{%EWOLookBehindKey% down}
-   sleep 10
-   SendInput {Blind}{wheelup}
-   sleep 50
+   sleep 20
    SendInput {Blind}{wheelup}{%EWOSpecialAbilitySlashActionKey% down}
-   sleep 70
+   sleep 35
+   SendInput {Blind}{wheelup}
+   sleep 60
    SendInput {Blind}{enter up}
    } else {
-   SendInput {Blind}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{%EWOLookBehindKey% down}
+   SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOSpecialAbilitySlashActionKey% down}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{%EWOLookBehindKey% down}
    Send {Blind}{f24 down}{f23 down}{f22 down}
    SendInput {Blind}{wheelup}{enter up}
 }
 sleep 25
 Send {Blind}{enter}
-SendInput {Blind}{%EWOLookBehindKey% up}{%EWOSpecialAbilitySlashActionKey% up}{%EWOMelee% up}{%InteractionMenuKey% up}{up up}{g up}{f24 up}{f23 up}{f22 up}{%EWO% up}
+SendInput {Blind}{%EWOLookBehindKey% up}{%EWOSpecialAbilitySlashActionKey% up}{%EWOMelee% up}{%InteractionMenuKey% up}{up up}{g up}{f24 up}{f23 up}{f22 up}{f21 up}{%EWO% up}
 SetCapsLockState, Off
 sleep 25
 return
@@ -556,7 +556,7 @@ GTAHax:
 CoordMode, Mouse, Client
 SendInput {%GTAHax% up}
 Run, GTAHaXUI.exe, %A_ScriptDir%, , Max
-Sleep 1000
+WinWait, ahk_exe GTAHaXUI.exe
 ControlClick, Edit1, ahk_exe GTAHaXUI.exe,,,,D
 sleep 25
 ControlClick, Edit1, ahk_exe GTAHaXUI.exe,,,,U
@@ -670,7 +670,7 @@ return
 
 CustomTextSpam:
 Length := StrLen(CustomSpamText)
-if (Length >= 32) {
+if (Length >= 31) {
 Loop, 140 {
 ArrayYes%A_Index% =
 }
@@ -686,14 +686,10 @@ SendInput {Raw}%ArrayYes94%%ArrayYes95%%ArrayYes96%%ArrayYes97%%ArrayYes98%%Arra
 SendRaw %ArrayYes124%
 SendInput {Raw}%ArrayYes125%%ArrayYes126%%ArrayYes127%%ArrayYes128%%ArrayYes129%%ArrayYes130%%ArrayYes131%%ArrayYes132%%ArrayYes133%%ArrayYes134%%ArrayYes135%%ArrayYes136%%ArrayYes137%%ArrayYes138%%ArrayYes139%%ArrayYes140%
 }
-else if Length <= 31 
+else if Length <= 30
 {
-Loop, 31 {
-ArrayYes%A_Index% =
-}
-StringSplit, ArrayYes, CustomSpamText
-Send {Blind}t%ArrayYes1%
-SendInput {Raw}%ArrayYes2%%ArrayYes3%%ArrayYes4%%ArrayYes5%%ArrayYes6%%ArrayYes7%%ArrayYes8%%ArrayYes9%%ArrayYes10%%ArrayYes11%%ArrayYes12%%ArrayYes13%%ArrayYes14%%ArrayYes15%%ArrayYes16%%ArrayYes17%%ArrayYes18%%ArrayYes19%%ArrayYes20%%ArrayYes21%%ArrayYes22%%ArrayYes23%%ArrayYes24%%ArrayYes25%%ArrayYes26%%ArrayYes27%%ArrayYes28%%ArrayYes29%%ArrayYes31%
+Send {Blind}t{shift up}
+SendInput {Raw}%CustomSpamText%
 }
 Send {Blind}{enter}
 return
@@ -729,10 +725,10 @@ return
 Paste2:
 GuiControlGet, Paste
 If (Paste = 0) {
-   Hotkey, *^v, Paste, Off
+   Hotkey, ^v, Paste, Off
 }
 else {
-   Hotkey, *^v, Paste, On
+   Hotkey, ^v, Paste, On
 }
 return
 
@@ -1125,10 +1121,10 @@ LaunchCycle:
             }
       GuiControlGet, Paste
       If (Paste = 0) {
-         Hotkey, *^v, Paste, Off
+         Hotkey, ^v, Paste, Off
       }
       else {
-         Hotkey, *^v, Paste, On
+         Hotkey, ^v, Paste, On
       }
       Gui, Submit, NoHide
       If (CrosshairDone = 0) {
