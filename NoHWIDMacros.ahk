@@ -1,33 +1,6 @@
 ﻿if not A_IsAdmin
 	Run *RunAs "%A_ScriptFullPath%"
-
-
-UrlDownloadToFile, https://pastebin.com/raw/dpBPUkBM, %A_Temp%\Keys.ini
-            while IfExist, A_Temp "\Keys.ini" 
-            {}
-IniRead, Key1, %A_Temp%\Keys.ini, Registration, Key1
-IniRead, Key2, %A_Temp%\Keys.ini, Registration, Key2
-IniRead, Key3, %A_Temp%\Keys.ini, Registration, Key3
-IniRead, Key4, %A_Temp%\Keys.ini, Registration, Key4
-IniRead, Key5, %A_Temp%\Keys.ini, Registration, Key5
-IniRead, Key6, %A_Temp%\Keys.ini, Registration, Key6
-IniRead, Key7, %A_Temp%\Keys.ini, Registration, Key7
-IniRead, Key8, %A_Temp%\Keys.ini, Registration, Key8
-IniRead, Key9, %A_Temp%\Keys.ini, Registration, Key9
-IniRead, Key10, %A_Temp%\Keys.ini, Registration, Key10
-FileDelete, %A_Temp%\Keys.ini
-
-key := % UUID()
-valid_ids := Object((Key1), y,(Key2), y,(Key3), y,(Key4), y,(Key5), y,(Key6), y,(Key7), y,(Key8), y,(Key9), y,(Key10), y)
-
-if (!valid_ids.HasKey(key))
-{
-	msgbox HWID Mismatch, your HWID has been copied to the clipboard. Please join the Discord Server and send it in the #macro-hwid channel.
-   clipboard := key
-	ExitApp
-}
-MsgBox HWID matching, welcome to Ryzen's Macros!
-MacroVersion = 3.12.2 2 Seconds Later Edition
+MacroVersion = 3.12
 CFG = GTA Binds.ini
 CrosshairDone := 0
 MCCEO2 := 0
@@ -41,7 +14,6 @@ IniRead,DebugTesting,%CFG%,Debug,Debug Testing
 #MaxHotkeysPerInterval 99000000
 #KeyHistory 0 
 #HotkeyInterval 99000000
-#Persistent
 ListLines Off
 SetTitleMatchMode, 2
 SetDefaultMouseSpeed, 0
@@ -437,7 +409,6 @@ Gui,Submit,NoHide
    IniWrite,%IncludeHotkeyChat2%,%CFG%,Misc,Include Hotkey Chat #2
 }
 
-Gosub, LaunchCycle
 Hotkey, *%ThermalHelmet%, ThermalHelmet, UseErrorLevel On
 Hotkey, *%FastSniperSwitch%, FastSniperSwitch, UseErrorLevel On
 Hotkey, *%EWO%, EWO, UseErrorLevel On
@@ -464,6 +435,7 @@ Hotkey, *%IncludeHotkey6%, IncludeHotkey06, UseErrorLevel On
 Hotkey, *%IncludeHotkeyChat1%, IncludeHotkeyChat01, UseErrorLevel On
 Hotkey, *%IncludeHotkeyChat2%, IncludeHotkeyChat02, UseErrorLevel On
 Hotkey, *%RPGSpam%, RPGSpam, UseErrorLevel On
+Gosub, LaunchCycle
 Return
 
 ThermalHelmet:
@@ -502,29 +474,27 @@ return
 
 EWO:
 GuiControlGet, SmoothEWO
-SetMouseDelay, -1
 if (SmoothEWO = 1) {
    sleep 50
-   SendInput {lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%InteractionMenuKey% down}{enter down}
+   SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%InteractionMenuKey% down}{enter down}
    sleep 40
-   SendInput {%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
+   SendInput {Blind}{%EWOLookBehindKey% down}
    sleep 20
-   SendInput {wheelup}
+   SendInput {Blind}{wheelup}{%EWOSpecialAbilitySlashActionKey% down}
    sleep 45
-   SendInput {wheelup}
+   SendInput {Blind}{wheelup}
    sleep 60
-   SendInput {enter up}
+   SendInput {Blind}{enter up}
    } else {
-   SendInput {lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOSpecialAbilitySlashActionKey% down}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}
+   SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOSpecialAbilitySlashActionKey% down}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{%EWOLookBehindKey% down}
    Send {Blind}{f24 down}{f23 down}{f22 down}
-   SendInput {wheelup}{enter up}
+   SendInput {Blind}{wheelup}{enter up}
 }
-Send {Blind}{enter 2}
 sleep 25
-SendInput {%EWOLookBehindKey% up}{%EWOSpecialAbilitySlashActionKey% up}{%EWOMelee% up}{%InteractionMenuKey% up}{up up}{g up}{f24 up}{f23 up}{f22 up}{f21 up}{%EWO% up}
+Send {Blind}{enter}
+SendInput {Blind}{%EWOLookBehindKey% up}{%EWOSpecialAbilitySlashActionKey% up}{%EWOMelee% up}{%InteractionMenuKey% up}{up up}{g up}{f24 up}{f23 up}{f22 up}{f21 up}{%EWO% up}
 SetCapsLockState, Off
 sleep 25
-SetMouseDelay, 10
 return
 
 BST:
@@ -1347,12 +1317,3 @@ DisableAll:
    GuiControl,,IncludeHotkeyChat2,
    }
    Return
-
-; Function UUID
-; 	returns UUID member of the System Information structure in the SMBIOS information
-;	this should be unique to a particular computer
-UUID()
-{
-	For obj in ComObjGet("winmgmts:{impersonationLevel=impersonate}!\\" . A_ComputerName . "\root\cimv2").ExecQuery("Select * From Win32_ComputerSystemProduct")
-		return obj.UUID	; http://msdn.microsoft.com/en-us/library/aa394105%28v=vs.85%29.aspx
-}
