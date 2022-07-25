@@ -27,7 +27,7 @@ if (!valid_ids.HasKey(key))
 	ExitApp
 }
 MsgBox HWID matching, welcome to Ryzen's Macros!
-MacroVersion = 3.12.2 2 Seconds Later Edition
+MacroVersion = 3.12.3
 CFG = GTA Binds.ini
 CrosshairDone := 0
 MCCEO2 := 0
@@ -69,6 +69,7 @@ Gui, Add, Text,, Ammo Macro:
 Gui, Add, Text,, Ammo buy wait time (ms):
 Gui, Add, Text,, Ammo weapons to buy:
 Gui, Add, Text,, Reverse Ammo Macro buy order?
+Gui, Add, Text,, Buy based on how many keypresses?
 Gui, Add, Text,, Fast Respawn Macro:
 Gui, Add, Text,, Suspend:
 
@@ -87,6 +88,7 @@ Gui, Add, Hotkey,vAmmo,
 Gui, Add, Edit,Number vSleepTime,
 Gui, Add, Edit,Number vBuyCycles,
 Gui, Add, Checkbox,vReverse h20,
+Gui, Add, Checkbox,vSpecialBuy h20,
 Gui, Add, Hotkey,vFastRespawn,
 Gui, Add, Hotkey,vSuspend,
 
@@ -184,6 +186,7 @@ IfExist, %CFG%
    IniRead,Read_BST,%CFG%,PVP Macros,BST
    IniRead,Read_BSTSpeed,%CFG%,PVP Macros,BST Speed
    IniRead,Read_Ammo,%CFG%,PVP Macros,Buy Ammo
+   IniRead,Read_SpecialBuy,%CFG%,Misc,Special Buy
    IniRead,Read_FastRespawn,%CFG%,Misc,Fast Respawn
    IniRead,Read_Suspend,%CFG%,Misc,Suspend Macro
    IniRead,Read_HelpWhatsThis,%CFG%,Chat Macros,idkwtfthisis
@@ -243,6 +246,7 @@ IfExist, %CFG%
    GuiControl,,BST,%Read_BST%
    GuiControl,,BSTSpeed,%Read_BSTSpeed%
    GuiControl,,Ammo,%Read_Ammo%
+   GuiControl,,SpecialBuy,%Read_SpecialBuy%
    GuiControl,,FastRespawn,%Read_FastRespawn%
    GuiControl,,Suspend,%Read_Suspend%
    GuiControl,,HelpWhatsThis,%Read_HelpWhatsThis%
@@ -398,6 +402,7 @@ Gui,Submit,NoHide
    IniWrite,%BST%,%CFG%,PVP Macros,BST
    IniWrite,%BSTSpeed%,%CFG%,PVP Macros,BST Speed
    IniWrite,%Ammo%,%CFG%,PVP Macros,Buy Ammo
+   IniWrite,%SpecialBuy%,%CFG%,Misc,Special Buy
    IniWrite,%FastRespawn%,%CFG%,Misc,Fast Respawn
    IniWrite,%Suspend%,%CFG%,Misc,Suspend Macro
    IniWrite,%HelpWhatsThis%,%CFG%,Chat Macros,idkwtfthisis
@@ -504,22 +509,29 @@ EWO:
 GuiControlGet, SmoothEWO
 SetMouseDelay, -1
 if (SmoothEWO = 1) {
-   sleep 50
    SendInput {lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%InteractionMenuKey% down}{enter down}
-   sleep 40
+   DllCall("Sleep",UInt,25)
    SendInput {%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
-   sleep 20
+   DllCall("Sleep",UInt,20)
    SendInput {wheelup}
-   sleep 45
+   DllCall("Sleep",UInt,25)
    SendInput {wheelup}
-   sleep 60
+   DllCall("Sleep",UInt,60)
+   SendInput {enter up}
+   } else {
+         If (getKeyState("lshift", "P") && getKeyState("lctrl", "P")) {
+   SendInput {lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOSpecialAbilitySlashActionKey% down}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}
+   Send {Blind}{f24 down}{f23 down}{f22 down}
+   SendInput {wheelup}
+   Send {Blind}{shift up}
    SendInput {enter up}
    } else {
    SendInput {lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOSpecialAbilitySlashActionKey% down}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}
    Send {Blind}{f24 down}{f23 down}{f22 down}
    SendInput {wheelup}{enter up}
-}
-Send {Blind}{enter 2}
+   }
+   }
+Send {Blind}{enter}
 sleep 25
 SendInput {%EWOLookBehindKey% up}{%EWOSpecialAbilitySlashActionKey% up}{%EWOMelee% up}{%InteractionMenuKey% up}{up up}{g up}{f24 up}{f23 up}{f22 up}{f21 up}{%EWO% up}
 SetCapsLockState, Off
@@ -550,29 +562,56 @@ return
 
 Ammo: ; Buys ammo.
 SendInput {%Ammo% up}{lbutton up}
-BuyCycles -= 1
 GuiControlGet, CEOMode
+GuiControlGet, SpecialBuy
 GuiControlGet, Reverse
 If (Reverse = 1) {
 Reverse2 = left
 } else {
    Reverse2 = right
 }
-If (CEOMode = 0) {
+If (SpecialBuy = 0) {
+   BuyCycles -= 1
+   If (CEOMode = 0) {
+      Send {Blind}{%InteractionMenuKey%}{down 2}
+      }
+      else {
+         Send {Blind}{%InteractionMenuKey%}{down 3}
+         }
+   Send {Blind}{enter}{down 5}{enter}{up}{enter}
+   Loop, %BuyCycles% {
+      Send {Blind}{up 2}{%Reverse2%}{down 2}
+         DllCall("Sleep",UInt,SleepTime)
+      Send {Blind}{enter}
+   }
+   Send {Blind}{%InteractionMenuKey%}
+   BuyCycles += 1
+} else {
+   KeyCount++
+   If (CEOMode = 0) {
    Send {Blind}{%InteractionMenuKey%}{down 2}
    }
    else {
       Send {Blind}{%InteractionMenuKey%}{down 3}
       }
-Send {Blind}{enter}{down 5}{enter}{up}{enter}
-Loop, %BuyCycles% {
-   Send {Blind}{up 2}{%Reverse2%}{down 2}
-   sleep %SleepTime%
-   Send {Blind}{enter}
+      Send {Blind}{enter}{down 5}{enter}
+      If (Keycount = 1) {
+         Send {Blind}{up}{enter}
+      } else {
+         KeyCountBuy:=KeyCount-1
+         Send {Blind}{down}{%Reverse2% %KeyCountBuy%}{down 2}{enter}
+      }
+      Send {Blind}{%InteractionMenuKey%}
+      if (KeyCount >= BuyCycles)
+         KeyCount = 0
+      sleep 150
+      SetTimer, KeyCountReset, -1350
 }
-Send {Blind}{%InteractionMenuKey%}
-BuyCycles += 1
 return
+
+KeyCountReset:
+KeyCount = 0
+Return
 
 FastRespawn:
 send {lbutton 30}
@@ -1322,6 +1361,7 @@ DisableAll:
    GuiControl,,SleepTime,200
    GuiControl,,BuyCycles,4
    GuiControl,,Reverse,0
+   GuiControl,,SpecialBuy,0
    GuiControl,,ProcessCheck2,0
    GuiControl,,AWMode,0
    GuiControl,,NightVision,0
