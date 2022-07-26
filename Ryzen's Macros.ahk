@@ -27,7 +27,7 @@ if (!valid_ids.HasKey(key))
 	ExitApp
 }
 MsgBox HWID matching, welcome to Ryzen's Macros!
-MacroVersion = 3.12.3
+MacroVersion = 3.12.4
 CFG = GTA Binds.ini
 CrosshairDone := 0
 MCCEO2 := 0
@@ -70,6 +70,7 @@ Gui, Add, Text,, Ammo buy wait time (ms):
 Gui, Add, Text,, Ammo weapons to buy:
 Gui, Add, Text,, Reverse Ammo Macro buy order?
 Gui, Add, Text,, Buy based on how many keypresses?
+Gui, Add, Text,, Buy all? (must be holding heavy weapon)
 Gui, Add, Text,, Fast Respawn Macro:
 Gui, Add, Text,, Suspend:
 
@@ -89,6 +90,7 @@ Gui, Add, Edit,Number vSleepTime,
 Gui, Add, Edit,Number vBuyCycles,
 Gui, Add, Checkbox,vReverse h20,
 Gui, Add, Checkbox,vSpecialBuy h20,
+Gui, Add, Checkbox,vBuyAll h20,
 Gui, Add, Hotkey,vFastRespawn,
 Gui, Add, Hotkey,vSuspend,
 
@@ -107,6 +109,7 @@ Gui, Add, Text,, AW Mode:
 Gui, Add, Text,, Use Night Vision for Thermal Macro?
 Gui, Add, Text,, Crosshair:
 Gui, Add, Text,, Smoothen EWO animation? (slower)
+Gui, Add, Text,, Smoothen EWO Mode:
 
 Gui, Add, Hotkey,vHelpWhatsThis yn y10,
 Gui, Add, Hotkey,vEssayAboutGTA,
@@ -123,6 +126,7 @@ Gui, Add, CheckBox, gAWMode2 vAWMode h20,
 Gui, Add, CheckBox, vNightVision h20,
 Gui, Add, Checkbox, gCrossHair5 vCrossHair h20,
 Gui, Add, Checkbox, vSmoothEWO h20,
+Gui, Add, DropDownList, vSmoothEWOMode, Slow|Fast
 Gui, Add, Button, gSaveConfig h20,Save config and start the macros!
 Gui, Add, Button, gApply h20,Apply changes and don't save
 Gui, Add, Button, gHideWindow h20,Hide window
@@ -187,6 +191,7 @@ IfExist, %CFG%
    IniRead,Read_BSTSpeed,%CFG%,PVP Macros,BST Speed
    IniRead,Read_Ammo,%CFG%,PVP Macros,Buy Ammo
    IniRead,Read_SpecialBuy,%CFG%,Misc,Special Buy
+   IniRead,Read_BuyAll,%CFG%,Misc,Buy All
    IniRead,Read_FastRespawn,%CFG%,Misc,Fast Respawn
    IniRead,Read_Suspend,%CFG%,Misc,Suspend Macro
    IniRead,Read_HelpWhatsThis,%CFG%,Chat Macros,idkwtfthisis
@@ -215,6 +220,7 @@ IfExist, %CFG%
    IniRead,Read_Paste,%CFG%,Misc,Allow Copy Paste
    IniRead,Read_MCCEO,%CFG%,Misc,MC CEO Toggle
    IniRead,Read_SmoothEWO,%CFG%,Misc,Smooth EWO
+   IniRead,Read_SmoothEWOMode,%CFG%,Misc,Smooth EWO Mode
    IniRead,Read_IncludeMacros,%CFG%,Misc,Include Macros
    IniRead,Read_IncludeHotkey1,%CFG%,Misc,Include Hotkey #1
    IniRead,Read_IncludeHotkey2,%CFG%,Misc,Include Hotkey #2
@@ -247,6 +253,7 @@ IfExist, %CFG%
    GuiControl,,BSTSpeed,%Read_BSTSpeed%
    GuiControl,,Ammo,%Read_Ammo%
    GuiControl,,SpecialBuy,%Read_SpecialBuy%
+   GuiControl,,BuyAll,%Read_BuyAll%
    GuiControl,,FastRespawn,%Read_FastRespawn%
    GuiControl,,Suspend,%Read_Suspend%
    GuiControl,,HelpWhatsThis,%Read_HelpWhatsThis%
@@ -275,6 +282,7 @@ IfExist, %CFG%
    GuiControl,,Paste,%Read_Paste%
    GuiControl,,MCCEO,%Read_MCCEO%
    GuiControl,,SmoothEWO,%Read_SmoothEWO%
+   GuiControl,Choose,SmoothEWOMode,%Read_SmoothEWOMode%
    GuiControl,,IncludeMacros,%Read_IncludeMacros%
    GuiControl,,IncludeHotkey1,%Read_IncludeHotkey1%
    GuiControl,,IncludeHotkey2,%Read_IncludeHotkey2%
@@ -403,6 +411,7 @@ Gui,Submit,NoHide
    IniWrite,%BSTSpeed%,%CFG%,PVP Macros,BST Speed
    IniWrite,%Ammo%,%CFG%,PVP Macros,Buy Ammo
    IniWrite,%SpecialBuy%,%CFG%,Misc,Special Buy
+   IniWrite,%BuyAll%,%CFG%,Misc,Buy All
    IniWrite,%FastRespawn%,%CFG%,Misc,Fast Respawn
    IniWrite,%Suspend%,%CFG%,Misc,Suspend Macro
    IniWrite,%HelpWhatsThis%,%CFG%,Chat Macros,idkwtfthisis
@@ -431,6 +440,7 @@ Gui,Submit,NoHide
    IniWrite,%Paste%,%CFG%,Misc,Allow Copy Paste
    IniWrite,%MCCEO%,%CFG%,Misc,MC CEO Toggle
    IniWrite,%SmoothEWO%,%CFG%,Misc,Smooth EWO
+   IniWrite,%SmoothEWOMode%,%CFG%,Misc,Smooth EWO Mode
    IniWrite,%IncludeMacros%,%CFG%,Misc,Include Macros
    IniWrite,%IncludeHotkey1%,%CFG%,Misc,Include Hotkey #1
    IniWrite,%IncludeHotkey2%,%CFG%,Misc,Include Hotkey #2
@@ -507,18 +517,24 @@ return
 
 EWO:
 GuiControlGet, SmoothEWO
+GuiControlGet, SmoothEWOMode
 SetMouseDelay, -1
 if (SmoothEWO = 1) {
+   If (SmoothEWOMode = "Fast") {
+   SendInput {lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{%EWOLookBehindKey% down}{lbutton up}{rbutton up}
+   Send {Blind}{%InteractionMenuKey%}{up 2}{enter}
+   } else {
    SendInput {lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%InteractionMenuKey% down}{enter down}
    DllCall("Sleep",UInt,25)
    SendInput {%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
-   DllCall("Sleep",UInt,20)
+   DllCall("Sleep",UInt,15)
    SendInput {wheelup}
    DllCall("Sleep",UInt,25)
    SendInput {wheelup}
    DllCall("Sleep",UInt,60)
    SendInput {enter up}
-   } else {
+   }
+   } else if (SmoothEWO = 0) {
          If (getKeyState("lshift", "P") && getKeyState("lctrl", "P")) {
    SendInput {lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOSpecialAbilitySlashActionKey% down}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}
    Send {Blind}{f24 down}{f23 down}{f22 down}
@@ -565,6 +581,8 @@ SendInput {%Ammo% up}{lbutton up}
 GuiControlGet, CEOMode
 GuiControlGet, SpecialBuy
 GuiControlGet, Reverse
+GuiControlGet, BuyAll
+If (BuyAll = 0) {
 If (Reverse = 1) {
 Reverse2 = left
 } else {
@@ -599,13 +617,19 @@ If (SpecialBuy = 0) {
          Send {Blind}{up}{enter}
       } else {
          KeyCountBuy:=KeyCount-1
-         Send {Blind}{down}{%Reverse2% %KeyCountBuy%}{down 2}{enter}
+         Send {Blind}{down}{%Reverse2% %KeyCountBuy%}{up 2}{enter}
       }
       Send {Blind}{%InteractionMenuKey%}
       if (KeyCount >= BuyCycles)
          KeyCount = 0
       sleep 150
       SetTimer, KeyCountReset, -1350
+}
+} else {
+   Send {Blind}{%InteractionMenuKey%}{down 2}
+   If (CEOMode) = 1
+      Send {Blind}{down}
+   Send {Blind}{enter}{down 5}{enter 2}{up}{enter}{%InteractionMenuKey%}
 }
 return
 
@@ -634,7 +658,7 @@ sleep 25
 ControlClick, Edit2, ahk_exe GTAHaXUI.exe,,,,D
 sleep 25
 ControlClick, Edit2, ahk_exe GTAHaXUI.exe,,,,U
-Send {Backspace}28073
+Send {Backspace}28397
 sleep 25
 Loop, 5 {
 ControlClick, Button1, ahk_exe GTAHaXUI.exe,,,,D
@@ -644,7 +668,7 @@ ControlClick, Button1, ahk_exe GTAHaXUI.exe,,,,U
 ControlClick, Edit2, ahk_exe GTAHaXUI.exe,,,,D
 sleep 25
 ControlClick, Edit2, ahk_exe GTAHaXUI.exe,,,,U
-Send {Backspace}4
+Send {Backspace}8
 sleep 25
 Loop, 5 {
 ControlClick, Button1, ahk_exe GTAHaXUI.exe,,,,D
@@ -1376,6 +1400,7 @@ DisableAll:
    GuiControl,,Paste,0
    GuiControl,,MCCEO,
    GuiControl,,SmoothEWO,0
+   GuiControl,Choose,SmoothEWOMode,Fast
    GuiControl,,IncludeMacros,
    GuiControl,,IncludeHotkey1,
    GuiControl,,IncludeHotkey2,
@@ -1388,11 +1413,8 @@ DisableAll:
    }
    Return
 
-; Function UUID
-; 	returns UUID member of the System Information structure in the SMBIOS information
-;	this should be unique to a particular computer
 UUID()
 {
 	For obj in ComObjGet("winmgmts:{impersonationLevel=impersonate}!\\" . A_ComputerName . "\root\cimv2").ExecQuery("Select * From Win32_ComputerSystemProduct")
-		return obj.UUID	; http://msdn.microsoft.com/en-us/library/aa394105%28v=vs.85%29.aspx
+		return obj.UUID
 }
