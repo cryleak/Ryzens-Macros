@@ -4,7 +4,7 @@ if not A_IsAdmin
 Goto, CheckHWID
 Backk:
 MsgBox HWID matching, welcome to Ryzen's Macros!
-MacroVersion = 3.13.1
+MacroVersion = 3.13
 CFG = GTA Binds.ini
 CrosshairDone := 0
 MCCEO2 := 0
@@ -257,7 +257,6 @@ WinActivate, Ryzen's Macros Version %MacroVersion%
 return
 
 HelpWhatsThis:
-while (getKeyState(HelpWhatsThis, "P")) {
 SendInput {%HelpWhatsThis% up}
 Send {Blind}t
 Send d
@@ -291,11 +290,9 @@ SendInput e {Numpadadd} get good {Numpadadd} reported
 Send {enter}t{Numpadadd}
 SendInput {space}ad hominem {Numpadadd} GG{shift down}1{shift up} {Numpadadd} ur mom
 Send {enter}
-}
 return
 
 EssayAboutGTA:
-while (getKeyState(EssayAboutGTA, "P")) {
 SendInput {%EssayAboutGTA% up}
 Send tw
 SendInput hy is my fps so shlt this game
@@ -338,11 +335,9 @@ SendInput istening to my essay about how
 Send {space}
 SendInput bad gta online is
 Send {enter}
-}
 return
 
 CustomTextSpam:
-while (getKeyState(CustomTextSpam, "P")) {
 Length := StrLen(CustomSpamText)
 if (Length >= 31) {
 Loop, 140 {
@@ -366,7 +361,6 @@ Send {Blind}t{shift up}
 SendInput {Raw}%CustomSpamText%
 }
 Send {Blind}{enter}
-}
 return
 
 Paste:
@@ -392,11 +386,9 @@ SendInput {raw}%Clipboard%
 return
 
 ShutUp:
-while (getKeyState(ShutUp, "P")) {
 Send {Blind}t{shift up}
 SendInput shut up
 Send {Blind}{enter}
-}
 return
 
 Paste2:
