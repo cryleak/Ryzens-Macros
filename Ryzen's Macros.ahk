@@ -31,7 +31,7 @@ Gui, Font,, Segoe UI Semibold
 Gosub, DiscordPriority
 
 Gui, Font, q5
-Gui, Add, Tab3,, Combat|Chat|In-Game Binds|Options|Custom|Buttons/Misc
+Gui, Add, Tab3,, Combat|Chat|In-Game Binds||Options|Custom|Buttons/Misc
 Gosub, CombatMacros
 Gosub, ChatMacros
 Gosub, InGameBinds
