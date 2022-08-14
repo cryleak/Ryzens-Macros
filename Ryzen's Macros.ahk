@@ -4,7 +4,7 @@ if not A_IsAdmin
 Goto, CheckHWID
 Backk:
 MsgBox HWID matching, welcome to Ryzen's Macros!
-MacroVersion = 3.13.1
+MacroVersion = 3.14
 CFG = GTA Binds.ini
 CrosshairDone := 0
 MCCEO2 := 0
@@ -146,10 +146,13 @@ GuiControlGet, SmoothEWO
 GuiControlGet, SmoothEWOMode
 SetMouseDelay, -1
 if (SmoothEWO = 1) {
-         If (getKeyState("rbutton", "P")) {
-         SendInput {lbutton up}{rbutton up}
-         sleep 100
-      }
+         If (SmoothEWOMode = "Fastest") {
+         } else {
+            if (getKeyState("rbutton", "P")) {
+            SendInput {lbutton up}{rbutton up}
+            sleep 50
+            }
+         }
    If (SmoothEWOMode = "Faster") {
       SendInput {lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOLookBehindKey% down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}{enter down}{%InteractionMenuKey% down}
       DllCall("Sleep",UInt,35)
@@ -158,7 +161,7 @@ if (SmoothEWO = 1) {
       Send {Blind}{up}
       DllCall("Sleep",UInt,10)
       Send {Blind}{enter up}
-   } else {
+   } else if (SmoothEWOMode = "Slow") {
       SendInput {lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%InteractionMenuKey% down}
       DllCall("Sleep",UInt,31)
       SendInput {Blind}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
@@ -168,6 +171,16 @@ if (SmoothEWO = 1) {
       SendInput {Blind}{wheelup}
       DllCall("Sleep",UInt,55)
       Send {Blind}{enter up}
+      } else if (SmoothEWOMode = "Fastest") {
+         SendInput {lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}
+         Send {Blind}{%InteractionMenuKey%}{up 2}
+         SendInput {%EWOSpecialAbilitySlashActionKey% down}
+         Send {Blind}{enter}
+      }
+      else if (SmoothEWOMode = "Retarded") {
+         StringUpper, EWOLookBehindKey, EWOLookBehindKey
+         Send {Blind}{%InteractionMenuKey%}{%EWOSpecialAbilitySlashActionKey%}{f24 down}{%EWOSpecialAbilitySlashActionKey%}{f24 up}{up 2}{%EWOLookBehindKey% down}{enter}
+         StringLower, EWOLookBehindKey, EWOLookBehindKey
       }} else if (SmoothEWO = 0) {
          If (getKeyState("lshift", "P") && getKeyState("lctrl", "P")) {
             SendInput {lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
@@ -219,45 +232,24 @@ send {lbutton 30}
 return
 
 GTAHax:
-CoordMode, Mouse, Client
 SendInput {%GTAHax% up}
-Run, GTAHaXUI.exe, %A_ScriptDir%, , Max
+Run, GTAHaXUI.exe, %A_ScriptDir%,,Max
 WinWait, ahk_exe GTAHaXUI.exe
-ControlClick, Edit1, ahk_exe GTAHaXUI.exe,,,,D
-sleep 25
-ControlClick, Edit1, ahk_exe GTAHaXUI.exe,,,,U
-Send {Backspace}
-SendInput 262145
-sleep 25
-ControlClick, Edit2, ahk_exe GTAHaXUI.exe,,,,D
-sleep 25
-ControlClick, Edit2, ahk_exe GTAHaXUI.exe,,,,U
-Send {Backspace}
-SendInput 28397
-sleep 25
-Loop, 5 {
-ControlClick, Button1, ahk_exe GTAHaXUI.exe,,,,D
-sleep 25
-ControlClick, Button1, ahk_exe GTAHaXUI.exe,,,,U
-}
-ControlClick, Edit2, ahk_exe GTAHaXUI.exe,,,,D
-sleep 25
-ControlClick, Edit2, ahk_exe GTAHaXUI.exe,,,,U
-Send {Backspace}
-SendInput 8
-sleep 25
-Loop, 5 {
-ControlClick, Button1, ahk_exe GTAHaXUI.exe,,,,D
-sleep 25
-ControlClick, Button1, ahk_exe GTAHaXUI.exe,,,,U
-}
+ControlSend, Edit1, {down}{backspace}262145
+ControlSend, Edit2, {down}{backspace}28397
 sleep 100
+ControlClick, Button1, ahk_exe GTAHaXUI.exe,,,,
+sleep 25
+ControlSend, Edit2, {down}{backspace}8
+sleep 100
+ControlClick, Button1, ahk_exe GTAHaXUI.exe,,,,
+sleep 25
 WinClose, ahk_exe GTAHaXUI.exe
 WinActivate, Ryzen's Macros Version %MacroVersion%
+MsgBox, 0, Complete!, You should now have no EWO cooldown. Kill yourself with a Sticky/RPG if you currently have a cooldown.
 return
 
 HelpWhatsThis:
-while (getKeyState(HelpWhatsThis, "P")) {
 SendInput {%HelpWhatsThis% up}
 Send {Blind}t
 Send d
@@ -291,11 +283,9 @@ SendInput e {Numpadadd} get good {Numpadadd} reported
 Send {enter}t{Numpadadd}
 SendInput {space}ad hominem {Numpadadd} GG{shift down}1{shift up} {Numpadadd} ur mom
 Send {enter}
-}
 return
 
 EssayAboutGTA:
-while (getKeyState(EssayAboutGTA, "P")) {
 SendInput {%EssayAboutGTA% up}
 Send tw
 SendInput hy is my fps so shlt this game
@@ -338,18 +328,18 @@ SendInput istening to my essay about how
 Send {space}
 SendInput bad gta online is
 Send {enter}
-}
 return
 
 CustomTextSpam:
-while (getKeyState(CustomTextSpam, "P")) {
+GuiControlGet, RawText
 Length := StrLen(CustomSpamText)
 if (Length >= 31) {
 Loop, 140 {
 ArrayYes%A_Index% =
 }
-StringSplit, ArrayYes, CustomSpamText
 Send {Blind}t{shift up}
+StringSplit, ArrayYes, CustomSpamText
+If (RawText = 1) {
 SendInput {Raw}%ArrayYes1%%ArrayYes2%%ArrayYes3%%ArrayYes4%%ArrayYes5%%ArrayYes6%%ArrayYes7%%ArrayYes8%%ArrayYes9%%ArrayYes10%%ArrayYes11%%ArrayYes12%%ArrayYes13%%ArrayYes14%%ArrayYes15%%ArrayYes16%%ArrayYes17%%ArrayYes18%%ArrayYes19%%ArrayYes20%%ArrayYes21%%ArrayYes22%%ArrayYes23%%ArrayYes24%%ArrayYes25%%ArrayYes26%%ArrayYes27%%ArrayYes28%%ArrayYes29%%ArrayYes30%
 SendRaw %ArrayYes31%
 SendInput {Raw}%ArrayYes32%%ArrayYes33%%ArrayYes34%%ArrayYes35%%ArrayYes36%%ArrayYes37%%ArrayYes38%%ArrayYes39%%ArrayYes40%%ArrayYes41%%ArrayYes42%%ArrayYes43%%ArrayYes44%%ArrayYes45%%ArrayYes46%%ArrayYes47%%ArrayYes48%%ArrayYes49%%ArrayYes50%%ArrayYes51%%ArrayYes52%%ArrayYes53%%ArrayYes54%%ArrayYes55%%ArrayYes56%%ArrayYes57%%ArrayYes58%%ArrayYes59%%ArrayYes60%%ArrayYes61%
@@ -359,13 +349,35 @@ SendRaw %ArrayYes93%
 SendInput {Raw}%ArrayYes94%%ArrayYes95%%ArrayYes96%%ArrayYes97%%ArrayYes98%%ArrayYes99%%ArrayYes100%%ArrayYes101%%ArrayYes102%%ArrayYes103%%ArrayYes104%%ArrayYes105%%ArrayYes106%%ArrayYes107%%ArrayYes108%%ArrayYes109%%ArrayYes110%%ArrayYes111%%ArrayYes112%%ArrayYes113%%ArrayYes114%%ArrayYes115%%ArrayYes116%%ArrayYes117%%ArrayYes118%%ArrayYes119%%ArrayYes120%%ArrayYes121%%ArrayYes122%%ArrayYes123%
 SendRaw %ArrayYes124%
 SendInput {Raw}%ArrayYes125%%ArrayYes126%%ArrayYes127%%ArrayYes128%%ArrayYes129%%ArrayYes130%%ArrayYes131%%ArrayYes132%%ArrayYes133%%ArrayYes134%%ArrayYes135%%ArrayYes136%%ArrayYes137%%ArrayYes138%%ArrayYes139%%ArrayYes140%
-}
-else if Length <= 30
-{
-Send {Blind}t{shift up}
-SendInput {Raw}%CustomSpamText%
-}
 Send {Blind}{enter}
+} else {
+   SendInput %ArrayYes1%%ArrayYes2%%ArrayYes3%%ArrayYes4%%ArrayYes5%%ArrayYes6%%ArrayYes7%%ArrayYes8%%ArrayYes9%%ArrayYes10%%ArrayYes11%%ArrayYes12%%ArrayYes13%%ArrayYes14%%ArrayYes15%%ArrayYes16%%ArrayYes17%%ArrayYes18%%ArrayYes19%%ArrayYes20%%ArrayYes21%%ArrayYes22%%ArrayYes23%%ArrayYes24%%ArrayYes25%%ArrayYes26%%ArrayYes27%%ArrayYes28%%ArrayYes29%%ArrayYes30%
+   Send %ArrayYes31%
+   SendInput %ArrayYes32%%ArrayYes33%%ArrayYes34%%ArrayYes35%%ArrayYes36%%ArrayYes37%%ArrayYes38%%ArrayYes39%%ArrayYes40%%ArrayYes41%%ArrayYes42%%ArrayYes43%%ArrayYes44%%ArrayYes45%%ArrayYes46%%ArrayYes47%%ArrayYes48%%ArrayYes49%%ArrayYes50%%ArrayYes51%%ArrayYes52%%ArrayYes53%%ArrayYes54%%ArrayYes55%%ArrayYes56%%ArrayYes57%%ArrayYes58%%ArrayYes59%%ArrayYes60%%ArrayYes61%
+   Send %ArrayYes62%
+   SendInput %ArrayYes63%%ArrayYes64%%ArrayYes65%%ArrayYes66%%ArrayYes67%%ArrayYes68%%ArrayYes69%%ArrayYes70%%ArrayYes71%%ArrayYes72%%ArrayYes73%%ArrayYes74%%ArrayYes75%%ArrayYes76%%ArrayYes77%%ArrayYes78%%ArrayYes79%%ArrayYes80%%ArrayYes81%%ArrayYes82%%ArrayYes83%%ArrayYes84%%ArrayYes85%%ArrayYes86%%ArrayYes87%%ArrayYes88%%ArrayYes89%%ArrayYes90%%ArrayYes91%%ArrayYes92%
+   Send %ArrayYes93%
+   SendInput %ArrayYes94%%ArrayYes95%%ArrayYes96%%ArrayYes97%%ArrayYes98%%ArrayYes99%%ArrayYes100%%ArrayYes101%%ArrayYes102%%ArrayYes103%%ArrayYes104%%ArrayYes105%%ArrayYes106%%ArrayYes107%%ArrayYes108%%ArrayYes109%%ArrayYes110%%ArrayYes111%%ArrayYes112%%ArrayYes113%%ArrayYes114%%ArrayYes115%%ArrayYes116%%ArrayYes117%%ArrayYes118%%ArrayYes119%%ArrayYes120%%ArrayYes121%%ArrayYes122%%ArrayYes123%
+   Send %ArrayYes124%
+   SendInput %ArrayYes125%%ArrayYes126%%ArrayYes127%%ArrayYes128%%ArrayYes129%%ArrayYes130%%ArrayYes131%%ArrayYes132%%ArrayYes133%%ArrayYes134%%ArrayYes135%%ArrayYes136%%ArrayYes137%%ArrayYes138%%ArrayYes139%%ArrayYes140%
+   Send {Blind}{enter}
+}
+}
+else if Length <= 30 
+{
+   If (RawText = 1) {
+Loop, 8 {
+   Send {Blind}t{shift up}
+   SendInput {Raw}%CustomSpamText%
+   Send {Blind}{enter}
+}
+} else {
+      Loop, 8 {
+      Send {Blind}t{shift up}
+      SendInput %CustomSpamText%
+      Send {Blind}{enter}
+   }
+}
 }
 return
 
@@ -392,7 +404,7 @@ SendInput {raw}%Clipboard%
 return
 
 ShutUp:
-while (getKeyState(ShutUp, "P")) {
+Loop, 8 {
 Send {Blind}t{shift up}
 SendInput shut up
 Send {Blind}{enter}
@@ -420,15 +432,20 @@ return
 
 2Screen2:
 GuiControlGet, 2Screen
+GuiControlGet, 2ScreenSpecial
 If (2Screen = 0) {
-Global crossHairX := (screenW / 2) - (crossHairH / 2)
-Global crossHairY := (screenH / 2) - (crossHairH / 2)
-WinMove, QuickMacroCrosshair,, %CrossHairX%, %CRossHairY%
+   Global crossHairX := (screenW / 2) - (crossHairH / 2)
+   Global crossHairY := (screenH / 2) - (crossHairH / 2)
+   WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
 }
-else {
-Global crossHairX := (screenW / 4) - (crossHairH / 2)
-Global crossHairY := (screenH / 2) - (crossHairH / 2)
-WinMove, QuickMacroCrosshair,, %CrossHairX%, %CRossHairY%
+else if (2Screen = 1) && (2ScreenSpecial = 0) { 
+   Global crossHairX := (screenW / 4) - (crossHairH / 2)
+   Global crossHairY := (screenH / 2) - (crossHairH / 2)
+   WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
+} else if (2ScreenSpecial = 1) { 
+   Global crossHairX := (screenW / 3.11465) - (crossHairH / 2)
+   Global crossHairY := (screenH / 2) - (crossHairH / 2)
+   WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
 }
 
 Crosshair5:
@@ -443,15 +460,20 @@ SysGet, screenW, 78
 SysGet, screenH, 79
 
 GuiControlGet, 2Screen
+GuiControlGet, 2ScreenSpecial
 If (2Screen = 0) {
-Global crossHairX := (screenW / 2) - (crossHairH / 2)
-Global crossHairY := (screenH / 2) - (crossHairH / 2)
-WinMove, QuickMacroCrosshair,, %CrossHairX%, %CRossHairY%
+   Global crossHairX := (screenW / 2) - (crossHairH / 2)
+   Global crossHairY := (screenH / 2) - (crossHairH / 2)
+   WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
 }
-else {
-Global crossHairX := (screenW / 4) - (crossHairH / 2)
-Global crossHairY := (screenH / 2) - (crossHairH / 2)
-WinMove, QuickMacroCrosshair,, %CrossHairX%, %CRossHairY%
+else if (2Screen = 1) && (2ScreenSpecial = 0) { 
+   Global crossHairX := (screenW / 4) - (crossHairH / 2)
+   Global crossHairY := (screenH / 2) - (crossHairH / 2)
+   WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
+} else if (2ScreenSpecial = 1) { 
+   Global crossHairX := (screenW / 3.11465) - (crossHairH / 2)
+   Global crossHairY := (screenH / 2) - (crossHairH / 2)
+   WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
 }
 
 IfNotExist, %A_WorkingDir%\assets
@@ -459,13 +481,13 @@ IfNotExist, %A_WorkingDir%\assets
 
 FileInstall, assets\crosshair.png, %A_WorkingDir%\assets\crosshair.png, false
 
-Gui, QuickMacroCrosshair: New, +AlwaysOnTop -Border -Caption
+Gui, Crosshair: New, +AlwaysOnTop -Border -Caption
 Gui, Color, backgroundColor
 Gui, Add, Picture, x0 y0 w%crossHairW% h%crossHairH%,  %A_WorkingDir%\assets\crosshair.png
-Gui, Show, w%crossHairW% h%crossHairH% x%crossHairX% y%crossHairY%, QuickMacroCrosshair
-WinSet, TransColor, backgroundColor, QuickMacroCrosshair
+Gui, Show, w%crossHairW% h%crossHairH% x%crossHairX% y%crossHairY%, Crosshair
+WinSet, TransColor, backgroundColor, Crosshair
 	} else {
-Gui, QuickMacroCrosshair: Hide
+Gui, Crosshair: Hide
 	}
 return
 
@@ -481,15 +503,20 @@ SysGet, screenW, 78
 SysGet, screenH, 79
 
 GuiControlGet, 2Screen
+GuiControlGet, 2ScreenSpecial
 If (2Screen = 0) {
-Global crossHairX := (screenW / 2) - (crossHairH / 2)
-Global crossHairY := (screenH / 2) - (crossHairH / 2)
-WinMove, QuickMacroCrosshair,, %CrossHairX%, %CRossHairY%
+   Global crossHairX := (screenW / 2) - (crossHairH / 2)
+   Global crossHairY := (screenH / 2) - (crossHairH / 2)
+   WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
 }
-else {
-Global crossHairX := (screenW / 4) - (crossHairH / 2)
-Global crossHairY := (screenH / 2) - (crossHairH / 2)
-WinMove, QuickMacroCrosshair,, %CrossHairX%, %CRossHairY%
+else if (2Screen = 1) && (2ScreenSpecial = 0) { 
+   Global crossHairX := (screenW / 4) - (crossHairH / 2)
+   Global crossHairY := (screenH / 2) - (crossHairH / 2)
+   WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
+} else if (2ScreenSpecial = 1) { 
+   Global crossHairX := (screenW / 3.11465) - (crossHairH / 2)
+   Global crossHairY := (screenH / 2) - (crossHairH / 2)
+   WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
 }
 
 IfNotExist, %A_WorkingDir%\assets
@@ -497,13 +524,13 @@ IfNotExist, %A_WorkingDir%\assets
 
 FileInstall, assets\crosshair.png, %A_WorkingDir%\assets\crosshair.png, false
 
-Gui, QuickMacroCrosshair: New, +AlwaysOnTop -Border -Caption
+Gui, Crosshair: New, +AlwaysOnTop -Border -Caption
 Gui, Color, backgroundColor
 Gui, Add, Picture, x0 y0 w%crossHairW% h%crossHairH%,  %A_WorkingDir%\assets\crosshair.png
-Gui, Show, w%crossHairW% h%crossHairH% x%crossHairX% y%crossHairY%, QuickMacroCrosshair
-WinSet, TransColor, backgroundColor, QuickMacroCrosshair
+Gui, Show, w%crossHairW% h%crossHairH% x%crossHairX% y%crossHairY%, Crosshair
+WinSet, TransColor, backgroundColor, Crosshair
 	} else {
-Gui, QuickMacroCrosshair: Hide
+Gui, Crosshair: Hide
 	}
     WinActivate, Grand Theft Auto V
 return
@@ -764,30 +791,35 @@ LaunchCycle:
       SysGet, screenW, 78
       SysGet, screenH, 79
 
-      GuiControlGet, 2Screen
-      If (2Screen = 0) {
-      Global crossHairX := (screenW / 2) - (crossHairH / 2)
-      Global crossHairY := (screenH / 2) - (crossHairH / 2)
-      WinMove, QuickMacroCrosshair,, %CrossHairX%, %CRossHairY%
-      }
-      else {
-      Global crossHairX := (screenW / 4) - (crossHairH / 2)
-      Global crossHairY := (screenH / 2) - (crossHairH / 2)
-      WinMove, QuickMacroCrosshair,, %CrossHairX%, %CRossHairY%
-      }
+GuiControlGet, 2Screen
+GuiControlGet, 2ScreenSpecial
+If (2Screen = 0) {
+   Global crossHairX := (screenW / 2) - (crossHairH / 2)
+   Global crossHairY := (screenH / 2) - (crossHairH / 2)
+   WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
+}
+else if (2Screen = 1) && (2ScreenSpecial = 0) { 
+   Global crossHairX := (screenW / 4) - (crossHairH / 2)
+   Global crossHairY := (screenH / 2) - (crossHairH / 2)
+   WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
+} else if (2ScreenSpecial = 1) { 
+   Global crossHairX := (screenW / 3.11465) - (crossHairH / 2)
+   Global crossHairY := (screenH / 2) - (crossHairH / 2)
+   WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
+}
 
       IfNotExist, %A_WorkingDir%\assets
          FileCreateDir, %A_WorkingDir%\assets
 
       FileInstall, assets\crosshair.png, %A_WorkingDir%\assets\crosshair.png, false
 
-      Gui, QuickMacroCrosshair: New, +AlwaysOnTop -Border -Caption
+      Gui, Crosshair: New, +AlwaysOnTop -Border -Caption
       Gui, Color, backgroundColor
       Gui, Add, Picture, x0 y0 w%crossHairW% h%crossHairH%,  %A_WorkingDir%\assets\crosshair.png
-      Gui, Show, w%crossHairW% h%crossHairH% x%crossHairX% y%crossHairY%, QuickMacroCrosshair
-      WinSet, TransColor, backgroundColor, QuickMacroCrosshair
+      Gui, Show, w%crossHairW% h%crossHairH% x%crossHairX% y%crossHairY%, Crosshair
+      WinSet, TransColor, backgroundColor, Crosshair
          } else {
-      Gui, QuickMacroCrosshair: Hide
+      Gui, Crosshair: Hide
          }
       }
       CrosshairDone := 1
@@ -922,6 +954,7 @@ DisableAll:
    GuiControl,,TabWeapon,0
    GuiControl,,Crosshair,0
    GuiControl,,2Screen,0
+   GuiControl,,2ScreenSpecial,0
    GuiControl,,Jobs,
    GuiControl,,Paste,0
    GuiControl,,MCCEO,
@@ -974,12 +1007,14 @@ Gui, Add, Text,x+5 y60, Epic Roast:
 Gui, Add, Text,, Essay About GTA:
 Gui, Add, Text,, Custom Text Spam:
 Gui, Add, Text,, Custom Spam Text
+Gui, Add, Text,, Raw Text?
 Gui, Add, Text,, Shut Up:
 
 Gui, Add, Hotkey,vHelpWhatsThis x+110 y60,
 Gui, Add, Hotkey,vEssayAboutGTA,
 Gui, Add, Hotkey,vCustomTextSpam,
 Gui, Add, Edit, Limit140 vCustomSpamText
+Gui, Add, Checkbox, vRawText h20,
 Gui, Add, Hotkey,vShutUp,
 Return
 
@@ -1011,6 +1046,7 @@ Gui, Add, Text,, Check if GTA open
 Gui, Add, Text,, Crosshair:
 Gui, Add, Text,, Night Vision Thermal
 Gui, Add, Text,, 2 screen setup?
+Gui, Add, Text,, 21:9 + 16:9?
 Gui, Add, Text,, Slower EWO?
 Gui, Add, Text,, Slower EWO Mode:
 Gui, Add, Text,, CEO Mode:
@@ -1020,8 +1056,9 @@ Gui, Add, CheckBox, gProcessCheck3 vProcessCheck2 h20,
 Gui, Add, Checkbox, gCrossHair5 vCrossHair h20,
 Gui, Add, CheckBox, vNightVision h20,
 Gui, Add, Checkbox, g2Screen2 v2Screen h20,
+Gui, Add, Checkbox, g2Screen2 v2ScreenSpecial h20,
 Gui, Add, Checkbox, vSmoothEWO h20,
-Gui, Add, DropDownList, vSmoothEWOMode, Slow|Faster
+Gui, Add, DropDownList, vSmoothEWOMode, Retarded|Slow|Faster|Fastest
 Gui, Add, CheckBox, vCEOMode h20,
 Return
 
@@ -1101,6 +1138,7 @@ Gui,Submit,NoHide
    IniWrite,%CustomTextSpam%,%CFG%,Chat Macros,Custom Text Spam
    IniWrite,%ShutUp%,%CFG%,Chat Macros,Shut Up Spam
    IniWrite,%CustomSpamText%,%CFG%,Chat Macros,Custom Spam Text
+   IniWrite,%RawText%,%CFG%,Chat Macros,Raw Text
    IniWrite,%ReloadOutfit%,%CFG%,Misc,Reload Outfit
    IniWrite,%ShowUI%,%CFG%,Misc,Show UI
    IniWrite,%ToggleCEO%,%CFG%,Misc,Toggle CEO
@@ -1117,6 +1155,7 @@ Gui,Submit,NoHide
    IniWrite,%TabWeapon%,%CFG%,Misc,Tab Weapon
    IniWrite,%Crosshair%,%CFG%,Misc,Crosshair
    IniWrite,%2Screen%,%CFG%,Misc,2 Screen Setup
+   IniWrite,%2ScreenSpecial%,%CFG%,Misc,Ultrawide Double Screen Setup
    IniWrite,%Jobs%,%CFG%,Misc,Disable All Job Blips
    IniWrite,%Paste%,%CFG%,Misc,Allow Copy Paste
    IniWrite,%MCCEO%,%CFG%,Misc,MC CEO Toggle
@@ -1215,6 +1254,7 @@ IfExist, %CFG%
    IniRead,Read_CustomTextSpam,%CFG%,Chat Macros,Custom Text Spam
    IniRead,Read_ShutUp,%CFG%,Chat Macros,Shut Up Spam
    IniRead,Read_CustomSpamText,%CFG%,Chat Macros,Custom Spam Text
+   IniRead,Read_RawText,%CFG%,Chat Macros,Raw Text
    IniRead,Read_ReloadOutfit,%CFG%,Misc,Reload Outfit
    IniRead,Read_ShowUI,%CFG%,Misc,Show UI
    IniRead,Read_ToggleCEO,%CFG%,Misc,Toggle CEO
@@ -1231,6 +1271,7 @@ IfExist, %CFG%
    IniRead,Read_TabWeapon,%CFG%,Misc,Tab Weapon
    IniRead,Read_Crosshair,%CFG%,Misc,Crosshair
    IniRead,Read_2Screen,%CFG%,Misc,2 Screen Setup
+   IniRead,Read_2ScreenSpecial,%CFG%,Misc,Ultrawide Double Screen Setup
    IniRead,Read_Jobs,%CFG%,Misc,Disable All Job Blips
    IniRead,Read_Paste,%CFG%,Misc,Allow Copy Paste
    IniRead,Read_MCCEO,%CFG%,Misc,MC CEO Toggle
@@ -1276,6 +1317,7 @@ IfExist, %CFG%
    GuiControl,,CustomTextSpam,%Read_CustomTextSpam%
    GuiControl,,ShutUp,%Read_ShutUp%
    GuiControl,,CustomSpamText,%Read_CustomSpamText%
+   GuiControl,,RawText,%Read_RawText%
    GuiControl,,ReloadOutfit,%Read_ReloadOutfit%
    GuiControl,,ShowUI,%Read_ShowUI%
    GuiControl,,ToggleCEO,%Read_ToggleCEO%
@@ -1292,6 +1334,7 @@ IfExist, %CFG%
    GuiControl,,TabWeapon,%Read_TabWeapon%
    GuiControl,,Crosshair,%Read_Crosshair%
    GuiControl,,2Screen,%Read_2Screen%
+   GuiControl,,2ScreenSpecial,%Read_2ScreenSpecial%
    GuiControl,,Jobs,%Read_Jobs%
    GuiControl,,Paste,%Read_Paste%
    GuiControl,,MCCEO,%Read_MCCEO%
@@ -1357,10 +1400,14 @@ Gui,2:Color,c%c0%
 Gui,2:Font,S10 cBlack,FixedSys
 Gui,2:Add, Link,w400,  Your HWID has been copied to the clipboard. Please join the Discord Server and send it in the #macro-hwid channel. To gain access to the channel, you must react in the #macros channel.
 Gui,2:Add, Link,, <a href="https://discord.gg/5Y3zJK4KGW">Here</a> is an invite to the discord server. 
-Gui,2:Add, Button,ym+80 gExitMacros, OK
+Gui,2:Add, Button,ym+80 gExitMacros2, OK
 Gui,2:Show,, HWID Mismatch
-clipboard := key
 Return
 } else {
    Goto, Backk
 }
+
+ExitMacros2:
+Clipboard := key
+ExitApp
+Return
