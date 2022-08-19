@@ -140,6 +140,7 @@ sleep 100
 Send {Blind}{lbutton up}
 return
 
+
 EWO:
 GuiControlGet, SmoothEWO
 GuiControlGet, SmoothEWOMode
@@ -184,17 +185,30 @@ if (SmoothEWO = 1) {
       } else if (SmoothEWO = 0) {
       SendInput {lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
       Send {Blind}{f24 down}{f23 down}{f22 down}
-      SendInput {Blind}{wheelup}{enter up}
+      SendInput {Blind}{wheelup}{enter up}{up up}
    }
-   If (SmoothEWO = 0)
-Send {Blind}{enter 3}
-else if (SmoothEWOMode = "Fastest")
-Send {Blind}{enter 3}
+Send {Blind}{enter}{up}{enter}
 sleep 25
 SendInput {%EWOLookBehindKey% up}{%EWOSpecialAbilitySlashActionKey% up}{%EWOMelee% up}{%InteractionMenuKey% up}{up up}{g up}{f24 up}{f23 up}{f22 up}{f21 up}{%EWO% up}
 SetCapsLockState, Off
 sleep 25
 SetMouseDelay, 10
+return
+
+KekEWO:
+Send {Blind}{esc}
+sleep 150
+Send {Blind}e
+sleep 500
+Send {Blind}{enter}
+sleep 300
+Send {Blind}{up 4}
+sleep 250
+Send {Blind}{enter}
+sleep 70
+Send {Blind}{up 6}
+sleep 250
+Send {Blind}{enter}
 return
 
 BST:
@@ -1069,6 +1083,7 @@ Gui, Add, Text,, Custom #5:
 Gui, Add, Text,, Custom #6:
 Gui, Add, Text,, Custom Chat #1:
 Gui, Add, Text,, Custom Chat #2:
+Gui, Add, Text,, Kek EWO:
 
 Gui, Add, Hotkey, vIncludeHotkey1 x+60 y60
 Gui, Add, Hotkey, vIncludeHotkey2
@@ -1078,6 +1093,7 @@ Gui, Add, Hotkey, vIncludeHotkey5
 Gui, Add, Hotkey, vIncludeHotkey6
 Gui, Add, Hotkey, vIncludeHotkeyChat1
 Gui, Add, Hotkey, vIncludeHotkeyChat2
+Gui, Add, Hotkey, vKekEWO
 Return
 
 SavingAndButtonsAndMiscMacros:
@@ -1119,6 +1135,7 @@ Gui,Submit,NoHide
    IniWrite,%FastSniperSwitch%,%CFG%,PVP Macros,Fast Sniper Switch
    IniWrite,%SniperBind%,%CFG%,Keybinds,Sniper Bind
    IniWrite,%EWO%,%CFG%,PVP Macros,EWO
+   IniWrite,%KekEWO%,%CFG%,PVP Macros,Kek EWO
    IniWrite,%EWOLookBehindKey%,%CFG%,Keybinds,EWO Look Behind Button
    IniWrite,%EWOSpecialAbilitySlashActionKey%,%CFG%,Keybinds,EWO Special Ability/Action Key
    IniWrite,%EWOMelee%,%CFG%,Keybinds,EWO Melee Key
@@ -1172,6 +1189,7 @@ Gosub, LaunchCycle
 Hotkey, *%ThermalHelmet%, ThermalHelmet, UseErrorLevel On
 Hotkey, *%FastSniperSwitch%, FastSniperSwitch, UseErrorLevel On
 Hotkey, *%EWO%, EWO, UseErrorLevel On
+Hotkey, *%KekEWO%, KekEWO, UseErrorLevel On
 Hotkey, *%BST%, BST, UseErrorLevel On
 Hotkey, *%Ammo%, Ammo, UseErrorLevel On
 Hotkey, *%FastRespawn%, FastRespawn, UseErrorLevel On
@@ -1235,6 +1253,7 @@ IfExist, %CFG%
    IniRead,Read_FastSniperSwitch,%CFG%,PVP Macros,Fast Sniper Switch
    IniRead,Read_SniperBind,%CFG%,Keybinds,Sniper Bind
    IniRead,Read_EWO,%CFG%,PVP Macros,EWO
+   IniRead,Read_KekEWO,%CFG%,PVP Macros,Kek EWO
    IniRead,Read_EWOLookBehindKey,%CFG%,Keybinds,EWO Look Behind Button
    IniRead,Read_EWOSpecialAbilitySlashActionKey,%CFG%,Keybinds,EWO Special Ability/Action Key
    IniRead,Read_EWOMelee,%CFG%,Keybinds,EWO Melee Key
@@ -1298,6 +1317,7 @@ IfExist, %CFG%
    GuiControl,,FastSniperSwitch,%Read_FastSniperSwitch%
    GuiControl,,SniperBind,%Read_SniperBind%
    GuiControl,,EWO,%Read_EWO%
+   GuiControl,,KekEWO,%Read_KekEWO%
    GuiControl,,EWOLookBehindKey,%Read_EWOLookBehindKey%
    GuiControl,,EWOSpecialAbilitySlashActionKey,%Read_EWOSpecialAbilitySlashActionKey%
    GuiControl,,EWOMelee,%Read_EWOMelee%
