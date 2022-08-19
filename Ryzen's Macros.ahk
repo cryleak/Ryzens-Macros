@@ -4,7 +4,7 @@ if not A_IsAdmin
 Goto, CheckHWID
 Backk:
 MsgBox HWID matching, welcome to Ryzen's Macros!
-MacroVersion = 3.14
+MacroVersion = 3.14.1
 CFG = GTA Binds.ini
 CrosshairDone := 0
 MCCEO2 := 0
