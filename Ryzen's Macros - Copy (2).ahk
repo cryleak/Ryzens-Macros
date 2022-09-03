@@ -149,13 +149,13 @@ EWO:
 GuiControlGet, SmoothEWO
 GuiControlGet, SmoothEWOMode
 SetMouseDelay, -1
-SendInput {Blind}{d up}{w up}{s up}{a up} 
 if (SmoothEWO = 1) {
          If (SmoothEWOMode = "Fastest") {
          } else {
             if (getKeyState("rbutton", "P")) {
             SendInput {lbutton up}{rbutton up}
-            DllCall("Sleep",UInt,50)
+            sleep 125
+            SendInput {Blind}{d up}{w up}{s up}{a up}
             }
          }
    If (SmoothEWOMode = "Faster") {
@@ -167,16 +167,15 @@ if (SmoothEWO = 1) {
       DllCall("Sleep",UInt,15)
       Send {Blind}{enter up}
    } else if (SmoothEWOMode = "Slow") {
-      DllCall("Sleep",UInt,50)
-      SendInput {lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%InteractionMenuKey% down}
-      DllCall("Sleep",UInt,31)
-      SendInput {Blind}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
-      DllCall("Sleep",UInt,13)
-      SendInput {Blind}{wheelup}
-      DllCall("Sleep",UInt,30)
-      SendInput {Blind}{wheelup}
-      DllCall("Sleep",UInt,45)
-      Send {Blind}{enter up}
+      SetKeyDelay, 20, -1
+      StringUpper, EWOLookBehindKey, EWOLookBehindKey
+      SetBatchLines, 10ms
+      Send {%InteractionMenuKey%}
+      sleep 0
+      Send {%EWOLookBehindKey% down}{up}{f24}{up}{%EWOSpecialAbilitySlashActionKey%}{%EWOSpecialAbilitySlashActionKey%}{enter}{%EWOLookBehindKey% up}
+      SetBatchLines, -1
+      StringLower, EWOLookBehindKey, EWOLookBehindKey
+      SetKeyDelay, -1, -1
       } else if (SmoothEWOMode = "Fastest") {
          SendInput {lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}
          Send {Blind}{%InteractionMenuKey%}{up 2}

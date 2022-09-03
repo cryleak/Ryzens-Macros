@@ -24,7 +24,7 @@ SetDefaultMouseSpeed, 0
 SetBatchLines, -1
 SetKeyDelay, -1, -1
 SetWinDelay, -1
-SetControlDelay, 0
+SetControlDelay, -1
 SetWorkingDir %A_ScriptDir%
 Gui, Font,, Segoe UI Semibold
 Gosub, DiscordPriority
@@ -149,13 +149,13 @@ EWO:
 GuiControlGet, SmoothEWO
 GuiControlGet, SmoothEWOMode
 SetMouseDelay, -1
-SendInput {Blind}{d up}{w up}{s up}{a up} 
+SendInput {Blind}{a up}{d up}{w up}{s up}
 if (SmoothEWO = 1) {
          If (SmoothEWOMode = "Fastest") {
          } else {
             if (getKeyState("rbutton", "P")) {
             SendInput {lbutton up}{rbutton up}
-            DllCall("Sleep",UInt,50)
+            sleep 50
             }
          }
    If (SmoothEWOMode = "Faster") {
@@ -164,18 +164,17 @@ if (SmoothEWO = 1) {
       Send {Blind}{up}
       DllCall("Sleep",UInt,25)
       Send {Blind}{up}
-      DllCall("Sleep",UInt,15)
+      DllCall("Sleep",UInt,10)
       Send {Blind}{enter up}
    } else if (SmoothEWOMode = "Slow") {
-      DllCall("Sleep",UInt,50)
       SendInput {lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%InteractionMenuKey% down}
-      DllCall("Sleep",UInt,31)
+      DllCall("Sleep",UInt,35)
       SendInput {Blind}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
-      DllCall("Sleep",UInt,13)
+      DllCall("Sleep",UInt,10)
       SendInput {Blind}{wheelup}
-      DllCall("Sleep",UInt,30)
+      DllCall("Sleep",UInt,22)
       SendInput {Blind}{wheelup}
-      DllCall("Sleep",UInt,45)
+      DllCall("Sleep",UInt,60)
       Send {Blind}{enter up}
       } else if (SmoothEWOMode = "Fastest") {
          SendInput {lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}
@@ -421,11 +420,15 @@ SendInput {raw}%Clipboard%
 return
 
 ShutUp:
+SetKeyDelay, -1, -1
+SetKeyDelay, -1, -1, Play
+SendMode InputThenPlay
 Loop, 8 {
-Send {Blind}t{shift up}
-SendInput shut up
-Send {Blind}{enter}
+SendEvent {Blind}t{shift up}
+Send shut up
+SendEvent {Blind}{enter}
 }
+MsgBox, %A_SendMode%
 return
 
 Paste2:
@@ -1437,20 +1440,4 @@ Return
 ExitMacros2:
 Clipboard := key
 ExitApp
-Return
-
-ToggleAntiAFK:
-If (AntiAFK = 1) {
-   AntiAFK = 0
-   MsgBox, 0, antiafk off, antiafk off
-} else {
-   AntiAFK = 1
-   SetTimer, AntiAFK, 2000
-   MsgBox, 0, antiafk on, antiafk on
-}
-
-AntiAFK:
-ControlClick,x500 y500,ahk_class grcWindow,,WheelUp,, NA
-sleep 1000
-ControlClick,x500 y500,ahk_class grcWindow,,WheelUp,, NA
 Return
