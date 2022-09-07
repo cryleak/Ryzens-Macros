@@ -4,7 +4,7 @@ if not A_IsAdmin
 Goto, CheckHWID
 Backk:
 MsgBox HWID matching, welcome to Ryzen's Macros!
-MacroVersion = 3.14.3
+MacroVersion = 3.14.2
 CFG = GTA Binds.ini
 CrosshairDone := 0
 MCCEO2 := 0
@@ -128,30 +128,13 @@ Send {Blind}{space}{%InteractionMenuKey%}
 return
 
 FastSniperSwitch:
-SendInput {%FastSniperSwitch% up}
-If (FasterSniper = 1)
-   Send {Blind}{%SniperBind%}{lbutton}{%SniperBind%}{lbutton}
-   else {
-         Send {Blind}{%SniperBind%}
-         sleep 30
-         Send {Blind}{lbutton down}
-         sleep 20
-         Send {Blind}{lbutton up}{%SniperBind%}
-         sleep 30
-         Send {Blind}{lbutton down}
-         sleep 100
-         Send {Blind}{lbutton up}
-   }
+Send {f20}
 return
 
 
 EWO:
 GuiControlGet, SmoothEWO
 GuiControlGet, SmoothEWOMode
-If (SmoothEWOMode = "Sticky") {
-Send {Blind}{rbutton}{%RifleBind%}{tab}{lbutton down}{g 100}
-SendInput {Blind}{lbutton up}
-} else {
 SetMouseDelay, -1
 SendInput {Blind}{d up}{w up}{s up}{a up} 
 if (SmoothEWO = 1) {
@@ -159,32 +142,32 @@ if (SmoothEWO = 1) {
          } else {
             if (getKeyState("rbutton", "P")) {
             SendInput {lbutton up}{rbutton up}
-            DllCall("Sleep",UInt,50)
+            DllCall("Sleep",UInt,75)
             }
          }
    If (SmoothEWOMode = "Faster") {
-      SendInput {lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOLookBehindKey% down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}{enter down}{%InteractionMenuKey% down}{%EWOMelee% down}
+      SendInput {lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOLookBehindKey% down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}{enter down}{%InteractionMenuKey% down}
       DllCall("Sleep",UInt,40)
       SendInput {Blind}{wheelup}
       DllCall("Sleep",UInt,25)
       SendInput {Blind}{wheelup}
       DllCall("Sleep",UInt,20)
-      SendInput {Blind}{enter up}
+      Send {Blind}{enter up}{f20}
    } else if (SmoothEWOMode = "Slow") {
-      SendInput {lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%InteractionMenuKey% down}{%EWOSpecialAbilitySlashActionKey% down}{%EWOMelee% down}
-      DllCall("Sleep",UInt,35)
-      SendInput {Blind}{%EWOLookBehindKey% down}
-      DllCall("Sleep",UInt,9.5)
+      SendInput {lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%InteractionMenuKey% down}
+      DllCall("Sleep",UInt,31)
+      SendInput {Blind}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
+      DllCall("Sleep",UInt,11.5)
       SendInput {Blind}{wheelup}
-      DllCall("Sleep",UInt,29)
+      DllCall("Sleep",UInt,30)
       SendInput {Blind}{wheelup}
-      DllCall("Sleep",UInt,50)
-      SendInput {Blind}{enter up}
+      DllCall("Sleep",UInt,48)
+      Send {Blind}{enter up}{f20}
       } else if (SmoothEWOMode = "Fastest") {
          SendInput {lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}
          Send {Blind}{%InteractionMenuKey%}{up 2}
          SendInput {%EWOSpecialAbilitySlashActionKey% down}
-         Send {Blind}{enter}
+         Send {Blind}{enter}{f20}
       }
       else if (SmoothEWOMode = "Retarded") {
          StringUpper, EWOLookBehindKey, EWOLookBehindKey
@@ -195,15 +178,15 @@ if (SmoothEWO = 1) {
       SendInput {lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
       Send {Blind}{f24 down}{f23 down}{f22 down}
       SendInput {Blind}{wheelup}{enter up}{up up}
+      Send {Blind}{f20}
    }
 SendInput {%EWOSpecialAbilitySlashActionKey% up}
 Send {Blind}{enter}{up}{enter}{left}{down}{enter}
 sleep 25
-SendInput {%EWOLookBehindKey% up}{%EWOMelee% up}{%InteractionMenuKey% up}{up up}{g up}{f24 up}{f23 up}{f22 up}{f20 up}{%EWO% up}
+SendInput {%EWOLookBehindKey% up}{%EWOMelee% up}{%InteractionMenuKey% up}{up up}{g up}{f24 up}{f23 up}{f22 up}{f21 up}{%EWO% up}
 SetCapsLockState, Off
 sleep 25
 SetMouseDelay, 10
-}
 return
 
 KekEWO:
@@ -944,7 +927,6 @@ DisableAll:
    GuiControl,,ThermalHelmet,
    GuiControl,,FastSniperSwitch,
    GuiControl,,SniperBind,9
-   GuiControl,,RifleBind,8
    GuiControl,,EWO,
    GuiControl,,EWOLookBehindKey,c
    GuiControl,,EWOSpecialAbilitySlashActionKey,CapsLock
@@ -1051,7 +1033,6 @@ Gui, Add, Text,, EWO Melee:
 Gui, Add, Text,, Heavy Weapon:
 Gui, Add, Text,, Sticky bomb:
 Gui, Add, Text,, Pistol:
-Gui, Add, Text,, Rifle:
 
 Gui, Add, Hotkey,vInteractionMenuKey x+110 y60,
 Gui, Add, Hotkey,vSniperBind,
@@ -1061,7 +1042,6 @@ Gui, Add, Hotkey,vEWOMelee,
 Gui, Add, Hotkey, vRPGBind,
 Gui, Add, Hotkey, vStickyBind,
 Gui, Add, Hotkey, vPistolBind,
-Gui, Add, Hotkey, vRifleBind,
 Return
 
 MacroOptions:
@@ -1085,7 +1065,7 @@ Gui, Add, CheckBox, vNightVision h20,
 Gui, Add, Checkbox, g2Screen2 v2Screen h20,
 Gui, Add, Checkbox, g2Screen2 v2ScreenSpecial h20,
 Gui, Add, Checkbox, vSmoothEWO h20,
-Gui, Add, DropDownList, vSmoothEWOMode, Sticky|Retarded|Slow|Faster|Fastest
+Gui, Add, DropDownList, vSmoothEWOMode, Retarded|Slow|Faster|Fastest
 Gui, Add, CheckBox, vCEOMode h20,
 Return
 
@@ -1151,7 +1131,6 @@ Gui,Submit,NoHide
    IniWrite,%ThermalHelmet%,%CFG%,PVP Macros,Thermal Helmet
    IniWrite,%FastSniperSwitch%,%CFG%,PVP Macros,Fast Sniper Switch
    IniWrite,%SniperBind%,%CFG%,Keybinds,Sniper Bind
-   IniWrite,%RifleBind%,%CFG%,Keybinds,Rifle Bind
    IniWrite,%EWO%,%CFG%,PVP Macros,EWO
    IniWrite,%KekEWO%,%CFG%,PVP Macros,Kek EWO
    IniWrite,%EWOLookBehindKey%,%CFG%,Keybinds,EWO Look Behind Button
@@ -1271,7 +1250,6 @@ IfExist, %CFG%
    IniRead,Read_ThermalHelmet,%CFG%,PVP Macros,Thermal Helmet
    IniRead,Read_FastSniperSwitch,%CFG%,PVP Macros,Fast Sniper Switch
    IniRead,Read_SniperBind,%CFG%,Keybinds,Sniper Bind
-   IniRead,Read_RifleBind,%CFG%,Keybinds,Rifle Bind
    IniRead,Read_EWO,%CFG%,PVP Macros,EWO
    IniRead,Read_KekEWO,%CFG%,PVP Macros,Kek EWO
    IniRead,Read_EWOLookBehindKey,%CFG%,Keybinds,EWO Look Behind Button
@@ -1337,7 +1315,6 @@ IfExist, %CFG%
    GuiControl,,ThermalHelmet,%Read_ThermalHelmet%
    GuiControl,,FastSniperSwitch,%Read_FastSniperSwitch%
    GuiControl,,SniperBind,%Read_SniperBind%
-   GuiControl,,RifleBind,%Read_RifleBind%
    GuiControl,,EWO,%Read_EWO%
    GuiControl,,KekEWO,%Read_KekEWO%
    GuiControl,,EWOLookBehindKey,%Read_EWOLookBehindKey%
