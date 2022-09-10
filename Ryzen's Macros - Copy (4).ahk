@@ -4,7 +4,7 @@ if not A_IsAdmin
 Goto, CheckHWID
 Backk:
 MsgBox HWID matching, welcome to Ryzen's Macros!
-MacroVersion = 3.15
+MacroVersion = 3.14.3
 CFG = GTA Binds.ini
 CrosshairDone := 0
 MCCEO2 := 0
@@ -269,25 +269,17 @@ sleep 25
 ControlSend, Edit2, {down}{backspace}8
 sleep 100
 ControlClick, Button1, ahk_exe GTAHaXUI.exe,,,,
-sleep 250
+sleep 25
 WinClose, ahk_exe GTAHaXUI.exe
-WinActivate, Ryzen's Macros Version %MacroVersion%
-MsgBox, 0, Complete!, You should now have no EWO cooldown. Kill yourself with a Sticky/RPG if you currently have a cooldown.
-return
-
-GTAHax2:
-SendInput {%GTAHax% up}
 Run, GTAHaXUI.exe, %A_ScriptDir%,,Max
 WinWait, ahk_exe GTAHaXUI.exe
+;SHOW SCORE
 ControlSend, Edit1, {down}{backspace}2703735
 ControlSend, Edit2, {down}{backspace}1571
 ControlSend, Edit3, {down}{backspace}817
-ControlSend, Edit8, {down}{backspace}12345678
-sleep 100
-ControlClick, Button1, ahk_exe GTAHaXUI.exe,,,,
-sleep 250
-WinClose, ahk_exe GTAHaXUI.exe
-MsgBox, 0, Complete!, Search for the value 12345678 using Cheat Engine and lock the value to 0 for it to work properly. If you are dumb, ignore this. If you don't understand what it does but are not dumb, ask me what to do.
+WinActivate, Ryzen's Macros Version %MacroVersion%
+MsgBox, 0, Complete!, You should now have no EWO cooldown. Kill yourself with a Sticky/RPG if you currently have a cooldown.
+SetTimer, EWO
 return
 
 HelpWhatsThis:
@@ -1164,7 +1156,6 @@ Gui, Add, Text,, MCCEO toggle:
 Gui, Add, Hotkey, vJobs x+30 y242
 Gui, Add, Checkbox, gPaste2 vPaste
 Gui, Add, Hotkey, vMCCEO
-Gui, Add, Button, gGTAHax2 h20 x200 y60, Show EWO Score (only use if you aren't dumb)
 Return
 
 SaveConfig:
