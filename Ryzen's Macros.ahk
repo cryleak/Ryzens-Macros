@@ -4,7 +4,7 @@ if not A_IsAdmin
 Goto, CheckHWID
 Backk:
 MsgBox HWID matching, welcome to Ryzen's Macros!
-MacroVersion = 3.15
+MacroVersion = 3.16
 CFG = GTA Binds.ini
 CrosshairDone := 0
 MCCEO2 := 0
@@ -27,7 +27,12 @@ SetWinDelay, -1
 SetControlDelay, 0
 SetWorkingDir %A_ScriptDir%
 Gui, Font,, Segoe UI Semibold
-Gosub, DiscordPriority
+Global processName := "SocialClubHelper.exe"
+Global Level := "L"
+Gosub, Priority
+Global processName := "Launcher.exe"
+Global Level := "L"
+Gosub, Priority
 
 Gui, Font, q5
 Gui, Add, Tab3,, Combat|Chat|In-Game Binds||Options|Custom|Buttons/Misc
@@ -148,7 +153,26 @@ return
 EWO:
 GuiControlGet, SmoothEWO
 GuiControlGet, SmoothEWOMode
-If (SmoothEWOMode = "Sticky") {
+GuiControlGet, EWOWrite
+If (SmoothEWOMode = "Fast Respawn") { 
+   Hotkey, Tab, ProBlocking, On
+   MouseMove,0,5000,,R
+   SendInput {Blind}{%FranklinBind% down}
+   sleep 50
+   SendInput {Blind}{lbutton down}
+   If (BugRespawnMode = "Homing") {
+      sleep 340
+   } else if (BugRespawnMode = "RPG") {
+      sleep 390
+   }
+   SendInput {Blind}{%FranklinBind% up}
+   sleep 75
+   Send {Blind}{esc}{lbutton up}
+   sleep 1200
+   Send {Blind}{%StickyBind%}{%RPGBind%}{tab}
+   Hotkey, Tab, ProBlocking, Off
+   sleep 250
+} else if (SmoothEWOMode = "Sticky") {
 Send {Blind}{%StickyBind%}{%RifleBind%}{tab}{lbutton 10}
 Loop, 15 {
    if WinActive("ahk_class grcWindow") {
@@ -158,17 +182,20 @@ Loop, 15 {
 SendInput {Blind}{lbutton up}
 } else {
 SetMouseDelay, -1
-SendInput {Blind}{d up}{w up}{s up}{a up} 
 if (SmoothEWO = 1) {
-         If (SmoothEWOMode = "Fastest") {
-         } else {
+         If (SmoothEWOMode = "Faster") {
             if (getKeyState("rbutton", "P")) {
             SendInput {lbutton up}{rbutton up}
             DllCall("Sleep",UInt,50)
             }
+         } else if (SmoothEWOMode = "Slow") {
+            if (getKeyState("rbutton", "P")) {
+            SendInput {lbutton up}{rbutton up}
+            DllCall("Sleep",UInt,75)
+            }
          }
    If (SmoothEWOMode = "Faster") {
-      SendInput {lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOLookBehindKey% down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}{enter down}{%InteractionMenuKey% down}{%EWOMelee% down}
+      SendInput {Blind}{d up}{w up}{s up}{a up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOLookBehindKey% down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}{enter down}{%InteractionMenuKey% down}{%EWOMelee% down}
       DllCall("Sleep",UInt,45)
       SendInput {Blind}{wheelup}
       DllCall("Sleep",UInt,30)
@@ -176,14 +203,14 @@ if (SmoothEWO = 1) {
       DllCall("Sleep",UInt,30)
       SendInput {Blind}{enter up}
    } else if (SmoothEWOMode = "Slow") {
-      SendInput {lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%InteractionMenuKey% down}{%EWOSpecialAbilitySlashActionKey% down}{%EWOMelee% down}
+      SendInput {Blind}{d up}{w up}{s up}{a up}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%InteractionMenuKey% down}{%EWOSpecialAbilitySlashActionKey% down}{%EWOMelee% down}
       DllCall("Sleep",UInt,35)
       SendInput {Blind}{%EWOLookBehindKey% down}
-      DllCall("Sleep",UInt,10.5)
+      DllCall("Sleep",UInt,10)
       SendInput {Blind}{wheelup}
-      DllCall("Sleep",UInt,29)
+      DllCall("Sleep",UInt,28)
       SendInput {Blind}{wheelup}
-      DllCall("Sleep",UInt,50)
+      DllCall("Sleep",UInt,63)
       SendInput {Blind}{enter up}
       } else if (SmoothEWOMode = "Fastest") {
          SendInput {lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}
@@ -193,7 +220,15 @@ if (SmoothEWO = 1) {
       }
       else if (SmoothEWOMode = "Retarded") {
          StringUpper, EWOLookBehindKey, EWOLookBehindKey
-         Send {Blind}{%InteractionMenuKey%}{%EWOSpecialAbilitySlashActionKey%}{f24 down}{%EWOSpecialAbilitySlashActionKey%}{f24 up}{up 2}{%EWOLookBehindKey% down}{enter}
+         SendInput {lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%InteractionMenuKey% down}{%EWOSpecialAbilitySlashActionKey% down}{%EWOMelee% down}
+         DllCall("Sleep",UInt,25)
+         SendInput {Blind}{wheelup}
+         DllCall("Sleep",UInt,30)
+         SendInput {Blind}{wheelup}
+         DllCall("Sleep",UInt,10)
+         Send {Blind}{%EWOLookBehindKey% down}
+         ;DllCall("Sleep",UInt,5)
+         Send {Blind}{enter up}
          StringLower, EWOLookBehindKey, EWOLookBehindKey
       }
       } else if (SmoothEWO = 0) {
@@ -201,15 +236,70 @@ if (SmoothEWO = 1) {
       Send {Blind}{f24 down}{f23 down}{f22 down}
       SendInput {Blind}{wheelup}{enter up}{up up}
    }
-SendInput {Blind}{%EWOSpecialAbilitySlashActionKey% up}
-Send {Blind}{enter 2}{up}{enter}{left}
-sleep 25
-SendInput {%EWOLookBehindKey% up}{%EWOMelee% up}{%InteractionMenuKey% up}{up up}{g up}{f24 up}{f23 up}{f22 up}{f20 up}{%EWO% up}
+SendInput {%EWOSpecialAbilitySlashActionKey% up}
 SetCapsLockState, Off
+Send {Blind}{enter 2}{up}{enter}{left}
+SendInput {Blind}{%EWOLookBehindKey% up}{%EWOMelee% up}{%InteractionMenuKey% up}{up up}{g up}{f24 up}{f23 up}{f22 up}{f20 up}{%EWO% up}
 sleep 25
 SetMouseDelay, 10
 }
 return
+
+Write:
+   if not WinExist("ahk_exe GTAHaXUI.exe") {
+   Run, GTAHaXUI.exe, %A_ScriptDir%,,Min
+   WinWait, ahk_exe GTAHaXUI.exe
+   ControlSend, Edit1, {shift}{down}{backspace}2703735, ahk_exe GTAHaXUI.exe
+   ControlSend, Edit2, {shift}{down}{backspace}1571, ahk_exe GTAHaXUI.exe
+   ControlSend, Edit3, {shift}{down}{backspace}817, ahk_exe GTAHaXUI.exe
+   sleep 20
+   If WinActive("ahk_exe GTAHaXUI.exe")
+      WinActivate, ahk_class grcWindow
+   else {
+      sleep 40
+      If WinActive("ahk_exe GTAHaXUI.exe")
+         WinActivate, ahk_class grcWindow
+      ; MsgBox, yes, yes, yes ; for testing
+   }
+   SendInput {lbutton up}
+} else {
+   ControlGet, Cocaine,Line,1,Edit1,ahk_exe GTAHaXUI.exe
+   ControlGet, Methamphetamine,Line,1,Edit2,ahk_exe GTAHaXUI.exe
+   ControlGet, HIV,Line,1,Edit3,ahk_exe GTAHaXUI.exe
+   ControlGet, Heroin,Line,1,Edit7,ahk_exe GTAHaXUI.exe
+   ControlGet, AIDS,Line,1,Edit8,ahk_exe GTAHaXUI.exe
+   If (Heroin = 1) && (Cocaine = 2703735) && (Methamphetamine = 1571) && (HIV = 817) && (AIDS = 0) {
+   ControlClick, Button1, ahk_exe GTAHaXUI.exe,,,,
+   If WinActive("ahk_exe GTAHaXUI.exe")
+      WinActivate, ahk_class grcWindow
+   else {
+      sleep 40
+      If WinActive("ahk_exe GTAHaXUI.exe")
+         WinActivate, ahk_class grcWindow
+      ; MsgBox, yes, yes, yes ; for testing
+   }
+   }
+}
+Return
+
+EWOWrite:
+GuiControlGet, EWOWrite
+If (EWOWrite = 1) {
+   MsgBox, 4,Warning!,Please note that this is a bit buggy`, and that the bugs are unfixable`, although it still works pretty well. Use the Cheat Engine method for a 100`% consistent method`, but also note that Cheat Engine may trigger RAC`, so I would not suggest doing recoveries on your account if you have used Cheat Engine without having another Mod Menu installed. Do you still want to continue?
+   IfMsgBox No
+      Goto NO! ; same shit as return
+}
+If (EWOWrite = 1) {
+   SetTimer, Write, %SetGlobalDelay%
+}
+else {
+   SetTimer, Write, Off
+}
+Return
+
+NO!:
+GuiControl,,EWOWrite,0
+Return
 
 KekEWO:
 Send {Blind}{esc}
@@ -251,14 +341,23 @@ Send {Blind}{%InteractionMenuKey%}{down 2}
 If (CEOMode) = 1
    Send {Blind}{down}
 Send {Blind}{enter}{down 5}{enter 2}{up}{enter}{%InteractionMenuKey%}
+Sleep 125
 return
 
 FastRespawn:
-send {lbutton 30}
+Send {Blind}{lbutton 30}
 return
 
+ProBlocking:
+Return
+
 GTAHax:
+SetTimer, Write, Off
+sleep 100
 SendInput {%GTAHax% up}
+Loop, 5
+   WinClose, ahk_exe GTAHaXUI.exe
+sleep 250
 Run, GTAHaXUI.exe, %A_ScriptDir%,,Max
 WinWait, ahk_exe GTAHaXUI.exe
 ControlSend, Edit1, {down}{backspace}262145
@@ -273,21 +372,31 @@ sleep 250
 WinClose, ahk_exe GTAHaXUI.exe
 WinActivate, Ryzen's Macros Version %MacroVersion%
 MsgBox, 0, Complete!, You should now have no EWO cooldown. Kill yourself with a Sticky/RPG if you currently have a cooldown.
+If (EWOWrite = 1) {
+   SetTimer, Write, %SetGlobalDelay%
+}
+else {
+   SetTimer, Write, Off
+}
 return
 
 GTAHax2:
+GuiControlGet, EWOWrite
 SendInput {%GTAHax% up}
 Run, GTAHaXUI.exe, %A_ScriptDir%,,Max
 WinWait, ahk_exe GTAHaXUI.exe
 ControlSend, Edit1, {down}{backspace}2703735
 ControlSend, Edit2, {down}{backspace}1571
 ControlSend, Edit3, {down}{backspace}817
-ControlSend, Edit8, {down}{backspace}12345678
+If (EWOWrite = 0) 
+   ControlSend, Edit8, {down}{backspace}12345678
 sleep 100
 ControlClick, Button1, ahk_exe GTAHaXUI.exe,,,,
 sleep 250
-WinClose, ahk_exe GTAHaXUI.exe
-MsgBox, 0, Complete!, Search for the value 12345678 using Cheat Engine and lock the value to 0 for it to work properly. If you are dumb, ignore this. If you don't understand what it does but are not dumb, ask me what to do.
+If (EWOWrite = 0) {
+   WinClose, ahk_exe GTAHaXUI.exe
+   MsgBox, 0, Complete!, Search for the value 12345678 using Cheat Engine and lock the value to 0 for it to work properly. If you are dumb, ignore this. If you don't understand what it does but are not dumb, ask me what to do.
+}
 return
 
 HelpWhatsThis:
@@ -711,93 +820,6 @@ if (MCCEO2 = 0) {
 }
 return
 
-DiscordPriority:
-{
-processName := "Discord.exe"
-
-PIDs := EnumProcessesByName(processName)
-for k, PID in PIDs
-   Process, Priority, % PID, A
-
-EnumProcessesByName(procName) {
-   if !DllCall("Wtsapi32\WTSEnumerateProcesses", Ptr, 0, UInt, 0, UInt, 1, PtrP, pProcessInfo, PtrP, count)
-      throw Exception("WTSEnumerateProcesses failed. A_LastError: " . A_LastError)
-   
-   addr := pProcessInfo, PIDs := []
-   Loop % count  {
-      if StrGet( NumGet(addr + 8) ) = procName
-         PID := NumGet(addr + 4, "UInt"), PIDs.Push(PID)
-      addr += A_PtrSize = 4 ? 16 : 24
-   }
-   DllCall("Wtsapi32\WTSFreeMemory", Ptr, pProcessInfo)
-   Return PIDs
-}
-}
-{
-processName := "SocialClubHelper.exe"
-
-PIDs := EnumProcessesByName2(processName)
-for k, PID in PIDs
-   Process, Priority, % PID, L
-
-EnumProcessesByName2(procName) {
-   if !DllCall("Wtsapi32\WTSEnumerateProcesses", Ptr, 0, UInt, 0, UInt, 1, PtrP, pProcessInfo, PtrP, count)
-      throw Exception("WTSEnumerateProcesses failed. A_LastError: " . A_LastError)
-   
-   addr := pProcessInfo, PIDs := []
-   Loop % count  {
-      if StrGet( NumGet(addr + 8) ) = procName
-         PID := NumGet(addr + 4, "UInt"), PIDs.Push(PID)
-      addr += A_PtrSize = 4 ? 16 : 24
-   }
-   DllCall("Wtsapi32\WTSFreeMemory", Ptr, pProcessInfo)
-   Return PIDs
-}
-}
-{
-processName := "Launcher.exe"
-
-PIDs := EnumProcessesByName3(processName)
-for k, PID in PIDs
-   Process, Priority, % PID, L
-
-EnumProcessesByName3(procName) {
-   if !DllCall("Wtsapi32\WTSEnumerateProcesses", Ptr, 0, UInt, 0, UInt, 1, PtrP, pProcessInfo, PtrP, count)
-      throw Exception("WTSEnumerateProcesses failed. A_LastError: " . A_LastError)
-   
-   addr := pProcessInfo, PIDs := []
-   Loop % count  {
-      if StrGet( NumGet(addr + 8) ) = procName
-         PID := NumGet(addr + 4, "UInt"), PIDs.Push(PID)
-      addr += A_PtrSize = 4 ? 16 : 24
-   }
-   DllCall("Wtsapi32\WTSFreeMemory", Ptr, pProcessInfo)
-   Return PIDs
-}
-}
-{
-processName := "PlayGTAV.exe"
-
-PIDs := EnumProcessesByName4(processName)
-for k, PID in PIDs
-   Process, Priority, % PID, L
-
-EnumProcessesByName4(procName) {
-   if !DllCall("Wtsapi32\WTSEnumerateProcesses", Ptr, 0, UInt, 0, UInt, 1, PtrP, pProcessInfo, PtrP, count)
-      throw Exception("WTSEnumerateProcesses failed. A_LastError: " . A_LastError)
-   
-   addr := pProcessInfo, PIDs := []
-   Loop % count  {
-      if StrGet( NumGet(addr + 8) ) = procName
-         PID := NumGet(addr + 4, "UInt"), PIDs.Push(PID)
-      addr += A_PtrSize = 4 ? 16 : 24
-   }
-   DllCall("Wtsapi32\WTSFreeMemory", Ptr, pProcessInfo)
-   Return PIDs
-}
-}
-Return
-
 LaunchCycle: 
       GuiControlGet, ProcessCheck2
       if (ProcessCheck2 = 0)
@@ -865,6 +887,13 @@ else if (2Screen = 1) && (2ScreenSpecial = 0) {
          }
       }
       CrosshairDone := 1
+GuiControlGet, EWOWrite
+If (EWOWrite = 1) {
+   SetTimer, Write, %SetGlobalDelay%
+}
+else {
+   SetTimer, Write, Off
+}
       return
 
 IncludeHotkey01:
@@ -962,11 +991,14 @@ DisableAll:
    IfNotExist, %CFG% 
    {
    GuiControl,,InteractionMenuKey,m
+   GuiControl,,FranklinBind,F6
    GuiControl,,ThermalHelmet,
    GuiControl,,FastSniperSwitch,
    GuiControl,,SniperBind,9
    GuiControl,,RifleBind,8
    GuiControl,,EWO,
+   GuiControl,,EWOWrite,0
+   GuiControl,,SetGlobalDelay,10
    GuiControl,,EWOLookBehindKey,c
    GuiControl,,EWOSpecialAbilitySlashActionKey,CapsLock
    GuiControl,,EWOMelee,r
@@ -1003,7 +1035,7 @@ DisableAll:
    GuiControl,,MCCEO,
    GuiControl,,SmoothEWO,0
    GuiControl,,FasterSniper,1
-   GuiControl,Choose,SmoothEWOMode,Fast
+   GuiControl,Choose,SmoothEWOMode,Fastest
    GuiControl,,IncludeMacros,
    GuiControl,,IncludeHotkey1,
    GuiControl,,IncludeHotkey2,
@@ -1075,6 +1107,7 @@ Gui, Add, Text,, Heavy Weapon:
 Gui, Add, Text,, Sticky bomb:
 Gui, Add, Text,, Pistol:
 Gui, Add, Text,, Rifle:
+Gui, Add, Text,, Swap to Franklin Bind:
 
 Gui, Add, Hotkey,vInteractionMenuKey x+110 y60,
 Gui, Add, Hotkey,vSniperBind,
@@ -1085,6 +1118,7 @@ Gui, Add, Hotkey, vRPGBind,
 Gui, Add, Hotkey, vStickyBind,
 Gui, Add, Hotkey, vPistolBind,
 Gui, Add, Hotkey, vRifleBind,
+Gui, Add, Hotkey, vFranklinBind,
 Return
 
 MacroOptions:
@@ -1099,6 +1133,7 @@ Gui, Add, Text,, 21:9 + 16:9?
 Gui, Add, Text,, Slower EWO?
 Gui, Add, Text,, Slower EWO Mode:
 Gui, Add, Text,, CEO Mode:
+Gui, Add, Text,, Optimize Fast Respawn EWO for:
 
 Gui, Add, Checkbox,vBSTSpeed h20 x+105 y60,
 Gui, Add, CheckBox, gProcessCheck3 vProcessCheck2 h20,
@@ -1108,8 +1143,9 @@ Gui, Add, CheckBox, vNightVision h20,
 Gui, Add, Checkbox, g2Screen2 v2Screen h20,
 Gui, Add, Checkbox, g2Screen2 v2ScreenSpecial h20,
 Gui, Add, Checkbox, vSmoothEWO h20,
-Gui, Add, DropDownList, vSmoothEWOMode, Sticky|Retarded|Slow|Faster|Fastest
+Gui, Add, DropDownList, vSmoothEWOMode, Fast Respawn|Sticky|Retarded|Slow|Faster|Fastest
 Gui, Add, CheckBox, vCEOMode h20,
+Gui, Add, DropDownList, vBugRespawnMode, Homing|RPG
 Return
 
 
@@ -1164,7 +1200,12 @@ Gui, Add, Text,, MCCEO toggle:
 Gui, Add, Hotkey, vJobs x+30 y242
 Gui, Add, Checkbox, gPaste2 vPaste
 Gui, Add, Hotkey, vMCCEO
-Gui, Add, Button, gGTAHax2 h20 x200 y60, Show EWO Score (only use if you aren't dumb)
+Gui, Add, Button, gGTAHax2 h20 x160 y60, Show EWO Score (only use if you aren't dumb)
+Gui, Add, Text,, Show EWO Score without Cheat Engine:
+Gui, Add, Text,, Delay Between Showing Score (ms):
+
+Gui, Add, Checkbox, gEWOWrite vEWOWrite h20 x+30 y84
+Gui, Add, Edit, Limit3 w30 vSetGlobalDelay
 Return
 
 SaveConfig:
@@ -1172,11 +1213,14 @@ Gosub,DisableAll
 Gui,Submit,NoHide
 {
    IniWrite,%InteractionMenuKey%,%CFG%,Keybinds,Interaction Menu Key
+   IniWrite,%FranklinBind%,%CFG%,Keybinds,Franklin Key
    IniWrite,%ThermalHelmet%,%CFG%,PVP Macros,Thermal Helmet
    IniWrite,%FastSniperSwitch%,%CFG%,PVP Macros,Fast Sniper Switch
    IniWrite,%SniperBind%,%CFG%,Keybinds,Sniper Bind
    IniWrite,%RifleBind%,%CFG%,Keybinds,Rifle Bind
    IniWrite,%EWO%,%CFG%,PVP Macros,EWO
+   IniWrite,%EWOWrite%,%CFG%,PVP Macros,EWO Write
+   IniWrite,%SetGlobalDelay%,%CFG%,PVP Macros,Set Global Delay
    IniWrite,%KekEWO%,%CFG%,PVP Macros,Kek EWO
    IniWrite,%EWOLookBehindKey%,%CFG%,Keybinds,EWO Look Behind Button
    IniWrite,%EWOSpecialAbilitySlashActionKey%,%CFG%,Keybinds,EWO Special Ability/Action Key
@@ -1216,6 +1260,7 @@ Gui,Submit,NoHide
    IniWrite,%MCCEO%,%CFG%,Misc,MC CEO Toggle
    IniWrite,%SmoothEWO%,%CFG%,Misc,Smooth EWO
    IniWrite,%SmoothEWOMode%,%CFG%,Misc,Smooth EWO Mode
+   IniWrite,%BugRespawnMode%,%CFG%,Misc,Bug Respawn Mode
    IniWrite,%FasterSniper%,%CFG%,Misc,Faster Sniper
    IniWrite,%IncludeMacros%,%CFG%,Misc,Include Macros
    IniWrite,%IncludeHotkey1%,%CFG%,Misc,Include Hotkey #1
@@ -1292,11 +1337,14 @@ Read:
 IfExist, %CFG% 
 { 
    IniRead,Read_InteractionMenuKey,%CFG%,Keybinds,Interaction Menu Key
+   IniRead,Read_FranklinBind,%CFG%,Keybinds,Franklin Key
    IniRead,Read_ThermalHelmet,%CFG%,PVP Macros,Thermal Helmet
    IniRead,Read_FastSniperSwitch,%CFG%,PVP Macros,Fast Sniper Switch
    IniRead,Read_SniperBind,%CFG%,Keybinds,Sniper Bind
    IniRead,Read_RifleBind,%CFG%,Keybinds,Rifle Bind
    IniRead,Read_EWO,%CFG%,PVP Macros,EWO
+   IniRead,Read_EWOWrite,%CFG%,PVP Macros,EWO Write
+   IniRead,Read_SetGlobalDelay,%CFG%,PVP Macros,Set Global Delay
    IniRead,Read_KekEWO,%CFG%,PVP Macros,Kek EWO
    IniRead,Read_EWOLookBehindKey,%CFG%,Keybinds,EWO Look Behind Button
    IniRead,Read_EWOSpecialAbilitySlashActionKey,%CFG%,Keybinds,EWO Special Ability/Action Key
@@ -1336,6 +1384,7 @@ IfExist, %CFG%
    IniRead,Read_MCCEO,%CFG%,Misc,MC CEO Toggle
    IniRead,Read_SmoothEWO,%CFG%,Misc,Smooth EWO
    IniRead,Read_SmoothEWOMode,%CFG%,Misc,Smooth EWO Mode
+   IniRead,Read_BugRespawnMode,%CFG%,Misc,Bug Respawn Mode
    IniRead,Read_FasterSniper,%CFG%,Misc,Faster Sniper
    IniRead,Read_IncludeMacros,%CFG%,Misc,Include Macros
    IniRead,Read_IncludeHotkey1,%CFG%,Misc,Include Hotkey #1
@@ -1358,11 +1407,14 @@ IfExist, %CFG%
 
 
    GuiControl,,InteractionMenuKey,%Read_InteractionMenuKey%
+   GuiControl,,FranklinBind,%Read_FranklinBind%
    GuiControl,,ThermalHelmet,%Read_ThermalHelmet%
    GuiControl,,FastSniperSwitch,%Read_FastSniperSwitch%
    GuiControl,,SniperBind,%Read_SniperBind%
    GuiControl,,RifleBind,%Read_RifleBind%
    GuiControl,,EWO,%Read_EWO%
+   GuiControl,,EWOWrite,%Read_EWOWrite%
+   GuiControl,,SetGlobalDelay,%Read_SetGlobalDelay%
    GuiControl,,KekEWO,%Read_KekEWO%
    GuiControl,,EWOLookBehindKey,%Read_EWOLookBehindKey%
    GuiControl,,EWOSpecialAbilitySlashActionKey,%Read_EWOSpecialAbilitySlashActionKey%
@@ -1402,6 +1454,7 @@ IfExist, %CFG%
    GuiControl,,MCCEO,%Read_MCCEO%
    GuiControl,,SmoothEWO,%Read_SmoothEWO%
    GuiControl,Choose,SmoothEWOMode,%Read_SmoothEWOMode%
+   GuiControl,Choose,BugRespawnMode,%Read_BugRespawnMode%
    GuiControl,,FasterSniper,%Read_FasterSniper%
    GuiControl,,IncludeMacros,%Read_IncludeMacros%
    GuiControl,,IncludeHotkey1,%Read_IncludeHotkey1%
@@ -1492,3 +1545,23 @@ Return
 Suspend:
 Suspend
 return
+
+Priority:
+PIDs := EnumProcessesByName(processName)
+for k, PID in PIDs
+   Process, Priority, % PID, Level
+
+EnumProcessesByName(procName) {
+   if !DllCall("Wtsapi32\WTSEnumerateProcesses", Ptr, 0, UInt, 0, UInt, 1, PtrP, pProcessInfo, PtrP, count)
+      throw Exception("WTSEnumerateProcesses failed. A_LastError: " . A_LastError)
+   
+   addr := pProcessInfo, PIDs := []
+   Loop % count  {
+      if StrGet( NumGet(addr + 8) ) = procName
+         PID := NumGet(addr + 4, "UInt"), PIDs.Push(PID)
+      addr += A_PtrSize = 4 ? 16 : 24
+   }
+   DllCall("Wtsapi32\WTSFreeMemory", Ptr, pProcessInfo)
+   Return PIDs
+}
+Return
