@@ -4,7 +4,7 @@ if not A_IsAdmin
 Goto, CheckHWID
 Backk:
 MsgBox HWID matching, welcome to Ryzen's Macros!
-MacroVersion = 3.16
+MacroVersion = 3.20
 CFG = GTA Binds.ini
 CrosshairDone := 0
 MCCEO2 := 0
@@ -58,11 +58,11 @@ Menu, Tray, Add, Open,                StandardTrayMenu
 Menu, Tray, Add, Help,                StandardTrayMenu
 Menu, Tray, Add
 Menu, Tray, Add, Window Spy,          StandardTrayMenu
-Menu, Tray, Add, Reload This Script,  StandardTrayMenu
+Menu, Tray, Add, Reload This Script,  Reload
 Menu, Tray, Add
 Menu, Tray, Add, Suspend Hotkeys,     StandardTrayMenu
 Menu, Tray, Add, Pause Script,        StandardTrayMenu
-Menu, Tray, Add, Exit,                StandardTrayMenu
+Menu, Tray, Add, Exit,                ExitMacros
 Menu, Tray, Default, Open
 
 If (DebugTesting = 1) {
@@ -85,6 +85,9 @@ return
 Gosub, StandardTrayMenu
 
 Reload:
+Loop 5 {
+      Process, Close, GTAHaXUI.exe
+}
 Reload
 return
 
@@ -111,6 +114,9 @@ Gui,Submit,NoHide
 Return
 
 ExitMacros:
+Loop 5 {
+   Process, Close, GTAHaXUI.exe
+}
 ExitApp
 return
 
@@ -119,13 +125,17 @@ Gui, Hide
 return
 
 ThermalHelmet:
-SendInput {lbutton up}
+SendInput {lbutton up}{enter down}
 GuiControlGet, CEOMode
 GuiControlGet, NightVision
 Send {Blind}{%InteractionMenuKey%}{down 3}
 If (CEOMode = 1) 
    Send {Blind}{down} 
-Send {Blind}{enter}{down}{enter}
+SendInput {enter up}
+Send {Blind}{down down}
+SendInput {enter down}
+Send {Blind}{down up}
+SendInput {enter up}
 If (NightVision = 0)
    Send {Blind}{down 4}
 sleep 50
@@ -155,17 +165,21 @@ GuiControlGet, SmoothEWO
 GuiControlGet, SmoothEWOMode
 GuiControlGet, EWOWrite
 If (SmoothEWOMode = "Fast Respawn") { 
-   Hotkey, Tab, ProBlocking, On
-   MouseMove,0,5000,,R
-   SendInput {Blind}{%FranklinBind% down}
-   sleep 50
-   SendInput {Blind}{lbutton down}
-   If (BugRespawnMode = "Homing") {
-      sleep 340
-   } else if (BugRespawnMode = "RPG") {
-      sleep 390
+      SendInput {lshift down}
+      Hotkey, Tab, ProBlocking, On
+      sleep 100
+      BlockInput, On
+      MouseMove,0,5000,,R
+      SendInput {Blind}{%FranklinBind% down}
+      sleep 50
+      SendInput {Blind}{lbutton down}
+      If (BugRespawnMode = "Homing") {
+         sleep 340
+      } else if (BugRespawnMode = "RPG") {
+         sleep 393
    }
-   SendInput {Blind}{%FranklinBind% up}
+   SendInput {Blind}{%FranklinBind% up}{lshift up}
+   BlockInput, Off
    sleep 75
    Send {Blind}{esc}{lbutton up}
    sleep 1200
@@ -198,20 +212,21 @@ if (SmoothEWO = 1) {
       SendInput {Blind}{d up}{w up}{s up}{a up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOLookBehindKey% down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}{enter down}{%InteractionMenuKey% down}{%EWOMelee% down}
       DllCall("Sleep",UInt,45)
       SendInput {Blind}{wheelup}
-      DllCall("Sleep",UInt,30)
-      SendInput {Blind}{wheelup}
-      DllCall("Sleep",UInt,30)
-      SendInput {Blind}{enter up}
-   } else if (SmoothEWOMode = "Slow") {
-      SendInput {Blind}{d up}{w up}{s up}{a up}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%InteractionMenuKey% down}{%EWOSpecialAbilitySlashActionKey% down}{%EWOMelee% down}
-      DllCall("Sleep",UInt,35)
-      SendInput {Blind}{%EWOLookBehindKey% down}
-      DllCall("Sleep",UInt,10)
-      SendInput {Blind}{wheelup}
       DllCall("Sleep",UInt,28)
       SendInput {Blind}{wheelup}
-      DllCall("Sleep",UInt,63)
-      SendInput {Blind}{enter up}
+      ;DllCall("Sleep",UInt,30)
+      Send {Blind}{f24}{f24 up}{enter up}
+   } else if (SmoothEWOMode = "Slow") {
+      StringUpper, EWOLookBehindKey, EWOLookBehindKey
+      SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOSpecialAbilitySlashActionKey% down}{%EWOMelee% down}{d up}{w up}{s up}{a up}
+      Send {Blind}{%InteractionMenuKey%}
+      DllCall("Sleep",UInt,7)
+      Send {Blind}{%EWOLookBehindKey% down}{up}
+      DllCall("Sleep",UInt,8)
+      Send {Blind}{up}{f24}
+      DllCall("Sleep",UInt,18)
+      Send {Blind}{enter}
+      StringLower, EWOLookBehindKey, EWOLookBehindKey
       } else if (SmoothEWOMode = "Fastest") {
          SendInput {lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}
          Send {Blind}{%InteractionMenuKey%}{up 2}
@@ -227,7 +242,7 @@ if (SmoothEWO = 1) {
          SendInput {Blind}{wheelup}
          DllCall("Sleep",UInt,10)
          Send {Blind}{%EWOLookBehindKey% down}
-         ;DllCall("Sleep",UInt,5)
+         DllCall("Sleep",UInt,10)
          Send {Blind}{enter up}
          StringLower, EWOLookBehindKey, EWOLookBehindKey
       }
@@ -238,45 +253,51 @@ if (SmoothEWO = 1) {
    }
 SendInput {%EWOSpecialAbilitySlashActionKey% up}
 SetCapsLockState, Off
-Send {Blind}{enter 2}{up}{enter}{left}
+Send {Blind}{enter 2}{up}{enter}{left}{down}
+BlockInput, On
+Loop, 25 {
+   if WinActive("ahk_class grcWindow") {
+      SendInput {LAlt up}{RAlt up}{Alt up}
+      Send {Blind}{enter}
+   }
+}
+BlockInput, Off
 SendInput {Blind}{%EWOLookBehindKey% up}{%EWOMelee% up}{%InteractionMenuKey% up}{up up}{g up}{f24 up}{f23 up}{f22 up}{f20 up}{%EWO% up}
-sleep 25
 SetMouseDelay, 10
 }
 return
 
 Write:
    if not WinExist("ahk_exe GTAHaXUI.exe") {
-   Run, GTAHaXUI.exe, %A_ScriptDir%,,Min
-   WinWait, ahk_exe GTAHaXUI.exe
-   ControlSend, Edit1, {shift}{down}{backspace}2703735, ahk_exe GTAHaXUI.exe
-   ControlSend, Edit2, {shift}{down}{backspace}1571, ahk_exe GTAHaXUI.exe
-   ControlSend, Edit3, {shift}{down}{backspace}817, ahk_exe GTAHaXUI.exe
+   Run, GTAHaXUI.exe, %A_ScriptDir%,Min,Gay2
+   WinWait, ahk_pid %Gay2%
+   ControlSend, Edit1, {shift}{down}{backspace}2703735, ahk_pid %Gay2%
+   ControlSend, Edit2, {shift}{down}{backspace}1571, ahk_pid %Gay2%
+   ControlSend, Edit3, {shift}{down}{backspace}817, ahk_pid %Gay2%
    sleep 20
-   If WinActive("ahk_exe GTAHaXUI.exe")
+   If WinActive("ahk_pid" Gay2)
       WinActivate, ahk_class grcWindow
    else {
       sleep 40
-      If WinActive("ahk_exe GTAHaXUI.exe")
-         WinActivate, ahk_class grcWindow
-      ; MsgBox, yes, yes, yes ; for testing
+      If WinActive("ahk_pid" Gay2)
+        WinActivate, ahk_class grcWindow
+
    }
    SendInput {lbutton up}
 } else {
-   ControlGet, Cocaine,Line,1,Edit1,ahk_exe GTAHaXUI.exe
-   ControlGet, Methamphetamine,Line,1,Edit2,ahk_exe GTAHaXUI.exe
-   ControlGet, HIV,Line,1,Edit3,ahk_exe GTAHaXUI.exe
-   ControlGet, Heroin,Line,1,Edit7,ahk_exe GTAHaXUI.exe
-   ControlGet, AIDS,Line,1,Edit8,ahk_exe GTAHaXUI.exe
+   ControlGet, Cocaine,Line,1,Edit1,ahk_pid %Gay2%
+   ControlGet, Methamphetamine,Line,1,Edit2,ahk_pid %Gay2%
+   ControlGet, HIV,Line,1,Edit3,ahk_pid %Gay2%
+   ControlGet, Heroin,Line,1,Edit7,ahk_pid %Gay2%
+   ControlGet, AIDS,Line,1,Edit8,ahk_pid %Gay2%
    If (Heroin = 1) && (Cocaine = 2703735) && (Methamphetamine = 1571) && (HIV = 817) && (AIDS = 0) {
-   ControlClick, Button1, ahk_exe GTAHaXUI.exe,,,,
-   If WinActive("ahk_exe GTAHaXUI.exe")
+   ControlClick, Button1, ahk_pid %Gay2%
+   If WinActive("ahk_pid" Gay2)
       WinActivate, ahk_class grcWindow
    else {
       sleep 40
-      If WinActive("ahk_exe GTAHaXUI.exe")
+      If WinActive("ahk_pid" Gay2)
          WinActivate, ahk_class grcWindow
-      ; MsgBox, yes, yes, yes ; for testing
    }
    }
 }
@@ -287,7 +308,7 @@ GuiControlGet, EWOWrite
 If (EWOWrite = 1) {
    MsgBox, 4,Warning!,Please note that this is a bit buggy`, and that the bugs are unfixable`, although it still works pretty well. Use the Cheat Engine method for a 100`% consistent method`, but also note that Cheat Engine may trigger RAC`, so I would not suggest doing recoveries on your account if you have used Cheat Engine without having another Mod Menu installed. Do you still want to continue?
    IfMsgBox No
-      Goto NO! ; same shit as return
+      Goto NO!
 }
 If (EWOWrite = 1) {
    SetTimer, Write, %SetGlobalDelay%
@@ -318,29 +339,50 @@ Send {Blind}{enter 20}
 return
 
 BST:
-SendInput {lbutton up}
+SendInput {lbutton up}{enter down}
 GuiControlGet, CEOMode
 GuiControlGet, BSTSpeed
 GuiControlGet, BSTMC
 If (CEOMode = 0)
    MsgBox, 0, Warning!, You are not in a CEO!
 else {
-   Send {Blind}{%InteractionMenuKey%}{enter}
-   If (BSTSpeed = 1)
-      Send {Blind}{up 3}{enter}{left}
-      Else 
-         Send {Blind}{down 4}{enter}
-   Send {Blind}{down}{enter}
+   Send {Blind}{%InteractionMenuKey%}{enter up}
+   If (BSTSpeed = 1) {
+      Send {Blind}{up}
+      SendInput {enter down} 
+      Send {Blind}{up 2}
+      SendInput {enter up}
+   } Else {
+         Send {Blind}{down}
+         SendInput {enter down} 
+         Send {Blind}{down 3}
+         SendInput {enter up}
+      }
+   Send {Blind}{down down} 
+   SendInput {enter down} 
+   Send {Blind}{down up}
+   SendInput {enter up}
 }
 return
 
 Ammo:
-SendInput {lbutton up}
+SendInput {lbutton up}{enter down}
 GuiControlGet, CEOMode
-Send {Blind}{%InteractionMenuKey%}{down 2}
+Send {Blind}{%InteractionMenuKey%}
 If (CEOMode) = 1
-   Send {Blind}{down}
-Send {Blind}{enter}{down 5}{enter 2}{up}{enter}{%InteractionMenuKey%}
+   Send {Blind}{down 3}
+   Else
+      Send {blind}{down 2}
+SendInput {enter up}
+Send {Blind}{down}
+SendInput {enter down}
+Send {Blind}{down 4}
+SendInput {enter up}
+Send {Blind}{enter}{up down}
+SendInput {enter down}
+Send {Blind}{up up}
+SendInput {enter up}
+Send {Blind}{%InteractionMenuKey%}
 Sleep 125
 return
 
@@ -352,49 +394,37 @@ ProBlocking:
 Return
 
 GTAHax:
-SetTimer, Write, Off
-sleep 100
 SendInput {%GTAHax% up}
-Loop, 5
-   WinClose, ahk_exe GTAHaXUI.exe
-sleep 250
-Run, GTAHaXUI.exe, %A_ScriptDir%,,Max
-WinWait, ahk_exe GTAHaXUI.exe
-ControlSend, Edit1, {down}{backspace}262145
-ControlSend, Edit2, {down}{backspace}28397
+Run, GTAHaXUI.exe, %A_ScriptDir%,,Gay
+WinWait, ahk_pid %Gay%
+ControlSend, Edit1, {down}{backspace}262145, ahk_pid %Gay%
+ControlSend, Edit2, {down}{backspace}28397, ahk_pid %Gay%
 sleep 100
-ControlClick, Button1, ahk_exe GTAHaXUI.exe,,,,
+ControlClick, Button1, ahk_pid %Gay%
 sleep 25
-ControlSend, Edit2, {down}{backspace}8
+ControlSend, Edit2, {down}{backspace}8, ahk_pid %Gay%
 sleep 100
-ControlClick, Button1, ahk_exe GTAHaXUI.exe,,,,
+ControlClick, Button1, ahk_pid %Gay%
 sleep 250
-WinClose, ahk_exe GTAHaXUI.exe
-WinActivate, Ryzen's Macros Version %MacroVersion%
+Process, Close, %Gay%
 MsgBox, 0, Complete!, You should now have no EWO cooldown. Kill yourself with a Sticky/RPG if you currently have a cooldown.
-If (EWOWrite = 1) {
-   SetTimer, Write, %SetGlobalDelay%
-}
-else {
-   SetTimer, Write, Off
-}
 return
 
 GTAHax2:
 GuiControlGet, EWOWrite
 SendInput {%GTAHax% up}
-Run, GTAHaXUI.exe, %A_ScriptDir%,,Max
-WinWait, ahk_exe GTAHaXUI.exe
-ControlSend, Edit1, {down}{backspace}2703735
-ControlSend, Edit2, {down}{backspace}1571
-ControlSend, Edit3, {down}{backspace}817
+Run, GTAHaXUI.exe, %A_ScriptDir%,Min,Obese11
+WinWait, ahk_pid %Obese11%
+ControlSend, Edit1, {down}{backspace}2703735, ahk_pid %Obese11%
+ControlSend, Edit2, {down}{backspace}1571, ahk_pid %Obese11%
+ControlSend, Edit3, {down}{backspace}817, ahk_pid %Obese11%
 If (EWOWrite = 0) 
-   ControlSend, Edit8, {down}{backspace}12345678
+   ControlSend, Edit8, {down}{backspace}12345678, ahk_pid %Obese11%
 sleep 100
-ControlClick, Button1, ahk_exe GTAHaXUI.exe,,,,
+ControlClick, Button1, ahk_pid %Obese11%
 sleep 250
 If (EWOWrite = 0) {
-   WinClose, ahk_exe GTAHaXUI.exe
+   Process, Close, %Obese11%
    MsgBox, 0, Complete!, Search for the value 12345678 using Cheat Engine and lock the value to 0 for it to work properly. If you are dumb, ignore this. If you don't understand what it does but are not dumb, ask me what to do.
 }
 return
@@ -487,7 +517,9 @@ if (Length >= 31) {
 Loop, 140 {
 ArrayYes%A_Index% =
 }
-Send {Blind}t{shift up}
+Send {Blind}{t down}
+SendInput {enter down}
+Send {Blind}{t up}{f24 up}
 StringSplit, ArrayYes, CustomSpamText
 If (RawText = 1) {
 SendInput {Raw}%ArrayYes1%%ArrayYes2%%ArrayYes3%%ArrayYes4%%ArrayYes5%%ArrayYes6%%ArrayYes7%%ArrayYes8%%ArrayYes9%%ArrayYes10%%ArrayYes11%%ArrayYes12%%ArrayYes13%%ArrayYes14%%ArrayYes15%%ArrayYes16%%ArrayYes17%%ArrayYes18%%ArrayYes19%%ArrayYes20%%ArrayYes21%%ArrayYes22%%ArrayYes23%%ArrayYes24%%ArrayYes25%%ArrayYes26%%ArrayYes27%%ArrayYes28%%ArrayYes29%%ArrayYes30%
@@ -499,7 +531,7 @@ SendRaw %ArrayYes93%
 SendInput {Raw}%ArrayYes94%%ArrayYes95%%ArrayYes96%%ArrayYes97%%ArrayYes98%%ArrayYes99%%ArrayYes100%%ArrayYes101%%ArrayYes102%%ArrayYes103%%ArrayYes104%%ArrayYes105%%ArrayYes106%%ArrayYes107%%ArrayYes108%%ArrayYes109%%ArrayYes110%%ArrayYes111%%ArrayYes112%%ArrayYes113%%ArrayYes114%%ArrayYes115%%ArrayYes116%%ArrayYes117%%ArrayYes118%%ArrayYes119%%ArrayYes120%%ArrayYes121%%ArrayYes122%%ArrayYes123%
 SendRaw %ArrayYes124%
 SendInput {Raw}%ArrayYes125%%ArrayYes126%%ArrayYes127%%ArrayYes128%%ArrayYes129%%ArrayYes130%%ArrayYes131%%ArrayYes132%%ArrayYes133%%ArrayYes134%%ArrayYes135%%ArrayYes136%%ArrayYes137%%ArrayYes138%%ArrayYes139%%ArrayYes140%
-Send {Blind}{enter}
+Send {Blind}{enter up}
 } else {
    SendInput %ArrayYes1%%ArrayYes2%%ArrayYes3%%ArrayYes4%%ArrayYes5%%ArrayYes6%%ArrayYes7%%ArrayYes8%%ArrayYes9%%ArrayYes10%%ArrayYes11%%ArrayYes12%%ArrayYes13%%ArrayYes14%%ArrayYes15%%ArrayYes16%%ArrayYes17%%ArrayYes18%%ArrayYes19%%ArrayYes20%%ArrayYes21%%ArrayYes22%%ArrayYes23%%ArrayYes24%%ArrayYes25%%ArrayYes26%%ArrayYes27%%ArrayYes28%%ArrayYes29%%ArrayYes30%
    Send %ArrayYes31%
@@ -510,22 +542,26 @@ Send {Blind}{enter}
    SendInput %ArrayYes94%%ArrayYes95%%ArrayYes96%%ArrayYes97%%ArrayYes98%%ArrayYes99%%ArrayYes100%%ArrayYes101%%ArrayYes102%%ArrayYes103%%ArrayYes104%%ArrayYes105%%ArrayYes106%%ArrayYes107%%ArrayYes108%%ArrayYes109%%ArrayYes110%%ArrayYes111%%ArrayYes112%%ArrayYes113%%ArrayYes114%%ArrayYes115%%ArrayYes116%%ArrayYes117%%ArrayYes118%%ArrayYes119%%ArrayYes120%%ArrayYes121%%ArrayYes122%%ArrayYes123%
    Send %ArrayYes124%
    SendInput %ArrayYes125%%ArrayYes126%%ArrayYes127%%ArrayYes128%%ArrayYes129%%ArrayYes130%%ArrayYes131%%ArrayYes132%%ArrayYes133%%ArrayYes134%%ArrayYes135%%ArrayYes136%%ArrayYes137%%ArrayYes138%%ArrayYes139%%ArrayYes140%
-   Send {Blind}{enter}
+   Send {Blind}{enter up}
 }
 }
 else if Length <= 30 
 {
    If (RawText = 1) {
 Loop, 8 {
-   Send {Blind}t{shift up}
+   Send {Blind}{t down}
+   SendInput {enter down}
+   Send {Blind}{t up}{f24 up}
    SendInput {Raw}%CustomSpamText%
-   Send {Blind}{enter}
+   Send {Blind}{enter up}
 }
 } else {
       Loop, 8 {
-      Send {Blind}t{shift up}
-      SendInput %CustomSpamText%
-      Send {Blind}{enter}
+         Send {Blind}{t down}
+         SendInput {enter down}
+         Send {Blind}{t up}{f24 up}
+         SendInput %CustomSpamText%
+         Send {Blind}{enter up}
    }
 }
 }
@@ -555,9 +591,11 @@ return
 
 ShutUp:
 Loop, 8 {
-Send {Blind}t{shift up}
+Send {Blind}{t down}
+SendInput {enter down}
+Send {Blind}{t up}{f24 up}
 SendInput shut up
-Send {Blind}{enter}
+Send {Blind}{enter up}
 }
 return
 
@@ -572,12 +610,19 @@ else {
 return
 
 ReloadOutfit:
-SendInput {lbutton up}
+SendInput {lbutton up}{enter down}
 GuiControlGet, CEOMode
-Send {Blind}{%InteractionMenuKey%}{down 3}
+Send {Blind}{%InteractionMenuKey%}
 If (CEOMode = 1) 
-   Send {Blind}{down}
-Send {Blind}{enter}{down 3}{enter 2}{%InteractionMenuKey%}
+   Send {Blind}{down 4}
+   Else
+      Send {Blind}{down 3}
+SendInput {enter up}
+Send {Blind}{down}
+SendInput {enter down}
+Send {Blind}{down 2}
+SendInput {enter up}
+Send {Blind}{%InteractionMenuKey%}
 return
 
 2Screen2:
@@ -593,7 +638,7 @@ else if (2Screen = 1) && (2ScreenSpecial = 0) {
    Global crossHairY := (screenH / 2) - (crossHairH / 2)
    WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
 } else if (2ScreenSpecial = 1) { 
-   Global crossHairX := (screenW / 3.11465) - (crossHairH / 2)
+   Global crossHairX := (screenW / 3.115373439) - (crossHairH / 2)
    Global crossHairY := (screenH / 2) - (crossHairH / 2)
    WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
 }
@@ -621,7 +666,7 @@ else if (2Screen = 1) && (2ScreenSpecial = 0) {
    Global crossHairY := (screenH / 2) - (crossHairH / 2)
    WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
 } else if (2ScreenSpecial = 1) { 
-   Global crossHairX := (screenW / 3.11465) - (crossHairH / 2)
+   Global crossHairX := (screenW / 3.115373439) - (crossHairH / 2)
    Global crossHairY := (screenH / 2) - (crossHairH / 2)
    WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
 }
@@ -664,7 +709,7 @@ else if (2Screen = 1) && (2ScreenSpecial = 0) {
    Global crossHairY := (screenH / 2) - (crossHairH / 2)
    WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
 } else if (2ScreenSpecial = 1) { 
-   Global crossHairX := (screenW / 3.11465) - (crossHairH / 2)
+   Global crossHairX := (screenW / 3.115373439) - (crossHairH / 2)
    Global crossHairY := (screenH / 2) - (crossHairH / 2)
    WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
 }
@@ -714,14 +759,19 @@ Gui, Show
 return
 
 ToggleCEO:
-SendInput {lbutton up}
+SendInput {lbutton up}{enter down}
 GuiControlGet, CEOMode
 If (CEOMode = 0) {
-   Send {Blind}{%InteractionMenuKey%}{down 6}{enter 2}
+   Send {Blind}{%InteractionMenuKey%}{down 6}
+   SendInput {enter up}
+   Send {Blind}{enter}
 GUIControl,, CEOMode, 1
 }
 else {
-   Send {Blind}{%InteractionMenuKey%}{enter}{up}{enter}
+   Send {Blind}{%InteractionMenuKey%}{enter up}{up down}
+   SendInput {enter down} 
+   Send {Blind}{up up}
+   SendInput {enter up}
 GUIControl,, CEOMode, 0
 }
 return
@@ -741,8 +791,12 @@ If (!pid1)
    pid2 := ErrorLevel
    If (pid2)
       Process, Close, %pid2%
+SetTimer, Write, Off
 SetTimer, ExitMacros, -15000
 MsgBox, 0, Macros will close now. RIP., GTA is no longer running. Macros will close now. RIP.
+   Loop 5 {
+      Process, Close, GTAHaXUI.exe
+   }
    ExitApp
  }
 }
@@ -779,7 +833,7 @@ If (Crosshair = 1) {
 goto, Crosshair6
 
 Jobs:
-SendInput {lbutton up}
+SendInput {lbutton up}{enter down}
 GuiControlGet, CEOMode ; Retrieves 1 if it is checked, 0 if it is unchecked.
 If (CEOMode = 0) {
 Send {Blind}{%InteractionMenuKey%}{down 8}
@@ -787,37 +841,66 @@ Send {Blind}{%InteractionMenuKey%}{down 8}
 else {
 Send {Blind}{%InteractionMenuKey%}{down 7}
 }
-Send {Blind}{enter}{down}{enter}
+SendInput {enter up}
+Send {Blind}{down down} 
+SendInput {enter down} 
+Send {Blind}{down up}
+SendInput {enter up}
 sleep 25
 Send {Blind}{left}
 Loop, 14 {
-Send {Blind}{down}{Enter}
+Send {Blind}{down down}
+SendInput {enter down}
+Send {Blind}{down up}
+SendInput {enter up}
 }
 Send {Blind}{%InteractionMenuKey%}
 return
 
 MCCEO:
-SendInput {lbutton up}
+SendInput {lbutton up}{enter down}
 if (MCCEO2 = 0) {
-   Send {Blind}{%InteractionMenuKey%}{enter}{up}{enter}
+   Send {Blind}{%InteractionMenuKey%}{enter up}{up down}
+   SendInput {enter down}
+   Send {Blind}{up up}
+   SendInput {enter up}
    sleep 200
-   Send {Blind}{%InteractionMenuKey%}{down 7}{enter 2}
-   Loop, 20 {
-      Send {Blind}{backspace}{enter 2}
+   SendInput {enter down}
+   Send {Blind}{%InteractionMenuKey%}{down 7}
+   SendInput {enter up}
+   Send {Blind}{enter}
+   Loop, 35 {
+      Send {Blind}{backspace down}
+      SendInput {enter down}
+      Send {Blind}{backspace up}
+      SendInput {enter up}
+      Send {Blind}{enter}
 }
    sleep 25
    MCCEO2 := 1
 }
    else {
-   Send {Blind}{%InteractionMenuKey%}{enter}{up}{enter}
+   Send {Blind}{%InteractionMenuKey%}{enter up}{up down}
+   SendInput {enter down}
+   Send {Blind}{up up}
+   SendInput {enter up}
+   Send {Blind}{enter}
    sleep 200
-   Send {Blind}{%InteractionMenuKey%}{down 6}{enter 2}
-   Loop, 20 {
-      Send {Blind}{backspace}{enter 2}
+   SendInput {enter down}
+   Send {Blind}{%InteractionMenuKey%}{down 6}
+   SendInput {enter up}
+   Send {Blind}{enter}
+   Loop, 35 {
+      Send {Blind}{backspace down}
+      SendInput {enter down}
+      Send {Blind}{backspace up}
+      SendInput {enter up}
+      Send {Blind}{enter}
 }
    sleep 25
    MCCEO2 := 0
 }
+GuiControl,, CEOMode, 1
 return
 
 LaunchCycle: 
@@ -867,7 +950,7 @@ else if (2Screen = 1) && (2ScreenSpecial = 0) {
    Global crossHairY := (screenH / 2) - (crossHairH / 2)
    WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
 } else if (2ScreenSpecial = 1) { 
-   Global crossHairX := (screenW / 3.11465) - (crossHairH / 2)
+   Global crossHairX := (screenW / 3.115373439) - (crossHairH / 2)
    Global crossHairY := (screenH / 2) - (crossHairH / 2)
    WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
 }
@@ -924,16 +1007,20 @@ IncludeHotkeyChat01:
 Length3 := StrLen(IncludeMacroChat1)
 if (Length3 >= 31) {
 SendInput {%IncludeHotkeyChat1% up}
-Send {Blind}t
-SendInput {Raw} %IncludeMacroChat1%
-Send {Blind}{enter}
+Send {Blind}{t down}
+SendInput {enter down}
+Send {Blind}{t up}{f24 up}
+SendInput {Raw}%IncludeMacroChat1%
+Send {Blind}{enter up}
 }
 else if Length3 <= 30
 {
 SendInput {%IncludeHotkeyChat1% up}
-Send {Blind}t{shift up}
+Send {Blind}{t down}
+SendInput {enter down}
+Send {Blind}{t up}{f24 up}
 SendInput {raw}%IncludeMacroChat1%
-Send {Blind}{enter}
+Send {Blind}{enter up}
 }
 return
 
@@ -941,16 +1028,20 @@ IncludeHotkeyChat02:
 Length4 := StrLen(IncludeMacroChat2)
 if (Length4 >= 31) {
 SendInput {%IncludeHotkeyChat2% up}
-Send {Blind}t
-SendInput {Raw} %IncludeMacroChat2%
-Send {Blind}{enter}
+Send {Blind}{t down}
+SendInput {enter down}
+Send {Blind}{t up}{f24 up}
+SendInput {Raw}%IncludeMacroChat2%
+Send {Blind}{enter up}
 }
 else if Length4 <= 30
 {
 SendInput {%IncludeHotkeyChat2% up}
-Send {Blind}t{shift up}
+Send {Blind}{t down}
+SendInput {enter down}
+Send {Blind}{t up}{f24 up}
 SendInput {raw}%IncludeMacroChat2%
-Send {Blind}{enter}
+Send {Blind}{enter up}
 }
 return
 
