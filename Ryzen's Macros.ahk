@@ -30,11 +30,17 @@ CEOCircleGlobalIndexAddedTogether := CEOCircleGlobalIndex + CEOCircleGlobalOffse
 
 Goto, CheckHWID ; Checks your PC's UUID. Shitty but it works
 Backk: ; It goes back to this checkpoint. It works.
-TrayTip, Ryzen's Macros, Successfully started. Welcome to Ryzen's Macros!, 10, 1
 MacroVersion = 3.21-beta ; Macro version
 CFG = GTA Binds.ini ; Config file name
 CrosshairDone := 0 ; If crosshair has been applied
 MCCEO2 := 0 ; If you are in MC
+WriteWasJustPerformed = 0
+If not WinExist("ahk_class grcWindow") {
+   GTAAlreadyClosed = 1
+} else {
+   GTAAlreadyClosed = 0
+}
+MsgBox, 0, Ryzen's Macros %MacroVersion%, Successfully started. Welcome to Ryzen's Macros!
 IniRead,DebugTesting,%CFG%,Debug,Debug Testing ; Checks if debug testing is true, usually false.
 #SingleInstance, force ; Forces single instance
 #IfWinActive ahk_class grcWindow ; Hotkeys will only work if you are tabbed in.
@@ -88,7 +94,7 @@ Menu, Tray, Add, Pause Script,        StandardTrayMenu
 Menu, Tray, Add, Exit,                ExitMacros
 Menu, Tray, Default, Open
 
-If (DebugTesting = 78976) { ; Adds some debug text if debug testing is true
+If (DebugTesting = maybeillusethisometimeinthefuture) { ; Adds some debug text if debug testing is true
    Menu, Tray, Tip, Ryzen's Macros Version %MacroVersion%-%DebugText%
    Gui, Show,, Ryzen's Macros Version %MacroVersion%-%DebugText%
 } else {
@@ -182,7 +188,6 @@ GuiControlGet, EWOWrite
 If (SmoothEWOMode = "Fast Respawn") { 
       SendInput {Blind}{lshift down}{w up}{a up}{s up}{d up}
       Hotkey, Tab, ProBlocking, On
-      sleep 100
       BlockInput, On
       MouseMove,0,5000,,R
       SendInput {Blind}{%FranklinBind% down}
@@ -289,33 +294,45 @@ SetMouseDelay, 10
 return
 
 Write:
-if not WinExist("ahk_exe GTAHaXUI.exe") { ; If window doesn't exist, make it exist and add shit to it
-   Run, GTAHaXUI.exe, %A_ScriptDir%,Min,Gay2
-   WinWait, ahk_pid %Gay2%
-   ControlSend, Edit1, {down}{backspace}%ScoreGlobalIndexAddedTogether%, ahk_pid %Gay2%
-   sleep 20
-   SendInput {lbutton up}
-} else { ; If it does exist
-   ControlGet, Cocaine,Line,1,Edit1,ahk_pid %Gay2% ; Get the value of controls and shiznit
-   ControlGet, Heroin,Line,1,Edit7,ahk_pid %Gay2%
-   ControlGet, AIDS,Line,1,Edit8,ahk_pid %Gay2%
-   If (Heroin = 1) && (Cocaine = ScoreGlobalIndexAddedTogether) && (AIDS = 0) { ; If the values are correct do this shit
-   ControlClick, Button1, ahk_pid %Gay2%
-   } else {
-      If not (Cocaine = ScoreGlobalIndexAddedTogether) { ; If global index isn't correct, then close GTAHaX and remake the window. Too lazy to remove everything, this is better anyways.
-         Process, Close, %Gay2%
-         Goto, Write
-      }
-      If not (AIDS = 0) { ; Same thing here but if the value you want to set it to is not 0, then it will restart GTAHaX and redo it.
-         Process, Close, %Gay2%
-         Goto, Write
+If WinActive("ahk_class grcWindow") {
+   If (GTAAlreadyClosed = 0) {
+      if not WinExist("ahk_exe GTAHaXUI.exe") { ; If window doesn't exist, make it exist and add shit to it
+         Run, GTAHaXUI.exe, %A_ScriptDir%,Min,Gay2
+         WinWait, ahk_pid %Gay2%
+         ControlSend, Edit1, {down}{backspace}%ScoreGlobalIndexAddedTogether%, ahk_pid %Gay2%
+         sleep 20
+         SendInput {lbutton up}
+      } else { ; If it does exist
+         ControlGet, Cocaine,Line,1,Edit1,ahk_pid %Gay2% ; Get the value of controls and shiznit
+         ControlGet, Heroin,Line,1,Edit7,ahk_pid %Gay2%
+         ControlGet, AIDS,Line,1,Edit8,ahk_pid %Gay2%
+         If (Heroin = 1) && (Cocaine = ScoreGlobalIndexAddedTogether) && (AIDS = 0) { ; If the values are correct do this shit
+         ControlClick, Button1, ahk_pid %Gay2%
+         WriteWasJustPerformed = 1
+         SetTimer, WriteWasPerformed, -200
+         } else {
+            If not (Cocaine = ScoreGlobalIndexAddedTogether) { ; If global index isn't correct, then close GTAHaX and remake the window. Too lazy to remove everything, this is better anyways.
+               Process, Close, %Gay2%
+               Goto, Write
+            }
+            If not (AIDS = 0) { ; Same thing here but if the value you want to set it to is not 0, then it will restart GTAHaX and redo it.
+               Process, Close, %Gay2%
+               Goto, Write
+            }
+         }
       }
    }
 }
 Return
 
+WriteWasPerformed:
+If (WriteWasJustPerformed = 1) {
+WriteWasJustPerformed = 0
+}
+Return
+
 TabBackInnn:
-if WinActive("ahk_pid Gay2") {
+If (WriteWasJustPerformed = 1) {
    WinActivate, ahk_exe GTA5.exe
 }
 Return
@@ -819,19 +836,22 @@ GUIControl,, CEOMode, 0
 return
 
 ProcessCheckTimer:
-GuiControlGet, ProcessCheck2
-If not (ProcessCheck2 = 0) {
-   If not WinExist("ahk_exe GTA5.exe") {
-      Gosub, CloseGTAProcesses
-      SetTimer, Write, Off
-      SetTimer, ExitMacros, -10000
-      MsgBox, 0, Macros will close now. RIP., GTA is no longer running. Macros will close now. RIP.
-         Process, Close, %Gay%
-         Process, Close, %Gay2%
-         Process, Close, %Obese11%
-         ExitApp
+If (GTAAlreadyClosed = 0) {
+   GuiControlGet, ProcessCheck2
+   If not (ProcessCheck2 = 0) {
+      If not WinExist("ahk_class grcWindow") {
+         Gosub, CloseGTAProcesses
+         SetTimer, Write, Off
+         SetTimer, CloseGTAHaX, 100
+         SetTimer, ExitMacros, -10000
+         MsgBox, 0, Macros will close now. RIP., GTA is no longer running. Macros will close now. RIP.
+            Process, Close, %Gay%
+            Process, Close, %Gay2%
+            Process, Close, %Obese11%
+            ExitApp
+         }
       }
-   }
+}
 return
 
 CloseGTAProcesses:
@@ -1338,6 +1358,7 @@ Gui, Add, Edit, Limit3 w30 vSetGlobalDelay
 Return
 
 SaveConfig:
+GuiControlGet, ProcessCheck2
 SetTimer, Write, Off
 SetTimer, TabBackInnn, Off
 SetTimer, ProcessCheckTimer, Off
@@ -1434,7 +1455,17 @@ if (ProcessCheck2 = 1) {
 SetTimer, ProcessCheckTimer, 100
 }
 ;MsgBox, 0, Saved!, Your config has been saved and/or the macros have been started!, 2
+If (GTAAlreadyClosed = 0) {
 TrayTip, Ryzen's Macros %MacroVersion%, Your config has been saved and/or the macros have been started!, 10, 1
+} else If (GTAAlreadyClosed = 1) && (ProcessCheck2 = 1) {
+   TrayTip, Ryzen's Macros %MacroVersion%, GTA has not been detected to be open`, the macros will not automatically close and Show EWO Score will not work`. Please restart the macros once you have restarted GTA., 10, 1
+}
+Return
+
+CloseGTAHaX:
+   Process, Close, %Gay%
+   Process, Close, %Gay2%
+   Process, Close, %Obese11%
 Return
 
 Nice1234:
