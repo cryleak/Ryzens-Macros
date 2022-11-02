@@ -326,15 +326,12 @@ If WinActive("ahk_class grcWindow") {
 Return
 
 WriteWasPerformed:
-If (WriteWasJustPerformed = 1) {
 WriteWasJustPerformed = 0
-}
 Return
 
 TabBackInnn:
-If (WriteWasJustPerformed = 1) {
+If (WriteWasJustPerformed = 1)
    WinActivate, ahk_exe GTA5.exe
-}
 Return
 
 EWOWrite:
@@ -345,8 +342,8 @@ If (EWOWrite = 1) {
       Goto NO!
 }
 If (EWOWrite = 1) {
-   SetTimer, Write, %SetGlobalDelay%
-   SetTimer, TabBackInnn, %SetGlobalDelay%
+   SetTimer, Write, 10
+   SetTimer, TabBackInnn, 10
 }
 else {
    SetTimer, Write, Off
@@ -1135,7 +1132,6 @@ Return
    GuiControl,,RifleBind,8
    GuiControl,,EWO,
    GuiControl,,EWOWrite,0
-   GuiControl,,SetGlobalDelay,10
    GuiControl,,EWOLookBehindKey,c
    GuiControl,,EWOSpecialAbilitySlashActionKey,CapsLock
    GuiControl,,EWOMelee,r
@@ -1351,10 +1347,8 @@ Gui, Add, Checkbox, gPaste2 vPaste
 Gui, Add, Hotkey, vMCCEO
 Gui, Add, Button, gGTAHax2 h20 x170 y60, Show EWO Score (only use if you aren't dumb)
 Gui, Add, Link,, Show EWO Score without Cheat Engine: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Show-EWO-Score-Without-Cheat-Engine">(?)</a> 
-Gui, Add, Link,, Delay Between Showing Score (ms): <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Delay-Between-Showing-Score-(ms)">(?)</a> 
 
 Gui, Add, Checkbox, gEWOWrite vEWOWrite h20 x+30 y84
-Gui, Add, Edit, Limit3 w30 vSetGlobalDelay
 Return
 
 SaveConfig:
@@ -1372,7 +1366,6 @@ Gui,Submit,NoHide
    IniWrite,%RifleBind%,%CFG%,Keybinds,Rifle Bind
    IniWrite,%EWO%,%CFG%,PVP Macros,EWO
    IniWrite,%EWOWrite%,%CFG%,PVP Macros,EWO Write
-   IniWrite,%SetGlobalDelay%,%CFG%,PVP Macros,Set Global Delay
    IniWrite,%KekEWO%,%CFG%,PVP Macros,Kek EWO
    IniWrite,%EWOLookBehindKey%,%CFG%,Keybinds,EWO Look Behind Button
    IniWrite,%EWOSpecialAbilitySlashActionKey%,%CFG%,Keybinds,EWO Special Ability/Action Key
@@ -1448,8 +1441,8 @@ Hotkey, *%IncludeHotkeyChat1%, IncludeHotkeyChat01, UseErrorLevel On
 Hotkey, *%IncludeHotkeyChat2%, IncludeHotkeyChat02, UseErrorLevel On
 Hotkey, *%RPGSpam%, RPGSpam, UseErrorLevel On
 If (EWOWrite = 1) {
-   SetTimer, Write, %SetGlobalDelay%
-   SetTimer, TabBackInnn, %SetGlobalDelay%
+   SetTimer, Write, 10
+   SetTimer, TabBackInnn, 10
 }
 if (ProcessCheck2 = 1) {
 SetTimer, ProcessCheckTimer, 100
@@ -1512,7 +1505,6 @@ IfExist, %CFG%
    IniRead,Read_RifleBind,%CFG%,Keybinds,Rifle Bind
    IniRead,Read_EWO,%CFG%,PVP Macros,EWO
    IniRead,Read_EWOWrite,%CFG%,PVP Macros,EWO Write
-   IniRead,Read_SetGlobalDelay,%CFG%,PVP Macros,Set Global Delay
    IniRead,Read_KekEWO,%CFG%,PVP Macros,Kek EWO
    IniRead,Read_EWOLookBehindKey,%CFG%,Keybinds,EWO Look Behind Button
    IniRead,Read_EWOSpecialAbilitySlashActionKey,%CFG%,Keybinds,EWO Special Ability/Action Key
@@ -1577,7 +1569,6 @@ IfExist, %CFG%
    GuiControl,,RifleBind,%Read_RifleBind%
    GuiControl,,EWO,%Read_EWO%
    GuiControl,,EWOWrite,%Read_EWOWrite%
-   GuiControl,,SetGlobalDelay,%Read_SetGlobalDelay%
    GuiControl,,KekEWO,%Read_KekEWO%
    GuiControl,,EWOLookBehindKey,%Read_EWOLookBehindKey%
    GuiControl,,EWOSpecialAbilitySlashActionKey,%Read_EWOSpecialAbilitySlashActionKey%
