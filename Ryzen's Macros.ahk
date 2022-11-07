@@ -3,11 +3,10 @@ if not A_IsAdmin ; Runs the script as an admin.
 	Run *RunAs "%A_ScriptFullPath%"
 
 ; Debug:
-/*
+; /*
 ListLines Off ; Removes line history, makes the script slightly more secret.
 #KeyHistory 0 ; Removes key history, makes the script slightly more secret.
 */
-
 
 
 ; GTAHaX EWO Offsets:
@@ -51,6 +50,8 @@ IniRead,DebugTesting,%CFG%,Debug,Debug Testing ; Checks if debug testing is true
 #HotkeyInterval 99000000 ; Same as the other hotkey interval setting
 #Persistent ; Makes the script never exit, probably unneccassary because other commands (like hotkey) already cause it to never exit.
 SetTitleMatchMode, 2 ; I forgor :dead_skull:
+OnError("LogError")
+fdhfg
 SetDefaultMouseSpeed, 0 ; Something
 SetKeyDelay, -1, -1 ; Sets key delay to the lowest possible, there is still delay due to the keyboard hook in GTA, but this makes it excecute as fast as possible WITHOUT skipping keystrokes. Set this a lot higher if you uninstalled the keyboard hook using mods.
 SetWinDelay, -1 ; After any window modifying command, the script has a built in delay. Fuck delays.
@@ -94,13 +95,9 @@ Menu, Tray, Add, Pause Script,        StandardTrayMenu
 Menu, Tray, Add, Exit,                ExitMacros
 Menu, Tray, Default, Open
 
-If (DebugTesting = maybeillusethisometimeinthefuture) { ; Adds some debug text if debug testing is true
-   Menu, Tray, Tip, Ryzen's Macros Version %MacroVersion%-%DebugText%
-   Gui, Show,, Ryzen's Macros Version %MacroVersion%-%DebugText%
-} else {
    Menu, Tray, Tip, Ryzen's Macros Version %MacroVersion%
    Gui, Show,, Ryzen's Macros Version %MacroVersion%
-}
+
 ;MsgBox, 0, Welcome!, HWID Matching! Welcome to Ryzen's Macros. Add me on Discord (cryleak#3961) if you have any issues. Good luck.
 Gosub, StandardTrayMenu
 Return
@@ -684,7 +681,7 @@ return
 Crosshair5:
 WinGetActiveTitle, OldActiveWindow
 GuiControlGet, CrosshairPos
-If not (CrossHairPos = "") {
+;If not (CrossHairPos = "") {
    GuiControlGet, Crosshair
       if(crossHair = 1) {
    Global crossHairW := 21
@@ -707,16 +704,17 @@ If not (CrossHairPos = "") {
    Gui, Crosshair: New, +AlwaysOnTop -Border -Caption
    Gui, Color, backgroundColor
    Gui, Add, Picture, x0 y0 w%crossHairW% h%crossHairH%,  %A_WorkingDir%\assets\crosshair.png
-   Try {
+   ;Try {
       Gui, Show, w%crossHairW% h%crossHairH% x%crossHairX% y%crossHairY%, Crosshair
-   } Catch {
+   ;} Catch {
       Gui, Crosshair: Hide
-   }
+   ;}
    WinSet, TransColor, backgroundColor, Crosshair
       } else {
    Gui, Crosshair: Hide
       }
-} else {
+;}
+ else {
    Gui, Crosshair: Hide
 }
 WinActivate, %OldActiveWindow%
@@ -747,11 +745,11 @@ If not (CrossHairPos = "") {
    Gui, Crosshair: New, +AlwaysOnTop -Border -Caption
    Gui, Color, backgroundColor
    Gui, Add, Picture, x0 y0 w%crossHairW% h%crossHairH%,  %A_WorkingDir%\assets\crosshair.png
-   Try {
+   ;Try {
       Gui, Show, w%crossHairW% h%crossHairH% x%crossHairX% y%crossHairY%, Crosshair
-      } Catch {
+   ;   } Catch {
          Gui, Crosshair: Hide
-   }
+   ;}
    WinSet, TransColor, backgroundColor, Crosshair
       } else {
    Gui, Crosshair: Hide
@@ -982,11 +980,11 @@ LaunchCycle:
       Gui, Crosshair: New, +AlwaysOnTop -Border -Caption
       Gui, Color, backgroundColor
       Gui, Add, Picture, x0 y0 w%crossHairW% h%crossHairH%,  %A_WorkingDir%\assets\crosshair.png
-      Try {
+      ;Try {
          Gui, Show, w%crossHairW% h%crossHairH% x%crossHairX% y%crossHairY%, Crosshair
-         } Catch {
+      ;   } Catch {
             Gui, Crosshair: Hide
-      }
+      ;}
       WinSet, TransColor, backgroundColor, Crosshair
          } else {
       Gui, Crosshair: Hide
@@ -1287,7 +1285,6 @@ Gui, Add, Button, gGTAHax h20, Apply GTAHaX EWO Codes!
 Gui, Add, Button, gGTAHaxCEO h20, bring back the fucking ceo circle
 If (DebugTesting = 1) {
    Gui, Add, Button, gSpotify h20, get rid of noob spotify
-   DebugText = beta
    }
 
 ; Button Links
@@ -1674,3 +1671,9 @@ Return
 ;JustStarted:
 ;JustStarted = 0
 ;Return
+
+LogError(exception) {
+    FileAppend % "Error on line " exception.Line ": " exception.Message "`n"
+        , errorlog.txt
+    return true
+}
