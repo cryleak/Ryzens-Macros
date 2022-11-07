@@ -1,4 +1,4 @@
-SetBatchLines, -1 ; Removes the built in 10ms sleep that happens after every line of code normally. It should never sleep now. It comes at the cost of CPU usage, but anyone with a half decent PC should be fine.
+ SetBatchLines, -1 ; Removes the built in 10ms sleep that happens after every line of code normally. It should never sleep now. It comes at the cost of CPU usage, but anyone with a half decent PC should be fine.
 if not A_IsAdmin ; Runs the script as an admin.
 	Run *RunAs "%A_ScriptFullPath%"
 
@@ -681,109 +681,86 @@ SendInput {Blind}{enter up}
 Send {Blind}{%InteractionMenuKey%}
 return
 
-2Screen2:
-GuiControlGet, 2Screen
-GuiControlGet, 2ScreenSpecial
-If (2Screen = 0) {
-   Global crossHairX := (screenW / 2) - (crossHairH / 2)
-   Global crossHairY := (screenH / 2) - (crossHairH / 2)
-   WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
-}
-else if (2Screen = 1) && (2ScreenSpecial = 0) { 
-   Global crossHairX := (screenW / 4) - (crossHairH / 2)
-   Global crossHairY := (screenH / 2) - (crossHairH / 2)
-   WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
-} else if (2ScreenSpecial = 1) { 
-   Global crossHairX := (screenW / 3.115373439) - (crossHairH / 2)
-   Global crossHairY := (screenH / 2) - (crossHairH / 2)
-   WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
-}
-
 Crosshair5:
-GuiControlGet, Crosshair
-	if(crossHair = 1) {
-Global crossHairW := 21
-Global crossHairH := 21
+WinGetActiveTitle, OldActiveWindow
+GuiControlGet, CrosshairPos
+If not (CrossHairPos = "") {
+   GuiControlGet, Crosshair
+      if(crossHair = 1) {
+   Global crossHairW := 21
+   Global crossHairH := 21
 
-Global backgroundColor := 0xff00cc
+   Global backgroundColor := 0xff00cc
 
-SysGet, screenW, 78
-SysGet, screenH, 79
+   SysGet, screenW, 78
+   SysGet, screenH, 79
 
-GuiControlGet, 2Screen
-GuiControlGet, 2ScreenSpecial
-If (2Screen = 0) {
-   Global crossHairX := (screenW / 2) - (crossHairH / 2)
-   Global crossHairY := (screenH / 2) - (crossHairH / 2)
-   WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
+
+      Global crossHairX := (screenW / CrosshairPos) - (crossHairH / 2)
+      Global crossHairY := (screenH / 2) - (crossHairH / 2)
+      WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
+   IfNotExist, %A_WorkingDir%\assets
+      FileCreateDir, %A_WorkingDir%\assets
+
+   FileInstall, assets\crosshair.png, %A_WorkingDir%\assets\crosshair.png, false
+
+   Gui, Crosshair: New, +AlwaysOnTop -Border -Caption
+   Gui, Color, backgroundColor
+   Gui, Add, Picture, x0 y0 w%crossHairW% h%crossHairH%,  %A_WorkingDir%\assets\crosshair.png
+   Try {
+      Gui, Show, w%crossHairW% h%crossHairH% x%crossHairX% y%crossHairY%, Crosshair
+   } Catch {
+      Gui, Crosshair: Hide
+   }
+   WinSet, TransColor, backgroundColor, Crosshair
+      } else {
+   Gui, Crosshair: Hide
+      }
+} else {
+   Gui, Crosshair: Hide
 }
-else if (2Screen = 1) && (2ScreenSpecial = 0) { 
-   Global crossHairX := (screenW / 4) - (crossHairH / 2)
-   Global crossHairY := (screenH / 2) - (crossHairH / 2)
-   WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
-} else if (2ScreenSpecial = 1) { 
-   Global crossHairX := (screenW / 3.115373439) - (crossHairH / 2)
-   Global crossHairY := (screenH / 2) - (crossHairH / 2)
-   WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
-}
-
-IfNotExist, %A_WorkingDir%\assets
-	FileCreateDir, %A_WorkingDir%\assets
-
-FileInstall, assets\crosshair.png, %A_WorkingDir%\assets\crosshair.png, false
-
-Gui, Crosshair: New, +AlwaysOnTop -Border -Caption
-Gui, Color, backgroundColor
-Gui, Add, Picture, x0 y0 w%crossHairW% h%crossHairH%,  %A_WorkingDir%\assets\crosshair.png
-Gui, Show, w%crossHairW% h%crossHairH% x%crossHairX% y%crossHairY%, Crosshair
-WinSet, TransColor, backgroundColor, Crosshair
-	} else {
-Gui, Crosshair: Hide
-	}
+WinActivate, %OldActiveWindow%
 return
 
 Crosshair6:
-GuiControlGet, Crosshair
-	if(crossHair = 1) {
-Global crossHairW := 21
-Global crossHairH := 21
+WinGetActiveTitle, OldActiveWindow
+GuiControlGet, CrosshairPos
+If not (CrossHairPos = "") {
+   GuiControlGet, Crosshair
+      if(crossHair = 1) {
+   Global crossHairW := 21
+   Global crossHairH := 21
 
-Global backgroundColor := 0xff00cc
+   Global backgroundColor := 0xff00cc
 
-SysGet, screenW, 78
-SysGet, screenH, 79
+   SysGet, screenW, 78
+   SysGet, screenH, 79
 
-GuiControlGet, 2Screen
-GuiControlGet, 2ScreenSpecial
-If (2Screen = 0) {
-   Global crossHairX := (screenW / 2) - (crossHairH / 2)
-   Global crossHairY := (screenH / 2) - (crossHairH / 2)
-   WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
+      Global crossHairX := (screenW / CrosshairPos) - (crossHairH / 2)
+      Global crossHairY := (screenH / 2) - (crossHairH / 2)
+      WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
+   IfNotExist, %A_WorkingDir%\assets
+      FileCreateDir, %A_WorkingDir%\assets
+
+   FileInstall, assets\crosshair.png, %A_WorkingDir%\assets\crosshair.png, false
+
+   Gui, Crosshair: New, +AlwaysOnTop -Border -Caption
+   Gui, Color, backgroundColor
+   Gui, Add, Picture, x0 y0 w%crossHairW% h%crossHairH%,  %A_WorkingDir%\assets\crosshair.png
+   Try {
+      Gui, Show, w%crossHairW% h%crossHairH% x%crossHairX% y%crossHairY%, Crosshair
+      } Catch {
+         Gui, Crosshair: Hide
+   }
+   WinSet, TransColor, backgroundColor, Crosshair
+      } else {
+   Gui, Crosshair: Hide
+      }
+      WinActivate, ahk_class grcWindow
+} else {
+   Gui, Crosshair: Hide
 }
-else if (2Screen = 1) && (2ScreenSpecial = 0) { 
-   Global crossHairX := (screenW / 4) - (crossHairH / 2)
-   Global crossHairY := (screenH / 2) - (crossHairH / 2)
-   WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
-} else if (2ScreenSpecial = 1) { 
-   Global crossHairX := (screenW / 3.115373439) - (crossHairH / 2)
-   Global crossHairY := (screenH / 2) - (crossHairH / 2)
-   WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
-}
-
-IfNotExist, %A_WorkingDir%\assets
-	FileCreateDir, %A_WorkingDir%\assets
-
-FileInstall, assets\crosshair.png, %A_WorkingDir%\assets\crosshair.png, false
-
-Gui, Crosshair: New, +AlwaysOnTop -Border -Caption
-Gui, Color, backgroundColor
-Gui, Add, Picture, x0 y0 w%crossHairW% h%crossHairH%,  %A_WorkingDir%\assets\crosshair.png
-Gui, Show, w%crossHairW% h%crossHairH% x%crossHairX% y%crossHairY%, Crosshair
-WinSet, TransColor, backgroundColor, Crosshair
-	} else {
-Gui, Crosshair: Hide
-	}
-    WinActivate, Grand Theft Auto V
+WinActivate, %OldActiveWindow%
 return
 
 ProcessCheck3:
@@ -869,14 +846,15 @@ return
 
 StickyBind:
 Send {Blind}{%StickyBind%}{tab}
-return
+Return
 
 PistolBind:
 Send {Blind}{%PistolBind%}{tab}
 return
 
 RPGSpam:
-Send {Blind}{%StickyBind%}{%RPGBind%}{tab}
+SendInput {Blind}{%StickyBind% down}
+Send {Blind}{%RPGBind% down}{tab}{%StickyBind% up}{%RPGBind% up}
 return
 
 ToggleCrosshair:
@@ -979,6 +957,9 @@ LaunchCycle:
       else
          Hotkey, ^v, Paste, On
       Gui, Submit, NoHide
+      WinGetActiveTitle, OldActiveWindow
+      GuiControlGet, CrosshairPos
+      If not (CrossHairPos = "") {
       If (CrosshairDone = 0) {
       GuiControlGet, Crosshair
          if(crossHair = 1) {
@@ -989,24 +970,10 @@ LaunchCycle:
 
       SysGet, screenW, 78
       SysGet, screenH, 79
-
-GuiControlGet, 2Screen
-GuiControlGet, 2ScreenSpecial
-If (2Screen = 0) {
-   Global crossHairX := (screenW / 2) - (crossHairH / 2)
+ 
+   Global crossHairX := (screenW / CrosshairPos) - (crossHairH / 2)
    Global crossHairY := (screenH / 2) - (crossHairH / 2)
    WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
-}
-else if (2Screen = 1) && (2ScreenSpecial = 0) { 
-   Global crossHairX := (screenW / 4) - (crossHairH / 2)
-   Global crossHairY := (screenH / 2) - (crossHairH / 2)
-   WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
-} else if (2ScreenSpecial = 1) { 
-   Global crossHairX := (screenW / 3.115373439) - (crossHairH / 2)
-   Global crossHairY := (screenH / 2) - (crossHairH / 2)
-   WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
-}
-
       IfNotExist, %A_WorkingDir%\assets
          FileCreateDir, %A_WorkingDir%\assets
 
@@ -1015,13 +982,21 @@ else if (2Screen = 1) && (2ScreenSpecial = 0) {
       Gui, Crosshair: New, +AlwaysOnTop -Border -Caption
       Gui, Color, backgroundColor
       Gui, Add, Picture, x0 y0 w%crossHairW% h%crossHairH%,  %A_WorkingDir%\assets\crosshair.png
-      Gui, Show, w%crossHairW% h%crossHairH% x%crossHairX% y%crossHairY%, Crosshair
+      Try {
+         Gui, Show, w%crossHairW% h%crossHairH% x%crossHairX% y%crossHairY%, Crosshair
+         } Catch {
+            Gui, Crosshair: Hide
+      }
       WinSet, TransColor, backgroundColor, Crosshair
          } else {
       Gui, Crosshair: Hide
          }
       }
+      } else {
+         Gui, Crosshair: Hide
+      }
       CrosshairDone := 1
+WinActivate, %OldActiveWindow%
 return
 }
 
@@ -1161,8 +1136,6 @@ Return
    GuiControl,,PistolBind,6
    GuiControl,,TabWeapon,0
    GuiControl,,Crosshair,0
-   GuiControl,,2Screen,0
-   GuiControl,,2ScreenSpecial,0
    GuiControl,,Jobs,
    GuiControl,,Paste,0
    GuiControl,,MCCEO,
@@ -1260,9 +1233,8 @@ Gui, Add, Link,x+5 y60, BST Less Reliable <a href="https://github.com/cryleak/Ry
 Gui, Add, Link,, Check if GTA open <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Check-if-GTA-is-Open">(?)</a> 
 Gui, Add, Link,, Faster Sniper Switch <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Faster-Sniper-Switch">(?)</a> 
 Gui, Add, Link,, Crosshair: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Crosshair">(?)</a> 
+Gui, Add, Link,, Custom crosshair position: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Custom-crosshair-position">(?)</a> 
 Gui, Add, Link,, Night Vision Thermal <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Night-Vision-Thermal">(?)</a> 
-Gui, Add, Link,, 2 screen setup? <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/2-Screen-Setup">(?)</a> 
-Gui, Add, Link,, 21:9 + 16:9? <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/21:9----16:9">(?)</a> 
 Gui, Add, Link,, Slower EWO? <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Slower-EWO">(?)</a> 
 Gui, Add, Link,, Slower EWO Mode: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Slower-EWO">(?)</a> 
 Gui, Add, Link,, CEO Mode: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/CEO-Mode">(?)</a> 
@@ -1272,9 +1244,8 @@ Gui, Add, Checkbox,vBSTSpeed h20 x+105 y60,
 Gui, Add, CheckBox, gProcessCheck3 vProcessCheck2 h20,
 Gui, Add, CheckBox, vFasterSniper h20,
 Gui, Add, Checkbox, gCrossHair5 vCrossHair h20,
+Gui, Add, Edit, gCrosshair5 vCrosshairPos h20,
 Gui, Add, CheckBox, vNightVision h20,
-Gui, Add, Checkbox, g2Screen2 v2Screen h20,
-Gui, Add, Checkbox, g2Screen2 v2ScreenSpecial h20,
 Gui, Add, Checkbox, vSmoothEWO h20,
 Gui, Add, DropDownList, vSmoothEWOMode, Fast Respawn|Sticky|Retarded|Retarded2|Slow|Faster|Fastest
 Gui, Add, CheckBox, vCEOMode h20,
@@ -1393,8 +1364,7 @@ Gui,Submit,NoHide
    IniWrite,%PistolBind%,%CFG%,Keybinds,Pistol Bind
    IniWrite,%TabWeapon%,%CFG%,Misc,Tab Weapon
    IniWrite,%Crosshair%,%CFG%,Misc,Crosshair
-   IniWrite,%2Screen%,%CFG%,Misc,2 Screen Setup
-   IniWrite,%2ScreenSpecial%,%CFG%,Misc,Ultrawide Double Screen Setup
+   IniWrite,%CrosshairPos%,%CFG%,Misc,Crosshair Position
    IniWrite,%Jobs%,%CFG%,Misc,Disable All Job Blips
    IniWrite,%Paste%,%CFG%,Misc,Allow Copy Paste
    IniWrite,%MCCEO%,%CFG%,Misc,MC CEO Toggle
@@ -1532,8 +1502,7 @@ IfExist, %CFG%
    IniRead,Read_PistolBind,%CFG%,Keybinds,Pistol Bind
    IniRead,Read_TabWeapon,%CFG%,Misc,Tab Weapon
    IniRead,Read_Crosshair,%CFG%,Misc,Crosshair
-   IniRead,Read_2Screen,%CFG%,Misc,2 Screen Setup
-   IniRead,Read_2ScreenSpecial,%CFG%,Misc,Ultrawide Double Screen Setup
+   IniRead,Read_CrosshairPos,%CFG%,Misc,Crosshair Position
    IniRead,Read_Jobs,%CFG%,Misc,Disable All Job Blips
    IniRead,Read_Paste,%CFG%,Misc,Allow Copy Paste
    IniRead,Read_MCCEO,%CFG%,Misc,MC CEO Toggle
@@ -1601,8 +1570,7 @@ IfExist, %CFG%
    GuiControl,,PistolBind,%Read_PistolBind%
    GuiControl,,TabWeapon,%Read_TabWeapon%
    GuiControl,,Crosshair,%Read_Crosshair%
-   GuiControl,,2Screen,%Read_2Screen%
-   GuiControl,,2ScreenSpecial,%Read_2ScreenSpecial%
+   GuiControl,,CrosshairPos,%Read_CrosshairPos%
    GuiControl,,Jobs,%Read_Jobs%
    GuiControl,,Paste,%Read_Paste%
    GuiControl,,MCCEO,%Read_MCCEO%
