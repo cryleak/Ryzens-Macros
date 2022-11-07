@@ -1,7 +1,7 @@
  SetBatchLines, -1 ; Removes the built in 10ms sleep that happens after every line of code normally. It should never sleep now. It comes at the cost of CPU usage, but anyone with a half decent PC should be fine.
 if not A_IsAdmin ; Runs the script as an admin.
 	Run *RunAs "%A_ScriptFullPath%"
-
+jj
 ; Debug:
 ; /*
 ListLines Off ; Removes line history, makes the script slightly more secret.
