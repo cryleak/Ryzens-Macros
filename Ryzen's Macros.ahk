@@ -1,7 +1,7 @@
  SetBatchLines, -1 ; Removes the built in 10ms sleep that happens after every line of code normally. It should never sleep now. It comes at the cost of CPU usage, but anyone with a half decent PC should be fine.
 if not A_IsAdmin ; Runs the script as an admin.
 	Run *RunAs "%A_ScriptFullPath%"
-jj
+
 ; Debug:
 ; /*
 ListLines Off ; Removes line history, makes the script slightly more secret.
@@ -50,8 +50,6 @@ IniRead,DebugTesting,%CFG%,Debug,Debug Testing ; Checks if debug testing is true
 #HotkeyInterval 99000000 ; Same as the other hotkey interval setting
 #Persistent ; Makes the script never exit, probably unneccassary because other commands (like hotkey) already cause it to never exit.
 SetTitleMatchMode, 2 ; I forgor :dead_skull:
-OnError("LogError")
-fdhfg
 SetDefaultMouseSpeed, 0 ; Something
 SetKeyDelay, -1, -1 ; Sets key delay to the lowest possible, there is still delay due to the keyboard hook in GTA, but this makes it excecute as fast as possible WITHOUT skipping keystrokes. Set this a lot higher if you uninstalled the keyboard hook using mods.
 SetWinDelay, -1 ; After any window modifying command, the script has a built in delay. Fuck delays.
@@ -704,11 +702,11 @@ GuiControlGet, CrosshairPos
    Gui, Crosshair: New, +AlwaysOnTop -Border -Caption
    Gui, Color, backgroundColor
    Gui, Add, Picture, x0 y0 w%crossHairW% h%crossHairH%,  %A_WorkingDir%\assets\crosshair.png
-   ;Try {
+   Try {
       Gui, Show, w%crossHairW% h%crossHairH% x%crossHairX% y%crossHairY%, Crosshair
-   ;} Catch {
+   } Catch {
       Gui, Crosshair: Hide
-   ;}
+   }
    WinSet, TransColor, backgroundColor, Crosshair
       } else {
    Gui, Crosshair: Hide
@@ -745,11 +743,11 @@ If not (CrossHairPos = "") {
    Gui, Crosshair: New, +AlwaysOnTop -Border -Caption
    Gui, Color, backgroundColor
    Gui, Add, Picture, x0 y0 w%crossHairW% h%crossHairH%,  %A_WorkingDir%\assets\crosshair.png
-   ;Try {
+   Try {
       Gui, Show, w%crossHairW% h%crossHairH% x%crossHairX% y%crossHairY%, Crosshair
-   ;   } Catch {
+      } Catch {
          Gui, Crosshair: Hide
-   ;}
+   }
    WinSet, TransColor, backgroundColor, Crosshair
       } else {
    Gui, Crosshair: Hide
@@ -980,11 +978,11 @@ LaunchCycle:
       Gui, Crosshair: New, +AlwaysOnTop -Border -Caption
       Gui, Color, backgroundColor
       Gui, Add, Picture, x0 y0 w%crossHairW% h%crossHairH%,  %A_WorkingDir%\assets\crosshair.png
-      ;Try {
+      Try {
          Gui, Show, w%crossHairW% h%crossHairH% x%crossHairX% y%crossHairY%, Crosshair
-      ;   } Catch {
+         } Catch {
             Gui, Crosshair: Hide
-      ;}
+      }
       WinSet, TransColor, backgroundColor, Crosshair
          } else {
       Gui, Crosshair: Hide
@@ -1671,9 +1669,3 @@ Return
 ;JustStarted:
 ;JustStarted = 0
 ;Return
-
-LogError(exception) {
-    FileAppend % "Error on line " exception.Line ": " exception.Message "`n"
-        , errorlog.txt
-    return true
-}
