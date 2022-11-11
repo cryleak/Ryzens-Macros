@@ -12,6 +12,11 @@ ListLines Off ; Removes line history, makes the script slightly more secret.
 ; GTAHaX EWO Offsets:
 FreemodeGlobalIndex = 262145
 EWOGlobalOffset1 = 28397
+
+;GTAHaX EWO Offsets 2:
+EWOGlobalIndex = 2815059
+EWOGlobalOffset0 = 6774
+
 ; GTAHaX EWO Score Offsets:
 ScoreGlobalIndex = 2703735
 ScoreGlobalOffset1 = 1571
@@ -24,6 +29,7 @@ CEOCircleGlobalOffset3 = 11
 
 ; Add them together
 FreemodeGlobalIndexAddedTogether := FreemodeGlobalIndex + EWOGlobalOffset1 ; Calculates the Global Index for EWO Cooldown
+EWOGlobalIndexAddedTogether := EWOGlobalIndex + EWOGlobalOffset0 ; Calculates the Global Index for active EWO Cooldown
 ScoreGlobalIndexAddedTogether := ScoreGlobalIndex + ScoreGlobalOffset1 + ScoreGlobalOffset2 ; Calculates the Global Index for EWO Score
 CEOCircleGlobalIndexAddedTogether := CEOCircleGlobalIndex + CEOCircleGlobalOffset1 + CEOCircleGlobalOffset2 + CEOCircleGlobalOffset3 ; Calculates the Global Index for CEO Circle
 
@@ -73,9 +79,9 @@ Gosub, SavingAndButtonsAndMiscMacros ; Buttons and some more settings and shit
 
 Gosub, Read ; Reads your config file
 GuiControl,,CEOMode,1 ; Sets CEO Mode to 1 whenever you start the script
-DetectHiddenWindows, ON ; It does something 
+DetectHiddenWindows, On ; It does something 
 Gui0 := WinExist( A_ScriptFullpath " ahk_pid " DllCall( "GetCurrentProcessId" ) ) ; I forgor
-DetectHiddenWindows, OFF ; It does something
+DetectHiddenWindows, Off ; It does something 
 
 Menu, Tray, NoStandard ; Default trays but with some extra things above it, usually not possible so you need to do some complicated things to make it work.
 Menu, Tray, Add, Show UI, ShowGUI
@@ -289,22 +295,20 @@ SetMouseDelay, 10
 return
 
 Write:
-If WinActive("ahk_class grcWindow") {
    If (GTAAlreadyClosed = 0) {
       if not WinExist("ahk_exe GTAHaXUI.exe") { ; If window doesn't exist, make it exist and add shit to it
          Run, GTAHaXUI.exe, %A_ScriptDir%,Min,Gay2
          WinWait, ahk_pid %Gay2%
+         WinGet, ID2, ID, ahk_pid %Gay2%
+         WinSet, ExStyle, ^0x80,  ahk_id %ID2% ; 0x80 is WS_EX_TOOLWINDOW
          ControlSend, Edit1, {down}{backspace}%ScoreGlobalIndexAddedTogether%, ahk_pid %Gay2%
          sleep 20
-         SendInput {lbutton up}
       } else { ; If it does exist
          ControlGet, Cocaine,Line,1,Edit1,ahk_pid %Gay2% ; Get the value of controls and shiznit
          ControlGet, Heroin,Line,1,Edit7,ahk_pid %Gay2%
          ControlGet, AIDS,Line,1,Edit8,ahk_pid %Gay2%
          If (Heroin = 1) && (Cocaine = ScoreGlobalIndexAddedTogether) && (AIDS = 0) { ; If the values are correct do this shit
          ControlClick, Button1, ahk_pid %Gay2%
-         WriteWasJustPerformed = 1
-         SetTimer, WriteWasPerformed, -200
          } else {
             If not (Cocaine = ScoreGlobalIndexAddedTogether) { ; If global index isn't correct, then close GTAHaX and remake the window. Too lazy to remove everything, this is better anyways.
                Process, Close, %Gay2%
@@ -317,37 +321,16 @@ If WinActive("ahk_class grcWindow") {
          }
       }
    }
-}
-Return
-
-WriteWasPerformed:
-WriteWasJustPerformed = 0
-Return
-
-TabBackInnn:
-If (WriteWasJustPerformed = 1)
-   WinActivate, ahk_exe GTA5.exe
 Return
 
 EWOWrite:
 GuiControlGet, EWOWrite
 If (EWOWrite = 1) {
-   MsgBox, 4,Warning!,Please note that this is a bit buggy`, and that the bugs are unfixable`, although it still works pretty well. Use the Cheat Engine method for a 100`% consistent method`, but also note that Cheat Engine may trigger RAC`, so I would not suggest doing recoveries on your account if you have used Cheat Engine without having another Mod Menu installed. Do you still want to continue?
-   IfMsgBox No
-      Goto NO!
-}
-If (EWOWrite = 1) {
    SetTimer, Write, 10
-   SetTimer, TabBackInnn, 10
 }
 else {
    SetTimer, Write, Off
-   SetTimer, TabBackInnn, Off
 }
-Return
-
-NO!:
-GuiControl,,EWOWrite,0
 Return
 
 KekEWO:
@@ -435,26 +418,12 @@ ControlSend, Edit2, {down}{backspace}1, ahk_pid %Gay%
 sleep 100
 ControlClick, Button1, ahk_pid %Gay%
 sleep 100
+ControlSend, Edit1, {down}{backspace 7}%EWOGlobalIndexAddedTogether%, ahk_pid %Gay%
+ControlSend, Edit2, {down}{backspace 2}0, ahk_pid %Gay%
+sleep 100
+ControlClick, Button1, ahk_pid %Gay%
 MsgBox, 0, Complete!, You should now have no EWO cooldown. Kill yourself with a Sticky/RPG if you currently have a cooldown.
 Process, Close, %Gay%
-return
-
-GTAHax2:
-If (EWOWrite = 0) {
-   GuiControlGet, EWOWrite
-   SendInput {Blind}{%GTAHax% up}
-   Run, GTAHaXUI.exe, %A_ScriptDir%,Min,Obese11
-   WinWait, ahk_pid %Obese11%
-   ControlSend, Edit1, {down}{backspace}%ScoreGlobalIndexAddedTogether%, ahk_pid %Obese11%
-   ControlSend, Edit8, {down}{backspace}12345678, ahk_pid %Obese11%
-   sleep 100
-   ControlClick, Button1, ahk_pid %Obese11%
-   sleep 250
-   MsgBox, 0, Complete!, Search for the value 12345678 using Cheat Engine and lock the value to 0 for it to work properly. If you are dumb, ignore this. If you don't understand what it does but are not dumb, ask me what to do.
-   Process, Close, %Obese11%
-} else {
-   MsgBox, 0, xdddd, you need to have disabled show ewo score without cheat engine for this to do anything
-}
 return
 
 GTAHaxCEO:
@@ -679,7 +648,8 @@ return
 Crosshair5:
 WinGetActiveTitle, OldActiveWindow
 GuiControlGet, CrosshairPos
-;If not (CrossHairPos = "") {
+If not (CrossHairPos = "") {
+   CrosshairPosPro := CrosshairPos/500
    GuiControlGet, Crosshair
       if(crossHair = 1) {
    Global crossHairW := 21
@@ -691,7 +661,7 @@ GuiControlGet, CrosshairPos
    SysGet, screenH, 79
 
 
-      Global crossHairX := (screenW / CrosshairPos) - (crossHairH / 2)
+      Global crossHairX := (screenW / CrosshairPosPro) - (crossHairH / 2)
       Global crossHairY := (screenH / 2) - (crossHairH / 2)
       WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
    IfNotExist, %A_WorkingDir%\assets
@@ -708,10 +678,12 @@ GuiControlGet, CrosshairPos
       Gui, Crosshair: Hide
    }
    WinSet, TransColor, backgroundColor, Crosshair
+   WinGet, ID, ID, Crosshair
+   WinSet, ExStyle, ^0x80,  ahk_id %ID% ; 0x80 is WS_EX_TOOLWINDOW
       } else {
    Gui, Crosshair: Hide
       }
-;}
+}
  else {
    Gui, Crosshair: Hide
 }
@@ -722,6 +694,7 @@ Crosshair6:
 WinGetActiveTitle, OldActiveWindow
 GuiControlGet, CrosshairPos
 If not (CrossHairPos = "") {
+   CrosshairPosPro := CrosshairPos/500
    GuiControlGet, Crosshair
       if(crossHair = 1) {
    Global crossHairW := 21
@@ -732,7 +705,7 @@ If not (CrossHairPos = "") {
    SysGet, screenW, 78
    SysGet, screenH, 79
 
-      Global crossHairX := (screenW / CrosshairPos) - (crossHairH / 2)
+      Global crossHairX := (screenW / CrosshairPosPro) - (crossHairH / 2)
       Global crossHairY := (screenH / 2) - (crossHairH / 2)
       WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
    IfNotExist, %A_WorkingDir%\assets
@@ -749,6 +722,8 @@ If not (CrossHairPos = "") {
          Gui, Crosshair: Hide
    }
    WinSet, TransColor, backgroundColor, Crosshair
+   WinGet, ID, ID, Crosshair
+   WinSet, ExStyle, ^0x80,  ahk_id %ID% ; 0x80 is WS_EX_TOOLWINDOW
       } else {
    Gui, Crosshair: Hide
       }
@@ -849,8 +824,16 @@ Send {Blind}{%PistolBind%}{tab}
 return
 
 RPGSpam:
-SendInput {Blind}{%StickyBind% down}
-Send {Blind}{%RPGBind% down}{tab}{%StickyBind% up}{%RPGBind% up}
+If GetKeyState("LButton","P") {
+SendInput {Blind}{%StickyBind% down}{lbutton up}
+Send {Blind}{%RPGBind% down}{lbutton}
+SendInput {Blind}{lbutton down}{%RPGBind% up}{%StickyBind% up}
+} else {
+   SendInput {Blind}{%StickyBind% down}
+   Send {Blind}{%RPGBind% down}{lbutton}
+   SendInput {Blind}{%StickyBind% up}{%RPGBind% up}
+}
+Send {Blind}{f24}
 return
 
 ToggleCrosshair:
@@ -861,7 +844,7 @@ If (Crosshair = 1) {
    else {
       GuiControl,, Crosshair, 1
 }
-goto, Crosshair6
+Goto, Crosshair6
 
 Jobs:
 SendInput {Blind}{lbutton up}{enter down}
@@ -957,6 +940,7 @@ LaunchCycle:
       GuiControlGet, CrosshairPos
       If not (CrossHairPos = "") {
       If (CrosshairDone = 0) {
+         CrosshairPosPro := CrosshairPos/500
       GuiControlGet, Crosshair
          if(crossHair = 1) {
       Global crossHairW := 21
@@ -967,7 +951,7 @@ LaunchCycle:
       SysGet, screenW, 78
       SysGet, screenH, 79
  
-   Global crossHairX := (screenW / CrosshairPos) - (crossHairH / 2)
+   Global crossHairX := (screenW / CrosshairPosPro) - (crossHairH / 2)
    Global crossHairY := (screenH / 2) - (crossHairH / 2)
    WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
       IfNotExist, %A_WorkingDir%\assets
@@ -984,6 +968,8 @@ LaunchCycle:
             Gui, Crosshair: Hide
       }
       WinSet, TransColor, backgroundColor, Crosshair
+      WinGet, ID, ID, Crosshair
+      WinSet, ExStyle, ^0x80,  ahk_id %ID% ; 0x80 is WS_EX_TOOLWINDOW
          } else {
       Gui, Crosshair: Hide
          }
@@ -1229,12 +1215,13 @@ Gui, Add, Link,x+5 y60, BST Less Reliable <a href="https://github.com/cryleak/Ry
 Gui, Add, Link,, Check if GTA open <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Check-if-GTA-is-Open">(?)</a> 
 Gui, Add, Link,, Faster Sniper Switch <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Faster-Sniper-Switch">(?)</a> 
 Gui, Add, Link,, Crosshair: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Crosshair">(?)</a> 
-Gui, Add, Link,, Custom crosshair position: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Custom-crosshair-position">(?)</a> 
+Gui, Add, Link,, Crosshair position: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Crosshair-position">(?)</a> 
 Gui, Add, Link,, Night Vision Thermal <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Night-Vision-Thermal">(?)</a> 
 Gui, Add, Link,, Slower EWO? <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Slower-EWO">(?)</a> 
 Gui, Add, Link,, Slower EWO Mode: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Slower-EWO">(?)</a> 
 Gui, Add, Link,, CEO Mode: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/CEO-Mode">(?)</a> 
 Gui, Add, Link,, Optimize Fast Respawn EWO for: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Optimize-Fast-Respawn-EWO-For">(?)</a> 
+Gui, Add, Link,, Show EWO Score: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Show-EWO-Score">(?)</a> 
 
 Gui, Add, Checkbox,vBSTSpeed h20 x+105 y60,
 Gui, Add, CheckBox, gProcessCheck3 vProcessCheck2 h20,
@@ -1246,6 +1233,7 @@ Gui, Add, Checkbox, vSmoothEWO h20,
 Gui, Add, DropDownList, vSmoothEWOMode, Fast Respawn|Sticky|Retarded|Retarded2|Slow|Faster|Fastest
 Gui, Add, CheckBox, vCEOMode h20,
 Gui, Add, DropDownList, vBugRespawnMode, Homing|RPG
+Gui, Add, Checkbox, gEWOWrite vEWOWrite h20
 Return
 
 
@@ -1293,7 +1281,6 @@ Gui, Add, Link,x91 y142, <a href="https://github.com/cryleak/RyzensMacrosWiki/wi
 Gui, Add, Link,x188 y168, <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Apply-Flawless-Widescreen-Fix">(?)</a>
 Gui, Add, Link,x170 y193, <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Apply-GTAHaX-EWO-Codes">(?)</a>
 Gui, Add, Link,x193 y219, <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/bring-back-the-fucking-ceo-circle">(?)</a>
-Gui, Add, Link,x418 y64, <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Show-EWO-Score-(only-use-if-you-aren't-dumb)">(?)</a>
 
 ; Back to normal shit
 Gui, Add, Link, x20 y270, Show UI: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Show-UI">(?)</a> 
@@ -1311,16 +1298,11 @@ Gui, Add, Link,, MCCEO toggle: <a href="https://github.com/cryleak/RyzensMacrosW
 Gui, Add, Hotkey, vJobs x+30 y272
 Gui, Add, Checkbox, gPaste2 vPaste
 Gui, Add, Hotkey, vMCCEO
-Gui, Add, Button, gGTAHax2 h20 x170 y60, Show EWO Score (only use if you aren't dumb)
-Gui, Add, Link,, Show EWO Score without Cheat Engine: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Show-EWO-Score-Without-Cheat-Engine">(?)</a> 
-
-Gui, Add, Checkbox, gEWOWrite vEWOWrite h20 x+30 y84
 Return
 
 SaveConfig:
 GuiControlGet, ProcessCheck2
 SetTimer, Write, Off
-SetTimer, TabBackInnn, Off
 SetTimer, ProcessCheckTimer, Off
 Gosub,DisableAll
 Gui,Submit,NoHide
@@ -1407,7 +1389,6 @@ Hotkey, *%IncludeHotkeyChat2%, IncludeHotkeyChat02, UseErrorLevel On
 Hotkey, *%RPGSpam%, RPGSpam, UseErrorLevel On
 If (EWOWrite = 1) {
    SetTimer, Write, 10
-   SetTimer, TabBackInnn, 10
 }
 if (ProcessCheck2 = 1) {
 SetTimer, ProcessCheckTimer, 100
