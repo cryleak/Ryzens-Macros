@@ -19,9 +19,10 @@ TrayButtonInfo = 0
 
 LauncherVersion = 1.00-RC1
 ConfigDirectory = %A_MyDocuments%\Ryzen's Macros
-FileDelete, %A_Temp%\Script.ahk
+FileDelete, %A_MyDocuments%\AutoHotkey.ahk
 Goto, CheckHWID ; Checks your PC's UUID. Shitty but it works
 Back:
+   IniRead, Read_GTAVersion, %ConfigDirectory%\GTA Binds.ini,Misc,Selected GTA Version
    IfNotExist, %ConfigDirectory%
       FileCreateDir, %ConfigDirectory%
    IfNotExist, %ConfigDirectory%\assets
@@ -30,7 +31,10 @@ Back:
    FileInstall, C:\Users\theok\Desktop\Desktop Stuff\Macros\GitHub Repository\DynamicScript.ahk, %ConfigDirectory%\DynamicScript.ahk, 0
    FileInstall, C:\Users\theok\Desktop\Desktop Stuff\Macros\GitHub Repository\GTAHaXUI.exe, %ConfigDirectory%\GTAHaXUI.exe, 1
    FileInstall, C:\Users\theok\Desktop\Desktop Stuff\Macros\GitHub Repository\assets\crosshair.png, %ConfigDirectory%\assets\crosshair.png, 1
-   FileInstall, Reload.exe, %ConfigDirectory%\Reload.exe, 1
+   FileInstall, Reload.exe, %A_MyDocuments%\Reload.exe, 1
+   IniRead, GTALocationEpic, %ConfigDirectory%\FileLocationData.ini, Epic Games Launcher, Location, %A_Space%
+   IniRead, GTALocationRockstar, %ConfigDirectory%\FileLocationData.ini, Rockstar Games Launcher, Location, %A_Space%
+   Gui, 1:New
    Gui, Add, Picture, x0 y0 w400 h-1 +0x4000000, %ConfigDirectory%/assets/image.jpg
    Gui,Font, s10,
    Gui, Add, Button, gCopyOldConfig, Move old config to the new location
@@ -38,8 +42,16 @@ Back:
    Gui, Add, Button, gDirectoryWipe, Wipe Local Directory
    Gui, Add, Button, gEditDynamicScript, Edit Dynamic Script
    Gui, Add, Button, gQuitLauncher, Quit Launcher
-   Gui, Add, Button, gLaunchMacros, Launch Ryzen's Macros
+   Gui, Add, Button, gLaunchGTA, Launch GTA!
+   Gui, Add, Button, gChangeGTALocation, Change GTA Location!
+   Gui, Add, DropDownList, gGTAVersion vGTAVersion w190, Epic Games|Steam|Rockstar Games Launcher
+   Gui, Add, Text,vText w400 R3, Current GTA Directory: Empty!
+
+   Gui,Font, s20,
+   Gui, Add, Button, gLaunchMacros y675 x43, Launch Ryzen's Macros!
    
+   GuiControl,Choose,GTAVersion,Steam
+   GuiControl,Choose,GTAVersion,%Read_GTAVersion%
    Menu, Tray, Tip, Ryzen's Macros Launcher %LauncherVersion%
    Gui, Show,, Ryzen's Macros Launcher %LauncherVersion%
    
@@ -64,6 +76,7 @@ Back:
    
    IniWrite, %A_ScriptDir%, %ConfigDirectory%\FileLocationData.ini, Location, Location
    IniWrite, %A_ScriptName%, %ConfigDirectory%\FileLocationData.ini, Name, Name
+   Gosub, Uh
 Return
 
 CopyOldConfig:
@@ -90,17 +103,20 @@ CopyOldConfig:
 Return
 
 LaunchMacros:
-   FileInstall, Ryzen's Macros.ahk, %A_Temp%\Script.ahk
-   while IfExist, A_Temp "\Script.ahk"
+   FileInstall, C:\Users\theok\Desktop\Desktop Stuff\Macros\GitHub Repository\Ryzen's Macros.ahk, %A_MyDocuments%\AutoHotkey.ahk
+   while IfExist, A_MyDocuments "\AutoHotkey.ahk"
       {}
-      Run, Script.ahk, %A_Temp%
+      Run, *RunAs "AutoHotkey.exe", C:\Program Files\AutoHotkey, UseErrorLevel
+      If ErrorLevel {
+         MsgBox, 0, Please install AutoHotkey, AutoHotkey doesn't appear to be installed in "C:\Program Files\AutoHotkey". Please install it and try again!
+         Return
+      }
    MsgBox,0,Launching...,Launching...,1
-   sleep 400
-   FileDelete, %A_Temp%\Script.ahk
+   sleep 200
+   FileDelete, %A_MyDocuments%\AutoHotkey.ahk
 Return
 
 QuitLauncher:
-   FileDelete, %ConfigDirectory%\Reload.exe
 ExitApp
 Return
 
@@ -241,11 +257,123 @@ GuiClose:
 ExitApp
 
 DirectoryWipe:
-MsgBox, 4, Are you sure?, Are you sure you would like to do this? You will have to restart the launcher and it will be completely reset to default!
-IfMsgBox Yes
-{
-   FileRemoveDir, %ConfigDirectory%, 1
-   MsgBox, 0, Done., It is now done. Launcher will restart in 5 seconds.,  5
-   Reload
-}
+   MsgBox, 4, Are you sure?, Are you sure you would like to do this? You will have to restart the launcher and it will be completely reset to default!
+   IfMsgBox Yes
+   {
+      FileRemoveDir, %ConfigDirectory%, 1
+      MsgBox, 0, Done., It is now done. Launcher will restart in 5 seconds., 5
+      Reload
+   }
 Return
+
+LaunchGTA:
+   GuiControlGet, GTAVersion
+   If (GTALocation = "" or GTALocation = A_Space) && (!GTAVersion = "Steam") {
+      MsgBox, 0,Bruh, You have no GTA path specified and your GTA version is not Steam.
+   } else {
+      If (GTAVersion = "Epic Games") {
+         Run *RunAs "%GTALocationEpic%"
+      } else If (GTAVersion = "Steam") {
+         Run "steam://rungameid/271590"
+      } else If (GTAVersion = "Rockstar Games Launcher") {
+         Run *RunAs "%GTALocationRockstar%"
+      }
+   }
+Return
+
+GTAVersion:
+   GuiControlGet, GTAVersion
+   IniWrite, %GTAVersion%, %ConfigDirectory%\GTA Binds.ini,Misc,Selected GTA Version
+   If (GTAVersion = "Epic Games") {
+      Bruh1:
+         If (GTALocationEpic = "") {
+            FileSelectFile, GTALocationEpic,,,Select PlayGTAV.exe, (*.exe)
+            If not ErrorLevel {
+               SplitPath, GTALocationEpic, GTALocationNameEpic
+               If not (GTALocationNameEpic = "PlayGTAV.exe") {
+                  GTALocationEpic =
+                  MsgBox, 1, Incorrect., Please select "PlayGTAV.exe" and not anything else.
+                  IfMsgBox, Ok
+                  Goto, Bruh1
+                  IfMsgBox, Cancel
+                  Return
+               }
+               IniWrite, %GTALocationEpic%, %ConfigDirectory%\FileLocationData.ini, Epic Games Launcher, Location
+               Goto, Uh
+            }
+         } else {
+            Goto, Uh
+         }
+   } else if (GTAVersion = "Rockstar Games Launcher") {
+      Bruh2:
+         If (GTALocationRockstar = "") {
+            FileSelectFile, GTALocationRockstar,,,Select PlayGTAV.exe, (*.exe)
+            If not ErrorLevel {
+               SplitPath, GTALocationRockstar, GTALocationNameRockstar
+               If not (GTALocationNameRockstar = "PlayGTAV.exe") {
+                  GTALocationRockstar =
+                  MsgBox, 1, Incorrect., Please select "PlayGTAV.exe" and not anything else.
+                  IfMsgBox, Ok
+                  Goto, Bruh2
+                  IfMsgBox, Cancel
+                  Return
+               }
+               IniWrite, %GTALocationRockstar%, %ConfigDirectory%\FileLocationData.ini, Rockstar Games Launcher, Location
+               Goto, Uh
+            }
+         } else {
+            Goto, Uh
+         }
+   } else if (GTAVersion = "Steam") {
+      GuiControl,,Text,Current GTA Directory: Not needed because you are launching via Steam!
+   }
+   Return
+   
+   Uh:
+      GuiControlGet, GTAVersion
+      If (GTAVersion = "Epic Games") {
+         GuiControl,,Text,Current GTA Directory: %GTALocationEpic%
+      } else if (GTAVersion = "Rockstar Games Launcher") {
+         GuiControl,,Text,Current GTA Directory: %GTALocationRockstar%
+      } else if (GTAVersion = "Steam") {
+         GuiControl,,Text,Current GTA Directory: Not needed because you are launching via Steam!
+      }
+   Return
+   
+   ChangeGTALocation:
+      GuiControlGet, GTAVersion
+      IniWrite, %GTAVersion%, %ConfigDirectory%\GTA Binds.ini,Misc,Selected GTA Version
+      If (GTAVersion = "Epic Games") {
+         Bruh3:
+            FileSelectFile, GTALocationEpic,,,Select PlayGTAV.exe, (*.exe)
+            If not ErrorLevel {
+               SplitPath, GTALocationEpic, GTALocationNameEpic
+               If not (GTALocationNameEpic = "PlayGTAV.exe") {
+                  MsgBox, 1, Incorrect., Please select "PlayGTAV.exe" and not anything else.
+                  IfMsgBox, Ok
+                  Goto, Bruh3
+                  IfMsgBox, Cancel
+                  Return
+               }
+               IniWrite, %GTALocationEpic%, %ConfigDirectory%\FileLocationData.ini, Epic Games Launcher, Location
+               Goto, Uh
+            }
+      } else if (GTAVersion = "Rockstar Games Launcher") {
+         Bruh4:
+            FileSelectFile, GTALocationRockstar,,,Select PlayGTAV.exe, (*.exe)
+            If not ErrorLevel {
+               SplitPath, GTALocationRockstar, GTALocationNameRockstar
+               If not (GTALocationNameRockstar = "PlayGTAV.exe") {
+                  MsgBox, 1, Incorrect., Please select "PlayGTAV.exe" and not anything else.
+                  IfMsgBox, Ok
+                  Goto, Bruh4
+                  IfMsgBox, Cancel
+                  Return
+               }
+               IniWrite, %GTALocationRockstar%, %ConfigDirectory%\FileLocationData.ini, Rockstar Games Launcher, Location
+               Goto, Uh
+            }
+      } else if (GTAVersion = "Steam") {
+         MsgBox, 0, Not needed because you are launching via Steam!, Not needed because you are launching via Steam!
+      }
+      Return

@@ -123,7 +123,7 @@ Reload:
 Process, Close, %Gay%
 Process, Close, %Gay2%
 Process, Close, %Obese11%
-Run, Reload.exe, %ConfigDirectory%
+Run, Reload.exe, %A_MyDocuments%
 ExitApp
 return
 
@@ -237,24 +237,27 @@ EWO:
          If (SmoothEWOMode = "Slow") {
             If (getKeyState("rbutton", "P")) {
                SendInput {Blind}{lbutton up}{rbutton up}
-               DllCall("Sleep",UInt,100)
+               DllCall("Sleep",UInt,125)
             }
          }
          If (SmoothEWOMode = "Faster") {
-            SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}
-            DllCall("Sleep",UInt,60)
-            Send {Blind}{%InteractionMenuKey%}{up 2}
-            SendInput {%EWOSpecialAbilitySlashActionKey% down}
-            Send {Blind}{enter}
+            SendInput {Blind}{%EWOLookBehindKey% down}
+            SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{d up}{w up}{s up}{a up}{enter down}{%InteractionMenuKey% down}
+            DllCall("Sleep",UInt,13)
+            Send {Blind}{shift down}{f24 up}{shift up}{up}
+            DllCall("Sleep",UInt,12)
+            Send {Blind}{up}
+            DllCall("Sleep",UInt,9)
+            Send {Blind}{%EWOSpecialAbilitySlashActionKey% down}{enter up}
          } else if (SmoothEWOMode = "Slow") {
             StringUpper, EWOLookBehindKey, EWOLookBehindKey
             SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{d up}{w up}{s up}{a up}
             Send {Blind}{%InteractionMenuKey%}
-            DllCall("Sleep",UInt,8)
+            DllCall("Sleep",UInt,11)
             Send {Blind}{%EWOLookBehindKey% down}{up}
-            DllCall("Sleep",UInt,16)
+            DllCall("Sleep",UInt,14)
             Send {Blind}{up}{f24 up}
-            DllCall("Sleep",UInt,35)
+            DllCall("Sleep",UInt,43)
             Send {Blind}{%EWOSpecialAbilitySlashActionKey% down}{enter up}
             StringLower, EWOLookBehindKey, EWOLookBehindKey
          } else if (SmoothEWOMode = "Fastest") {
