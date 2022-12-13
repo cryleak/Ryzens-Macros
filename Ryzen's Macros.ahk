@@ -17,18 +17,18 @@ TrayButtonInfo = 0
 
 ; GTAHaX EWO Offsets:
 FreemodeGlobalIndex = 262145
-EWOGlobalOffset1 = 28397
+EWOGlobalOffset1 = 28409
 
 ; GTAHaX EWO Offsets 2:
-EWOGlobalIndex = 2815059
-EWOGlobalOffset0 = 6774
+EWOGlobalIndex = 2793044
+EWOGlobalOffset0 = 6899
 
 ; GTAHaX EWO Score Offsets:
-ScoreGlobalIndex = 2703735
-ScoreGlobalOffset1 = 1571
+ScoreGlobalIndex = 2672505
+ScoreGlobalOffset1 = 1684
 ScoreGlobalOffset2 = 817
 ; CEO Circle Offsets:
-CEOCircleGlobalIndex = 1892703
+CEOCircleGlobalIndex = 1894573
 CEOCircleGlobalOffset1 = 5
 CEOCircleGlobalOffset2 = 10
 CEOCircleGlobalOffset3 = 11
@@ -41,7 +41,7 @@ CEOCircleGlobalIndexAddedTogether := CEOCircleGlobalIndex + CEOCircleGlobalOffse
 
 Goto, CheckHWID ; Checks your PC's UUID. Shitty but it works
 Back: ; It goes back to this checkpoint. It works.
-   MacroVersion = 3.30-RC1 ; Macro version
+   MacroVersion = 3.30.1 ; Macro version
    RunningInScript = 1
    CFG = %A_MyDocuments%\Ryzen's Macros\GTA Binds.ini ; Config file name
    SetWorkingDir %A_MyDocuments%\Ryzen's Macros\
@@ -236,13 +236,13 @@ EWO:
       if (SmoothEWO = 1) {
          If (SmoothEWOMode = "Slow") {
             If (getKeyState("rbutton", "P")) {
-               SendInput {Blind}{lbutton up}{rbutton up}
-               DllCall("Sleep",UInt,125)
+               SendInput {Blind}{lbutton up}{rbutton up} ; {d up}{w up}{s up}{a up}
+               DllCall("Sleep",UInt,110)
             }
          }
          If (SmoothEWOMode = "Faster") {
             SendInput {Blind}{%EWOLookBehindKey% down}
-            SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{d up}{w up}{s up}{a up}{enter down}{%InteractionMenuKey% down}
+            SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{%InteractionMenuKey% down}{d up}{w up}{s up}{a up}
             DllCall("Sleep",UInt,13)
             Send {Blind}{shift down}{f24 up}{shift up}{up}
             DllCall("Sleep",UInt,12)
@@ -253,11 +253,11 @@ EWO:
             StringUpper, EWOLookBehindKey, EWOLookBehindKey
             SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{d up}{w up}{s up}{a up}
             Send {Blind}{%InteractionMenuKey%}
-            DllCall("Sleep",UInt,11)
+            DllCall("Sleep",UInt,8)
             Send {Blind}{%EWOLookBehindKey% down}{up}
             DllCall("Sleep",UInt,14)
-            Send {Blind}{up}{f24 up}
-            DllCall("Sleep",UInt,43)
+            Send {Blind}{up}{f24}
+            DllCall("Sleep",UInt,18)
             Send {Blind}{%EWOSpecialAbilitySlashActionKey% down}{enter up}
             StringLower, EWOLookBehindKey, EWOLookBehindKey
          } else if (SmoothEWOMode = "Fastest") {
@@ -416,7 +416,7 @@ Ammo:
    }
    Send {Blind}{enter up}{down}
    SendInput {Blind}{enter down}
-   Send {Blind}{down 4}
+   Send {Blind}{down 5}
    SendInput {Blind}{enter up}
    Send {Blind}{enter}{up down}
    SendInput {Blind}{enter down}
@@ -464,7 +464,7 @@ GTAHaxCEO:
    ;msgbox 0
    Loop, 32 { ; Recreates the function that determines what memory address this global should be in, and tests every possible combination of that.
       PlayerID := a_index
-      PlayerID1 := PlayerID * 599
+      PlayerID1 := PlayerID * 608
       ControlSend, Edit2, {down}{backspace 5}%PlayerID1%, ahk_pid %Gay%
       sleep 30
       ControlClick, Button1, ahk_pid %Gay%
@@ -874,17 +874,9 @@ Jobs:
    SendInput {Blind}{enter up}
    Send {Blind}{down down}
    SendInput {Blind}{enter down}
-   Send {Blind}{down up}
+   Send {Blind}{down up}{down}
    SendInput {Blind}{enter up}
-   sleep 25
-   Send {Blind}{left}
-   Loop, 14 {
-      Send {Blind}{down down}
-      SendInput {Blind}{enter down}
-      Send {Blind}{down up}
-      SendInput {Blind}{enter up}
-   }
-   Send {Blind}{%InteractionMenuKey%}
+   Send {Blind}{enter}{%InteractionMenuKey%}
 return
 
 MCCEO:
