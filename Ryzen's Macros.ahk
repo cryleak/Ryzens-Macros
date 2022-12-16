@@ -47,8 +47,9 @@ Back: ; It goes back to this checkpoint. It works.
    SetWorkingDir %A_MyDocuments%\Ryzen's Macros\
    CrosshairDone := 0 ; If crosshair has been applied
    MCCEO2 := 0 ; If you are in MC
+   SendInputFallbackText = I have detected that it has taken a very long time to complete the chat message. First, check if the characters are being sent one by one, or in instant `"batches`". If it is being sent in batches, then your FPS is likely very low. Please complain to me on Discord and I will raise the threshold for this message. If it is being sent one by one, try this: If you are running Flawless Widescreen, you must close it, as it causes issues, and makes most macros far slower. Please open a support ticket on the Discord Server if the problem persists, or if Flawless Widescreen is not running.
    WriteWasJustPerformed = 0
-   If not WinExist("ahk_class grcWindow") {
+   If not WinExist("ahk_exe GTA5.exe") {
       GTAAlreadyClosed = 1
    } else {
       GTAAlreadyClosed = 0
@@ -57,13 +58,16 @@ Back: ; It goes back to this checkpoint. It works.
    IniRead,OriginalLocation, %ConfigDirectory%\FileLocationData.ini, Location, Location
    IniRead,OriginalName, %ConfigDirectory%\FileLocationData.ini, Name, Name
    #SingleInstance, force ; Forces single instance
-#IfWinActive ahk_class grcWindow ; Hotkeys will only work if you are tabbed in.
+#IfWinActive ahk_exe GTA5.exe ; Hotkeys will only work if you are tabbed in.
    #MaxThreadsPerHotkey 1 ; Doesn't really matter
    #MaxThreads 99999 ; Sets the maximum amount of active threads to practically infinity.
    #MaxThreadsBuffer On ; Makes hotkeys buffer if you hold it down or something.
    #MaxHotkeysPerInterval 99000000 ; Doesn't matter but AHK may give you an error if you spam hotkeys really really fast otherwise.
    #HotkeyInterval 99000000 ; Same as the other hotkey interval setting
    #Persistent ; Makes the script never exit, probably unneccassary because other commands (like hotkey) already cause it to never exit.
+   #UseHook On
+   #InstallKeybdHook
+   #InstallMouseHook
    SetTitleMatchMode, 2 ; I forgor :dead_skull:
    SetDefaultMouseSpeed, 0 ; Something
    SetKeyDelay, -1, -1 ; Sets key delay to the lowest possible, there is still delay due to the keyboard hook in GTA, but this makes it excecute as fast as possible WITHOUT skipping keystrokes. Set this a lot higher if you uninstalled the keyboard hook using mods.
@@ -120,11 +124,15 @@ Back: ; It goes back to this checkpoint. It works.
 Return
 
 Reload:
-Process, Close, %Gay%
-Process, Close, %Gay2%
-Process, Close, %Obese11%
-Run, Reload.exe, %A_MyDocuments%
-ExitApp
+If (A_ScriptName = "Ryzen's Macros.ahk")
+   Reload
+Else {
+   Process, Close, %Gay%
+   Process, Close, %Gay2%
+   Process, Close, %Obese11%
+   Run, Reload.exe, %A_MyDocuments%
+   ExitApp
+}
 return
 
 Spotify:
@@ -226,7 +234,7 @@ EWO:
       SendInput {lbutton up}
       Send {Blind}{tab} ; {lbutton 5}
       Loop, 15 {
-         if WinActive("ahk_class grcWindow") {
+         if WinActive("ahk_exe GTA5.exe") {
             Send {Blind}{g 4} ; {lbutton}
          }
       }
@@ -237,7 +245,7 @@ EWO:
          If (SmoothEWOMode = "Slow") {
             If (getKeyState("rbutton", "P")) {
                SendInput {Blind}{lbutton up}{rbutton up} ; {d up}{w up}{s up}{a up}
-               DllCall("Sleep",UInt,110)
+               DllCall("Sleep",UInt,100)
             }
          }
          If (SmoothEWOMode = "Faster") {
@@ -253,11 +261,11 @@ EWO:
             StringUpper, EWOLookBehindKey, EWOLookBehindKey
             SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{d up}{w up}{s up}{a up}
             Send {Blind}{%InteractionMenuKey%}
-            DllCall("Sleep",UInt,8)
+            DllCall("Sleep",UInt,9)
             Send {Blind}{%EWOLookBehindKey% down}{up}
-            DllCall("Sleep",UInt,14)
-            Send {Blind}{up}{f24}
-            DllCall("Sleep",UInt,18)
+            DllCall("Sleep",UInt,16)
+            Send {Blind}{up}{f24 up}
+            DllCall("Sleep",UInt,27)
             Send {Blind}{%EWOSpecialAbilitySlashActionKey% down}{enter up}
             StringLower, EWOLookBehindKey, EWOLookBehindKey
          } else if (SmoothEWOMode = "Fastest") {
@@ -311,7 +319,7 @@ return
 Write:
    If (GTAAlreadyClosed = 0) {
       if not WinExist("ahk_exe GTAHaXUI.exe") { ; If window doesn't exist, make it exist and add shit to it
-         Run, GTAHaXUI.exe, %A_ScriptDir%,Min,Gay2
+         Run, GTAHaXUI.exe, %ConfigDirectory%,Min,Gay2
          WinWait, ahk_pid %Gay2%
          WinGet, ID2, ID, ahk_pid %Gay2%
          WinSet, ExStyle, ^0x80, ahk_id %ID2% ; 0x80 is WS_EX_TOOLWINDOW
@@ -435,7 +443,7 @@ Return
 
 GTAHax:
    SendInput {Blind}{%GTAHax% up}
-   Run, GTAHaXUI.exe, %A_ScriptDir%,,Gay
+   Run, GTAHaXUI.exe, %ConfigDirectory%,,Gay
    WinWait, ahk_pid %Gay%
    ControlSend, Edit1, {down}{backspace}%FreemodeGlobalIndexAddedTogether%, ahk_pid %Gay%
    sleep 100
@@ -455,7 +463,7 @@ return
 
 GTAHaxCEO:
    SendInput {Blind}{%GTAHax% up}
-   Run, GTAHaXUI.exe, %A_ScriptDir%,,Gay
+   Run, GTAHaXUI.exe, %ConfigDirectory%,,Gay
    WinWait, ahk_pid %Gay%
    ControlSend, Edit1, {down}{backspace}%CEOCircleGlobalIndexAddedTogether%, ahk_pid %Gay%
    sleep 30
@@ -477,6 +485,7 @@ GTAHaxCEO:
 Return
 
 HelpWhatsThis:
+   StartTime := A_TickCount
    SendInput {%HelpWhatsThis% up}
    Send {Blind}t
    Send d
@@ -510,9 +519,13 @@ HelpWhatsThis:
    Send {enter}t{Numpadadd}
    SendInput {space}ad hominem {Numpadadd} GG{shift down}1{shift up} {Numpadadd} ur mom
    Send {enter}
+   EndTime := A_TickCount - StartTime
+   If (EndTime > 2500)
+      MsgBox, %SendInputFallbackText%
 return
 
 EssayAboutGTA:
+   StartTime := A_TickCount
    SendInput {%EssayAboutGTA% up}
    Send tw
    SendInput hy is my fps so shlt this game
@@ -555,9 +568,13 @@ EssayAboutGTA:
    Send {space}
    SendInput bad gta online is
    Send {enter}
+   EndTime := A_TickCount - StartTime
+   If (EndTime > 2500)
+      MsgBox, %SendInputFallbackText%
 return
 
 CustomTextSpam:
+   StartTime := A_TickCount
    GuiControlGet, RawText
    Length := StrLen(CustomSpamText)
    if (Length >= 31) {
@@ -591,6 +608,9 @@ CustomTextSpam:
          SendInput %ArrayYes125%%ArrayYes126%%ArrayYes127%%ArrayYes128%%ArrayYes129%%ArrayYes130%%ArrayYes131%%ArrayYes132%%ArrayYes133%%ArrayYes134%%ArrayYes135%%ArrayYes136%%ArrayYes137%%ArrayYes138%%ArrayYes139%%ArrayYes140%
          Send {Blind}{enter up}
       }
+      EndTime := A_TickCount - StartTime
+      If (EndTime > 1000)
+         MsgBox, %SendInputFallbackText%
    }
    else if Length <= 30
    {
@@ -611,11 +631,15 @@ CustomTextSpam:
             Send {Blind}{enter up}
          }
       }
+      EndTime := A_TickCount - StartTime
+      If (EndTime > 900)
+         MsgBox, %SendInputFallbackText%
    }
 return
 
 Paste:
    Length2 = StrLen(Clipboard)
+   StartTime := A_TickCount
    if (Length2 >= 31) {
       Loop, 140 {
          ArrayYesPaste%A_Index% =
@@ -630,13 +654,22 @@ Paste:
       SendInput {Raw}%ArrayYesPaste94%%ArrayYesPaste95%%ArrayYesPaste96%%ArrayYesPaste97%%ArrayYesPaste98%%ArrayYesPaste99%%ArrayYesPaste100%%ArrayYesPaste101%%ArrayYesPaste102%%ArrayYesPaste103%%ArrayYesPaste104%%ArrayYesPaste105%%ArrayYesPaste106%%ArrayYesPaste107%%ArrayYesPaste108%%ArrayYesPaste109%%ArrayYesPaste110%%ArrayYesPaste111%%ArrayYesPaste112%%ArrayYesPaste113%%ArrayYesPaste114%%ArrayYesPaste115%%ArrayYesPaste116%%ArrayYesPaste117%%ArrayYesPaste118%%ArrayYesPaste119%%ArrayYesPaste120%%ArrayYesPaste121%%ArrayYesPaste122%%ArrayYesPaste123%
       SendRaw %ArrayYesPaste124%
       SendInput {Raw}%ArrayYesPaste125%%ArrayYesPaste126%%ArrayYesPaste127%%ArrayYesPaste128%%ArrayYesPaste129%%ArrayYesPaste130%%ArrayYesPaste131%%ArrayYesPaste132%%ArrayYesPaste133%%ArrayYesPaste134%%ArrayYesPaste135%%ArrayYesPaste136%%ArrayYesPaste137%%ArrayYesPaste138%%ArrayYesPaste139%%ArrayYesPaste140%
+      EndTime := A_TickCount - StartTime
+      MsgBox %EndTime%
+      If (EndTime > 350)
+         MsgBox, %SendInputFallbackText%
    }
    else {
       SendInput {Raw}%Clipboard%
+      EndTime := A_TickCount - StartTime
+      MsgBox %EndTime%
+      If (EndTime > 50)
+         MsgBox, %SendInputFallbackText%
    }
 return
 
 ShutUp:
+   StartTime := A_TickCount
    Loop, 8 {
       Send {Blind}{t down}
       SendInput {Blind}{enter down}
@@ -644,6 +677,9 @@ ShutUp:
       SendInput {Blind}shut up
       Send {Blind}{enter up}
    }
+   EndTime := A_TickCount - StartTime
+   If (EndTime > 800)
+      MsgBox, %SendInputFallbackText%
 return
 
 Paste2:
@@ -749,7 +785,7 @@ Crosshair6:
       } else {
          Gui, Crosshair: Hide
       }
-      WinActivate, ahk_class grcWindow
+      WinActivate, ahk_exe GTA5.exe
    } else {
       Gui, Crosshair: Hide
    }
@@ -806,7 +842,7 @@ ProcessCheckTimer:
    If (GTAAlreadyClosed = 0) {
       GuiControlGet, ProcessCheck2
       If not (ProcessCheck2 = 0) {
-         If not WinExist("ahk_class grcWindow") {
+         If not WinExist("ahk_exe GTA5.exe") {
             Gosub, CloseGTAProcesses
             SetTimer, Write, Off
             SetTimer, CloseGTAHaX, 100
@@ -1302,7 +1338,7 @@ SaveConfig:
    } else If (GTAAlreadyClosed = 1) && (ProcessCheck2 = 1) {
       TrayTip, Ryzen's Macros %MacroVersion%, GTA has not been detected to be open`, the macros will not automatically close and Show EWO Score will not work`. Please restart the macros once you have restarted GTA., 10, 1
    }
-   #Include %A_MyDocuments%\Ryzen's Macros\DynamicScript.ahk
+   #Include *i %A_MyDocuments%\Ryzen's Macros\DynamicScript.ahk
 Return
 
 CloseGTAHaX:
@@ -1578,7 +1614,7 @@ Return
 PassiveDisableSpam:
    GuiControlGet, PassiveDisableSpam
    If (PassiveDisableSpam = 1) {
-      If WinActive("ahk_class grcWindow") {
+      If WinActive("ahk_exe GTA5.exe") {
          If GetKeyState("LButton","P") {
             SendInput {Blind}{up down}{enter down}{lbutton up}
             Send {Blind}{backspace}{%InteractionMenuKey%}{enter up}{%InteractionMenuKey%}

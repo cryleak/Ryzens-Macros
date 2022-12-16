@@ -30,7 +30,6 @@ Scroll down for tips!
 
 HOTKEYS:
 */
-Gosub, DoNotRemove ; If you are worried about what this does, scroll down to the very bottom of the script. DO NOT REMOVE THIS!. It will break the "Edit Dynamic Script" button in the Launcher.
 Hotkey, *F24, Macro1, UseErrorLevel ; Binds the macro to F24. Swap out F24 for anything to change it.
 Hotkey, *F23, Macro2, UseErrorLevel ; Binds the macro to F23. Swap out F23 for anything to change it.
 Hotkey, *F22, Macro3, UseErrorLevel ; Binds the macro to F22. Swap out F22 for anything to change it.
@@ -38,6 +37,8 @@ Hotkey, *F21, Macro4, UseErrorLevel ; Binds the macro to F21. Swap out F21 for a
 Hotkey, *F20, Macro5, UseErrorLevel ; Binds the macro to F20. Swap out F20 for anything to change it.
 Hotkey, *F19, Macro6, UseErrorLevel ; Binds the macro to F19. Swap out F19 for anything to change it.
 Hotkey, *F18, Macro7, UseErrorLevel ; Binds the macro to F18. Swap out F18 for anything to change it.
+Goto, DoNotRemove ; If you are worried about what this does, scroll down to the very bottom of the script. DO NOT REMOVE THIS!. It will break the "Edit Dynamic Script" button in the Launcher.
+WhyTheFuckDoesThisNotWork: ; Don't remove this either
 Return
 
 ; Example macro that gives you armor from CEO menu
@@ -79,29 +80,29 @@ Macro7:
 Return
 
 /*
-                             
-         tttt            iiii                                       
-      ttt:::t           i::::i                                      
-      t:::::t            iiii                                       
-      t:::::t                                                       
-ttttttt:::::ttttttt    iiiiiii ppppp   ppppppppp       ssssssssss   
-t:::::::::::::::::t    i:::::i p::::ppp:::::::::p    ss::::::::::s  
-t:::::::::::::::::t     i::::i p:::::::::::::::::p ss:::::::::::::s 
+         
+         tttt            iiii
+      ttt:::t           i::::i
+      t:::::t            iiii
+      t:::::t
+ttttttt:::::ttttttt    iiiiiii ppppp   ppppppppp       ssssssssss
+t:::::::::::::::::t    i:::::i p::::ppp:::::::::p    ss::::::::::s
+t:::::::::::::::::t     i::::i p:::::::::::::::::p ss:::::::::::::s
 tttttt:::::::tttttt     i::::i pp::::::ppppp::::::ps::::::ssss:::::s
-      t:::::t           i::::i  p:::::p     p:::::p s:::::s  ssssss 
-      t:::::t           i::::i  p:::::p     p:::::p   s::::::s      
-      t:::::t           i::::i  p:::::p     p:::::p      s::::::s   
-      t:::::t    tttttt i::::i  p:::::p    p::::::pssssss   s:::::s 
+      t:::::t           i::::i  p:::::p     p:::::p s:::::s  ssssss
+      t:::::t           i::::i  p:::::p     p:::::p   s::::::s
+      t:::::t           i::::i  p:::::p     p:::::p      s::::::s
+      t:::::t    tttttt i::::i  p:::::p    p::::::pssssss   s:::::s
       t::::::tttt:::::ti::::::i p:::::ppppp:::::::ps:::::ssss::::::s
-      tt::::::::::::::ti::::::i p::::::::::::::::p s::::::::::::::s 
-        tt:::::::::::tti::::::i p::::::::::::::pp   s:::::::::::ss  
-          ttttttttttt  iiiiiiii p::::::pppppppp      sssssssssss    
-                                p:::::p                             
-                                p:::::p                             
-                               p:::::::p                            
-                               p:::::::p                            
-                               p:::::::p                            
-                               ppppppppp                            
+      tt::::::::::::::ti::::::i p::::::::::::::::p s::::::::::::::s
+        tt:::::::::::tti::::::i p::::::::::::::pp   s:::::::::::ss
+          ttttttttttt  iiiiiiii p::::::pppppppp      sssssssssss
+                                p:::::p
+                                p:::::p
+                               p:::::::p
+                               p:::::::p
+                               p:::::::p
+                               ppppppppp
 
 Instead of using {m} as an example for the Interaction Menu key, you can instead use the variable {%InteractionMenuKey%}. This helps your macros keep working even if you switch binds.
 You can do almost anything with these macros, including very advanced code, if you want to. You don't specifically need to use a Hotkey, you can create Functions inside of here, and much more. If you have any questions, ask me.
@@ -111,8 +112,7 @@ EWOSpecialAbilitySlashActionKey (Quick action bind, in the keybinds settings ing
 InteractionMenuKey
 You can also use every single hotkey as a variable, altough the names of those may be a bit harder to find. It is usually the same as the name in the Configs file, without spaces. You can use MsgBox to check, which will make a box show up with whatever contents the variable has.
 Check the documentation to figure out how to use MsgBox.
-
-
+You can create more macros if you want.
 
 */
 
@@ -197,9 +197,11 @@ Check the documentation to figure out how to use MsgBox.
 
 
 
+
 DoNotRemove: ; DO NOT REMOVE THIS, IT WILL BREAK SHIT IF YOU DO
-If not (RunningInScript = 1) { ; DO NOT REMOVE THIS, IT WILL BREAK SHIT IF YOU DO
-    Edit ; DO NOT REMOVE THIS, IT WILL BREAK SHIT IF YOU DO
-    ExitApp ; DO NOT REMOVE THIS, IT WILL BREAK SHIT IF YOU DO
-} ; DO NOT REMOVE THIS, IT WILL BREAK SHIT IF YOU DO
-Return ; DO NOT REMOVE THIS, IT WILL BREAK SHIT IF YOU DO
+If not (RunningInScript = 1) {
+    Edit
+    ExitApp
+} else {
+    Goto, WhyTheFuckDoesThisNotWork
+}
