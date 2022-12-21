@@ -46,7 +46,7 @@ Back:
    Gui, Add, Button, gChangeGTALocation, Change GTA Location!
    Gui, Add, DropDownList, gGTAVersion vGTAVersion w190, Epic Games|Steam|Rockstar Games Launcher
    Gui, Add, Text,vText w400 R3, Current GTA Directory: Empty!
-
+   
    Gui,Font, s20,
    Gui, Add, Button, gLaunchMacros y675 x43, Launch Ryzen's Macros!
    
@@ -107,14 +107,14 @@ LaunchMacros:
    while IfExist, A_MyDocuments "\AutoHotkey.ahk"
       {}
       Run, *RunAs "AutoHotkey.exe", C:\Program Files\AutoHotkey, UseErrorLevel
-      If ErrorLevel {
-         MsgBox, 0, Please install AutoHotkey, AutoHotkey doesn't appear to be installed in "C:\Program Files\AutoHotkey". Please install it and try again!
-         Return
-      }
+   If ErrorLevel {
+      MsgBox, 0, Please install AutoHotkey, AutoHotkey doesn't appear to be installed in "C:\Program Files\AutoHotkey". Please install it and try again!
+      Return
+   }
    MsgBox,0,Launching...,Launching...,1
    sleep 200
    FileDelete, %A_MyDocuments%\AutoHotkey.ahk
-Return
+ExitApp
 
 QuitLauncher:
 ExitApp

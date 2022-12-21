@@ -74,6 +74,13 @@ Back: ; It goes back to this checkpoint. It works.
    SetWinDelay, -1 ; After any window modifying command, the script has a built in delay. Fuck delays.
    SetControlDelay, 0 ; After any control modifying command, for example; ControlSend, there is a built in delay. Set to 0 instead of -1 because having a slight delay may improve reliability, and is unnoticable anyways.
    Gui, Font,, Segoe UI Semibold ; Sets font to something
+   IniRead,Read_AlwaysOnTop,%CFG%,Misc,Always On Top
+   If (Read_AlwaysOnTop = 1) {
+      WinSet, AlwaysOnTop, Off, ahk_exe GTA5.exe
+      WinMinimize, ahk_exe GTA5.exe
+      SetTimer, AlwaysOnTop, 25, -2147483648
+   }
+   SendInputTestV2()
    MsgBox, 0, Ryzen's Macros %MacroVersion%, Successfully started. Welcome to Ryzen's Macros!
    Global processName := "SocialClubHelper.exe"
    Global Level := "L"
@@ -99,7 +106,7 @@ Back: ; It goes back to this checkpoint. It works.
    DetectHiddenWindows, Off ; It does something
    
    Menu, Tray, NoStandard ; Default trays but with some extra things above it, usually not possible so you need to do some complicated things to make it work.
-   Menu, Tray, Add, Show UI, ShowGUI
+   Menu, Tray, Add, Show UI, ShowUI
    Menu, Tray, Add, Hide UI, HideWindow
    Menu, Tray, Add, Save Macros, SaveConfig
    Menu, Tray, Add
@@ -124,8 +131,15 @@ Back: ; It goes back to this checkpoint. It works.
 Return
 
 Reload:
-If (A_ScriptName = "Ryzen's Macros.ahk")
+GuiControlGet, AlwaysOnTop
+If (AlwaysOnTop = 1) {
+   WinSet, AlwaysOnTop, Off, ahk_exe GTA5.exe
+   WinMinimize, ahk_exe GTA5.exe
+}
+If (A_ScriptName = "Ryzen's Macros.ahk") {
+   MsgBox, 0, Ryzen's Macros %MacroVersion%, If you see this, something strange is happening.
    Reload
+}
 Else {
    Process, Close, %Gay%
    Process, Close, %Gay2%
@@ -148,16 +162,17 @@ Flawless:
    MsgBox, 0, Fix applied, Fix applied`, please DM me if it doesn't work.
 Return
 
-ShowGUI:
-   Gui, Show
-return
-
 Apply:
    Gosub,DisableAll
    Gui,Submit,NoHide
 Return
 
 ExitMacros:
+   GuiControlGet, AlwaysOnTop
+   If (AlwaysOnTop = 1) {
+      WinSet, AlwaysOnTop, Off, ahk_exe GTA5.exe
+      WinMinimize, ahk_exe GTA5.exe
+   }
    Process, Close, %Gay%
    Process, Close, %Gay2%
    Process, Close, %Obese11%
@@ -245,7 +260,7 @@ EWO:
          If (SmoothEWOMode = "Slow") {
             If (getKeyState("rbutton", "P")) {
                SendInput {Blind}{lbutton up}{rbutton up} ; {d up}{w up}{s up}{a up}
-               DllCall("Sleep",UInt,100)
+               DllCall("Sleep",UInt,50)
             }
          }
          If (SmoothEWOMode = "Faster") {
@@ -259,14 +274,13 @@ EWO:
             Send {Blind}{%EWOSpecialAbilitySlashActionKey% down}{enter up}
          } else if (SmoothEWOMode = "Slow") {
             StringUpper, EWOLookBehindKey, EWOLookBehindKey
-            SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{d up}{w up}{s up}{a up}
-            Send {Blind}{%InteractionMenuKey%}
-            DllCall("Sleep",UInt,9)
+            SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{d up}{w up}{s up}{a up}{%InteractionMenuKey% down}
+            DllCall("Sleep",UInt,15)
             Send {Blind}{%EWOLookBehindKey% down}{up}
-            DllCall("Sleep",UInt,16)
-            Send {Blind}{up}{f24 up}
-            DllCall("Sleep",UInt,27)
-            Send {Blind}{%EWOSpecialAbilitySlashActionKey% down}{enter up}
+            DllCall("Sleep",UInt,17)
+            Send {Blind}{up}
+            DllCall("Sleep",UInt,37)
+            Send {Blind}{%EWOSpecialAbilitySlashActionKey% down}{enter up}{%InteractionMenuKey% up}
             StringLower, EWOLookBehindKey, EWOLookBehindKey
          } else if (SmoothEWOMode = "Fastest") {
             SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}
@@ -332,7 +346,7 @@ Write:
          If (Heroin = 1) && (Cocaine = ScoreGlobalIndexAddedTogether) && (AIDS = 0) { ; If the values are correct do this shit
             ControlClick, Button1, ahk_pid %Gay2%
             WriteWasJustPerformed = 1
-            SetTimer, WriteWasPerformed, -350
+            SetTimer, WriteWasPerformed, -350, -2147483648
          } else {
             If not (Cocaine = ScoreGlobalIndexAddedTogether) { ; If global index isn't correct, then close GTAHaX and remake the window. Too lazy to remove everything, this is better anyways.
                Process, Close, %Gay2%
@@ -359,12 +373,12 @@ Return
 EWOWrite:
    GuiControlGet, EWOWrite
    If (EWOWrite = 1) {
-      SetTimer, Write, 10
-      SetTimer, TabBackInnn, 10
+      SetTimer, Write, 10, -2147483648
+      SetTimer, TabBackInnn, 10, -2147483648
    }
    else {
-      SetTimer, Write, Off
-      SetTimer, TabBackInnn, Off
+      SetTimer, Write, Off, -2147483648
+      SetTimer, TabBackInnn, Off, -2147483648
    }
 Return
 
@@ -422,16 +436,17 @@ Ammo:
       Send {Blind}{down}
       SendInput {Blind}{WheelDown}
    }
-   Send {Blind}{enter up}{down}
+   Send {Blind}{enter up}{down 4}
    SendInput {Blind}{enter down}
-   Send {Blind}{down 5}
+   Send {Blind}{down 2}
    SendInput {Blind}{enter up}
    Send {Blind}{enter}{up down}
    SendInput {Blind}{enter down}
    Send {Blind}{up up}
-   SendInput {Blind}{enter up}
-   Send {Blind}{%InteractionMenuKey%}
-   Sleep 125
+   SendInput {Blind}{enter up}{%InteractionMenuKey% down}
+   Sleep 25
+   SendInput {Blind}{%InteractionMenuKey% up}
+   sleep 100
 return
 
 FastRespawn:
@@ -485,7 +500,6 @@ GTAHaxCEO:
 Return
 
 HelpWhatsThis:
-   StartTime := A_TickCount
    SendInput {%HelpWhatsThis% up}
    Send {Blind}t
    Send d
@@ -519,13 +533,9 @@ HelpWhatsThis:
    Send {enter}t{Numpadadd}
    SendInput {space}ad hominem {Numpadadd} GG{shift down}1{shift up} {Numpadadd} ur mom
    Send {enter}
-   EndTime := A_TickCount - StartTime
-   If (EndTime > 2500)
-      MsgBox, %SendInputFallbackText%
 return
 
 EssayAboutGTA:
-   StartTime := A_TickCount
    SendInput {%EssayAboutGTA% up}
    Send tw
    SendInput hy is my fps so shlt this game
@@ -568,13 +578,9 @@ EssayAboutGTA:
    Send {space}
    SendInput bad gta online is
    Send {enter}
-   EndTime := A_TickCount - StartTime
-   If (EndTime > 2500)
-      MsgBox, %SendInputFallbackText%
 return
 
 CustomTextSpam:
-   StartTime := A_TickCount
    GuiControlGet, RawText
    Length := StrLen(CustomSpamText)
    if (Length >= 31) {
@@ -608,9 +614,6 @@ CustomTextSpam:
          SendInput %ArrayYes125%%ArrayYes126%%ArrayYes127%%ArrayYes128%%ArrayYes129%%ArrayYes130%%ArrayYes131%%ArrayYes132%%ArrayYes133%%ArrayYes134%%ArrayYes135%%ArrayYes136%%ArrayYes137%%ArrayYes138%%ArrayYes139%%ArrayYes140%
          Send {Blind}{enter up}
       }
-      EndTime := A_TickCount - StartTime
-      If (EndTime > 1000)
-         MsgBox, %SendInputFallbackText%
    }
    else if Length <= 30
    {
@@ -631,15 +634,11 @@ CustomTextSpam:
             Send {Blind}{enter up}
          }
       }
-      EndTime := A_TickCount - StartTime
-      If (EndTime > 900)
-         MsgBox, %SendInputFallbackText%
    }
 return
 
 Paste:
    Length2 = StrLen(Clipboard)
-   StartTime := A_TickCount
    if (Length2 >= 31) {
       Loop, 140 {
          ArrayYesPaste%A_Index% =
@@ -654,22 +653,13 @@ Paste:
       SendInput {Raw}%ArrayYesPaste94%%ArrayYesPaste95%%ArrayYesPaste96%%ArrayYesPaste97%%ArrayYesPaste98%%ArrayYesPaste99%%ArrayYesPaste100%%ArrayYesPaste101%%ArrayYesPaste102%%ArrayYesPaste103%%ArrayYesPaste104%%ArrayYesPaste105%%ArrayYesPaste106%%ArrayYesPaste107%%ArrayYesPaste108%%ArrayYesPaste109%%ArrayYesPaste110%%ArrayYesPaste111%%ArrayYesPaste112%%ArrayYesPaste113%%ArrayYesPaste114%%ArrayYesPaste115%%ArrayYesPaste116%%ArrayYesPaste117%%ArrayYesPaste118%%ArrayYesPaste119%%ArrayYesPaste120%%ArrayYesPaste121%%ArrayYesPaste122%%ArrayYesPaste123%
       SendRaw %ArrayYesPaste124%
       SendInput {Raw}%ArrayYesPaste125%%ArrayYesPaste126%%ArrayYesPaste127%%ArrayYesPaste128%%ArrayYesPaste129%%ArrayYesPaste130%%ArrayYesPaste131%%ArrayYesPaste132%%ArrayYesPaste133%%ArrayYesPaste134%%ArrayYesPaste135%%ArrayYesPaste136%%ArrayYesPaste137%%ArrayYesPaste138%%ArrayYesPaste139%%ArrayYesPaste140%
-      EndTime := A_TickCount - StartTime
-      MsgBox %EndTime%
-      If (EndTime > 350)
-         MsgBox, %SendInputFallbackText%
    }
    else {
       SendInput {Raw}%Clipboard%
-      EndTime := A_TickCount - StartTime
-      MsgBox %EndTime%
-      If (EndTime > 50)
-         MsgBox, %SendInputFallbackText%
    }
 return
 
 ShutUp:
-   StartTime := A_TickCount
    Loop, 8 {
       Send {Blind}{t down}
       SendInput {Blind}{enter down}
@@ -677,9 +667,6 @@ ShutUp:
       SendInput {Blind}shut up
       Send {Blind}{enter up}
    }
-   EndTime := A_TickCount - StartTime
-   If (EndTime > 800)
-      MsgBox, %SendInputFallbackText%
 return
 
 Paste2:
@@ -795,9 +782,9 @@ return
 ProcessCheck3:
    GuiControlGet, ProcessCheck2
    if (ProcessCheck2 = 0) {
-      SetTimer, ProcessCheckTimer, Off
+      SetTimer, ProcessCheckTimer, Off, -2147483648
    } else {
-      SetTimer, ProcessCheckTimer, 100
+      SetTimer, ProcessCheckTimer, 100, -2147483648
    }
 return
 
@@ -817,6 +804,11 @@ TabWeapon2:
 return
 
 ShowUI:
+   GuiControlGet, AlwaysOnTop
+   If (AlwaysOnTop = 1) {
+      WinSet, AlwaysOnTop, Off, ahk_exe GTA5.exe
+      WinMinimize, ahk_exe GTA5.exe
+   }
    Gui, Show
 return
 
@@ -844,9 +836,9 @@ ProcessCheckTimer:
       If not (ProcessCheck2 = 0) {
          If not WinExist("ahk_exe GTA5.exe") {
             Gosub, CloseGTAProcesses
-            SetTimer, Write, Off
-            SetTimer, CloseGTAHaX, 100
-            SetTimer, ExitMacros, -10000
+            SetTimer, Write, Off, -2147483648
+            SetTimer, CloseGTAHaX, 100, -2147483648
+            SetTimer, ExitMacros, -10000, -2147483648
             MsgBox, 0, Macros will close now. RIP., GTA is no longer running. Macros will close now. RIP.
             Process, Close, %Gay%
             Process, Close, %Gay2%
@@ -882,16 +874,9 @@ PistolBind:
 return
 
 RPGSpam:
-   If GetKeyState("LButton","P") {
-      SendInput {Blind}{%StickyBind% down}{lbutton up}
-      Send {Blind}{%RPGBind% down}{lbutton}
-      SendInput {Blind}{lbutton down}{%RPGBind% up}{%StickyBind% up}
-   } else {
-      SendInput {Blind}{%StickyBind% down}
-      Send {Blind}{%RPGBind% down}{lbutton}
-      SendInput {Blind}{%StickyBind% up}{%RPGBind% up}{lbutton up}
-   }
-   Send {Blind}{f24}
+   SendInput {Blind}{%StickyBind% down}
+   Send {Blind}{%RPGBind% down}{tab}
+   SendInput {Blind}{%RPGBind% up}{%StickyBind% up}
 return
 
 ToggleCrosshair:
@@ -962,73 +947,77 @@ MCCEO:
 return
 
 LaunchCycle:
-   {
-      GuiControlGet, Paste ; Checks if pasting chat messages is enabled, and then it will enable it.
-      If (Paste = 0)
-         Hotkey, ^v, Paste, Off
-      else
-         Hotkey, ^v, Paste, On
-      GuiControlGet, TabWeapon
-      If (TabWeapon = 0) {
-         Hotkey, *%SniperBind%, SniperBind, UseErrorLevel Off
-         Hotkey, *%RPGBind%, RPGBind, UseErrorLevel Off
-         Hotkey, *%StickyBind%, StickyBind, UseErrorLevel Off
-         Hotkey, *%PistolBind%, PistolBind, UseErrorLevel Off
-      } else {
-         Hotkey, *%SniperBind%, SniperBind, UseErrorLevel On
-         Hotkey, *%RPGBind%, RPGBind, UseErrorLevel On
-         Hotkey, *%StickyBind%, StickyBind, UseErrorLevel On
-         Hotkey, *%PistolBind%, PistolBind, UseErrorLevel On
-      }
-      GuiControlGet, Paste
-      If (Paste = 0)
-         Hotkey, ^v, Paste, Off
-      else
-         Hotkey, ^v, Paste, On
-      Gui, Submit, NoHide
-      WinGetActiveTitle, OldActiveWindow
-      GuiControlGet, CrosshairPos
-      If not (CrossHairPos = "") {
-         If (CrosshairDone = 0) {
-            CrosshairPosPro := CrosshairPos/500
-            GuiControlGet, Crosshair
-            if(crossHair = 1) {
-               Global crossHairW := 21
-               Global crossHairH := 21
-               
-               Global backgroundColor := 0xff00cc
-               
-               SysGet, screenW, 78
-               SysGet, screenH, 79
-               
-               Global crossHairX := (screenW / CrosshairPosPro) - (crossHairH / 2)
-               Global crossHairY := (screenH / 2) - (crossHairH / 2)
-               WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
-               IfNotExist, %A_WorkingDir%\assets
-                  FileCreateDir, %A_WorkingDir%\assets
-               
-               Gui, Crosshair: New, +AlwaysOnTop -Border -Caption
-               Gui, Color, backgroundColor
-               Gui, Add, Picture, x0 y0 w%crossHairW% h%crossHairH%, %A_WorkingDir%\assets\crosshair.png
-               Try {
-                  Gui, Show, w%crossHairW% h%crossHairH% x%crossHairX% y%crossHairY%, Crosshair
-               } Catch {
-                  Gui, Crosshair: Hide
-               }
-               WinSet, TransColor, backgroundColor, Crosshair
-               WinGet, ID, ID, Crosshair
-               WinSet, ExStyle, ^0x80, ahk_id %ID% ; 0x80 is WS_EX_TOOLWINDOW
-            } else {
+   GuiControlGet, Paste ; Checks if pasting chat messages is enabled, and then it will enable it.
+   If (Paste = 0)
+      Hotkey, ^v, Paste, Off
+   else
+      Hotkey, ^v, Paste, On
+   GuiControlGet, TabWeapon
+   If (TabWeapon = 0) {
+      Hotkey, *%SniperBind%, SniperBind, UseErrorLevel Off
+      Hotkey, *%RPGBind%, RPGBind, UseErrorLevel Off
+      Hotkey, *%StickyBind%, StickyBind, UseErrorLevel Off
+      Hotkey, *%PistolBind%, PistolBind, UseErrorLevel Off
+   } else {
+      Hotkey, *%SniperBind%, SniperBind, UseErrorLevel On
+      Hotkey, *%RPGBind%, RPGBind, UseErrorLevel On
+      Hotkey, *%StickyBind%, StickyBind, UseErrorLevel On
+      Hotkey, *%PistolBind%, PistolBind, UseErrorLevel On
+   }
+   GuiControlGet, Paste
+   If (Paste = 0)
+      Hotkey, ^v, Paste, Off
+   else
+      Hotkey, ^v, Paste, On
+   Gui, Submit, NoHide
+   WinGetActiveTitle, OldActiveWindow
+   GuiControlGet, CrosshairPos
+   If not (CrossHairPos = "") {
+      If (CrosshairDone = 0) {
+         CrosshairPosPro := CrosshairPos/500
+         GuiControlGet, Crosshair
+         if(crossHair = 1) {
+            Global crossHairW := 21
+            Global crossHairH := 21
+            
+            Global backgroundColor := 0xff00cc
+            
+            SysGet, screenW, 78
+            SysGet, screenH, 79
+            
+            Global crossHairX := (screenW / CrosshairPosPro) - (crossHairH / 2)
+            Global crossHairY := (screenH / 2) - (crossHairH / 2)
+            WinMove, Crosshair,, %CrossHairX%, %CRossHairY%
+            IfNotExist, %A_WorkingDir%\assets
+               FileCreateDir, %A_WorkingDir%\assets
+            
+            Gui, Crosshair: New, +AlwaysOnTop -Border -Caption
+            Gui, Color, backgroundColor
+            Gui, Add, Picture, x0 y0 w%crossHairW% h%crossHairH%, %A_WorkingDir%\assets\crosshair.png
+            Try {
+               Gui, Show, w%crossHairW% h%crossHairH% x%crossHairX% y%crossHairY%, Crosshair
+            } Catch {
                Gui, Crosshair: Hide
             }
+            WinSet, TransColor, backgroundColor, Crosshair
+            WinGet, ID, ID, Crosshair
+            WinSet, ExStyle, ^0x80, ahk_id %ID% ; 0x80 is WS_EX_TOOLWINDOW
+         } else {
+            Gui, Crosshair: Hide
          }
-      } else {
-         Gui, Crosshair: Hide
       }
-      CrosshairDone := 1
-      WinActivate, %OldActiveWindow%
-      return
+   } else {
+      Gui, Crosshair: Hide
    }
+   CrosshairDone := 1
+   WinActivate, %OldActiveWindow%
+   GuiControlGet, AlwaysOnTop
+   if (AlwaysOnTop = 0) {
+      SetTimer, AlwaysOnTop, Delete, -2147483648
+   } else {
+      SetTimer, AlwaysOnTop, 100, -2147483648
+   }
+return
 
 DisableAll:
    Hotkey, *%ThermalHelmet%, ThermalHelmet, UseErrorLevel Off
@@ -1188,8 +1177,10 @@ MacroOptions:
    Gui, Add, Link,, CEO Mode: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/CEO-Mode">(?)</a>
    Gui, Add, Link,, Optimize Fast Respawn EWO for: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Optimize-Fast-Respawn-EWO-For">(?)</a>
    Gui, Add, Link,, Show EWO Score: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Show-EWO-Score">(?)</a>
-   If (DebugTesting = 1)
+   If (DebugTesting = 1) {
       Gui, Add, Link,, Passive Disable Spam: <a href="">(?)</a>
+      Gui, Add, Link,, Always On Top: <a href="">(?)</a>
+   }
    
    Gui, Add, Checkbox,vBSTSpeed h20 x+105 y60,
    Gui, Add, CheckBox, gProcessCheck3 vProcessCheck2 h20,
@@ -1203,6 +1194,8 @@ MacroOptions:
    Gui, Add, DropDownList, vBugRespawnMode, Homing|RPG
    Gui, Add, Checkbox, gEWOWrite vEWOWrite h20
    Gui, Add, Checkbox, gPassiveDisableSpamCheck vPassiveDisableSpam h20
+   If (DebugTesting = 1)
+      Gui, Add, Checkbox, gAlwaysOnTopCheck vAlwaysOnTop h32
 Return
 
 MiscMacros:
@@ -1254,9 +1247,9 @@ Return
 
 SaveConfig:
    GuiControlGet, ProcessCheck2
-   SetTimer, Write, Off
-   SetTimer, TabBackInnn, Off
-   SetTimer, ProcessCheckTimer, Off
+   SetTimer, Write, Off, -2147483648
+   SetTimer, TabBackInnn, Off, -2147483648
+   SetTimer, ProcessCheckTimer, Off, -2147483648
    Gosub,DisableAll
    Gui,Submit,NoHide
    IniWrite,%InteractionMenuKey%,%CFG%,Keybinds,Interaction Menu Key
@@ -1303,6 +1296,7 @@ SaveConfig:
    IniWrite,%BugRespawnMode%,%CFG%,Misc,Bug Respawn Mode
    IniWrite,%FasterSniper%,%CFG%,Misc,Faster Sniper
    IniWrite,%PassiveDisableSpamToggle%,%CFG%,Misc,Passive Disable Spam Toggle
+   IniWrite,%AlwaysOnTop%,%CFG%,Misc,Always On Top
    
    Gosub, LaunchCycle
    Hotkey, *%ThermalHelmet%, ThermalHelmet, UseErrorLevel On
@@ -1326,11 +1320,11 @@ SaveConfig:
    Hotkey, *%RPGSpam%, RPGSpam, UseErrorLevel On
    Hotkey, *%PassiveDisableSpamToggle%, PassiveDisableSpamToggle, UseErrorLevel On
    If (EWOWrite = 1) {
-      SetTimer, Write, 10
-      SetTimer, TabBackInnn, 10
+      SetTimer, Write, 10, -2147483648
+      SetTimer, TabBackInnn, 10, -2147483648
    }
    if (ProcessCheck2 = 1) {
-      SetTimer, ProcessCheckTimer, 100
+      SetTimer, ProcessCheckTimer, 100, -2147483648
    }
    ;MsgBox, 0, Saved!, Your config has been saved and/or the macros have been started!, 2
    If (GTAAlreadyClosed = 0) {
@@ -1427,6 +1421,7 @@ Read:
       IniRead,Read_BugRespawnMode,%CFG%,Misc,Bug Respawn Mode
       IniRead,Read_FasterSniper,%CFG%,Misc,Faster Sniper
       IniRead,Read_PassiveDisableSpamToggle,%CFG%,Misc,Passive Disable Spam Toggle
+      IniRead,Read_AlwaysOnTop,%CFG%,Misc,Always On Top
       
       GuiControl,,InteractionMenuKey,%Read_InteractionMenuKey%
       GuiControl,,FranklinBind,%Read_FranklinBind%
@@ -1477,6 +1472,7 @@ Read:
       GuiControl,Choose,BugRespawnMode,%Read_BugRespawnMode%
       GuiControl,,FasterSniper,%Read_FasterSniper%
       GuiControl,,PassiveDisableSpamToggle,%Read_PassiveDisableSpamToggle%
+      GuiControl,,AlwaysOnTop,%Read_AlwaysOnTop%
    }
 Return
 
@@ -1591,20 +1587,20 @@ Return
 PassiveDisableSpamCheck:
    GuiControlGet, PassiveDisableSpam
    if (PassiveDisableSpam = 0) {
-      SetTimer, PassiveDisableSpam, Delete
+      SetTimer, PassiveDisableSpam, Delete, -2147483648
    } else {
-      SetTimer, PassiveDisableSpam, 7500
+      SetTimer, PassiveDisableSpam, 7500, -2147483648
    }
 Return
 
 PassiveDisableSpamToggle:
    GuiControlGet, PassiveDisableSpam
    if (PassiveDisableSpam = 1) {
-      SetTimer, PassiveDisableSpam, Delete
+      SetTimer, PassiveDisableSpam, Delete, -2147483648
       GuiControl,, PassiveDisableSpam, 0
       MsgBox, 0, Ryzen's Macros %MacroVersion%, Passive Disable Spam disabled
    } else {
-      SetTimer, PassiveDisableSpam, 7500
+      SetTimer, PassiveDisableSpam, 7500, -2147483648
       GuiControl,, PassiveDisableSpam, 1
       TrayTip, Ryzen's Macros %MacroVersion%, Passive Disable Spam enabled, 10, 1
       MsgBox, 0, Ryzen's Macros %MacroVersion%, Passive Disable Spam enabled
@@ -1631,3 +1627,45 @@ Return
 OpenDirectory:
    Run, %ConfigDirectory%
 Return
+
+AlwaysOnTopCheck:
+   GuiControlGet, AlwaysOnTop
+   if (AlwaysOnTop = 0) {
+      SetTimer, AlwaysOnTop, Delete, -2147483648
+   } else {
+      SetTimer, AlwaysOnTop, 25, -2147483648
+   }
+Return
+
+AlwaysOnTop:
+   GuiControlGet, AlwaysOnTop
+   If (AlwaysOnTop = 1) {
+      If WinActive("ahk_exe GTA5.exe") {
+         WinSet, AlwaysOnTop, On, ahk_exe GTA5.exe
+      } else {
+         WinSet, AlwaysOnTop, Off, ahk_exe GTA5.exe
+         WinMinimize, ahk_exe GTA5.exe
+      }
+   }
+Return
+
+SendInputTestV2() {
+   BlockInput, On
+   WinActivate, ahk_exe GTA5.exe
+   sleep 2000
+   StartTime := A_TickCount
+   Send t{shift up}
+   SendInput Loading{. 30}
+   EndTime := A_TickCount - StartTime
+   sleep 500
+   Send {Blind}{esc}
+   sleep 500
+   BlockInput, Off
+   ; MsgBox %EndTime%
+   If (EndTime > 200)
+      MsgBox, 4, Ryzen's Macros %MacroVersion%, I have detected that macros are currently incredibly slow, most likely due to Flawless Widescreen, or a different program that also installs the keyboard hook. Would you like to continue anyway?
+   IfMsgBox No
+   {
+      ExitApp
+   }
+}
