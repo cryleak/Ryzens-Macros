@@ -8,12 +8,16 @@ IfNotExist, %ConfigDirectory%
 IfNotExist, %ConfigDirectory%\assets
    FileCreateDir, %ConfigDirectory%\assets
 TrayButtonInfo = 1
+If (A_ScriptName = "Ryzen's Macros.ahk")
+   isCompiled = 0
+Else
+   isCompiled = 1
 ; Debug:
-; /*
-ListLines Off ; Removes line history, makes the script slightly more secret.
-#KeyHistory 0 ; Removes key history, makes the script slightly more secret.
-TrayButtonInfo = 0
-*/
+If (isCompiled) {
+   ListLines Off ; Removes line history, makes the script slightly more secret.
+   #KeyHistory 0 ; Removes key history, makes the script slightly more secret.
+   TrayButtonInfo = 0
+}
 
 ; GTAHaX EWO Offsets:
 FreemodeGlobalIndex = 262145
@@ -58,6 +62,7 @@ Back: ; It goes back to this checkpoint. It works.
    IniRead,OriginalLocation, %ConfigDirectory%\FileLocationData.ini, Location, Location
    IniRead,OriginalName, %ConfigDirectory%\FileLocationData.ini, Name, Name
    #SingleInstance, force ; Forces single instance
+   #HotkeyModifierTimeout -1 ; Changes hotkey modifier timeout, maybe does something lmao
 #IfWinActive ahk_exe GTA5.exe ; Hotkeys will only work if you are tabbed in.
    #MaxThreadsPerHotkey 1 ; Doesn't really matter
    #MaxThreads 99999 ; Sets the maximum amount of active threads to practically infinity.
@@ -65,9 +70,9 @@ Back: ; It goes back to this checkpoint. It works.
    #MaxHotkeysPerInterval 99000000 ; Doesn't matter but AHK may give you an error if you spam hotkeys really really fast otherwise.
    #HotkeyInterval 99000000 ; Same as the other hotkey interval setting
    #Persistent ; Makes the script never exit, probably unneccassary because other commands (like hotkey) already cause it to never exit.
-   #UseHook On
-   #InstallKeybdHook
-   #InstallMouseHook
+   #UseHook On ; Idk
+   #InstallKeybdHook ; Idk
+   #InstallMouseHook ; Idk
    SetTitleMatchMode, 2 ; I forgor :dead_skull:
    SetDefaultMouseSpeed, 0 ; Something
    SetKeyDelay, -1, -1 ; Sets key delay to the lowest possible, there is still delay due to the keyboard hook in GTA, but this makes it excecute as fast as possible WITHOUT skipping keystrokes. Set this a lot higher if you uninstalled the keyboard hook using mods.
@@ -136,8 +141,8 @@ If (AlwaysOnTop = 1) {
    WinSet, AlwaysOnTop, Off, ahk_exe GTA5.exe
    WinMinimize, ahk_exe GTA5.exe
 }
-If (A_ScriptName = "Ryzen's Macros.ahk") {
-   MsgBox, 0, Ryzen's Macros %MacroVersion%, If you see this, something strange is happening.
+If (!isCompiled) {
+   MsgBox, 0, Ryzen's Macros %MacroVersion%,If you see this`, something strange is happening. , 0.5
    Reload
 }
 Else {
@@ -160,11 +165,6 @@ Flawless:
    MsgBox, 0, IMPORTANT!, Make sure you have applied the settings you want to use already inside Flawless Widescreen!
    Process, Close, FlawlessWidescreen.exe
    MsgBox, 0, Fix applied, Fix applied`, please DM me if it doesn't work.
-Return
-
-Apply:
-   Gosub,DisableAll
-   Gui,Submit,NoHide
 Return
 
 ExitMacros:
@@ -257,12 +257,15 @@ EWO:
    } else {
       SetMouseDelay, -1
       if (SmoothEWO = 1) {
+         /*
+         
          If (SmoothEWOMode = "Slow") {
             If (getKeyState("rbutton", "P")) {
                SendInput {Blind}{lbutton up}{rbutton up} ; {d up}{w up}{s up}{a up}
-               DllCall("Sleep",UInt,50)
+               DllCall("Sleep",UInt,25)
             }
          }
+         */
          If (SmoothEWOMode = "Faster") {
             SendInput {Blind}{%EWOLookBehindKey% down}
             SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{%InteractionMenuKey% down}{d up}{w up}{s up}{a up}
@@ -273,15 +276,17 @@ EWO:
             DllCall("Sleep",UInt,9)
             Send {Blind}{%EWOSpecialAbilitySlashActionKey% down}{enter up}
          } else if (SmoothEWOMode = "Slow") {
-            StringUpper, EWOLookBehindKey, EWOLookBehindKey
+            ; StringUpper, EWOLookBehindKey, EWOLookBehindKey
             SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{d up}{w up}{s up}{a up}{%InteractionMenuKey% down}
             DllCall("Sleep",UInt,15)
-            Send {Blind}{%EWOLookBehindKey% down}{up}
+            Send {Blind}{%EWOLookBehindKey% down}
+            DllCall("Sleep",UInt,8)
+            Send {Blind}{up}
             DllCall("Sleep",UInt,17)
             Send {Blind}{up}
-            DllCall("Sleep",UInt,37)
+            DllCall("Sleep",UInt,40)
             Send {Blind}{%EWOSpecialAbilitySlashActionKey% down}{enter up}{%InteractionMenuKey% up}
-            StringLower, EWOLookBehindKey, EWOLookBehindKey
+            ; StringLower, EWOLookBehindKey, EWOLookBehindKey
          } else if (SmoothEWOMode = "Fastest") {
             SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}
             Send {Blind}{%InteractionMenuKey%}{up 2}
@@ -828,6 +833,7 @@ ToggleCEO:
       SendInput {Blind}{enter up}
       GUIControl,, CEOMode, 0
    }
+   sleep 125
 return
 
 ProcessCheckTimer:
@@ -1245,58 +1251,70 @@ SavingAndButtonsAndMiscMacros:
    Gui, Add, Link,x235 y245, <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Open-Local-Directory-of-Ryzen's-Macros">(?)</a>
 Return
 
+Apply:
+   Global save = 0
+   Goto SaveConfigRedirect
+Return
+
 SaveConfig:
+   Global save = 1
+   Goto SaveConfigRedirect
+Return
+
+SaveConfigRedirect:
    GuiControlGet, ProcessCheck2
    SetTimer, Write, Off, -2147483648
    SetTimer, TabBackInnn, Off, -2147483648
    SetTimer, ProcessCheckTimer, Off, -2147483648
    Gosub,DisableAll
    Gui,Submit,NoHide
-   IniWrite,%InteractionMenuKey%,%CFG%,Keybinds,Interaction Menu Key
-   IniWrite,%FranklinBind%,%CFG%,Keybinds,Franklin Key
-   IniWrite,%ThermalHelmet%,%CFG%,PVP Macros,Thermal Helmet
-   IniWrite,%FastSniperSwitch%,%CFG%,PVP Macros,Fast Sniper Switch
-   IniWrite,%SniperBind%,%CFG%,Keybinds,Sniper Bind
-   IniWrite,%RifleBind%,%CFG%,Keybinds,Rifle Bind
-   IniWrite,%EWO%,%CFG%,PVP Macros,EWO
-   IniWrite,%EWOWrite%,%CFG%,PVP Macros,EWO Write
-   IniWrite,%KekEWO%,%CFG%,PVP Macros,Kek EWO
-   IniWrite,%EWOLookBehindKey%,%CFG%,Keybinds,EWO Look Behind Button
-   IniWrite,%EWOSpecialAbilitySlashActionKey%,%CFG%,Keybinds,EWO Special Ability/Action Key
-   IniWrite,%EWOMelee%,%CFG%,Keybinds,EWO Melee Key
-   IniWrite,%BST%,%CFG%,PVP Macros,BST
-   IniWrite,%BSTSpeed%,%CFG%,PVP Macros,BST Speed
-   IniWrite,%Ammo%,%CFG%,PVP Macros,Buy Ammo
-   IniWrite,%FastRespawn%,%CFG%,Misc,Fast Respawn
-   IniWrite,%Suspend%,%CFG%,Misc,Suspend Macro
-   IniWrite,%HelpWhatsThis%,%CFG%,Chat Macros,idkwtfthisis
-   IniWrite,%EssayAboutGTA%,%CFG%,Chat Macros,Essay About GTA
-   IniWrite,%CustomTextSpam%,%CFG%,Chat Macros,Custom Text Spam
-   IniWrite,%ShutUp%,%CFG%,Chat Macros,Shut Up Spam
-   IniWrite,%CustomSpamText%,%CFG%,Chat Macros,Custom Spam Text
-   IniWrite,%RawText%,%CFG%,Chat Macros,Raw Text
-   IniWrite,%ReloadOutfit%,%CFG%,Misc,Reload Outfit
-   IniWrite,%ShowUI%,%CFG%,Misc,Show UI
-   IniWrite,%ToggleCEO%,%CFG%,Misc,Toggle CEO
-   IniWrite,%ToggleCrosshair%,%CFG%,Misc,Toggle Crosshair
-   IniWrite,%ProcessCheck2%,%CFG%,Misc,Process Check
-   IniWrite,%NightVision%,%CFG%,Misc,Use Night Vision Thermal
-   IniWrite,%RPGSpam%,%CFG%,PVP Macros,RPG Spam
-   IniWrite,%RPGBind%,%CFG%,Keybinds,RPG Bind
-   IniWrite,%StickyBind%,%CFG%,Keybinds,Sticky Bind
-   IniWrite,%PistolBind%,%CFG%,Keybinds,Pistol Bind
-   IniWrite,%TabWeapon%,%CFG%,Misc,Tab Weapon
-   IniWrite,%Crosshair%,%CFG%,Misc,Crosshair
-   IniWrite,%CrosshairPos%,%CFG%,Misc,Crosshair Position
-   IniWrite,%Jobs%,%CFG%,Misc,Disable All Job Blips
-   IniWrite,%Paste%,%CFG%,Misc,Allow Copy Paste
-   IniWrite,%MCCEO%,%CFG%,Misc,MC CEO Toggle
-   IniWrite,%SmoothEWO%,%CFG%,Misc,Smooth EWO
-   IniWrite,%SmoothEWOMode%,%CFG%,Misc,Smooth EWO Mode
-   IniWrite,%BugRespawnMode%,%CFG%,Misc,Bug Respawn Mode
-   IniWrite,%FasterSniper%,%CFG%,Misc,Faster Sniper
-   IniWrite,%PassiveDisableSpamToggle%,%CFG%,Misc,Passive Disable Spam Toggle
-   IniWrite,%AlwaysOnTop%,%CFG%,Misc,Always On Top
+   If (save = 1) {
+      IniWrite,%InteractionMenuKey%,%CFG%,Keybinds,Interaction Menu Key
+      IniWrite,%FranklinBind%,%CFG%,Keybinds,Franklin Key
+      IniWrite,%ThermalHelmet%,%CFG%,PVP Macros,Thermal Helmet
+      IniWrite,%FastSniperSwitch%,%CFG%,PVP Macros,Fast Sniper Switch
+      IniWrite,%SniperBind%,%CFG%,Keybinds,Sniper Bind
+      IniWrite,%RifleBind%,%CFG%,Keybinds,Rifle Bind
+      IniWrite,%EWO%,%CFG%,PVP Macros,EWO
+      IniWrite,%EWOWrite%,%CFG%,PVP Macros,EWO Write
+      IniWrite,%KekEWO%,%CFG%,PVP Macros,Kek EWO
+      IniWrite,%EWOLookBehindKey%,%CFG%,Keybinds,EWO Look Behind Button
+      IniWrite,%EWOSpecialAbilitySlashActionKey%,%CFG%,Keybinds,EWO Special Ability/Action Key
+      IniWrite,%EWOMelee%,%CFG%,Keybinds,EWO Melee Key
+      IniWrite,%BST%,%CFG%,PVP Macros,BST
+      IniWrite,%BSTSpeed%,%CFG%,PVP Macros,BST Speed
+      IniWrite,%Ammo%,%CFG%,PVP Macros,Buy Ammo
+      IniWrite,%FastRespawn%,%CFG%,Misc,Fast Respawn
+      IniWrite,%Suspend%,%CFG%,Misc,Suspend Macro
+      IniWrite,%HelpWhatsThis%,%CFG%,Chat Macros,idkwtfthisis
+      IniWrite,%EssayAboutGTA%,%CFG%,Chat Macros,Essay About GTA
+      IniWrite,%CustomTextSpam%,%CFG%,Chat Macros,Custom Text Spam
+      IniWrite,%ShutUp%,%CFG%,Chat Macros,Shut Up Spam
+      IniWrite,%CustomSpamText%,%CFG%,Chat Macros,Custom Spam Text
+      IniWrite,%RawText%,%CFG%,Chat Macros,Raw Text
+      IniWrite,%ReloadOutfit%,%CFG%,Misc,Reload Outfit
+      IniWrite,%ShowUI%,%CFG%,Misc,Show UI
+      IniWrite,%ToggleCEO%,%CFG%,Misc,Toggle CEO
+      IniWrite,%ToggleCrosshair%,%CFG%,Misc,Toggle Crosshair
+      IniWrite,%ProcessCheck2%,%CFG%,Misc,Process Check
+      IniWrite,%NightVision%,%CFG%,Misc,Use Night Vision Thermal
+      IniWrite,%RPGSpam%,%CFG%,PVP Macros,RPG Spam
+      IniWrite,%RPGBind%,%CFG%,Keybinds,RPG Bind
+      IniWrite,%StickyBind%,%CFG%,Keybinds,Sticky Bind
+      IniWrite,%PistolBind%,%CFG%,Keybinds,Pistol Bind
+      IniWrite,%TabWeapon%,%CFG%,Misc,Tab Weapon
+      IniWrite,%Crosshair%,%CFG%,Misc,Crosshair
+      IniWrite,%CrosshairPos%,%CFG%,Misc,Crosshair Position
+      IniWrite,%Jobs%,%CFG%,Misc,Disable All Job Blips
+      IniWrite,%Paste%,%CFG%,Misc,Allow Copy Paste
+      IniWrite,%MCCEO%,%CFG%,Misc,MC CEO Toggle
+      IniWrite,%SmoothEWO%,%CFG%,Misc,Smooth EWO
+      IniWrite,%SmoothEWOMode%,%CFG%,Misc,Smooth EWO Mode
+      IniWrite,%BugRespawnMode%,%CFG%,Misc,Bug Respawn Mode
+      IniWrite,%FasterSniper%,%CFG%,Misc,Faster Sniper
+      IniWrite,%PassiveDisableSpamToggle%,%CFG%,Misc,Passive Disable Spam Toggle
+      IniWrite,%AlwaysOnTop%,%CFG%,Misc,Always On Top
+   }
    
    Gosub, LaunchCycle
    Hotkey, *%ThermalHelmet%, ThermalHelmet, UseErrorLevel On
@@ -1323,15 +1341,15 @@ SaveConfig:
       SetTimer, Write, 10, -2147483648
       SetTimer, TabBackInnn, 10, -2147483648
    }
-   if (ProcessCheck2 = 1) {
+   if (ProcessCheck2 = 1)
       SetTimer, ProcessCheckTimer, 100, -2147483648
-   }
    ;MsgBox, 0, Saved!, Your config has been saved and/or the macros have been started!, 2
-   If (GTAAlreadyClosed = 0) {
+   If (GTAAlreadyClosed = 0 && save = 1)
       TrayTip, Ryzen's Macros %MacroVersion%, Your config has been saved and/or the macros have been started!, 10, 1
-   } else If (GTAAlreadyClosed = 1) && (ProcessCheck2 = 1) {
+   else if (save = 0)
+      TrayTip, Ryzen's Macros %MacroVersion%, Your config has been applied and/or the macros have been started! Settings have not been saved., 10, 1
+   else if (GTAAlreadyClosed = 1) && (ProcessCheck2 = 1)
       TrayTip, Ryzen's Macros %MacroVersion%, GTA has not been detected to be open`, the macros will not automatically close and Show EWO Score will not work`. Please restart the macros once you have restarted GTA., 10, 1
-   }
    #Include *i %A_MyDocuments%\Ryzen's Macros\DynamicScript.ahk
 Return
 
@@ -1652,7 +1670,7 @@ Return
 SendInputTestV2() {
    BlockInput, On
    WinActivate, ahk_exe GTA5.exe
-   sleep 2000
+   sleep 250
    StartTime := A_TickCount
    Send t{shift up}
    SendInput Loading{. 30}
@@ -1665,7 +1683,5 @@ SendInputTestV2() {
    If (EndTime > 200)
       MsgBox, 4, Ryzen's Macros %MacroVersion%, I have detected that macros are currently incredibly slow, most likely due to Flawless Widescreen, or a different program that also installs the keyboard hook. Would you like to continue anyway?
    IfMsgBox No
-   {
-      ExitApp
-   }
-}
+   { ExitApp
+}}
