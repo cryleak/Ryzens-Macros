@@ -45,7 +45,7 @@ CEOCircleGlobalIndexAddedTogether := CEOCircleGlobalIndex + CEOCircleGlobalOffse
 
 Goto, CheckHWID ; Checks your PC's UUID. Shitty but it works
 Back: ; It goes back to this checkpoint. It works.
-   MacroVersion = 3.30.1 ; Macro version
+   MacroVersion = Final #1 ; Macro version
    ClumsyPing = 200
    RunningInScript = 1
    CFG = %A_MyDocuments%\Ryzen's Macros\GTA Binds.ini ; Config file name
