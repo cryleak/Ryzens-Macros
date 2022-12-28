@@ -46,6 +46,7 @@ CEOCircleGlobalIndexAddedTogether := CEOCircleGlobalIndex + CEOCircleGlobalOffse
 Goto, CheckHWID ; Checks your PC's UUID. Shitty but it works
 Back: ; It goes back to this checkpoint. It works.
    MacroVersion = 3.30.1 ; Macro version
+   ClumsyPing = 200
    RunningInScript = 1
    CFG = %A_MyDocuments%\Ryzen's Macros\GTA Binds.ini ; Config file name
    SetWorkingDir %A_MyDocuments%\Ryzen's Macros\
@@ -85,14 +86,9 @@ Back: ; It goes back to this checkpoint. It works.
       WinMinimize, ahk_exe GTA5.exe
       SetTimer, AlwaysOnTop, 25, -2147483648
    }
-   SendInputTestV2()
+   If (IsCompiled)
+      SendInputTestV2()
    MsgBox, 0, Ryzen's Macros %MacroVersion%, Successfully started. Welcome to Ryzen's Macros!
-   Global processName := "SocialClubHelper.exe"
-   Global Level := "L"
-   Gosub, Priority ; Sets priority of "SocialClubHelper.exe" to "L"
-   Global processName := "Launcher.exe"
-   Global Level := "L"
-   Gosub, Priority ; Sets priority of "Launcher.exe" to "L"
    Gui, Font, q5 ; Font quality, I don't know why this is a seperate line to the other font command above.
    Gui, Add, Tab3,, Combat|Chat|In-Game Binds|Options|Misc|Buttons/Misc|| ; Adds tabs to the GUI
    Gosub, CombatMacros ; Combat Macros
@@ -148,6 +144,7 @@ If (!isCompiled) {
 Else {
    Process, Close, %Gay%
    Process, Close, %Gay2%
+   Process, Close, %Gay3%
    Process, Close, %Obese11%
    Run, Reload.exe, %A_MyDocuments%
    ExitApp
@@ -175,6 +172,7 @@ ExitMacros:
    }
    Process, Close, %Gay%
    Process, Close, %Gay2%
+   Process, Close, %Gay3%
    Process, Close, %Obese11%
 ExitApp
 return
@@ -257,15 +255,12 @@ EWO:
    } else {
       SetMouseDelay, -1
       if (SmoothEWO = 1) {
-         /*
-         
          If (SmoothEWOMode = "Slow") {
             If (getKeyState("rbutton", "P")) {
                SendInput {Blind}{lbutton up}{rbutton up} ; {d up}{w up}{s up}{a up}
-               DllCall("Sleep",UInt,25)
+               DllCall("Sleep",UInt,50)
             }
          }
-         */
          If (SmoothEWOMode = "Faster") {
             SendInput {Blind}{%EWOLookBehindKey% down}
             SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{%InteractionMenuKey% down}{d up}{w up}{s up}{a up}
@@ -279,11 +274,11 @@ EWO:
             ; StringUpper, EWOLookBehindKey, EWOLookBehindKey
             SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{d up}{w up}{s up}{a up}{%InteractionMenuKey% down}
             DllCall("Sleep",UInt,15)
-            Send {Blind}{%EWOLookBehindKey% down}
-            DllCall("Sleep",UInt,8)
+            Send {Blind}{%EWOLookBehindKey% down}{f24}
+            ; DllCall("Sleep",UInt,10)
             Send {Blind}{up}
-            DllCall("Sleep",UInt,17)
-            Send {Blind}{up}
+            DllCall("Sleep",UInt,25)
+            SendInput {Blind}{WheelUp}
             DllCall("Sleep",UInt,40)
             Send {Blind}{%EWOSpecialAbilitySlashActionKey% down}{enter up}{%InteractionMenuKey% up}
             ; StringLower, EWOLookBehindKey, EWOLookBehindKey
@@ -305,18 +300,30 @@ EWO:
             StringLower, EWOLookBehindKey, EWOLookBehindKey
          }
          else if (SmoothEWOMode = "Retarded2") {
+            
             SendInput {Blind}{lbutton up}{enter down}
             Send {Blind}{%InteractionMenuKey%}{enter up}{up down}
             SendInput {Blind}{enter down}
             Send {Blind}{up up}
             SendInput {Blind}{enter up}
             GUIControl,, CEOMode, 0
+            DllCall("Sleep",UInt,110)
+            
+            SendInput {Blind}{%EWOLookBehindKey% down}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{%InteractionMenuKey% down}{d up}{w up}{s up}{a up}
+            DllCall("Sleep",UInt,13)
+            Send {Blind}{shift down}{f24 up}{shift up}{up}
+            DllCall("Sleep",UInt,12)
+            Send {Blind}{up}
+            DllCall("Sleep",UInt,9)
+            Send {Blind}{%EWOSpecialAbilitySlashActionKey% down}{enter up}
+            /*
             sleep 30
             SendInput {Blind}{%EWOLookBehindKey% down}
             sleep 95
             SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}
             Send {Blind}{f24 down}{f23 down}{f22 down}
             SendInput {Blind}{wheelup}{enter up}{up up}
+            */
          }
       } else if (SmoothEWO = 0) {
          SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
@@ -462,7 +469,6 @@ ProBlocking:
 Return
 
 GTAHax:
-   SendInput {Blind}{%GTAHax% up}
    Run, GTAHaXUI.exe, %ConfigDirectory%,,Gay
    WinWait, ahk_pid %Gay%
    ControlSend, Edit1, {down}{backspace}%FreemodeGlobalIndexAddedTogether%, ahk_pid %Gay%
@@ -482,7 +488,6 @@ GTAHax:
 return
 
 GTAHaxCEO:
-   SendInput {Blind}{%GTAHax% up}
    Run, GTAHaXUI.exe, %ConfigDirectory%,,Gay
    WinWait, ahk_pid %Gay%
    ControlSend, Edit1, {down}{backspace}%CEOCircleGlobalIndexAddedTogether%, ahk_pid %Gay%
@@ -848,6 +853,7 @@ ProcessCheckTimer:
             MsgBox, 0, Macros will close now. RIP., GTA is no longer running. Macros will close now. RIP.
             Process, Close, %Gay%
             Process, Close, %Gay2%
+            Process, Close, %Gay3%
             Process, Close, %Obese11%
             ExitApp
          }
@@ -1237,8 +1243,10 @@ SavingAndButtonsAndMiscMacros:
    Gui, Add, Button, gGTAHax h20, Apply GTAHaX EWO Codes!
    Gui, Add, Button, gGTAHaxCEO h20, Apply CEO Circle!
    Gui, Add, Button, gOpenDirectory h20, Open Local Directory of Ryzen's Macros!
-   If (DebugTesting = 1)
+   If (DebugTesting = 1) {
       Gui, Add, Button, gSpotify h20, get rid of noob spotify
+      Gui, Add, Button, gClumsy h20, toggle clumsy
+   }
    
    ; Button Links
    Gui, Add, Link,x158 y62, <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Save-Config-Start-Macros">(?)</a>
@@ -1356,6 +1364,7 @@ Return
 CloseGTAHaX:
    Process, Close, %Gay%
    Process, Close, %Gay2%
+   Process, Close, %Gay3%
    Process, Close, %Obese11%
 Return
 
@@ -1685,3 +1694,32 @@ SendInputTestV2() {
    IfMsgBox No
    { ExitApp
 }}
+
+Clumsy:
+   Process, Close, %Gay3%
+   Run, clumsy.exe, %ConfigDirectory%\clumsy,Min,Gay3
+   WinWait, ahk_pid %Gay3%
+   WinGet, ID3, ID, ahk_pid %Gay3%
+   WinSet, ExStyle, ^0x80, ahk_id %ID3% ; 0x80 is WS_EX_TOOLWINDOW
+   Control, Choose, 4, ComboBox1, ahk_pid %Gay3%
+   Control, Check,, Button4, ahk_pid %Gay3%
+   ControlSetText,Edit2,%ClumsyPing%,ahk_pid %Gay3%
+   sleep 100
+   ControlClick, Button2, ahk_pid %Gay3%
+global clumsyStarted = 1
+global Notified = 0
+SetTimer, ClumsyClosed, 350, -2147483648
+Return
+
+ClumsyClosed:
+If (clumsyStarted) && (!Notified) && (!ProcessExist(ahk_pid Gay3)) {
+   msgbox, for some reason it closed`, idk why
+   global Notified = 1
+   SetTimer, ClumsyClosed, Delete, -2147483648
+}
+Return
+
+ProcessExist(Name) {
+	Process,Exist,%Name%
+	Return ErrorLevel
+}
