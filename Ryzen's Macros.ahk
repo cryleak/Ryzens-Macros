@@ -7,6 +7,7 @@ IfNotExist, %ConfigDirectory%
    FileCreateDir, %ConfigDirectory%
 IfNotExist, %ConfigDirectory%\assets
    FileCreateDir, %ConfigDirectory%\assets
+clumsyEnabled = 0
 TrayButtonInfo = 1
 If (A_ScriptName = "Ryzen's Macros.ahk")
    isCompiled = 0
@@ -19,14 +20,26 @@ If (isCompiled) {
    TrayButtonInfo = 0
 }
 
+; Variables:
+MacroVersion = Final #2 ; Macro version
+; clumsyPing = 200 ; Ping to set to the secret clumsy module
+RunningInScript = 1 ; Required for dynamic script to work properly
+CFG = %A_MyDocuments%\Ryzen's Macros\GTA Binds.ini ; Config file name
+CrosshairDone := 0 ; If crosshair has been applied
+MCCEO2 := 0 ; If you are in MC
+SendInputFallbackText = I have detected that it has taken a very long time to complete the chat message. First, check if the characters are being sent one by one, or in instant `"batches`". If it is being sent in batches, then your FPS is likely very low. Please complain to me on Discord and I will raise the threshold for this message. If it is being sent one by one, try this: If you are running Flawless Widescreen, you must close it, as it causes issues, and makes most macros far slower. Please open a support ticket on the Discord Server if the problem persists, or if Flawless Widescreen is not running.
+WriteWasJustPerformed = 0 ; EWO Score Write was just performed
+IniRead,DebugTesting,%CFG%,Debug,Debug Testing ; Checks if debug testing is true, usually false.
+IniRead,clumsyPing,%CFG%,Debug,clumsy ping ; yes
+IniRead,OriginalLocation, %ConfigDirectory%\FileLocationData.ini, Location, Location
+IniRead,OriginalName, %ConfigDirectory%\FileLocationData.ini, Name, Name
+
 ; GTAHaX EWO Offsets:
 FreemodeGlobalIndex = 262145
 EWOGlobalOffset1 = 28409
-
 ; GTAHaX EWO Offsets 2:
 EWOGlobalIndex = 2793044
 EWOGlobalOffset0 = 6899
-
 ; GTAHaX EWO Score Offsets:
 ScoreGlobalIndex = 2672505
 ScoreGlobalOffset1 = 1684
@@ -45,23 +58,13 @@ CEOCircleGlobalIndexAddedTogether := CEOCircleGlobalIndex + CEOCircleGlobalOffse
 
 Goto, CheckHWID ; Checks your PC's UUID. Shitty but it works
 Back: ; It goes back to this checkpoint. It works.
-   MacroVersion = Final #1 ; Macro version
-   ClumsyPing = 200
-   RunningInScript = 1
-   CFG = %A_MyDocuments%\Ryzen's Macros\GTA Binds.ini ; Config file name
+   Gosub, CreateTrayOptions
    SetWorkingDir %A_MyDocuments%\Ryzen's Macros\
-   CrosshairDone := 0 ; If crosshair has been applied
-   MCCEO2 := 0 ; If you are in MC
-   SendInputFallbackText = I have detected that it has taken a very long time to complete the chat message. First, check if the characters are being sent one by one, or in instant `"batches`". If it is being sent in batches, then your FPS is likely very low. Please complain to me on Discord and I will raise the threshold for this message. If it is being sent one by one, try this: If you are running Flawless Widescreen, you must close it, as it causes issues, and makes most macros far slower. Please open a support ticket on the Discord Server if the problem persists, or if Flawless Widescreen is not running.
-   WriteWasJustPerformed = 0
-   If not WinExist("ahk_exe GTA5.exe") {
+   If not WinExist("ahk_exe GTA5.exe") { ; Makes the macros not immediately close if you run it while GTA isn't open
       GTAAlreadyClosed = 1
    } else {
       GTAAlreadyClosed = 0
    }
-   IniRead,DebugTesting,%CFG%,Debug,Debug Testing ; Checks if debug testing is true, usually false.
-   IniRead,OriginalLocation, %ConfigDirectory%\FileLocationData.ini, Location, Location
-   IniRead,OriginalName, %ConfigDirectory%\FileLocationData.ini, Name, Name
    #SingleInstance, force ; Forces single instance
    #HotkeyModifierTimeout -1 ; Changes hotkey modifier timeout, maybe does something lmao
 #IfWinActive ahk_exe GTA5.exe ; Hotkeys will only work if you are tabbed in.
@@ -79,17 +82,16 @@ Back: ; It goes back to this checkpoint. It works.
    SetKeyDelay, -1, -1 ; Sets key delay to the lowest possible, there is still delay due to the keyboard hook in GTA, but this makes it excecute as fast as possible WITHOUT skipping keystrokes. Set this a lot higher if you uninstalled the keyboard hook using mods.
    SetWinDelay, -1 ; After any window modifying command, the script has a built in delay. Fuck delays.
    SetControlDelay, 0 ; After any control modifying command, for example; ControlSend, there is a built in delay. Set to 0 instead of -1 because having a slight delay may improve reliability, and is unnoticable anyways.
-   Gui, Font,, Segoe UI Semibold ; Sets font to something
-   IniRead,Read_AlwaysOnTop,%CFG%,Misc,Always On Top
+   Gui,Font,q5,Segoe UI Semibold ; Sets font to something
+   IniRead,Read_AlwaysOnTop,%CFG%,Misc,Always On Top ; Secret module
    If (Read_AlwaysOnTop = 1) {
       WinSet, AlwaysOnTop, Off, ahk_exe GTA5.exe
       WinMinimize, ahk_exe GTA5.exe
       SetTimer, AlwaysOnTop, 25, -2147483648
    }
    If (IsCompiled)
-      SendInputTestV2()
+      SendInputTestV2() ; Check to see if SendInput works or not
    MsgBox, 0, Ryzen's Macros %MacroVersion%, Successfully started. Welcome to Ryzen's Macros!
-   Gui, Font, q5 ; Font quality, I don't know why this is a seperate line to the other font command above.
    Gui, Add, Tab3,, Combat|Chat|In-Game Binds|Options|Misc|Buttons/Misc|| ; Adds tabs to the GUI
    Gosub, CombatMacros ; Combat Macros
    Gosub, ChatMacros ; Chat Macros
@@ -105,33 +107,13 @@ Back: ; It goes back to this checkpoint. It works.
    DetectHiddenWindows, On ; It does something
    Gui0 := WinExist( A_ScriptFullpath " ahk_pid " DllCall( "GetCurrentProcessId" ) ) ; I forgor
    DetectHiddenWindows, Off ; It does something
-   
-   Menu, Tray, NoStandard ; Default trays but with some extra things above it, usually not possible so you need to do some complicated things to make it work.
-   Menu, Tray, Add, Show UI, ShowUI
-   Menu, Tray, Add, Hide UI, HideWindow
-   Menu, Tray, Add, Save Macros, SaveConfig
-   Menu, Tray, Add
-   If (TrayButtonInfo = 1)
-      Menu, Tray, Add, Open, StandardTrayMenu
-   Menu, Tray, Add, Help, StandardTrayMenu
-   Menu, Tray, Add
-   Menu, Tray, Add, Window Spy, StandardTrayMenu
-   Menu, Tray, Add, Reload This Script, Reload
-   Menu, Tray, Add
-   Menu, Tray, Add, Suspend Hotkeys, StandardTrayMenu
-   Menu, Tray, Add, Pause Script, StandardTrayMenu
-   Menu, Tray, Add, Exit, ExitMacros
-   If (TrayButtonInfo = 1)
-      Menu, Tray, Default, Open
-   
-   Menu, Tray, Tip, Ryzen's Macros Version %MacroVersion%
    Gui, Show,, Ryzen's Macros Version %MacroVersion%
    
    ;MsgBox, 0, Welcome!, HWID Matching! Welcome to Ryzen's Macros. Add me on Discord (cryleak#3961) if you have any issues. Good luck.
    Gosub, StandardTrayMenu
 Return
 
-Reload:
+Reload: ; Reloads the macros
 GuiControlGet, AlwaysOnTop
 If (AlwaysOnTop = 1) {
    WinSet, AlwaysOnTop, Off, ahk_exe GTA5.exe
@@ -151,20 +133,20 @@ Else {
 }
 return
 
-Spotify:
+Spotify: ; Another secret module
    Loop, 10 {
       Process, Close, Spotify.exe
    }
 Return
 
-Flawless:
+Flawless: ; Flawless Widescreen fix
    MsgBox, 0, Info, This fixes slow chat macros and slower overall macros when Flawless Widescreen is running.
    MsgBox, 0, IMPORTANT!, Make sure you have applied the settings you want to use already inside Flawless Widescreen!
    Process, Close, FlawlessWidescreen.exe
    MsgBox, 0, Fix applied, Fix applied`, please DM me if it doesn't work.
 Return
 
-ExitMacros:
+ExitMacros: ; Self explanatory
    GuiControlGet, AlwaysOnTop
    If (AlwaysOnTop = 1) {
       WinSet, AlwaysOnTop, Off, ahk_exe GTA5.exe
@@ -177,11 +159,11 @@ ExitMacros:
 ExitApp
 return
 
-HideWindow:
+HideWindow: ; Hides the GUI
    Gui, Hide
 return
 
-ThermalHelmet:
+ThermalHelmet: ; Self explanatory
    SendInput {Blind}{lbutton up}{enter down}
    GuiControlGet, CEOMode
    GuiControlGet, NightVision
@@ -199,7 +181,7 @@ ThermalHelmet:
    Send {Blind}{space}{%InteractionMenuKey%}
 return
 
-FastSniperSwitch:
+FastSniperSwitch: ; Self explanatory
    SendInput {Blind}{%FastSniperSwitch% up}
    If (FasterSniper = 1)
       Send {Blind}{%SniperBind%}{lbutton}{%SniperBind%}{lbutton}
@@ -216,7 +198,7 @@ FastSniperSwitch:
    }
 return
 
-EWO:
+EWO: ; Self explanatory
    GuiControlGet, SmoothEWO
    GuiControlGet, SmoothEWOMode
    GuiControlGet, EWOWrite
@@ -255,12 +237,16 @@ EWO:
    } else {
       SetMouseDelay, -1
       if (SmoothEWO = 1) {
+         /*
+         
          If (SmoothEWOMode = "Slow") {
             If (getKeyState("rbutton", "P")) {
                SendInput {Blind}{lbutton up}{rbutton up} ; {d up}{w up}{s up}{a up}
+               DllCall("Sleep",UInt,110)
+            } else
                DllCall("Sleep",UInt,50)
-            }
          }
+         */
          If (SmoothEWOMode = "Faster") {
             SendInput {Blind}{%EWOLookBehindKey% down}
             SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{%InteractionMenuKey% down}{d up}{w up}{s up}{a up}
@@ -271,17 +257,26 @@ EWO:
             DllCall("Sleep",UInt,9)
             Send {Blind}{%EWOSpecialAbilitySlashActionKey% down}{enter up}
          } else if (SmoothEWOMode = "Slow") {
-            ; StringUpper, EWOLookBehindKey, EWOLookBehindKey
+            /*
+            StringUpper, EWOLookBehindKey, EWOLookBehindKey
             SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{d up}{w up}{s up}{a up}{%InteractionMenuKey% down}
-            DllCall("Sleep",UInt,15)
-            Send {Blind}{%EWOLookBehindKey% down}{f24}
-            ; DllCall("Sleep",UInt,10)
-            Send {Blind}{up}
+            DllCall("Sleep",UInt,20)
+            Send {Blind}{%EWOLookBehindKey% down}{up}
             DllCall("Sleep",UInt,25)
             SendInput {Blind}{WheelUp}
-            DllCall("Sleep",UInt,40)
-            Send {Blind}{%EWOSpecialAbilitySlashActionKey% down}{enter up}{%InteractionMenuKey% up}
-            ; StringLower, EWOLookBehindKey, EWOLookBehindKey
+            DllCall("Sleep",UInt,46)
+            SendInput {Blind}{%EWOSpecialAbilitySlashActionKey% down}
+            Send {Blind}{enter up}{%InteractionMenuKey% up}
+            StringLower, EWOLookBehindKey, EWOLookBehindKey
+            */
+            DllCall("Sleep",UInt,35)
+            SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{d up}{w up}{s up}{a up}{%InteractionMenuKey% down}{%EWOLookBehindKey% up}
+            DllCall("Sleep",UInt,15)
+            Send {Blind}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey%}{up}
+            DllCall("Sleep",UInt,24)
+            SendInput {Blind}{WheelUp}
+            DllCall("Sleep",UInt,50)
+            SendInput {Blind}{enter up}{%InteractionMenuKey% up}{%EWOLookBehindKey% up}
          } else if (SmoothEWOMode = "Fastest") {
             SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}
             Send {Blind}{%InteractionMenuKey%}{up 2}
@@ -290,13 +285,21 @@ EWO:
          }
          else if (SmoothEWOMode = "Retarded") {
             StringUpper, EWOLookBehindKey, EWOLookBehindKey
+            Random, Var, 1, 3
             SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%InteractionMenuKey% down}{%EWOSpecialAbilitySlashActionKey% down}{%EWOMelee% down}
             DllCall("Sleep",UInt,30)
             Send {Blind}{up}
             DllCall("Sleep",UInt,20)
             Send {Blind}{up}
-            DllCall("Sleep",UInt,10)
-            Send {Blind}{%EWOLookBehindKey% down}{f24}{f24 up}{enter up}
+            DllCall("Sleep",UInt,40)
+            Send {Blind}{%EWOLookBehindKey% down}
+            if (var) ; why the fuck did i do this
+               DllCall("Sleep",UInt,10)
+            else if (var = 2)
+               DllCall("Sleep",UInt,5)
+            else
+               DllCall("Sleep",UInt,15)
+            Send {Blind}{enter up}
             StringLower, EWOLookBehindKey, EWOLookBehindKey
          }
          else if (SmoothEWOMode = "Retarded2") {
@@ -342,7 +345,7 @@ EWO:
    }
 return
 
-Write:
+Write: ; Shows the score even if you have EWOd in the session via some advanced shit
    If (GTAAlreadyClosed = 0) {
       if not WinExist("ahk_exe GTAHaXUI.exe") { ; If window doesn't exist, make it exist and add shit to it
          Run, GTAHaXUI.exe, %ConfigDirectory%,Min,Gay2
@@ -373,16 +376,16 @@ Write:
    }
 Return
 
-WriteWasPerformed:
+WriteWasPerformed: ; Submodule of the Write module
    WriteWasJustPerformed = 0
 Return
 
-TabBackInnn:
+TabBackInnn: ; Submodule of the submodule of the Write module
    If (WriteWasJustPerformed = 1)
       WinActivate, ahk_exe GTA5.exe
 Return
 
-EWOWrite:
+EWOWrite: ; Checks if EWO Write is enabled
    GuiControlGet, EWOWrite
    If (EWOWrite = 1) {
       SetTimer, Write, 10, -2147483648
@@ -394,7 +397,7 @@ EWOWrite:
    }
 Return
 
-KekEWO:
+KekEWO: ; Opens the options menu to EWO, works even if you are stunned or ragdolled
    Send {Blind}{esc}
    sleep 150
    Send {Blind}e
@@ -410,7 +413,7 @@ KekEWO:
    Send {Blind}{enter 20}
 return
 
-BST:
+BST: ; Self explanatory
    SendInput {Blind}{lbutton up}{enter down}
    GuiControlGet, CEOMode
    GuiControlGet, BSTSpeed
@@ -437,7 +440,7 @@ BST:
    }
 return
 
-Ammo:
+Ammo: ; Self explanatory
    SendInput {Blind}{lbutton up}{enter down}
    GuiControlGet, CEOMode
    Send {Blind}{%InteractionMenuKey%}
@@ -461,14 +464,14 @@ Ammo:
    sleep 100
 return
 
-FastRespawn:
+FastRespawn: ; Self explanatory
    Send {Blind}{lbutton 30}
 return
 
-ProBlocking:
+ProBlocking: ; I don't think I need this anymore
 Return
 
-GTAHax:
+GTAHax: ; Self explanatory
    Run, GTAHaXUI.exe, %ConfigDirectory%,,Gay
    WinWait, ahk_pid %Gay%
    ControlSend, Edit1, {down}{backspace}%FreemodeGlobalIndexAddedTogether%, ahk_pid %Gay%
@@ -487,7 +490,7 @@ GTAHax:
    Process, Close, %Gay%
 return
 
-GTAHaxCEO:
+GTAHaxCEO: ; GTAHaX CEO Circle
    Run, GTAHaXUI.exe, %ConfigDirectory%,,Gay
    WinWait, ahk_pid %Gay%
    ControlSend, Edit1, {down}{backspace}%CEOCircleGlobalIndexAddedTogether%, ahk_pid %Gay%
@@ -509,7 +512,7 @@ GTAHaxCEO:
    Process, Close, %Gay%
 Return
 
-HelpWhatsThis:
+HelpWhatsThis: ; Self explanatory
    SendInput {%HelpWhatsThis% up}
    Send {Blind}t
    Send d
@@ -545,7 +548,7 @@ HelpWhatsThis:
    Send {enter}
 return
 
-EssayAboutGTA:
+EssayAboutGTA: ; Self explanatory
    SendInput {%EssayAboutGTA% up}
    Send tw
    SendInput hy is my fps so shlt this game
@@ -590,7 +593,7 @@ EssayAboutGTA:
    Send {enter}
 return
 
-CustomTextSpam:
+CustomTextSpam: ; Self explanatory
    GuiControlGet, RawText
    Length := StrLen(CustomSpamText)
    if (Length >= 31) {
@@ -647,7 +650,7 @@ CustomTextSpam:
    }
 return
 
-Paste:
+Paste: ; Self explanatory
    Length2 = StrLen(Clipboard)
    if (Length2 >= 31) {
       Loop, 140 {
@@ -669,7 +672,7 @@ Paste:
    }
 return
 
-ShutUp:
+ShutUp: ; Self explanatory
    Loop, 8 {
       Send {Blind}{t down}
       SendInput {Blind}{enter down}
@@ -679,7 +682,7 @@ ShutUp:
    }
 return
 
-Paste2:
+Paste2: ; Checks if Paste is enabled
    GuiControlGet, Paste
    If (Paste = 0) {
       Hotkey, ^v, Paste, Off
@@ -689,7 +692,7 @@ Paste2:
    }
 return
 
-ReloadOutfit:
+ReloadOutfit: ; Self explanatory
    SendInput {Blind}{lbutton up}{enter down}
    GuiControlGet, CEOMode
    Send {Blind}{%InteractionMenuKey%}
@@ -705,7 +708,7 @@ ReloadOutfit:
    Send {Blind}{%InteractionMenuKey%}
 return
 
-Crosshair5:
+Crosshair5: ; Self explanatory
    WinGetActiveTitle, OldActiveWindow
    GuiControlGet, CrosshairPos
    If not (CrossHairPos = "") {
@@ -747,7 +750,7 @@ Crosshair5:
    WinActivate, %OldActiveWindow%
 return
 
-Crosshair6:
+Crosshair6: ; Self explanatory
    WinGetActiveTitle, OldActiveWindow
    GuiControlGet, CrosshairPos
    If not (CrossHairPos = "") {
@@ -789,7 +792,7 @@ Crosshair6:
    WinActivate, %OldActiveWindow%
 return
 
-ProcessCheck3:
+ProcessCheck3: ; Self explanatory
    GuiControlGet, ProcessCheck2
    if (ProcessCheck2 = 0) {
       SetTimer, ProcessCheckTimer, Off, -2147483648
@@ -798,7 +801,7 @@ ProcessCheck3:
    }
 return
 
-TabWeapon2:
+TabWeapon2: ; If Fast Switch is enabled
    GuiControlGet, TabWeapon
    If (TabWeapon = 0) {
       Hotkey, *%SniperBind%, SniperBind, UseErrorLevel Off
@@ -1189,6 +1192,7 @@ MacroOptions:
    Gui, Add, Link,, CEO Mode: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/CEO-Mode">(?)</a>
    Gui, Add, Link,, Optimize Fast Respawn EWO for: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Optimize-Fast-Respawn-EWO-For">(?)</a>
    Gui, Add, Link,, Show EWO Score: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Show-EWO-Score">(?)</a>
+   Gui, Add, Link,, Sing: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Show-EWO-Score">(?)</a>
    If (DebugTesting = 1) {
       Gui, Add, Link,, Passive Disable Spam: <a href="">(?)</a>
       Gui, Add, Link,, Always On Top: <a href="">(?)</a>
@@ -1205,9 +1209,11 @@ MacroOptions:
    Gui, Add, CheckBox, vCEOMode h20,
    Gui, Add, DropDownList, vBugRespawnMode, Homing|RPG
    Gui, Add, Checkbox, gEWOWrite vEWOWrite h20
-   Gui, Add, Checkbox, gPassiveDisableSpamCheck vPassiveDisableSpam h20
-   If (DebugTesting = 1)
+   Gui, Add, Checkbox, gToggleSing vsingEnabled h20
+   If (DebugTesting = 1) {
+      Gui, Add, Checkbox, gPassiveDisableSpamCheck vPassiveDisableSpam h20
       Gui, Add, Checkbox, gAlwaysOnTopCheck vAlwaysOnTop h32
+   }
 Return
 
 MiscMacros:
@@ -1505,7 +1511,7 @@ Return
 
 CheckHWID:
    UrlDownloadToFile, https://pastebin.com/raw/dpBPUkBM, %A_Temp%\Keys.ini
-   while IfExist, A_Temp "\Keys.ini"
+   while IfExist, A_Temp "\Keys.ini" ; This cheeky little piece of code makes it wait until the file exists.
       {}
       IniRead, Key1, %A_Temp%\Keys.ini, Registration, Key1
    IniRead, Key2, %A_Temp%\Keys.ini, Registration, Key2
@@ -1567,7 +1573,6 @@ CheckHWID:
    IniRead, Key58, %A_Temp%\Keys.ini, Registration, Key58
    IniRead, Key59, %A_Temp%\Keys.ini, Registration, Key59
    IniRead, Key60, %A_Temp%\Keys.ini, Registration, Key60
-   
    FileDelete, %A_Temp%\Keys.ini
    
    key := % UUID()
@@ -1696,30 +1701,160 @@ SendInputTestV2() {
 }}
 
 Clumsy:
-   Process, Close, %Gay3%
-   Run, clumsy.exe, %ConfigDirectory%\clumsy,Min,Gay3
-   WinWait, ahk_pid %Gay3%
-   WinGet, ID3, ID, ahk_pid %Gay3%
-   WinSet, ExStyle, ^0x80, ahk_id %ID3% ; 0x80 is WS_EX_TOOLWINDOW
-   Control, Choose, 4, ComboBox1, ahk_pid %Gay3%
-   Control, Check,, Button4, ahk_pid %Gay3%
-   ControlSetText,Edit2,%ClumsyPing%,ahk_pid %Gay3%
-   sleep 100
-   ControlClick, Button2, ahk_pid %Gay3%
-global clumsyStarted = 1
-global Notified = 0
-SetTimer, ClumsyClosed, 350, -2147483648
+   if (clumsyEnabled = 0) {
+      Process, Close, %Gay3%
+      Run, clumsy.exe, %ConfigDirectory%\clumsy,Min,Gay3
+      WinWait, ahk_pid %Gay3%
+      WinGet, ID3, ID, ahk_pid %Gay3%
+      WinSet, ExStyle, ^0x80, ahk_id %ID3% ; 0x80 is WS_EX_TOOLWINDOW
+      Control, Choose, 4, ComboBox1, ahk_pid %Gay3%
+      Control, Check,, Button4, ahk_pid %Gay3%
+      ControlSetText,Edit2,%clumsyPing%,ahk_pid %Gay3%
+      sleep 100
+      ControlClick, Button2, ahk_pid %Gay3%
+      global clumsyStarted = 1
+      global clumsyEnabled = 1
+      global Notified = 0
+      SetTimer, ClumsyClosed, 350, -2147483648
+      msgbox, clumsy enabled
+   } else {
+      Process, Close, %Gay3%
+      SetTimer, ClumsyClosed, Delete, -2147483648
+      global clumsyEnabled = 0
+      msgbox, clumsy disabled
+   }
 Return
 
 ClumsyClosed:
-If (clumsyStarted) && (!Notified) && (!ProcessExist(ahk_pid Gay3)) {
-   msgbox, for some reason it closed`, idk why
-   global Notified = 1
-   SetTimer, ClumsyClosed, Delete, -2147483648
-}
+   If (clumsyStarted) && (!Notified) && (!ProcessExist(ahk_pid Gay3)) {
+      msgbox, for some reason it closed`, idk why
+      global Notified = 1
+      SetTimer, ClumsyClosed, Delete, -2147483648
+   }
 Return
 
-ProcessExist(Name) {
-	Process,Exist,%Name%
-	Return ErrorLevel
+ProcessExist(Name) { ; For convenience sake
+   Process,Exist,%Name%
+   Return ErrorLevel
 }
+
+CreateTrayOptions:
+   Menu, Tray, NoStandard ; Default trays but with some extra things above it, usually not possible so you need to do some complicated things to make it work.
+   Menu, Tray, Add, Show UI, ShowUI
+   Menu, Tray, Add, Hide UI, HideWindow
+   Menu, Tray, Add, Save Macros, SaveConfig
+   Menu, Tray, Add
+   If (TrayButtonInfo = 1)
+      Menu, Tray, Add, Open, StandardTrayMenu
+   Menu, Tray, Add, Help, StandardTrayMenu
+   Menu, Tray, Add
+   Menu, Tray, Add, Window Spy, StandardTrayMenu
+   Menu, Tray, Add, Reload This Script, Reload
+   Menu, Tray, Add
+   Menu, Tray, Add, Suspend Hotkeys, StandardTrayMenu
+   Menu, Tray, Add, Pause Script, StandardTrayMenu
+   Menu, Tray, Add, Exit, ExitMacros
+   If (TrayButtonInfo = 1)
+      Menu, Tray, Default, Open
+   
+   Menu, Tray, Tip, Ryzen's Macros Version %MacroVersion%
+Return
+
+ToggleSing: ; Toggles the sing
+   GuiControlGet, singEnabled
+   if (singEnabled) ; If sing is on
+      Goto, Sing
+Return
+
+Sing: ; Sings in chat lmao
+   global keepRunning = 1 ; Set to 1 at the start unless you use the Safeguard Hotkey.
+   global waitExistsInLyrics = 0 ; Resets it when you restart
+   NoWaitExistsTimeout = 2000 ; If there is no wait() in the lyrics file, then it will sleep this amount per message automatically.
+   
+   songFileLocation = %ConfigDirectory%\Lyrics.txt ; Location of the file
+   WinActivate, ahk_exe GTA5.exe ; Activates the GTA window
+   
+   Loop, Read, %songFileLocation% ; Sends every line of the lyrics unless it is a wait() or a comment. Not the most efficient way to do this but I do not fucking care. A few clock cycles doesn't matter.
+   {
+      if (keepRunning) ; This will only be disabled if you press the safeguard key. Timers override basically any thread priority, so this is better than a hotkey. If you do not specify a value that in the if statement, it will be if it is 1.
+      {
+         
+         if ErrorLevel ; If the line isn't read (because it doesn't exist, because we have reached the end of the file), then stop looping.
+            break
+         
+         If (A_LoopReadLine = "") { ; If the line is empty, skip it and go to the next loop.
+            Continue ; Goes back to the top of the loop and continues with the next line
+         }
+         else if InStr(A_LoopReadLine,"//") ; If it begins with // (a comment) then skip it.
+         {
+            foundPos := InStr(A_LoopReadLine,"//") ; The character position of //. Will only do something if it is in the front. I'm too dumb to make it parse the entire thing. Fuck regex.
+            if (foundPos = 1) || (foundPos = 2) ; Incase you have a space before // for some reason, then it will be 2.
+               Continue ; Goes back to the top of the loop and continues with the next line
+         }
+         else if InStr(A_LoopReadLine,"wait(") ; If the line starts with "wait(" then it will wait.
+         {
+            global waitExistsInLyrics = 1 ; Variable that lets me know that wait exists somewhere in the lyrics, and it will not count commented waits, thanks to this being below the other ifs in an else statement.
+            waitTime := StrSplit(A_LoopReadLine,"(",")",2) ; Splits the array into wait( and the rest of the string. It will omit the ")" so only the number remains. This number is then used to sleep.
+            waitTime := waitTime[2] ; Makes waitTime equal to the second value in the array to make it slightly simpler.
+            sleep %waitTime% ; It then waits the amount of time specified in the lyrics file.
+         }
+         else if InStr(A_LoopReadLine,"SafeguardKey(")
+         {
+            global safeguardKey := StrSplit(A_LoopReadLine,"(","y" ")",2) ; Uses delimiters again
+            global safeguardKey := safeguardKey[2] ; Makes it slightly simpler
+            SetTimer, UltraHighPriorityLoopBypassingThread,1,2147483647 ; Find out more at the bottom of the script
+         } ; If the line starts with "SafeguardCancelKey(" then it will bind it to something.
+         else
+         {
+            MsgBox %A_LoopReadLine%
+            Gosub, IJustCopyPastedThisChatFunction ; If it is (most likely) part of a valid lyrics that you will actually want to be sent, then send the messages.
+            If (!waitExistsInLyrics) ; Waits 2000ms (2 seconds) if there is no wait() specified anywhere in the file.
+               sleep %NoWaitExistsTimeout%
+         }
+      }
+      else ; If the Safeguard Key has been pressed, stop the loop.
+         break
+   }
+   GuiControl,,singEnabled,0 ; Once it is done, disable Sing.
+   SetTimer, UltraHighPriorityLoopBypassingThread,Off,2147483647 ; Disables the timer after it is done
+Return
+
+IJustCopyPastedThisChatFunction: ; Pasted from CustomTextSpam.
+   Length := StrLen(A_LoopReadLine)
+   if (Length >= 31) {
+      Loop, 140 {
+         ArrayYes%A_Index% =
+      }
+      Send {Blind}{t down}
+      SendInput {Blind}{enter down}
+      Send {Blind}{t up}{f24 up}
+      StringSplit, ArrayYes, A_LoopReadLine
+      SendInput {Raw}%ArrayYes1%%ArrayYes2%%ArrayYes3%%ArrayYes4%%ArrayYes5%%ArrayYes6%%ArrayYes7%%ArrayYes8%%ArrayYes9%%ArrayYes10%%ArrayYes11%%ArrayYes12%%ArrayYes13%%ArrayYes14%%ArrayYes15%%ArrayYes16%%ArrayYes17%%ArrayYes18%%ArrayYes19%%ArrayYes20%%ArrayYes21%%ArrayYes22%%ArrayYes23%%ArrayYes24%%ArrayYes25%%ArrayYes26%%ArrayYes27%%ArrayYes28%%ArrayYes29%%ArrayYes30%
+      SendRaw %ArrayYes31%
+      SendInput {Raw}%ArrayYes32%%ArrayYes33%%ArrayYes34%%ArrayYes35%%ArrayYes36%%ArrayYes37%%ArrayYes38%%ArrayYes39%%ArrayYes40%%ArrayYes41%%ArrayYes42%%ArrayYes43%%ArrayYes44%%ArrayYes45%%ArrayYes46%%ArrayYes47%%ArrayYes48%%ArrayYes49%%ArrayYes50%%ArrayYes51%%ArrayYes52%%ArrayYes53%%ArrayYes54%%ArrayYes55%%ArrayYes56%%ArrayYes57%%ArrayYes58%%ArrayYes59%%ArrayYes60%%ArrayYes61%
+      SendRaw %ArrayYes62%
+      SendInput {Raw}%ArrayYes63%%ArrayYes64%%ArrayYes65%%ArrayYes66%%ArrayYes67%%ArrayYes68%%ArrayYes69%%ArrayYes70%%ArrayYes71%%ArrayYes72%%ArrayYes73%%ArrayYes74%%ArrayYes75%%ArrayYes76%%ArrayYes77%%ArrayYes78%%ArrayYes79%%ArrayYes80%%ArrayYes81%%ArrayYes82%%ArrayYes83%%ArrayYes84%%ArrayYes85%%ArrayYes86%%ArrayYes87%%ArrayYes88%%ArrayYes89%%ArrayYes90%%ArrayYes91%%ArrayYes92%
+      SendRaw %ArrayYes93%
+      SendInput {Raw}%ArrayYes94%%ArrayYes95%%ArrayYes96%%ArrayYes97%%ArrayYes98%%ArrayYes99%%ArrayYes100%%ArrayYes101%%ArrayYes102%%ArrayYes103%%ArrayYes104%%ArrayYes105%%ArrayYes106%%ArrayYes107%%ArrayYes108%%ArrayYes109%%ArrayYes110%%ArrayYes111%%ArrayYes112%%ArrayYes113%%ArrayYes114%%ArrayYes115%%ArrayYes116%%ArrayYes117%%ArrayYes118%%ArrayYes119%%ArrayYes120%%ArrayYes121%%ArrayYes122%%ArrayYes123%
+      SendRaw %ArrayYes124%
+      SendInput {Raw}%ArrayYes125%%ArrayYes126%%ArrayYes127%%ArrayYes128%%ArrayYes129%%ArrayYes130%%ArrayYes131%%ArrayYes132%%ArrayYes133%%ArrayYes134%%ArrayYes135%%ArrayYes136%%ArrayYes137%%ArrayYes138%%ArrayYes139%%ArrayYes140%
+      Send {Blind}{enter up}
+   }
+   else if (Length <= 30) {
+      Send {Blind}{t down}
+      SendInput {enter down}
+      Send {Blind}{t up}{f24 up}
+      SendInput {Raw}%A_LoopReadLine%
+      Send {Blind}{enter up}
+   }
+return
+
+UltraHighPriorityLoopBypassingThread:
+   if GetKeyState(safeguardKey,"P") ; SetTimers override basically any thread priority, so this is a better way.
+   {
+      SendInput {Blind}{%safeguardKey% up}
+      global keepRunning = 0 ; Makes it stop running
+      SetTimer, UltraHighPriorityLoopBypassingThread,Off,2147483647 ; Disables the timer after it is done
+      MsgBox, 0, Ryzen's Macros %MacroVersion%, Safeguard Key pressed`, lyrics cancelled., 1
+   }
+Return

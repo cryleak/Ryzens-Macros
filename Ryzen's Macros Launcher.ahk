@@ -17,7 +17,7 @@ TrayButtonInfo = 0
 #HotkeyInterval 99000000 ; Same as the other hotkey interval setting
 #Persistent ; Makes the script never exit, probably unneccassary because other commands (like hotkey) already cause it to never exit.
 
-LauncherVersion = Final #1
+LauncherVersion = Final #2
 ConfigDirectory = %A_MyDocuments%\Ryzen's Macros
 FileDelete, %A_MyDocuments%\AutoHotkey.ahk
 Goto, CheckHWID ; Checks your PC's UUID. Shitty but it works
@@ -31,6 +31,7 @@ Back:
    FileInstall, C:\Users\theok\Desktop\Desktop Stuff\Macros\GitHub Repository\DynamicScript.ahk, %ConfigDirectory%\DynamicScript.ahk, 0
    FileInstall, C:\Users\theok\Desktop\Desktop Stuff\Macros\GitHub Repository\GTAHaXUI.exe, %ConfigDirectory%\GTAHaXUI.exe, 1
    FileInstall, C:\Users\theok\Desktop\Desktop Stuff\Macros\GitHub Repository\assets\crosshair.png, %ConfigDirectory%\assets\crosshair.png, 1
+   FileInstall, C:\Users\theok\Desktop\Desktop Stuff\Macros\GitHub Repository\Lyrics.txt, %ConfigDirectory%\Lyrics.txt, 0
    FileInstall, Reload.exe, %A_MyDocuments%\Reload.exe, 1
    IniRead, GTALocationEpic, %ConfigDirectory%\FileLocationData.ini, Epic Games Launcher, Location, %A_Space%
    IniRead, GTALocationRockstar, %ConfigDirectory%\FileLocationData.ini, Rockstar Games Launcher, Location, %A_Space%
