@@ -91,7 +91,7 @@ Back: ; It goes back to this checkpoint. It works.
    }
    If (IsCompiled)
       SendInputTestV2() ; Check to see if SendInput works or not
-   MsgBox, 0, Ryzen's Macros %MacroVersion%, Successfully started. Welcome to Ryzen's Macros!
+   MsgBox, 0, Ryzen's Macros %MacroVersion%, Successfully started. Welcome to Ryzen's Macros! , 0.75
    Gui, Add, Tab3,, Combat|Chat|In-Game Binds|Options|Misc|Buttons/Misc|| ; Adds tabs to the GUI
    Gosub, CombatMacros ; Combat Macros
    Gosub, ChatMacros ; Chat Macros
@@ -120,7 +120,7 @@ If (AlwaysOnTop = 1) {
    WinMinimize, ahk_exe GTA5.exe
 }
 If (!isCompiled) {
-   MsgBox, 0, Ryzen's Macros %MacroVersion%,If you see this`, something strange is happening. , 0.5
+   MsgBox, 0, Ryzen's Macros %MacroVersion%,If you see this`, something strange is happening. , 0.75
    Reload
 }
 Else {
@@ -419,7 +419,7 @@ BST: ; Self explanatory
    GuiControlGet, BSTSpeed
    GuiControlGet, BSTMC
    If (CEOMode = 0)
-      MsgBox, 0, Warning!, You are not in a CEO!
+      MsgBox, 0, Warning!, You are not in a CEO! , 0.75
    else {
       Send {Blind}{%InteractionMenuKey%}{enter up}
       If (BSTSpeed = 1) {
@@ -1630,12 +1630,12 @@ PassiveDisableSpamToggle:
    if (PassiveDisableSpam = 1) {
       SetTimer, PassiveDisableSpam, Delete, -2147483648
       GuiControl,, PassiveDisableSpam, 0
-      MsgBox, 0, Ryzen's Macros %MacroVersion%, Passive Disable Spam disabled
+      MsgBox, 0, Ryzen's Macros %MacroVersion%, Passive Disable Spam disabled , 0.75
    } else {
       SetTimer, PassiveDisableSpam, 7500, -2147483648
       GuiControl,, PassiveDisableSpam, 1
       TrayTip, Ryzen's Macros %MacroVersion%, Passive Disable Spam enabled, 10, 1
-      MsgBox, 0, Ryzen's Macros %MacroVersion%, Passive Disable Spam enabled
+      MsgBox, 0, Ryzen's Macros %MacroVersion%, Passive Disable Spam enabled , 0.75
    }
 Return
 
@@ -1763,20 +1763,27 @@ Return
 ToggleSing: ; Toggles the sing
    GuiControlGet, singEnabled
    if (singEnabled) ; If sing is on
+   {
+      global singEnabledVariable = 1 ; Indicates that sing is enabled.
       Goto, Sing
+   }
+   else
+   {
+      global singEnabledVariable = 0 ; Indicates that sing is disabled if you disable it while it is running.
+   }
 Return
 
 Sing: ; Sings in chat lmao
    global keepRunning = 1 ; Set to 1 at the start unless you use the Safeguard Hotkey.
    global waitExistsInLyrics = 0 ; Resets it when you restart
-   NoWaitExistsTimeout = 2000 ; If there is no wait() in the lyrics file, then it will sleep this amount per message automatically.
+   noWaitExistsTimeout := 2000 ; If there is no wait() in the lyrics file, then it will sleep this amount per message automatically.
    
    songFileLocation = %ConfigDirectory%\Lyrics.txt ; Location of the file
    WinActivate, ahk_exe GTA5.exe ; Activates the GTA window
    
    Loop, Read, %songFileLocation% ; Sends every line of the lyrics unless it is a wait() or a comment. Not the most efficient way to do this but I do not fucking care. A few clock cycles doesn't matter.
    {
-      if (keepRunning) ; This will only be disabled if you press the safeguard key. Timers override basically any thread priority, so this is better than a hotkey. If you do not specify a value that in the if statement, it will be if it is 1.
+      if (keepRunning) && (singEnabledVariable) ; This will only be disabled if you press the safeguard key. Timers override basically any thread priority, so this is better than a hotkey. If you do not specify a value that in the if statement, it will be if it is 1.
       {
          
          if ErrorLevel ; If the line isn't read (because it doesn't exist, because we have reached the end of the file), then stop looping.
@@ -1798,18 +1805,22 @@ Sing: ; Sings in chat lmao
             waitTime := waitTime[2] ; Makes waitTime equal to the second value in the array to make it slightly simpler.
             sleep %waitTime% ; It then waits the amount of time specified in the lyrics file.
          }
-         else if InStr(A_LoopReadLine,"SafeguardKey(")
+         else if InStr(A_LoopReadLine,"SafeguardKey(") ; If the line starts with "SafeguardCancelKey(" then it will bind it to something.
          {
             global safeguardKey := StrSplit(A_LoopReadLine,"(","y" ")",2) ; Uses delimiters again
             global safeguardKey := safeguardKey[2] ; Makes it slightly simpler
             SetTimer, UltraHighPriorityLoopBypassingThread,1,2147483647 ; Find out more at the bottom of the script
-         } ; If the line starts with "SafeguardCancelKey(" then it will bind it to something.
+         }
+         else if InStr(A_LoopReadLine,"StandardWaitTime(") ; Will change the standard wait time if there is no wait included
+         {
+            noWaitExistsTimeout := StrSplit(A_LoopReadLine,"(","e" ")",2) ; Uses delimiters again
+            noWaitExistsTimeout := noWaitExistsTimeout[2] ; Makes it slightly simpler
+         }
          else
          {
-            MsgBox %A_LoopReadLine%
             Gosub, IJustCopyPastedThisChatFunction ; If it is (most likely) part of a valid lyrics that you will actually want to be sent, then send the messages.
             If (!waitExistsInLyrics) ; Waits 2000ms (2 seconds) if there is no wait() specified anywhere in the file.
-               sleep %NoWaitExistsTimeout%
+               sleep %noWaitExistsTimeout%
          }
       }
       else ; If the Safeguard Key has been pressed, stop the loop.
@@ -1850,6 +1861,16 @@ IJustCopyPastedThisChatFunction: ; Pasted from CustomTextSpam.
 return
 
 UltraHighPriorityLoopBypassingThread:
+   
+   GuiControlGet, singEnabled ; If you disable singing while singing it won't disable but now it will thanks to this.
+   if (singEnabled) ; If sing is on
+      global singEnabledVariable = 1 ; Indicates that sing is enabled.
+   else
+   {
+      global singEnabledVariable = 0 ; Indicates that sing is disabled if you disable it while it is running.
+      MsgBox, 0, Ryzen's Macros %MacroVersion%, Sing disabled mid-singing`, lyrics cancelled., 1
+   }
+   
    if GetKeyState(safeguardKey,"P") ; SetTimers override basically any thread priority, so this is a better way.
    {
       SendInput {Blind}{%safeguardKey% up}
