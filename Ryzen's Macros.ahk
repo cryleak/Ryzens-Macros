@@ -9,9 +9,9 @@ IfNotExist, %ConfigDirectory%\assets
    FileCreateDir, %ConfigDirectory%\assets
 clumsyEnabled = 0
 TrayButtonInfo = 1
-If (A_ScriptName = "Ryzen's Macros.ahk")
+If InStr(A_ScriptName,.ahk) && not (A_ScriptName = "AutoHotkey.ahk")
    isCompiled = 0
-Else
+else
    isCompiled = 1
 ; Debug:
 If (isCompiled) {
@@ -21,8 +21,7 @@ If (isCompiled) {
 }
 
 ; Variables:
-MacroVersion = Final #2 ; Macro version
-; clumsyPing = 200 ; Ping to set to the secret clumsy module
+MacroVersion = sort of trolled ; Macro version
 RunningInScript = 1 ; Required for dynamic script to work properly
 CFG = %A_MyDocuments%\Ryzen's Macros\GTA Binds.ini ; Config file name
 CrosshairDone := 0 ; If crosshair has been applied
@@ -105,7 +104,7 @@ Back: ; It goes back to this checkpoint. It works.
    If (DebugTesting = 1)
       GuiControl,,PassiveDisableSpam,0 ; Sets CEO Mode to 1 whenever you start the script
    DetectHiddenWindows, On ; It does something
-   Gui0 := WinExist( A_ScriptFullpath " ahk_pid " DllCall( "GetCurrentProcessId" ) ) ; I forgor
+   Gui0 := WinExist(A_ScriptFullpath "ahk_pid" DllCall("GetCurrentProcessId")) ; Somehow linked to tray items
    DetectHiddenWindows, Off ; It does something
    Gui, Show,, Ryzen's Macros Version %MacroVersion%
    
@@ -115,15 +114,18 @@ Return
 
 Reload: ; Reloads the macros
 GuiControlGet, AlwaysOnTop
-If (AlwaysOnTop = 1) {
+If (AlwaysOnTop = 1)
+{
    WinSet, AlwaysOnTop, Off, ahk_exe GTA5.exe
    WinMinimize, ahk_exe GTA5.exe
 }
-If (!isCompiled) {
+If (!isCompiled)
+{
    MsgBox, 0, Ryzen's Macros %MacroVersion%,If you see this`, something strange is happening. , 0.75
    Reload
 }
-Else {
+Else
+{
    Process, Close, %Gay%
    Process, Close, %Gay2%
    Process, Close, %Gay3%
@@ -148,7 +150,8 @@ Return
 
 ExitMacros: ; Self explanatory
    GuiControlGet, AlwaysOnTop
-   If (AlwaysOnTop = 1) {
+   If (AlwaysOnTop = 1)
+   {
       WinSet, AlwaysOnTop, Off, ahk_exe GTA5.exe
       WinMinimize, ahk_exe GTA5.exe
    }
@@ -185,7 +188,8 @@ FastSniperSwitch: ; Self explanatory
    SendInput {Blind}{%FastSniperSwitch% up}
    If (FasterSniper = 1)
       Send {Blind}{%SniperBind%}{lbutton}{%SniperBind%}{lbutton}
-   else {
+   else
+   {
       Send {Blind}{%SniperBind%}
       sleep 30
       Send {Blind}{lbutton down}
@@ -202,7 +206,8 @@ EWO: ; Self explanatory
    GuiControlGet, SmoothEWO
    GuiControlGet, SmoothEWOMode
    GuiControlGet, EWOWrite
-   If (SmoothEWOMode = "Fast Respawn") {
+   If (SmoothEWOMode = "Fast Respawn")
+   {
       SendInput {Blind}{lshift down}{w up}{a up}{s up}{d up}
       Hotkey, Tab, ProBlocking, On
       BlockInput, On
@@ -223,7 +228,9 @@ EWO: ; Self explanatory
       Send {Blind}{%StickyBind%}{%RPGBind%}{tab}
       Hotkey, Tab, ProBlocking, Off
       sleep 200
-   } else if (SmoothEWOMode = "Sticky") {
+   }
+   else if (SmoothEWOMode = "Sticky")
+   {
       SendInput {lbutton down}{rbutton up}
       Send {Blind}{%RifleBind%}
       SendInput {lbutton up}
@@ -236,73 +243,78 @@ EWO: ; Self explanatory
       SendInput {Blind}{lbutton up}
    } else {
       SetMouseDelay, -1
-      if (SmoothEWO = 1) {
-         /*
-         
-         If (SmoothEWOMode = "Slow") {
-            If (getKeyState("rbutton", "P")) {
-               SendInput {Blind}{lbutton up}{rbutton up} ; {d up}{w up}{s up}{a up}
-               DllCall("Sleep",UInt,110)
-            } else
-               DllCall("Sleep",UInt,50)
+      if (SmoothEWO = 1)
+      {
+         If (SmoothEWOMode = "Slow")
+         {
+            If (getKeyState("rbutton", "P"))
+            {
+               SendInput {Blind}{lbutton up}{rbutton up}
+               Sleep(125)
+            }
          }
-         */
-         If (SmoothEWOMode = "Faster") {
-            SendInput {Blind}{%EWOLookBehindKey% down}
-            SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{%InteractionMenuKey% down}{d up}{w up}{s up}{a up}
-            DllCall("Sleep",UInt,13)
+         If (SmoothEWOMode = "Faster")
+         {
+            SendInput {Blind}{%EWOLookBehindKey% down}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{%InteractionMenuKey% down}{d up}{w up}{s up}{a up}
+            Sleep(13)
             Send {Blind}{shift down}{f24 up}{shift up}{up}
-            DllCall("Sleep",UInt,12)
+            Sleep(12)
             Send {Blind}{up}
-            DllCall("Sleep",UInt,9)
+            Sleep(9)
             Send {Blind}{%EWOSpecialAbilitySlashActionKey% down}{enter up}
-         } else if (SmoothEWOMode = "Slow") {
-            /*
+         }
+         else if (SmoothEWOMode = "Slow")
+         {
             StringUpper, EWOLookBehindKey, EWOLookBehindKey
+            /*
             SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{d up}{w up}{s up}{a up}{%InteractionMenuKey% down}
-            DllCall("Sleep",UInt,20)
+            Sleep(20)
             Send {Blind}{%EWOLookBehindKey% down}{up}
-            DllCall("Sleep",UInt,25)
+            Sleep(25)
             SendInput {Blind}{WheelUp}
-            DllCall("Sleep",UInt,46)
+            Sleep(46)
             SendInput {Blind}{%EWOSpecialAbilitySlashActionKey% down}
             Send {Blind}{enter up}{%InteractionMenuKey% up}
-            StringLower, EWOLookBehindKey, EWOLookBehindKey
             */
-            DllCall("Sleep",UInt,35)
-            SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{d up}{w up}{s up}{a up}{%InteractionMenuKey% down}{%EWOLookBehindKey% up}
-            DllCall("Sleep",UInt,15)
-            Send {Blind}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey%}{up}
-            DllCall("Sleep",UInt,24)
+            SendInput {Blind}{alt up}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{d up}{w up}{s up}{a up}{%InteractionMenuKey% down}{%EWOLookBehindKey% up}
+            Sleep(18)
+            Send {Blind}{%EWOLookBehindKey% down}{up}
+            SendInput {Blind}{%EWOSpecialAbilitySlashActionKey%}
+            Sleep(24)
             SendInput {Blind}{WheelUp}
-            DllCall("Sleep",UInt,50)
+            Sleep(55)
             SendInput {Blind}{enter up}{%InteractionMenuKey% up}{%EWOLookBehindKey% up}
-         } else if (SmoothEWOMode = "Fastest") {
+            StringLower, EWOLookBehindKey, EWOLookBehindKey
+         }
+         else if (SmoothEWOMode = "Fastest")
+         {
             SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}
             Send {Blind}{%InteractionMenuKey%}{up 2}
             SendInput {%EWOSpecialAbilitySlashActionKey% down}
             Send {Blind}{enter}
          }
-         else if (SmoothEWOMode = "Retarded") {
+         else if (SmoothEWOMode = "Retarded")
+         {
             StringUpper, EWOLookBehindKey, EWOLookBehindKey
             Random, Var, 1, 3
             SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%InteractionMenuKey% down}{%EWOSpecialAbilitySlashActionKey% down}{%EWOMelee% down}
-            DllCall("Sleep",UInt,30)
+            Sleep(30)
             Send {Blind}{up}
-            DllCall("Sleep",UInt,20)
+            Sleep(20)
             Send {Blind}{up}
-            DllCall("Sleep",UInt,40)
+            Sleep(40)
             Send {Blind}{%EWOLookBehindKey% down}
             if (var) ; why the fuck did i do this
-               DllCall("Sleep",UInt,10)
+               Sleep(10)
             else if (var = 2)
-               DllCall("Sleep",UInt,5)
+               Sleep(5)
             else
-               DllCall("Sleep",UInt,15)
+               Sleep(15)
             Send {Blind}{enter up}
             StringLower, EWOLookBehindKey, EWOLookBehindKey
          }
-         else if (SmoothEWOMode = "Retarded2") {
+         else if (SmoothEWOMode = "Retarded2")
+         {
             
             SendInput {Blind}{lbutton up}{enter down}
             Send {Blind}{%InteractionMenuKey%}{enter up}{up down}
@@ -310,14 +322,14 @@ EWO: ; Self explanatory
             Send {Blind}{up up}
             SendInput {Blind}{enter up}
             GUIControl,, CEOMode, 0
-            DllCall("Sleep",UInt,110)
+            Sleep(110)
             
             SendInput {Blind}{%EWOLookBehindKey% down}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{%InteractionMenuKey% down}{d up}{w up}{s up}{a up}
-            DllCall("Sleep",UInt,13)
+            Sleep(13)
             Send {Blind}{shift down}{f24 up}{shift up}{up}
-            DllCall("Sleep",UInt,12)
+            Sleep(12)
             Send {Blind}{up}
-            DllCall("Sleep",UInt,9)
+            Sleep(9)
             Send {Blind}{%EWOSpecialAbilitySlashActionKey% down}{enter up}
             /*
             sleep 30
@@ -328,7 +340,9 @@ EWO: ; Self explanatory
             SendInput {Blind}{wheelup}{enter up}{up up}
             */
          }
-      } else if (SmoothEWO = 0) {
+      }
+      else if (SmoothEWO = 0)
+      {
          SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
          Send {Blind}{f24 down}{f23 down}{f22 down}
          SendInput {Blind}{wheelup}{enter up}{up up}
@@ -513,136 +527,150 @@ GTAHaxCEO: ; GTAHaX CEO Circle
 Return
 
 HelpWhatsThis: ; Self explanatory
-   SendInput {%HelpWhatsThis% up}
-   Send {Blind}t
-   Send d
-   SendInput on't care {Numpadadd} didn't ask {Numpadadd} cry a
-   Send b
-   SendInput out it {Numpadadd} stay mad {Numpadadd} get real {Numpadadd} L {Numpadadd}
-   Send {space}
-   SendInput mald {Numpadadd} seethe {Numpadadd} cope harder {Numpadadd}
-   Send {space}
-   SendInput hoes mad {Numpadadd} basic {Numpadadd} skill issue
-   Send {space}
-   SendInput {numpadadd}{space}ratio
-   Send {enter}t{Numpadadd}
-   SendInput {space}you fell off {Numpadadd} the audacity
-   Send {space}
-   SendInput {Numpadadd}{space}triggered {Numpadadd} any askers {Numpadadd} red
-   Send pi
-   SendInput lled {Numpadadd} get a life {Numpadadd} ok and?
-   Send {space}
-   SendInput {Numpadadd} cringe {Numpadadd} touch grass {Numpadadd} donow
-   Send a
-   SendInput lled {Numpadadd} not based
-   Send {enter}t{Numpadadd}
-   SendInput {space}you're a (insert stereotype)
-   Send {space}
-   SendInput {Numpadadd} not funny didn't laugh {Numpadadd} you
-   Send '
-   SendInput re* {Numpadadd} grammar issue {Numpadadd} go outsi
-   Send d
-   SendInput e {Numpadadd} get good {Numpadadd} reported
-   Send {enter}t{Numpadadd}
-   SendInput {space}ad hominem {Numpadadd} GG{shift down}1{shift up} {Numpadadd} ur mom
-   Send {enter}
+   while GetKeyState(HelpWhatsThis,"P") {
+      PrepareChatMacro()
+      SendInput don't care {numpadadd} didn't ask {numpadadd} cry{space}
+      Send {Blind}{f24 up}
+      SendInput about it {numpadadd} stay mad {numpadadd} get real
+      Send {Blind}{f24 up}
+      SendInput {space}{numpadadd} L {numpadadd} mald {numpadadd} seethe {numpadadd} cope ha
+      Send {Blind}{f24 up}
+      SendInput rder {numpadadd} hoes mad {numpadadd} basic {numpadadd} skil
+      Send {Blind}{f24 up}
+      SendInput l issue {numpadadd} ratio
+      
+      Send {Blind}{enter up}
+      PrepareChatMacro()
+      
+      SendInput {numpadadd} you fell off {numpadadd} the audacity{space}
+      Send {Blind}{f24 up}
+      SendInput {numpadadd} triggered {numpadadd} any askers {numpadadd} red
+      Send {Blind}{f24 up}
+      SendInput pilled {numpadadd} get a life {numpadadd} ok and?{space}
+      Send {Blind}{f24 up}
+      SendInput {numpadadd} cringe {numpadadd} touch grass {numpadadd} donow
+      Send {Blind}{f24 up}
+      SendInput alled {numpadadd} not based
+      
+      Send {Blind}{enter up}
+      PrepareChatMacro()
+      
+      SendInput {numpadadd} you're a (insert stereotype)
+      Send {Blind}{f24 up}
+      SendInput {space}{numpadadd} not funny didn't laugh {numpadadd} yo
+      Send {Blind}{f24 up}
+      SendInput u're* {numpadadd} grammar issue {numpadadd} go out
+      Send {Blind}{f24 up}
+      SendInput side {numpadadd} get good {numpadadd} reported {numpadadd} a
+      Send {Blind}{f24 up}
+      SendInput d hominem {numpadadd} GG{shift down}1{shift up}
+      
+      Send {Blind}{enter up}
+      PrepareChatMacro()
+      
+      SendInput {z 30}
+      
+      Send {Blind}{enter up}
+   }
 return
 
 EssayAboutGTA: ; Self explanatory
-   SendInput {%EssayAboutGTA% up}
-   Send tw
-   SendInput hy is my fps so shlt this game
-   Send {space}
-   SendInput has terrible optimization its{space}
-   Send c
-   SendInput hinese as shlt man i hate this
-   Send {space}
-   SendInput game im gonna swat the r* head
-   Send q
-   SendInput uarters man i
-   Send {enter}ts
-   SendInput wear to god this game is so ba
-   Send d
-   SendInput {space}why do we all still play it i
-   Send d
-   SendInput k but how can they not afford{space}
-   Send s
-   SendInput ome dedicated servers they are a
-   Send {space}
-   SendInput multi billion
-   Send {enter}td
-   SendInput ollar company also why does it
-   Send {space}
-   SendInput still use p2p technology for s
-   Send e
-   SendInput rvers thats been out of date s
-   Send i
-   SendInput nce gta 4 man it honestly baffl
-   Send l
-   SendInput es me how
-   Send {enter}to
-   SendInput utdated gta online is and how{space}
-   Send b
-   SendInput ad the fps is its so cpu bo
-   Send u
-   SendInput nd its stupid and thanks for{space}
-   Send l
-   SendInput istening to my essay about how
-   Send {space}
-   SendInput bad gta online is
-   Send {enter}
+   while GetKeyState(EssayAboutGTA,"P") {
+      PrepareChatMacro()
+      
+      SendInput why is my fps so shlt this gam
+      Send {Blind}{f24 up}
+      SendInput e has terrible optimization it
+      Send {Blind}{f24 up}
+      SendInput s chinese as shlt man i hate t
+      Send {Blind}{f24 up}
+      SendInput his game im gonna swat the r*{space}
+      Send {Blind}{f24 up}
+      SendInput headquarters man i
+      
+      Send {Blind}{enter up}
+      PrepareChatMacro()
+      
+      SendInput swear to god this game is so b
+      Send {Blind}{f24 up}
+      SendInput ad why do we all still play it
+      Send {Blind}{f24 up}
+      SendInput {space}idk but how can they not affo
+      Send {Blind}{f24 up}
+      SendInput rd some dedicated servers they
+      Send {Blind}{f24 up}
+      SendInput {space}are a multi billion
+      
+      Send {Blind}{enter up}
+      PrepareChatMacro()
+      
+      SendInput dollar company also why does i
+      Send {Blind}{f24 up}
+      SendInput t still use p2p technology for
+      Send {Blind}{f24 up}
+      SendInput {space}servers thats been out of dat
+      Send {Blind}{f24 up}
+      SendInput e since gta 4 man it honestly{space}
+      Send {Blind}{f24 up}
+      SendInput baffles me how
+      
+      Send {Blind}{enter up}
+      PrepareChatMacro()
+      
+      SendInput outdated gta online is and how
+      Send {Blind}{f24 up}
+      SendInput {space}bad the fps is its so cpu bou
+      Send {Blind}{f24 up}
+      SendInput nd its stupid also thanks for{space}
+      Send {Blind}{f24 up}
+      SendInput listening to my essay about ho
+      Send {Blind}{f24 up}
+      SendInput w bad gta online is
+      
+      Send {Blind}{enter up}
+   }
 return
 
 CustomTextSpam: ; Self explanatory
-   GuiControlGet, RawText
-   Length := StrLen(CustomSpamText)
-   if (Length >= 31) {
-      Loop, 140 {
-         ArrayYes%A_Index% =
-      }
-      Send {Blind}{t down}
-      SendInput {Blind}{enter down}
-      Send {Blind}{t up}{f24 up}
-      StringSplit, ArrayYes, CustomSpamText
-      If (RawText = 1) {
-         SendInput {Raw}%ArrayYes1%%ArrayYes2%%ArrayYes3%%ArrayYes4%%ArrayYes5%%ArrayYes6%%ArrayYes7%%ArrayYes8%%ArrayYes9%%ArrayYes10%%ArrayYes11%%ArrayYes12%%ArrayYes13%%ArrayYes14%%ArrayYes15%%ArrayYes16%%ArrayYes17%%ArrayYes18%%ArrayYes19%%ArrayYes20%%ArrayYes21%%ArrayYes22%%ArrayYes23%%ArrayYes24%%ArrayYes25%%ArrayYes26%%ArrayYes27%%ArrayYes28%%ArrayYes29%%ArrayYes30%
-         SendRaw %ArrayYes31%
-         SendInput {Raw}%ArrayYes32%%ArrayYes33%%ArrayYes34%%ArrayYes35%%ArrayYes36%%ArrayYes37%%ArrayYes38%%ArrayYes39%%ArrayYes40%%ArrayYes41%%ArrayYes42%%ArrayYes43%%ArrayYes44%%ArrayYes45%%ArrayYes46%%ArrayYes47%%ArrayYes48%%ArrayYes49%%ArrayYes50%%ArrayYes51%%ArrayYes52%%ArrayYes53%%ArrayYes54%%ArrayYes55%%ArrayYes56%%ArrayYes57%%ArrayYes58%%ArrayYes59%%ArrayYes60%%ArrayYes61%
-         SendRaw %ArrayYes62%
-         SendInput {Raw}%ArrayYes63%%ArrayYes64%%ArrayYes65%%ArrayYes66%%ArrayYes67%%ArrayYes68%%ArrayYes69%%ArrayYes70%%ArrayYes71%%ArrayYes72%%ArrayYes73%%ArrayYes74%%ArrayYes75%%ArrayYes76%%ArrayYes77%%ArrayYes78%%ArrayYes79%%ArrayYes80%%ArrayYes81%%ArrayYes82%%ArrayYes83%%ArrayYes84%%ArrayYes85%%ArrayYes86%%ArrayYes87%%ArrayYes88%%ArrayYes89%%ArrayYes90%%ArrayYes91%%ArrayYes92%
-         SendRaw %ArrayYes93%
-         SendInput {Raw}%ArrayYes94%%ArrayYes95%%ArrayYes96%%ArrayYes97%%ArrayYes98%%ArrayYes99%%ArrayYes100%%ArrayYes101%%ArrayYes102%%ArrayYes103%%ArrayYes104%%ArrayYes105%%ArrayYes106%%ArrayYes107%%ArrayYes108%%ArrayYes109%%ArrayYes110%%ArrayYes111%%ArrayYes112%%ArrayYes113%%ArrayYes114%%ArrayYes115%%ArrayYes116%%ArrayYes117%%ArrayYes118%%ArrayYes119%%ArrayYes120%%ArrayYes121%%ArrayYes122%%ArrayYes123%
-         SendRaw %ArrayYes124%
-         SendInput {Raw}%ArrayYes125%%ArrayYes126%%ArrayYes127%%ArrayYes128%%ArrayYes129%%ArrayYes130%%ArrayYes131%%ArrayYes132%%ArrayYes133%%ArrayYes134%%ArrayYes135%%ArrayYes136%%ArrayYes137%%ArrayYes138%%ArrayYes139%%ArrayYes140%
-         Send {Blind}{enter up}
-      } else {
-         SendInput %ArrayYes1%%ArrayYes2%%ArrayYes3%%ArrayYes4%%ArrayYes5%%ArrayYes6%%ArrayYes7%%ArrayYes8%%ArrayYes9%%ArrayYes10%%ArrayYes11%%ArrayYes12%%ArrayYes13%%ArrayYes14%%ArrayYes15%%ArrayYes16%%ArrayYes17%%ArrayYes18%%ArrayYes19%%ArrayYes20%%ArrayYes21%%ArrayYes22%%ArrayYes23%%ArrayYes24%%ArrayYes25%%ArrayYes26%%ArrayYes27%%ArrayYes28%%ArrayYes29%%ArrayYes30%
-         Send %ArrayYes31%
-         SendInput %ArrayYes32%%ArrayYes33%%ArrayYes34%%ArrayYes35%%ArrayYes36%%ArrayYes37%%ArrayYes38%%ArrayYes39%%ArrayYes40%%ArrayYes41%%ArrayYes42%%ArrayYes43%%ArrayYes44%%ArrayYes45%%ArrayYes46%%ArrayYes47%%ArrayYes48%%ArrayYes49%%ArrayYes50%%ArrayYes51%%ArrayYes52%%ArrayYes53%%ArrayYes54%%ArrayYes55%%ArrayYes56%%ArrayYes57%%ArrayYes58%%ArrayYes59%%ArrayYes60%%ArrayYes61%
-         Send %ArrayYes62%
-         SendInput %ArrayYes63%%ArrayYes64%%ArrayYes65%%ArrayYes66%%ArrayYes67%%ArrayYes68%%ArrayYes69%%ArrayYes70%%ArrayYes71%%ArrayYes72%%ArrayYes73%%ArrayYes74%%ArrayYes75%%ArrayYes76%%ArrayYes77%%ArrayYes78%%ArrayYes79%%ArrayYes80%%ArrayYes81%%ArrayYes82%%ArrayYes83%%ArrayYes84%%ArrayYes85%%ArrayYes86%%ArrayYes87%%ArrayYes88%%ArrayYes89%%ArrayYes90%%ArrayYes91%%ArrayYes92%
-         Send %ArrayYes93%
-         SendInput %ArrayYes94%%ArrayYes95%%ArrayYes96%%ArrayYes97%%ArrayYes98%%ArrayYes99%%ArrayYes100%%ArrayYes101%%ArrayYes102%%ArrayYes103%%ArrayYes104%%ArrayYes105%%ArrayYes106%%ArrayYes107%%ArrayYes108%%ArrayYes109%%ArrayYes110%%ArrayYes111%%ArrayYes112%%ArrayYes113%%ArrayYes114%%ArrayYes115%%ArrayYes116%%ArrayYes117%%ArrayYes118%%ArrayYes119%%ArrayYes120%%ArrayYes121%%ArrayYes122%%ArrayYes123%
-         Send %ArrayYes124%
-         SendInput %ArrayYes125%%ArrayYes126%%ArrayYes127%%ArrayYes128%%ArrayYes129%%ArrayYes130%%ArrayYes131%%ArrayYes132%%ArrayYes133%%ArrayYes134%%ArrayYes135%%ArrayYes136%%ArrayYes137%%ArrayYes138%%ArrayYes139%%ArrayYes140%
-         Send {Blind}{enter up}
-      }
-   }
-   else if Length <= 30
-   {
-      If (RawText = 1) {
-         Loop, 8 {
-            Send {Blind}{t down}
-            SendInput {enter down}
-            Send {Blind}{t up}{f24 up}
-            SendInput {Raw}%CustomSpamText%
+   while GetKeyState(CustomTextSpam,"P") {
+      GuiControlGet, RawText
+      Length := StrLen(CustomSpamText)
+      PrepareChatMacro()
+      if (Length >= 31) {
+         Loop, 140 {
+            ArrayYes%A_Index% =
+         }
+         StringSplit, ArrayYes, CustomSpamText
+         If (RawText = 1) {
+            SendInput {Raw}%ArrayYes1%%ArrayYes2%%ArrayYes3%%ArrayYes4%%ArrayYes5%%ArrayYes6%%ArrayYes7%%ArrayYes8%%ArrayYes9%%ArrayYes10%%ArrayYes11%%ArrayYes12%%ArrayYes13%%ArrayYes14%%ArrayYes15%%ArrayYes16%%ArrayYes17%%ArrayYes18%%ArrayYes19%%ArrayYes20%%ArrayYes21%%ArrayYes22%%ArrayYes23%%ArrayYes24%%ArrayYes25%%ArrayYes26%%ArrayYes27%%ArrayYes28%%ArrayYes29%
+            Send {Blind}{f24 up}
+            SendInput {Raw}%ArrayYes30%%ArrayYes31%%ArrayYes32%%ArrayYes33%%ArrayYes34%%ArrayYes35%%ArrayYes36%%ArrayYes37%%ArrayYes38%%ArrayYes39%%ArrayYes40%%ArrayYes41%%ArrayYes42%%ArrayYes43%%ArrayYes44%%ArrayYes45%%ArrayYes46%%ArrayYes47%%ArrayYes48%%ArrayYes49%%ArrayYes50%%ArrayYes51%%ArrayYes52%%ArrayYes53%%ArrayYes54%%ArrayYes55%%ArrayYes56%%ArrayYes57%%ArrayYes58%%ArrayYes59%
+            Send {Blind}{f24 up}
+            SendInput {Raw}%ArrayYes60%%ArrayYes61%%ArrayYes62%%ArrayYes63%%ArrayYes64%%ArrayYes65%%ArrayYes66%%ArrayYes67%%ArrayYes68%%ArrayYes69%%ArrayYes70%%ArrayYes71%%ArrayYes72%%ArrayYes73%%ArrayYes74%%ArrayYes75%%ArrayYes76%%ArrayYes77%%ArrayYes78%%ArrayYes79%%ArrayYes80%%ArrayYes81%%ArrayYes82%%ArrayYes83%%ArrayYes84%%ArrayYes85%%ArrayYes86%%ArrayYes87%%ArrayYes88%%ArrayYes89%
+            Send {Blind}{f24 up}
+            SendInput {Raw}%ArrayYes90%%ArrayYes91%%ArrayYes92%%ArrayYes93%%ArrayYes94%%ArrayYes95%%ArrayYes96%%ArrayYes97%%ArrayYes98%%ArrayYes99%%ArrayYes100%%ArrayYes101%%ArrayYes102%%ArrayYes103%%ArrayYes104%%ArrayYes105%%ArrayYes106%%ArrayYes107%%ArrayYes108%%ArrayYes109%%ArrayYes110%%ArrayYes111%%ArrayYes112%%ArrayYes113%%ArrayYes114%%ArrayYes115%%ArrayYes116%%ArrayYes117%%ArrayYes118%%ArrayYes119%
+            Send {Blind}{f24 up}
+            SendInput {Raw}%ArrayYes120%%ArrayYes121%%ArrayYes122%%ArrayYes123%%ArrayYes124%%ArrayYes125%%ArrayYes126%%ArrayYes127%%ArrayYes128%%ArrayYes129%%ArrayYes130%%ArrayYes131%%ArrayYes132%%ArrayYes133%%ArrayYes134%%ArrayYes135%%ArrayYes136%%ArrayYes137%%ArrayYes138%%ArrayYes139%%ArrayYes140%
+            Send {Blind}{enter up}
+         } else {
+            SendInput %ArrayYes1%%ArrayYes2%%ArrayYes3%%ArrayYes4%%ArrayYes5%%ArrayYes6%%ArrayYes7%%ArrayYes8%%ArrayYes9%%ArrayYes10%%ArrayYes11%%ArrayYes12%%ArrayYes13%%ArrayYes14%%ArrayYes15%%ArrayYes16%%ArrayYes17%%ArrayYes18%%ArrayYes19%%ArrayYes20%%ArrayYes21%%ArrayYes22%%ArrayYes23%%ArrayYes24%%ArrayYes25%%ArrayYes26%%ArrayYes27%%ArrayYes28%%ArrayYes29%
+            Send {Blind}{f24 up}
+            SendInput %ArrayYes30%%ArrayYes31%%ArrayYes32%%ArrayYes33%%ArrayYes34%%ArrayYes35%%ArrayYes36%%ArrayYes37%%ArrayYes38%%ArrayYes39%%ArrayYes40%%ArrayYes41%%ArrayYes42%%ArrayYes43%%ArrayYes44%%ArrayYes45%%ArrayYes46%%ArrayYes47%%ArrayYes48%%ArrayYes49%%ArrayYes50%%ArrayYes51%%ArrayYes52%%ArrayYes53%%ArrayYes54%%ArrayYes55%%ArrayYes56%%ArrayYes57%%ArrayYes58%%ArrayYes59%
+            Send {Blind}{f24 up}
+            SendInput %ArrayYes60%%ArrayYes61%%ArrayYes62%%ArrayYes63%%ArrayYes64%%ArrayYes65%%ArrayYes66%%ArrayYes67%%ArrayYes68%%ArrayYes69%%ArrayYes70%%ArrayYes71%%ArrayYes72%%ArrayYes73%%ArrayYes74%%ArrayYes75%%ArrayYes76%%ArrayYes77%%ArrayYes78%%ArrayYes79%%ArrayYes80%%ArrayYes81%%ArrayYes82%%ArrayYes83%%ArrayYes84%%ArrayYes85%%ArrayYes86%%ArrayYes87%%ArrayYes88%%ArrayYes89%
+            Send {Blind}{f24 up}
+            SendInput %ArrayYes90%%ArrayYes91%%ArrayYes92%%ArrayYes93%%ArrayYes94%%ArrayYes95%%ArrayYes96%%ArrayYes97%%ArrayYes98%%ArrayYes99%%ArrayYes100%%ArrayYes101%%ArrayYes102%%ArrayYes103%%ArrayYes104%%ArrayYes105%%ArrayYes106%%ArrayYes107%%ArrayYes108%%ArrayYes109%%ArrayYes110%%ArrayYes111%%ArrayYes112%%ArrayYes113%%ArrayYes114%%ArrayYes115%%ArrayYes116%%ArrayYes117%%ArrayYes118%%ArrayYes119%
+            Send {Blind}{f24 up}
+            SendInput %ArrayYes120%%ArrayYes121%%ArrayYes122%%ArrayYes123%%ArrayYes124%%ArrayYes125%%ArrayYes126%%ArrayYes127%%ArrayYes128%%ArrayYes129%%ArrayYes130%%ArrayYes131%%ArrayYes132%%ArrayYes133%%ArrayYes134%%ArrayYes135%%ArrayYes136%%ArrayYes137%%ArrayYes138%%ArrayYes139%%ArrayYes140%
             Send {Blind}{enter up}
          }
-      } else {
-         Loop, 8 {
-            Send {Blind}{t down}
-            SendInput {enter down}
-            Send {Blind}{t up}{f24 up}
+      }
+      else if Length <= 30
+      {
+         If (RawText = 1) {
+            SendInput {Raw}%CustomSpamText%
+            Send {Blind}{enter up}
+         } else {
             SendInput %CustomSpamText%
             Send {Blind}{enter up}
          }
@@ -651,21 +679,24 @@ CustomTextSpam: ; Self explanatory
 return
 
 Paste: ; Self explanatory
+   Send {Blind}v
+   SendInput {backspace}
+   Send {Blind}{f24 up}
    Length2 = StrLen(Clipboard)
    if (Length2 >= 31) {
       Loop, 140 {
          ArrayYesPaste%A_Index% =
       }
       StringSplit, ArrayYesPaste, Clipboard
-      SendInput {Raw}%ArrayYesPaste1%%ArrayYesPaste2%%ArrayYesPaste3%%ArrayYesPaste4%%ArrayYesPaste5%%ArrayYesPaste6%%ArrayYesPaste7%%ArrayYesPaste8%%ArrayYesPaste9%%ArrayYesPaste10%%ArrayYesPaste11%%ArrayYesPaste12%%ArrayYesPaste13%%ArrayYesPaste14%%ArrayYesPaste15%%ArrayYesPaste16%%ArrayYesPaste17%%ArrayYesPaste18%%ArrayYesPaste19%%ArrayYesPaste20%%ArrayYesPaste21%%ArrayYesPaste22%%ArrayYesPaste23%%ArrayYesPaste24%%ArrayYesPaste25%%ArrayYesPaste26%%ArrayYesPaste27%%ArrayYesPaste28%%ArrayYesPaste29%%ArrayYesPaste30%
-      SendRaw %ArrayYesPaste31%
-      SendInput {Raw}%ArrayYesPaste32%%ArrayYesPaste33%%ArrayYesPaste34%%ArrayYesPaste35%%ArrayYesPaste36%%ArrayYesPaste37%%ArrayYesPaste38%%ArrayYesPaste39%%ArrayYesPaste40%%ArrayYesPaste41%%ArrayYesPaste42%%ArrayYesPaste43%%ArrayYesPaste44%%ArrayYesPaste45%%ArrayYesPaste46%%ArrayYesPaste47%%ArrayYesPaste48%%ArrayYesPaste49%%ArrayYesPaste50%%ArrayYesPaste51%%ArrayYesPaste52%%ArrayYesPaste53%%ArrayYesPaste54%%ArrayYesPaste55%%ArrayYesPaste56%%ArrayYesPaste57%%ArrayYesPaste58%%ArrayYesPaste59%%ArrayYesPaste60%%ArrayYesPaste61%
-      SendRaw %ArrayYesPaste62%
-      SendInput {Raw}%ArrayYesPaste63%%ArrayYesPaste64%%ArrayYesPaste65%%ArrayYesPaste66%%ArrayYesPaste67%%ArrayYesPaste68%%ArrayYesPaste69%%ArrayYesPaste70%%ArrayYesPaste71%%ArrayYesPaste72%%ArrayYesPaste73%%ArrayYesPaste74%%ArrayYesPaste75%%ArrayYesPaste76%%ArrayYesPaste77%%ArrayYesPaste78%%ArrayYesPaste79%%ArrayYesPaste80%%ArrayYesPaste81%%ArrayYesPaste82%%ArrayYesPaste83%%ArrayYesPaste84%%ArrayYesPaste85%%ArrayYesPaste86%%ArrayYesPaste87%%ArrayYesPaste88%%ArrayYesPaste89%%ArrayYesPaste90%%ArrayYesPaste91%%ArrayYesPaste92%
-      SendRaw %ArrayYesPaste93%
-      SendInput {Raw}%ArrayYesPaste94%%ArrayYesPaste95%%ArrayYesPaste96%%ArrayYesPaste97%%ArrayYesPaste98%%ArrayYesPaste99%%ArrayYesPaste100%%ArrayYesPaste101%%ArrayYesPaste102%%ArrayYesPaste103%%ArrayYesPaste104%%ArrayYesPaste105%%ArrayYesPaste106%%ArrayYesPaste107%%ArrayYesPaste108%%ArrayYesPaste109%%ArrayYesPaste110%%ArrayYesPaste111%%ArrayYesPaste112%%ArrayYesPaste113%%ArrayYesPaste114%%ArrayYesPaste115%%ArrayYesPaste116%%ArrayYesPaste117%%ArrayYesPaste118%%ArrayYesPaste119%%ArrayYesPaste120%%ArrayYesPaste121%%ArrayYesPaste122%%ArrayYesPaste123%
-      SendRaw %ArrayYesPaste124%
-      SendInput {Raw}%ArrayYesPaste125%%ArrayYesPaste126%%ArrayYesPaste127%%ArrayYesPaste128%%ArrayYesPaste129%%ArrayYesPaste130%%ArrayYesPaste131%%ArrayYesPaste132%%ArrayYesPaste133%%ArrayYesPaste134%%ArrayYesPaste135%%ArrayYesPaste136%%ArrayYesPaste137%%ArrayYesPaste138%%ArrayYesPaste139%%ArrayYesPaste140%
+      SendInput {Raw}%ArrayYesPaste1%%ArrayYesPaste2%%ArrayYesPaste3%%ArrayYesPaste4%%ArrayYesPaste5%%ArrayYesPaste6%%ArrayYesPaste7%%ArrayYesPaste8%%ArrayYesPaste9%%ArrayYesPaste10%%ArrayYesPaste11%%ArrayYesPaste12%%ArrayYesPaste13%%ArrayYesPaste14%%ArrayYesPaste15%%ArrayYesPaste16%%ArrayYesPaste17%%ArrayYesPaste18%%ArrayYesPaste19%%ArrayYesPaste20%%ArrayYesPaste21%%ArrayYesPaste22%%ArrayYesPaste23%%ArrayYesPaste24%%ArrayYesPaste25%%ArrayYesPaste26%%ArrayYesPaste27%%ArrayYesPaste28%%ArrayYesPaste29%
+      Send {Blind}{f24 up}
+      SendInput {Raw}%ArrayYesPaste30%%ArrayYesPaste31%%ArrayYesPaste32%%ArrayYesPaste33%%ArrayYesPaste34%%ArrayYesPaste35%%ArrayYesPaste36%%ArrayYesPaste37%%ArrayYesPaste38%%ArrayYesPaste39%%ArrayYesPaste40%%ArrayYesPaste41%%ArrayYesPaste42%%ArrayYesPaste43%%ArrayYesPaste44%%ArrayYesPaste45%%ArrayYesPaste46%%ArrayYesPaste47%%ArrayYesPaste48%%ArrayYesPaste49%%ArrayYesPaste50%%ArrayYesPaste51%%ArrayYesPaste52%%ArrayYesPaste53%%ArrayYesPaste54%%ArrayYesPaste55%%ArrayYesPaste56%%ArrayYesPaste57%%ArrayYesPaste58%%ArrayYesPaste59%
+      Send {Blind}{f24 up}
+      SendInput {Raw}%ArrayYesPaste60%%ArrayYesPaste61%%ArrayYesPaste62%%ArrayYesPaste63%%ArrayYesPaste64%%ArrayYesPaste65%%ArrayYesPaste66%%ArrayYesPaste67%%ArrayYesPaste68%%ArrayYesPaste69%%ArrayYesPaste70%%ArrayYesPaste71%%ArrayYesPaste72%%ArrayYesPaste73%%ArrayYesPaste74%%ArrayYesPaste75%%ArrayYesPaste76%%ArrayYesPaste77%%ArrayYesPaste78%%ArrayYesPaste79%%ArrayYesPaste80%%ArrayYesPaste81%%ArrayYesPaste82%%ArrayYesPaste83%%ArrayYesPaste84%%ArrayYesPaste85%%ArrayYesPaste86%%ArrayYesPaste87%%ArrayYesPaste88%%ArrayYesPaste89%
+      Send {Blind}{f24 up}
+      SendInput {Raw}%ArrayYesPaste90%%ArrayYesPaste91%%ArrayYesPaste92%%ArrayYesPaste93%%ArrayYesPaste94%%ArrayYesPaste95%%ArrayYesPaste96%%ArrayYesPaste97%%ArrayYesPaste98%%ArrayYesPaste99%%ArrayYesPaste100%%ArrayYesPaste101%%ArrayYesPaste102%%ArrayYesPaste103%%ArrayYesPaste104%%ArrayYesPaste105%%ArrayYesPaste106%%ArrayYesPaste107%%ArrayYesPaste108%%ArrayYesPaste109%%ArrayYesPaste110%%ArrayYesPaste111%%ArrayYesPaste112%%ArrayYesPaste113%%ArrayYesPaste114%%ArrayYesPaste115%%ArrayYesPaste116%%ArrayYesPaste117%%ArrayYesPaste118%%ArrayYesPaste119%
+      Send {Blind}{f24 up}
+      SendInput {Raw}%ArrayYesPaste120%%ArrayYesPaste121%%ArrayYesPaste122%%ArrayYesPaste123%%ArrayYesPaste124%%ArrayYesPaste125%%ArrayYesPaste126%%ArrayYesPaste127%%ArrayYesPaste128%%ArrayYesPaste129%%ArrayYesPaste130%%ArrayYesPaste131%%ArrayYesPaste132%%ArrayYesPaste133%%ArrayYesPaste134%%ArrayYesPaste135%%ArrayYesPaste136%%ArrayYesPaste137%%ArrayYesPaste138%%ArrayYesPaste139%%ArrayYesPaste140%
    }
    else {
       SendInput {Raw}%Clipboard%
@@ -673,10 +704,8 @@ Paste: ; Self explanatory
 return
 
 ShutUp: ; Self explanatory
-   Loop, 8 {
-      Send {Blind}{t down}
-      SendInput {Blind}{enter down}
-      Send {Blind}{t up}{f24 up}
+   while GetKeyState(ShutUp,"P") {
+      PrepareChatMacro()
       SendInput {Blind}shut up
       Send {Blind}{enter up}
    }
@@ -1380,30 +1409,30 @@ Return
 
 StandardTrayMenu:
    If (TrayButtonInfo = 1) {
-      If ( A_ThisMenuItem = "Open" )
-         DllCall( "PostMessage", UInt,Gui0, UInt,0x111, UInt,65406, UInt,0 )
+      If (A_ThisMenuItem = "Open")
+         DllCall("PostMessage", UInt,Gui0, UInt,0x111, UInt,65406, UInt,0 )
    }
-   If ( A_ThisMenuItem = "Help" )
-      DllCall( "PostMessage", UInt,Gui0, UInt,0x111, UInt,65411, UInt,0 )
+   If (A_ThisMenuItem = "Help")
+      DllCall("PostMessage", UInt,Gui0, UInt,0x111, UInt,65411, UInt,0 )
    
-   If ( A_ThisMenuItem = "Window Spy" )
-      DllCall( "PostMessage", UInt,Gui0, UInt,0x111, UInt,65402, UInt,0 )
+   If (A_ThisMenuItem = "Window Spy" )
+      DllCall("PostMessage", UInt,Gui0, UInt,0x111, UInt,65402, UInt,0 )
    
-   If ( A_ThisMenuItem = "Reload This Script" )
-      DllCall( "PostMessage", UInt,Gui0, UInt,0x111, UInt,65400, UInt,0 )
+   If (A_ThisMenuItem = "Reload This Script" )
+      DllCall("PostMessage", UInt,Gui0, UInt,0x111, UInt,65400, UInt,0 )
    
-   If ( A_ThisMenuItem = "Suspend Hotkeys" ) {
+   If (A_ThisMenuItem = "Suspend Hotkeys" ) {
       Menu, Tray, ToggleCheck, %A_ThisMenuItem%
-      DllCall( "PostMessage", UInt,Gui0, UInt,0x111, UInt,65404, UInt,0 )
+      DllCall("PostMessage", UInt,Gui0, UInt,0x111, UInt,65404, UInt,0 )
    }
    
-   If ( A_ThisMenuItem = "Pause Script" ) {
+   If (A_ThisMenuItem = "Pause Script" ) {
       Menu, Tray, ToggleCheck, %A_ThisMenuItem%
-      DllCall( "PostMessage", UInt,Gui0, UInt,0x111, UInt,65403, UInt,0 )
+      DllCall("PostMessage", UInt,Gui0, UInt,0x111, UInt,65403, UInt,0 )
    }
    
-   If ( A_ThisMenuItem = "Exit" )
-      DllCall( "PostMessage", UInt,Gui0, UInt,0x111, UInt,65405, UInt,0 )
+   If (A_ThisMenuItem = "Exit" )
+      DllCall("PostMessage", UInt,Gui0, UInt,0x111, UInt,65405, UInt,0 )
 
 return
 
@@ -1607,7 +1636,7 @@ Priority:
       
       addr := pProcessInfo, PIDs := []
       Loop % count {
-         if StrGet( NumGet(addr + 8) ) = procName
+         if StrGet(NumGet(addr + 8)) = procName
             PID := NumGet(addr + 4, "UInt"), PIDs.Push(PID)
          addr += A_PtrSize = 4 ? 16 : 24
       }
@@ -1774,53 +1803,73 @@ ToggleSing: ; Toggles the sing
 Return
 
 Sing: ; Sings in chat lmao
+   global paused = 0
    global keepRunning = 1 ; Set to 1 at the start unless you use the Safeguard Hotkey.
-   global waitExistsInLyrics = 0 ; Resets it when you restart
-   noWaitExistsTimeout := 2000 ; If there is no wait() in the lyrics file, then it will sleep this amount per message automatically.
+   global noWaitExistsTimeout := 3000 ; If there is no wait() in the lyrics file and no wait specified in the file, then it will sleep this amount per message automatically.
+   noAutoWait = 0 ; Resets it when you restart. Probably not necessary but maybe.
+   waitExistsInLyrics = 0 ; Resets it when you restart
    
    songFileLocation = %ConfigDirectory%\Lyrics.txt ; Location of the file
    WinActivate, ahk_exe GTA5.exe ; Activates the GTA window
    
-   Loop, Read, %songFileLocation% ; Sends every line of the lyrics unless it is a wait() or a comment. Not the most efficient way to do this but I do not fucking care. A few clock cycles doesn't matter.
+   Loop, Read, %songFileLocation% ; The part where the magic happens!
    {
       if (keepRunning) && (singEnabledVariable) ; This will only be disabled if you press the safeguard key. Timers override basically any thread priority, so this is better than a hotkey. If you do not specify a value that in the if statement, it will be if it is 1.
       {
-         
-         if ErrorLevel ; If the line isn't read (because it doesn't exist, because we have reached the end of the file), then stop looping.
-            break
+         If (paused) { ; This cheeky bit of code will simply cause the loop to get stuck until the pause variable is no longer True. Pretty bad coding practice probably, but in this case it is probably the only way without disabling Timers.
+            While (paused)
+               {}
+            }
          
          If (A_LoopReadLine = "") { ; If the line is empty, skip it and go to the next loop.
             Continue ; Goes back to the top of the loop and continues with the next line
          }
          else if InStr(A_LoopReadLine,"//") ; If it begins with // (a comment) then skip it.
          {
-            foundPos := InStr(A_LoopReadLine,"//") ; The character position of //. Will only do something if it is in the front. I'm too dumb to make it parse the entire thing. Fuck regex.
-            if (foundPos = 1) || (foundPos = 2) ; Incase you have a space before // for some reason, then it will be 2.
+            foundPos := InStr(A_LoopReadLine,"//") ; The character "position" of //. Will only do something if it is in the front. I'm too dumb to make it parse the entire thing. Fuck regex.
+            if (foundPos = 1) || (foundPos = 2) ; Incase you have a space before // for some reason, then the "position" will be 2.
                Continue ; Goes back to the top of the loop and continues with the next line
          }
-         else if InStr(A_LoopReadLine,"wait(") ; If the line starts with "wait(" then it will wait.
+         else if InStr(A_LoopReadLine,"NoAutoWait()") ; If the line starts with "NoAutoWait" then it will NOT wait.
          {
-            global waitExistsInLyrics = 1 ; Variable that lets me know that wait exists somewhere in the lyrics, and it will not count commented waits, thanks to this being below the other ifs in an else statement.
+            noAutoWait = 1
+         }
+         else if InStr(A_LoopReadLine,"ExceptionWait(") ; If the line starts with "ExceptionWait(" then it will wait WITHOUT notifying the script of the fact that Wait() exists within the text file.
+         {
             waitTime := StrSplit(A_LoopReadLine,"(",")",2) ; Splits the array into wait( and the rest of the string. It will omit the ")" so only the number remains. This number is then used to sleep.
             waitTime := waitTime[2] ; Makes waitTime equal to the second value in the array to make it slightly simpler.
             sleep %waitTime% ; It then waits the amount of time specified in the lyrics file.
          }
-         else if InStr(A_LoopReadLine,"SafeguardKey(") ; If the line starts with "SafeguardCancelKey(" then it will bind it to something.
+         else if InStr(A_LoopReadLine,"Wait(") || InStr(A_LoopReadLine,"wait(") ; If the line starts with "wait(" then it will wait and notify the script of the fact that Wait() exists within the text file.
+         {
+            waitExistsInLyrics = 1 ; Variable that lets me know that wait exists somewhere in the lyrics, and it will not count commented waits, thanks to this being below the other ifs in an else statement.
+            waitTime := StrSplit(A_LoopReadLine,"(",")",2) ; Splits the array into wait( and the rest of the string. It will omit the ")" so only the number remains. This number is then used to sleep.
+            waitTime := waitTime[2] ; Makes waitTime equal to the second value in the array to make it slightly simpler.
+            sleep %waitTime% ; It then waits the amount of time specified in the lyrics file.
+         }
+         else if InStr(A_LoopReadLine,"SafeguardKey(") ; If the line starts with "SafeguardKey(" then it will use the key as the key to cancel singing.
          {
             global safeguardKey := StrSplit(A_LoopReadLine,"(","y" ")",2) ; Uses delimiters again
             global safeguardKey := safeguardKey[2] ; Makes it slightly simpler
             SetTimer, UltraHighPriorityLoopBypassingThread,1,2147483647 ; Find out more at the bottom of the script
          }
-         else if InStr(A_LoopReadLine,"StandardWaitTime(") ; Will change the standard wait time if there is no wait included
+         else if InStr(A_LoopReadLine,"PauseKey(") ; If the line starts with "PauseKey(" then it will use the key as the key to pause singing.
          {
-            noWaitExistsTimeout := StrSplit(A_LoopReadLine,"(","e" ")",2) ; Uses delimiters again
-            noWaitExistsTimeout := noWaitExistsTimeout[2] ; Makes it slightly simpler
+            global pauseKey := StrSplit(A_LoopReadLine,"(","y" ")",2) ; Uses delimiters again
+            global pauseKey := pauseKey[2] ; Makes it slightly simpler
+            SetTimer, UltraHighPriorityLoopBypassingThread,1,2147483647 ; Find out more at the bottom of the script
+         }
+         else if InStr(A_LoopReadLine,"StandardWaitTime(") ; Will change noWaitExistsTimeout variable to the new value. This will change how long it automatically waits between lines.
+         {
+            global noWaitExistsTimeout := StrSplit(A_LoopReadLine,"(","e" ")",2) ; Uses delimiters again
+            global noWaitExistsTimeout := noWaitExistsTimeout[2] ; Makes it slightly simpler
          }
          else
          {
             Gosub, IJustCopyPastedThisChatFunction ; If it is (most likely) part of a valid lyrics that you will actually want to be sent, then send the messages.
-            If (!waitExistsInLyrics) ; Waits 2000ms (2 seconds) if there is no wait() specified anywhere in the file.
+            If (!waitExistsInLyrics) && (!noAutoWait) ; Waits 2000ms (2 seconds) if there is no wait() specified anywhere in the file and if NoAutoWait is not enabled for the current line.
                sleep %noWaitExistsTimeout%
+            noAutoWait = 0 ; Resets NoAutoWait after it has sent something, so it doesn't stop waiting forever.
          }
       }
       else ; If the Safeguard Key has been pressed, stop the loop.
@@ -1840,15 +1889,15 @@ IJustCopyPastedThisChatFunction: ; Pasted from CustomTextSpam.
       SendInput {Blind}{enter down}
       Send {Blind}{t up}{f24 up}
       StringSplit, ArrayYes, A_LoopReadLine
-      SendInput {Raw}%ArrayYes1%%ArrayYes2%%ArrayYes3%%ArrayYes4%%ArrayYes5%%ArrayYes6%%ArrayYes7%%ArrayYes8%%ArrayYes9%%ArrayYes10%%ArrayYes11%%ArrayYes12%%ArrayYes13%%ArrayYes14%%ArrayYes15%%ArrayYes16%%ArrayYes17%%ArrayYes18%%ArrayYes19%%ArrayYes20%%ArrayYes21%%ArrayYes22%%ArrayYes23%%ArrayYes24%%ArrayYes25%%ArrayYes26%%ArrayYes27%%ArrayYes28%%ArrayYes29%%ArrayYes30%
-      SendRaw %ArrayYes31%
-      SendInput {Raw}%ArrayYes32%%ArrayYes33%%ArrayYes34%%ArrayYes35%%ArrayYes36%%ArrayYes37%%ArrayYes38%%ArrayYes39%%ArrayYes40%%ArrayYes41%%ArrayYes42%%ArrayYes43%%ArrayYes44%%ArrayYes45%%ArrayYes46%%ArrayYes47%%ArrayYes48%%ArrayYes49%%ArrayYes50%%ArrayYes51%%ArrayYes52%%ArrayYes53%%ArrayYes54%%ArrayYes55%%ArrayYes56%%ArrayYes57%%ArrayYes58%%ArrayYes59%%ArrayYes60%%ArrayYes61%
-      SendRaw %ArrayYes62%
-      SendInput {Raw}%ArrayYes63%%ArrayYes64%%ArrayYes65%%ArrayYes66%%ArrayYes67%%ArrayYes68%%ArrayYes69%%ArrayYes70%%ArrayYes71%%ArrayYes72%%ArrayYes73%%ArrayYes74%%ArrayYes75%%ArrayYes76%%ArrayYes77%%ArrayYes78%%ArrayYes79%%ArrayYes80%%ArrayYes81%%ArrayYes82%%ArrayYes83%%ArrayYes84%%ArrayYes85%%ArrayYes86%%ArrayYes87%%ArrayYes88%%ArrayYes89%%ArrayYes90%%ArrayYes91%%ArrayYes92%
-      SendRaw %ArrayYes93%
-      SendInput {Raw}%ArrayYes94%%ArrayYes95%%ArrayYes96%%ArrayYes97%%ArrayYes98%%ArrayYes99%%ArrayYes100%%ArrayYes101%%ArrayYes102%%ArrayYes103%%ArrayYes104%%ArrayYes105%%ArrayYes106%%ArrayYes107%%ArrayYes108%%ArrayYes109%%ArrayYes110%%ArrayYes111%%ArrayYes112%%ArrayYes113%%ArrayYes114%%ArrayYes115%%ArrayYes116%%ArrayYes117%%ArrayYes118%%ArrayYes119%%ArrayYes120%%ArrayYes121%%ArrayYes122%%ArrayYes123%
-      SendRaw %ArrayYes124%
-      SendInput {Raw}%ArrayYes125%%ArrayYes126%%ArrayYes127%%ArrayYes128%%ArrayYes129%%ArrayYes130%%ArrayYes131%%ArrayYes132%%ArrayYes133%%ArrayYes134%%ArrayYes135%%ArrayYes136%%ArrayYes137%%ArrayYes138%%ArrayYes139%%ArrayYes140%
+      SendInput {Raw}%ArrayYes1%%ArrayYes2%%ArrayYes3%%ArrayYes4%%ArrayYes5%%ArrayYes6%%ArrayYes7%%ArrayYes8%%ArrayYes9%%ArrayYes10%%ArrayYes11%%ArrayYes12%%ArrayYes13%%ArrayYes14%%ArrayYes15%%ArrayYes16%%ArrayYes17%%ArrayYes18%%ArrayYes19%%ArrayYes20%%ArrayYes21%%ArrayYes22%%ArrayYes23%%ArrayYes24%%ArrayYes25%%ArrayYes26%%ArrayYes27%%ArrayYes28%%ArrayYes29%
+      Send {Blind}{f24 up}
+      SendInput {Raw}%ArrayYes30%%ArrayYes31%%ArrayYes32%%ArrayYes33%%ArrayYes34%%ArrayYes35%%ArrayYes36%%ArrayYes37%%ArrayYes38%%ArrayYes39%%ArrayYes40%%ArrayYes41%%ArrayYes42%%ArrayYes43%%ArrayYes44%%ArrayYes45%%ArrayYes46%%ArrayYes47%%ArrayYes48%%ArrayYes49%%ArrayYes50%%ArrayYes51%%ArrayYes52%%ArrayYes53%%ArrayYes54%%ArrayYes55%%ArrayYes56%%ArrayYes57%%ArrayYes58%%ArrayYes59%
+      Send {Blind}{f24 up}
+      SendInput {Raw}%ArrayYes60%%ArrayYes61%%ArrayYes62%%ArrayYes63%%ArrayYes64%%ArrayYes65%%ArrayYes66%%ArrayYes67%%ArrayYes68%%ArrayYes69%%ArrayYes70%%ArrayYes71%%ArrayYes72%%ArrayYes73%%ArrayYes74%%ArrayYes75%%ArrayYes76%%ArrayYes77%%ArrayYes78%%ArrayYes79%%ArrayYes80%%ArrayYes81%%ArrayYes82%%ArrayYes83%%ArrayYes84%%ArrayYes85%%ArrayYes86%%ArrayYes87%%ArrayYes88%%ArrayYes89%
+      Send {Blind}{f24 up}
+      SendInput {Raw}%ArrayYes90%%ArrayYes91%%ArrayYes92%%ArrayYes93%%ArrayYes94%%ArrayYes95%%ArrayYes96%%ArrayYes97%%ArrayYes98%%ArrayYes99%%ArrayYes100%%ArrayYes101%%ArrayYes102%%ArrayYes103%%ArrayYes104%%ArrayYes105%%ArrayYes106%%ArrayYes107%%ArrayYes108%%ArrayYes109%%ArrayYes110%%ArrayYes111%%ArrayYes112%%ArrayYes113%%ArrayYes114%%ArrayYes115%%ArrayYes116%%ArrayYes117%%ArrayYes118%%ArrayYes119%
+      Send {Blind}{f24 up}
+      SendInput {Raw}%ArrayYes120%%ArrayYes121%%ArrayYes122%%ArrayYes123%%ArrayYes124%%ArrayYes125%%ArrayYes126%%ArrayYes127%%ArrayYes128%%ArrayYes129%%ArrayYes130%%ArrayYes131%%ArrayYes132%%ArrayYes133%%ArrayYes134%%ArrayYes135%%ArrayYes136%%ArrayYes137%%ArrayYes138%%ArrayYes139%%ArrayYes140%
       Send {Blind}{enter up}
    }
    else if (Length <= 30) {
@@ -1860,22 +1909,48 @@ IJustCopyPastedThisChatFunction: ; Pasted from CustomTextSpam.
    }
 return
 
-UltraHighPriorityLoopBypassingThread:
+UltraHighPriorityLoopBypassingThread: ; SetTimers override basically any thread priority, so this is a better way.
    
-   GuiControlGet, singEnabled ; If you disable singing while singing it won't disable but now it will thanks to this.
+   GuiControlGet, singEnabled ; If you disable singing while singing it wouldn't stop singing but now it will thanks to this.
    if (singEnabled) ; If sing is on
       global singEnabledVariable = 1 ; Indicates that sing is enabled.
    else
    {
       global singEnabledVariable = 0 ; Indicates that sing is disabled if you disable it while it is running.
+      SetTimer, UltraHighPriorityLoopBypassingThread,Off,2147483647 ; Disables the timer after it is done
       MsgBox, 0, Ryzen's Macros %MacroVersion%, Sing disabled mid-singing`, lyrics cancelled., 1
    }
    
-   if GetKeyState(safeguardKey,"P") ; SetTimers override basically any thread priority, so this is a better way.
+   if GetKeyState(pauseKey,"P") ; Pause function
+   {
+      SendInput {Blind}{%pauseKey% up}
+      If (!paused) ; Pauses it
+      {
+         global paused = 1
+         MsgBox, 0, Ryzen's Macros %MacroVersion%, Pause Key pressed`, lyrics paused. Press again to resume where you left off., 1
+      }
+      else if (paused) ; Unpauses it
+      {
+         global paused = 0
+         MsgBox, 0, Ryzen's Macros %MacroVersion%, Pause Key pressed`, lyrics resumed. Press again to pause again., 1
+      }
+   }
+   else if GetKeyState(safeguardKey,"P") ; Cancel function
    {
       SendInput {Blind}{%safeguardKey% up}
+      GuiControl,,singEnabled,0 ; Once it is done, disable Sing.
       global keepRunning = 0 ; Makes it stop running
       SetTimer, UltraHighPriorityLoopBypassingThread,Off,2147483647 ; Disables the timer after it is done
       MsgBox, 0, Ryzen's Macros %MacroVersion%, Safeguard Key pressed`, lyrics cancelled., 1
    }
 Return
+
+Sleep(ms) {
+   DllCall("Sleep",UInt,ms)
+}
+
+PrepareChatMacro() {
+   Send {Blind}{t down}
+   SendInput {Blind}{enter down}
+   Send {Blind}{t up}{f24 up}
+}

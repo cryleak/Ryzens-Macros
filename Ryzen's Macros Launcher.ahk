@@ -17,7 +17,7 @@ TrayButtonInfo = 0
 #HotkeyInterval 99000000 ; Same as the other hotkey interval setting
 #Persistent ; Makes the script never exit, probably unneccassary because other commands (like hotkey) already cause it to never exit.
 
-LauncherVersion = Final #2
+LauncherVersion = sort of trolled
 ConfigDirectory = %A_MyDocuments%\Ryzen's Macros
 FileDelete, %A_MyDocuments%\AutoHotkey.ahk
 Goto, CheckHWID ; Checks your PC's UUID. Shitty but it works
@@ -57,7 +57,7 @@ Back:
    Gui, Show,, Ryzen's Macros Launcher %LauncherVersion%
    
    DetectHiddenWindows, On ; It does something
-   Gui0 := WinExist( A_ScriptFullpath " ahk_pid " DllCall( "GetCurrentProcessId" ) ) ; I forgor
+   Gui0 := WinExist(A_ScriptFullpath "ahk_pid" DllCall("GetCurrentProcessId"))
    DetectHiddenWindows, Off ; It does something
    Menu, Tray, NoStandard
    If (TrayButtonInfo = 1) {
@@ -108,13 +108,14 @@ LaunchMacros:
    while IfExist, A_MyDocuments "\AutoHotkey.ahk"
       {}
       Run, *RunAs "AutoHotkey.exe", C:\Program Files\AutoHotkey, UseErrorLevel
+   sleep 85
    If ErrorLevel {
+      FileDelete, %A_MyDocuments%\AutoHotkey.ahk
       MsgBox, 0, Please install AutoHotkey, AutoHotkey doesn't appear to be installed in "C:\Program Files\AutoHotkey". Please install it and try again!
       Return
    }
-   MsgBox,0,Launching...,Launching...,1
-   sleep 200
    FileDelete, %A_MyDocuments%\AutoHotkey.ahk
+   MsgBox,0,Launching...,Launching...,1
 ExitApp
 
 QuitLauncher:
@@ -226,31 +227,32 @@ EditDynamicScript:
 Return
 
 StandardTrayMenu:
-   If (TrayButtonInfo = 1) {
-      If ( A_ThisMenuItem = "Open" )
-         DllCall( "PostMessage", UInt,Gui0, UInt,0x111, UInt,65406, UInt,0 )
+   If (TrayButtonInfo = 1)
+   {
+      If (A_ThisMenuItem = "Open")
+         DllCall("PostMessage", UInt,Gui0, UInt,0x111, UInt,65406, UInt,0)
    }
-   If ( A_ThisMenuItem = "Help" )
-      DllCall( "PostMessage", UInt,Gui0, UInt,0x111, UInt,65411, UInt,0 )
+   If (A_ThisMenuItem = "Help")
+      DllCall("PostMessage", UInt,Gui0, UInt,0x111, UInt,65411, UInt,0)
    
-   If ( A_ThisMenuItem = "Window Spy" )
-      DllCall( "PostMessage", UInt,Gui0, UInt,0x111, UInt,65402, UInt,0 )
+   If (A_ThisMenuItem = "Window Spy")
+      DllCall("PostMessage", UInt,Gui0, UInt,0x111, UInt,65402, UInt,0)
    
-   If ( A_ThisMenuItem = "Reload This Script" )
-      DllCall( "PostMessage", UInt,Gui0, UInt,0x111, UInt,65400, UInt,0 )
+   If (A_ThisMenuItem = "Reload This Script")
+      DllCall("PostMessage", UInt,Gui0, UInt,0x111, UInt,65400, UInt,0)
    
-   If ( A_ThisMenuItem = "Suspend Hotkeys" ) {
+   If (A_ThisMenuItem = "Suspend Hotkeys")
+   {
       Menu, Tray, ToggleCheck, %A_ThisMenuItem%
-      DllCall( "PostMessage", UInt,Gui0, UInt,0x111, UInt,65404, UInt,0 )
+      DllCall("PostMessage", UInt,Gui0, UInt,0x111, UInt,65404, UInt,0)
    }
-   
-   If ( A_ThisMenuItem = "Pause Script" ) {
+   If (A_ThisMenuItem = "Pause Script")
+   {
       Menu, Tray, ToggleCheck, %A_ThisMenuItem%
-      DllCall( "PostMessage", UInt,Gui0, UInt,0x111, UInt,65403, UInt,0 )
+      DllCall("PostMessage", UInt,Gui0, UInt,0x111, UInt,65403, UInt,0)
    }
-   
-   If ( A_ThisMenuItem = "Exit" )
-      DllCall( "PostMessage", UInt,Gui0, UInt,0x111, UInt,65405, UInt,0 )
+   If (A_ThisMenuItem = "Exit")
+      DllCall("PostMessage", UInt,Gui0, UInt,0x111, UInt,65405, UInt,0)
 
 return
 
