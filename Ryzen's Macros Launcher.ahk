@@ -130,66 +130,8 @@ CheckHWID:
    UrlDownloadToFile, https://pastebin.com/raw/dpBPUkBM, %A_Temp%\Keys.ini
    while IfExist, A_Temp "\Keys.ini"
       {}
-      IniRead, Key1, %A_Temp%\Keys.ini, Registration, Key1
-   IniRead, Key2, %A_Temp%\Keys.ini, Registration, Key2
-   IniRead, Key3, %A_Temp%\Keys.ini, Registration, Key3
-   IniRead, Key4, %A_Temp%\Keys.ini, Registration, Key4
-   IniRead, Key5, %A_Temp%\Keys.ini, Registration, Key5
-   IniRead, Key6, %A_Temp%\Keys.ini, Registration, Key6
-   IniRead, Key7, %A_Temp%\Keys.ini, Registration, Key7
-   IniRead, Key8, %A_Temp%\Keys.ini, Registration, Key8
-   IniRead, Key9, %A_Temp%\Keys.ini, Registration, Key9
-   IniRead, Key10, %A_Temp%\Keys.ini, Registration, Key10
-   IniRead, Key11, %A_Temp%\Keys.ini, Registration, Key11
-   IniRead, Key12, %A_Temp%\Keys.ini, Registration, Key12
-   IniRead, Key13, %A_Temp%\Keys.ini, Registration, Key13
-   IniRead, Key14, %A_Temp%\Keys.ini, Registration, Key14
-   IniRead, Key15, %A_Temp%\Keys.ini, Registration, Key15
-   IniRead, Key16, %A_Temp%\Keys.ini, Registration, Key16
-   IniRead, Key17, %A_Temp%\Keys.ini, Registration, Key17
-   IniRead, Key18, %A_Temp%\Keys.ini, Registration, Key18
-   IniRead, Key19, %A_Temp%\Keys.ini, Registration, Key19
-   IniRead, Key20, %A_Temp%\Keys.ini, Registration, Key20
-   IniRead, Key21, %A_Temp%\Keys.ini, Registration, Key21
-   IniRead, Key22, %A_Temp%\Keys.ini, Registration, Key22
-   IniRead, Key23, %A_Temp%\Keys.ini, Registration, Key23
-   IniRead, Key24, %A_Temp%\Keys.ini, Registration, Key24
-   IniRead, Key25, %A_Temp%\Keys.ini, Registration, Key25
-   IniRead, Key26, %A_Temp%\Keys.ini, Registration, Key26
-   IniRead, Key27, %A_Temp%\Keys.ini, Registration, Key27
-   IniRead, Key28, %A_Temp%\Keys.ini, Registration, Key28
-   IniRead, Key29, %A_Temp%\Keys.ini, Registration, Key29
-   IniRead, Key30, %A_Temp%\Keys.ini, Registration, Key30
-   IniRead, Key31, %A_Temp%\Keys.ini, Registration, Key31
-   IniRead, Key32, %A_Temp%\Keys.ini, Registration, Key32
-   IniRead, Key33, %A_Temp%\Keys.ini, Registration, Key33
-   IniRead, Key34, %A_Temp%\Keys.ini, Registration, Key34
-   IniRead, Key35, %A_Temp%\Keys.ini, Registration, Key35
-   IniRead, Key36, %A_Temp%\Keys.ini, Registration, Key36
-   IniRead, Key37, %A_Temp%\Keys.ini, Registration, Key37
-   IniRead, Key38, %A_Temp%\Keys.ini, Registration, Key38
-   IniRead, Key39, %A_Temp%\Keys.ini, Registration, Key39
-   IniRead, Key40, %A_Temp%\Keys.ini, Registration, Key40
-   IniRead, Key41, %A_Temp%\Keys.ini, Registration, Key41
-   IniRead, Key42, %A_Temp%\Keys.ini, Registration, Key42
-   IniRead, Key43, %A_Temp%\Keys.ini, Registration, Key43
-   IniRead, Key44, %A_Temp%\Keys.ini, Registration, Key44
-   IniRead, Key45, %A_Temp%\Keys.ini, Registration, Key45
-   IniRead, Key46, %A_Temp%\Keys.ini, Registration, Key46
-   IniRead, Key47, %A_Temp%\Keys.ini, Registration, Key47
-   IniRead, Key48, %A_Temp%\Keys.ini, Registration, Key48
-   IniRead, Key49, %A_Temp%\Keys.ini, Registration, Key49
-   IniRead, Key50, %A_Temp%\Keys.ini, Registration, Key50
-   IniRead, Key51, %A_Temp%\Keys.ini, Registration, Key51
-   IniRead, Key52, %A_Temp%\Keys.ini, Registration, Key52
-   IniRead, Key53, %A_Temp%\Keys.ini, Registration, Key53
-   IniRead, Key54, %A_Temp%\Keys.ini, Registration, Key54
-   IniRead, Key55, %A_Temp%\Keys.ini, Registration, Key55
-   IniRead, Key56, %A_Temp%\Keys.ini, Registration, Key56
-   IniRead, Key57, %A_Temp%\Keys.ini, Registration, Key57
-   IniRead, Key58, %A_Temp%\Keys.ini, Registration, Key58
-   IniRead, Key59, %A_Temp%\Keys.ini, Registration, Key59
-   IniRead, Key60, %A_Temp%\Keys.ini, Registration, Key60
+      Loop 60
+         IniRead, Key%A_Index%, %A_Temp%\Keys.ini, Registration, Key%A_Index%
    
    FileDelete, %A_Temp%\Keys.ini
    
@@ -297,9 +239,9 @@ GTAVersion:
                   GTALocationEpic =
                   MsgBox, 1, Incorrect., Please select "PlayGTAV.exe" and not anything else.
                   IfMsgBox, Ok
-                  Goto, Bruh1
+                     Goto, Bruh1
                   IfMsgBox, Cancel
-                  Return
+                     Return
                }
                IniWrite, %GTALocationEpic%, %ConfigDirectory%\FileLocationData.ini, Epic Games Launcher, Location
                Goto, Uh
@@ -317,9 +259,9 @@ GTAVersion:
                   GTALocationRockstar =
                   MsgBox, 1, Incorrect., Please select "PlayGTAV.exe" and not anything else.
                   IfMsgBox, Ok
-                  Goto, Bruh2
+                     Goto, Bruh2
                   IfMsgBox, Cancel
-                  Return
+                     Return
                }
                IniWrite, %GTALocationRockstar%, %ConfigDirectory%\FileLocationData.ini, Rockstar Games Launcher, Location
                Goto, Uh
@@ -354,9 +296,9 @@ GTAVersion:
                If not (GTALocationNameEpic = "PlayGTAV.exe") {
                   MsgBox, 1, Incorrect., Please select "PlayGTAV.exe" and not anything else.
                   IfMsgBox, Ok
-                  Goto, Bruh3
+                     Goto, Bruh3
                   IfMsgBox, Cancel
-                  Return
+                     Return
                }
                IniWrite, %GTALocationEpic%, %ConfigDirectory%\FileLocationData.ini, Epic Games Launcher, Location
                Goto, Uh
@@ -369,9 +311,9 @@ GTAVersion:
                If not (GTALocationNameRockstar = "PlayGTAV.exe") {
                   MsgBox, 1, Incorrect., Please select "PlayGTAV.exe" and not anything else.
                   IfMsgBox, Ok
-                  Goto, Bruh4
+                     Goto, Bruh4
                   IfMsgBox, Cancel
-                  Return
+                     Return
                }
                IniWrite, %GTALocationRockstar%, %ConfigDirectory%\FileLocationData.ini, Rockstar Games Launcher, Location
                Goto, Uh
