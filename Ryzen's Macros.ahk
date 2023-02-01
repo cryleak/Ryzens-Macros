@@ -1,6 +1,6 @@
-if not A_IsAdmin ; Runs the script as an admin.
+if (!A_IsAdmin) ; Runs the script as an admin.
    Run *RunAs "%A_ScriptFullPath%"
-SetBatchLines, -1 ; Removes the built in 10ms sleep that happens after every line of code normally. It should never sleep now. It comes at the cost of CPU usage, but anyone with a half decent PC should be fine.
+SetBatchLines, -1 ; Removes the built in 10ms Sleep that happens after every line of code normally. It should never Sleep now. It comes at the cost of CPU usage, but anyone with a half decent PC should be fine.
 Menu, Tray, NoStandard ; Default trays but with some extra things above it, usually not possible so you need to do some complicated things to make it work.
 ConfigDirectory = %A_MyDocuments%\Ryzen's Macros
 IfNotExist, %ConfigDirectory%
@@ -8,28 +8,36 @@ IfNotExist, %ConfigDirectory%
 IfNotExist, %ConfigDirectory%\assets
    FileCreateDir, %ConfigDirectory%\assets
 clumsyEnabled = 0
-TrayButtonInfo = 1
 If InStr(A_ScriptName,.ahk) && not (A_ScriptName = "AutoHotkey.ahk")
+{
+   MacroVersion := "Ryzen's Macros Dev Build" ; Macro version
    isCompiled = 0
-else
+} else
+{
+   MacroVersion := "Ryzen's Macros Release Build" ; Macro version
    isCompiled = 1
+}
 ; Debug:
-If (isCompiled) {
+If (isCompiled)
+{
    ListLines Off ; Removes line history, makes the script slightly more secret.
    #KeyHistory 0 ; Removes key history, makes the script slightly more secret.
-   TrayButtonInfo = 0
 }
 
 ; Variables:
-MacroVersion = sort of trolled ; Macro version
 RunningInScript = 1 ; Required for dynamic script to work properly
 CFG = %A_MyDocuments%\Ryzen's Macros\GTA Binds.ini ; Config file name
+global originalTime
+global endTime
 CrosshairDone := 0 ; If crosshair has been applied
+; gtaWindow := This apparently doesn't work so I will just manually specify it
 MCCEO2 := 0 ; If you are in MC
 SendInputFallbackText = I have detected that it has taken a very long time to complete the chat message. First, check if the characters are being sent one by one, or in instant `"batches`". If it is being sent in batches, then your FPS is likely very low. Please complain to me on Discord and I will raise the threshold for this message. If it is being sent one by one, try this: If you are running Flawless Widescreen, you must close it, as it causes issues, and makes most macros far slower. Please open a support ticket on the Discord Server if the problem persists, or if Flawless Widescreen is not running.
 WriteWasJustPerformed = 0 ; EWO Score Write was just performed
 IniRead,DebugTesting,%CFG%,Debug,Debug Testing ; Checks if debug testing is true, usually false.
 IniRead,clumsyPing,%CFG%,Debug,clumsy ping ; yes
+IniRead,WhileChat,%CFG%,Debug,Improve Chat Macros But You Can't Use Multiple Keybinds ; yes
+IniWrite,%WhileChat%,%CFG%,Debug,Improve Chat Macros But You Can't Use Multiple Keybinds
 IniRead,OriginalLocation, %ConfigDirectory%\FileLocationData.ini, Location, Location
 IniRead,OriginalName, %ConfigDirectory%\FileLocationData.ini, Name, Name
 
@@ -59,11 +67,10 @@ Goto, CheckHWID ; Checks your PC's UUID. Shitty but it works
 Back: ; It goes back to this checkpoint. It works.
    Gosub, CreateTrayOptions
    SetWorkingDir %A_MyDocuments%\Ryzen's Macros\
-   If not WinExist("ahk_exe GTA5.exe") { ; Makes the macros not immediately close if you run it while GTA isn't open
+   If !WinExist("ahk_exe GTA5.exe") ; Makes the macros not immediately close if you run it while GTA isn't open
       GTAAlreadyClosed = 1
-   } else {
+   else
       GTAAlreadyClosed = 0
-   }
    #SingleInstance, force ; Forces single instance
    #HotkeyModifierTimeout -1 ; Changes hotkey modifier timeout, maybe does something lmao
 #IfWinActive ahk_exe GTA5.exe ; Hotkeys will only work if you are tabbed in.
@@ -83,14 +90,23 @@ Back: ; It goes back to this checkpoint. It works.
    SetControlDelay, 0 ; After any control modifying command, for example; ControlSend, there is a built in delay. Set to 0 instead of -1 because having a slight delay may improve reliability, and is unnoticable anyways.
    Gui,Font,q5,Segoe UI Semibold ; Sets font to something
    IniRead,Read_AlwaysOnTop,%CFG%,Misc,Always On Top ; Secret module
-   If (Read_AlwaysOnTop = 1) {
+   If (Read_AlwaysOnTop)
+   {
       WinSet, AlwaysOnTop, Off, ahk_exe GTA5.exe
       WinMinimize, ahk_exe GTA5.exe
       SetTimer, AlwaysOnTop, 25, -2147483648
    }
    If (IsCompiled)
-      SendInputTestV2() ; Check to see if SendInput works or not
-   MsgBox, 0, Ryzen's Macros %MacroVersion%, Successfully started. Welcome to Ryzen's Macros! , 0.75
+   {
+      endTime := SendInputTestV2() ; Check to see if SendInput works or not
+      If (endTime > 200)
+         MsgBox, 2, %MacroVersion%, I have detected that macros are currently incredibly slow, most likely due to Flawless Widescreen, or a different program that also installs the keyboard hook.
+      IfMsgBox Abort
+         ExitApp
+      IfMsgBox Retry
+         Goto, Reload
+   }
+   MsgBox, 0, %MacroVersion%, Successfully started. Welcome to Ryzen's Macros! , 0.75
    Gui, Add, Tab3,, Combat|Chat|In-Game Binds|Options|Misc|Buttons/Misc|| ; Adds tabs to the GUI
    Gosub, CombatMacros ; Combat Macros
    Gosub, ChatMacros ; Chat Macros
@@ -101,12 +117,12 @@ Back: ; It goes back to this checkpoint. It works.
    
    Gosub, Read ; Reads your config file
    GuiControl,,CEOMode,1 ; Sets CEO Mode to 1 whenever you start the script
-   If (DebugTesting = 1)
+   If (DebugTesting)
       GuiControl,,PassiveDisableSpam,0 ; Sets CEO Mode to 1 whenever you start the script
    DetectHiddenWindows, On ; It does something
    Gui0 := WinExist(A_ScriptFullpath "ahk_pid" DllCall("GetCurrentProcessId")) ; Somehow linked to tray items
    DetectHiddenWindows, Off ; It does something
-   Gui, Show,, Ryzen's Macros Version %MacroVersion%
+   Gui, Show,, %MacroVersion%
    
    ;MsgBox, 0, Welcome!, HWID Matching! Welcome to Ryzen's Macros. Add me on Discord (cryleak#3961) if you have any issues. Good luck.
    Gosub, StandardTrayMenu
@@ -114,14 +130,14 @@ Return
 
 Reload: ; Reloads the macros
 GuiControlGet, AlwaysOnTop
-If (AlwaysOnTop = 1)
+If (AlwaysOnTop)
 {
    WinSet, AlwaysOnTop, Off, ahk_exe GTA5.exe
    WinMinimize, ahk_exe GTA5.exe
 }
 If (!isCompiled)
 {
-   MsgBox, 0, Ryzen's Macros %MacroVersion%,If you see this`, something strange is happening. , 0.75
+   MsgBox, 0, %MacroVersion%,If you see this`, something strange is happening. , 0.75
    Reload
 }
 Else
@@ -150,7 +166,7 @@ Return
 
 ExitMacros: ; Self explanatory
    GuiControlGet, AlwaysOnTop
-   If (AlwaysOnTop = 1)
+   If (AlwaysOnTop)
    {
       WinSet, AlwaysOnTop, Off, ahk_exe GTA5.exe
       WinMinimize, ahk_exe GTA5.exe
@@ -171,33 +187,33 @@ ThermalHelmet: ; Self explanatory
    GuiControlGet, CEOMode
    GuiControlGet, NightVision
    Send {Blind}{%InteractionMenuKey%}{down 3}
-   If (CEOMode = 1)
+   If (CEOMode)
       Send {Blind}{down}
    SendInput {Blind}{enter up}
    Send {Blind}{down down}
    SendInput {Blind}{enter down}
    Send {Blind}{down up}
    SendInput {Blind}{enter up}
-   If (NightVision = 0)
+   If (!NightVision)
       Send {Blind}{down 4}
-   sleep 50
+   Sleep(50)
    Send {Blind}{space}{%InteractionMenuKey%}
 return
 
 FastSniperSwitch: ; Self explanatory
    SendInput {Blind}{%FastSniperSwitch% up}
-   If (FasterSniper = 1)
+   If (FasterSniper)
       Send {Blind}{%SniperBind%}{lbutton}{%SniperBind%}{lbutton}
    else
    {
       Send {Blind}{%SniperBind%}
-      sleep 30
+      Sleep(30)
       Send {Blind}{lbutton down}
-      sleep 20
+      Sleep(20)
       Send {Blind}{lbutton up}{%SniperBind%}
-      sleep 30
+      Sleep(30)
       Send {Blind}{lbutton down}
-      sleep 100
+      Sleep(100)
       Send {Blind}{lbutton up}
    }
 return
@@ -213,21 +229,20 @@ EWO: ; Self explanatory
       BlockInput, On
       MouseMove,0,5000,,R
       SendInput {Blind}{%FranklinBind% down}
-      sleep 50
+      Sleep(50)
       SendInput {Blind}{lbutton down}
-      If (BugRespawnMode = "Homing") {
-         sleep 340
-      } else if (BugRespawnMode = "RPG") {
-         sleep 393
-      }
+      If (BugRespawnMode = "Homing")
+         Sleep(340)
+      else if (BugRespawnMode = "RPG")
+         Sleep(393)
       SendInput {Blind}{%FranklinBind% up}{lshift up}
       BlockInput, Off
-      sleep 75
+      Sleep(75)
       Send {Blind}{esc}{lbutton up}
-      sleep 1500
+      Sleep(1500)
       Send {Blind}{%StickyBind%}{%RPGBind%}{tab}
       Hotkey, Tab, ProBlocking, Off
-      sleep 200
+      Sleep(200)
    }
    else if (SmoothEWOMode = "Sticky")
    {
@@ -236,22 +251,28 @@ EWO: ; Self explanatory
       SendInput {lbutton up}
       Send {Blind}{tab} ; {lbutton 5}
       Loop, 15 {
-         if WinActive("ahk_exe GTA5.exe") {
+         if WinActive("ahk_exe GTA5.exe")
+         {
             Send {Blind}{g 4} ; {lbutton}
          }
       }
       SendInput {Blind}{lbutton up}
-   } else {
+   } else
+   {
       SetMouseDelay, -1
-      if (SmoothEWO = 1)
+      if (SmoothEWO)
       {
          If (SmoothEWOMode = "Slow")
          {
-            If (getKeyState("rbutton", "P"))
+            If getKeyState("rbutton", "P")
             {
                SendInput {Blind}{lbutton up}{rbutton up}
-               Sleep(125)
+               Sleep(100)
             }
+         } else if (SmoothEWOMode = "Faster")
+         {
+            SendInput {Blind}{lbutton up}{rbutton up}
+            Sleep(20)
          }
          If (SmoothEWOMode = "Faster")
          {
@@ -265,7 +286,6 @@ EWO: ; Self explanatory
          }
          else if (SmoothEWOMode = "Slow")
          {
-            StringUpper, EWOLookBehindKey, EWOLookBehindKey
             /*
             SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{d up}{w up}{s up}{a up}{%InteractionMenuKey% down}
             Sleep(20)
@@ -277,14 +297,14 @@ EWO: ; Self explanatory
             Send {Blind}{enter up}{%InteractionMenuKey% up}
             */
             SendInput {Blind}{alt up}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{d up}{w up}{s up}{a up}{%InteractionMenuKey% down}{%EWOLookBehindKey% up}
-            Sleep(18)
-            Send {Blind}{%EWOLookBehindKey% down}{up}
-            SendInput {Blind}{%EWOSpecialAbilitySlashActionKey%}
-            Sleep(24)
+            Sleep(30)
+            SendInput {Blind}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey%}
+            Sleep(10)
+            SendInput {Blind}{up down}
+            Sleep(31)
             SendInput {Blind}{WheelUp}
-            Sleep(55)
+            Sleep(58)
             SendInput {Blind}{enter up}{%InteractionMenuKey% up}{%EWOLookBehindKey% up}
-            StringLower, EWOLookBehindKey, EWOLookBehindKey
          }
          else if (SmoothEWOMode = "Fastest")
          {
@@ -331,57 +351,50 @@ EWO: ; Self explanatory
             Send {Blind}{up}
             Sleep(9)
             Send {Blind}{%EWOSpecialAbilitySlashActionKey% down}{enter up}
-            /*
-            sleep 30
-            SendInput {Blind}{%EWOLookBehindKey% down}
-            sleep 95
-            SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}
-            Send {Blind}{f24 down}{f23 down}{f22 down}
-            SendInput {Blind}{wheelup}{enter up}{up up}
-            */
          }
       }
-      else if (SmoothEWO = 0)
+      else if (!SmoothEWO)
       {
          SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
-         Send {Blind}{f24 down}{f23 down}{f22 down}
-         SendInput {Blind}{wheelup}{enter up}{up up}
+         Send {Blind}{f24}{f24 up}
+         SendInput {Blind}{wheelup}{up up}{enter up}
       }
-      SendInput {Blind}{%EWOSpecialAbilitySlashActionKey% up}
-      SetCapsLockState, Off
       Send {Blind}{enter 2}{up down}
-      SendInput {Blind}{enter down}
+      SendInput {Blind}{%EWOSpecialAbilitySlashActionKey% up}{enter down}
+      SetCapsLockState, Off
       Send {Blind}{up up}
       SendInput {Blind}{enter up}
       Send {Blind}{left}{down}
-      SendInput {Blind}{%EWOLookBehindKey% up}{%EWOMelee% up}{%InteractionMenuKey% up}{up up}{g up}{f24 up}{f23 up}{f22 up}{f20 up}{%EWO% up}
+      SendInput {Blind}{%EWOLookBehindKey% up}{%EWOMelee% up}{%InteractionMenuKey% up}{up up}{g up}{%EWO% up}
       SetMouseDelay, 10
    }
 return
 
 Write: ; Shows the score even if you have EWOd in the session via some advanced shit
-   If (GTAAlreadyClosed = 0) {
-      if not WinExist("ahk_exe GTAHaXUI.exe") { ; If window doesn't exist, make it exist and add shit to it
+   If (!GTAAlreadyClosed)
+   {
+      if !WinExist("ahk_exe GTAHaXUI.exe") ; If window doesn't exist, make it exist and add shit to it
+      {
          Run, GTAHaXUI.exe, %ConfigDirectory%,Min,Gay2
          WinWait, ahk_pid %Gay2%
          WinGet, ID2, ID, ahk_pid %Gay2%
          WinSet, ExStyle, ^0x80, ahk_id %ID2% ; 0x80 is WS_EX_TOOLWINDOW
          ControlSend, Edit1, {down}{backspace}%ScoreGlobalIndexAddedTogether%, ahk_pid %Gay2%
-         sleep 20
-      } else { ; If it does exist
+         Sleep(20)
+      } else ; If it does exist
+      {
          ControlGet, Cocaine,Line,1,Edit1,ahk_pid %Gay2% ; Get the value of controls and shiznit
          ControlGet, Heroin,Line,1,Edit7,ahk_pid %Gay2%
          ControlGet, AIDS,Line,1,Edit8,ahk_pid %Gay2%
-         If (Heroin = 1) && (Cocaine = ScoreGlobalIndexAddedTogether) && (AIDS = 0) { ; If the values are correct do this shit
+         If (Heroin) && (Cocaine = ScoreGlobalIndexAddedTogether) && (!AIDS) ; If the values are correct do this shit
+         {
             ControlClick, Button1, ahk_pid %Gay2%
             WriteWasJustPerformed = 1
             SetTimer, WriteWasPerformed, -350, -2147483648
-         } else {
-            If not (Cocaine = ScoreGlobalIndexAddedTogether) { ; If global index isn't correct, then close GTAHaX and remake the window. Too lazy to remove everything, this is better anyways.
-               Process, Close, %Gay2%
-               Goto, Write
-            }
-            If not (AIDS = 0) { ; Same thing here but if the value you want to set it to is not 0, then it will restart GTAHaX and redo it.
+         } else
+         {
+            If (!Cocaine = ScoreGlobalIndexAddedTogether) || (!AIDS = 0) ; If global index isn't correct, then close GTAHaX and remake the window. Too lazy to remove everything, this is better anyways.
+            {
                Process, Close, %Gay2%
                Goto, Write
             }
@@ -395,17 +408,19 @@ WriteWasPerformed: ; Submodule of the Write module
 Return
 
 TabBackInnn: ; Submodule of the submodule of the Write module
-   If (WriteWasJustPerformed = 1)
+   If (WriteWasJustPerformed)
       WinActivate, ahk_exe GTA5.exe
 Return
 
 EWOWrite: ; Checks if EWO Write is enabled
    GuiControlGet, EWOWrite
-   If (EWOWrite = 1) {
+   If (EWOWrite)
+   {
       SetTimer, Write, 10, -2147483648
       SetTimer, TabBackInnn, 10, -2147483648
    }
-   else {
+   else
+   {
       SetTimer, Write, Off, -2147483648
       SetTimer, TabBackInnn, Off, -2147483648
    }
@@ -413,17 +428,17 @@ Return
 
 KekEWO: ; Opens the options menu to EWO, works even if you are stunned or ragdolled
    Send {Blind}{esc}
-   sleep 150
+   Sleep(150)
    Send {Blind}e
-   sleep 500
+   Sleep(500)
    Send {Blind}{enter}
-   sleep 400
+   Sleep(400)
    Send {Blind}{up 4}
-   sleep 250
+   Sleep(250)
    Send {Blind}{enter}
-   sleep 100
+   Sleep(100)
    Send {Blind}{up 6}
-   sleep 100
+   Sleep(100)
    Send {Blind}{enter 20}
 return
 
@@ -432,16 +447,19 @@ BST: ; Self explanatory
    GuiControlGet, CEOMode
    GuiControlGet, BSTSpeed
    GuiControlGet, BSTMC
-   If (CEOMode = 0)
+   If (!CEOMode)
       MsgBox, 0, Warning!, You are not in a CEO! , 0.75
-   else {
+   else
+   {
       Send {Blind}{%InteractionMenuKey%}{enter up}
-      If (BSTSpeed = 1) {
+      If (BSTSpeed)
+      {
          Send {Blind}{up}
          SendInput {Blind}{enter down}
          Send {Blind}{up 2}
          SendInput {Blind}{enter up}
-      } Else {
+      } else
+      {
          Send {Blind}{down}
          SendInput {Blind}{enter down}
          Send {Blind}{down 3}
@@ -451,6 +469,8 @@ BST: ; Self explanatory
       SendInput {Blind}{enter down}
       Send {Blind}{down up}
       SendInput {Blind}{enter up}
+      Send {Blind}{%InteractionMenuKey%}
+      Sleep(110)
    }
 return
 
@@ -461,7 +481,8 @@ Ammo: ; Self explanatory
    If (CEOMode) = 1 {
       Send {Blind}{down 2}
       SendInput {Blind}{WheelDown}
-   } Else {
+   } else
+   {
       Send {Blind}{down}
       SendInput {Blind}{WheelDown}
    }
@@ -473,9 +494,9 @@ Ammo: ; Self explanatory
    SendInput {Blind}{enter down}
    Send {Blind}{up up}
    SendInput {Blind}{enter up}{%InteractionMenuKey% down}
-   Sleep 25
+   Send {Blind}{f24 up}
    SendInput {Blind}{%InteractionMenuKey% up}
-   sleep 100
+   Sleep(100)
 return
 
 FastRespawn: ; Self explanatory
@@ -489,16 +510,16 @@ GTAHax: ; Self explanatory
    Run, GTAHaXUI.exe, %ConfigDirectory%,,Gay
    WinWait, ahk_pid %Gay%
    ControlSend, Edit1, {down}{backspace}%FreemodeGlobalIndexAddedTogether%, ahk_pid %Gay%
-   sleep 100
+   Sleep(100)
    ControlClick, Button1, ahk_pid %Gay%
-   sleep 100
+   Sleep(100)
    ControlSend, Edit2, {down}{backspace}1, ahk_pid %Gay%
-   sleep 100
+   Sleep(100)
    ControlClick, Button1, ahk_pid %Gay%
-   sleep 100
+   Sleep(100)
    ControlSend, Edit1, {down}{backspace 7}%EWOGlobalIndexAddedTogether%, ahk_pid %Gay%
    ControlSend, Edit2, {down}{backspace 2}0, ahk_pid %Gay%
-   sleep 100
+   Sleep(100)
    ControlClick, Button1, ahk_pid %Gay%
    MsgBox, 0, Complete!, You should now have no EWO cooldown. Kill yourself with a Sticky/RPG if you currently have a cooldown.
    Process, Close, %Gay%
@@ -508,183 +529,210 @@ GTAHaxCEO: ; GTAHaX CEO Circle
    Run, GTAHaXUI.exe, %ConfigDirectory%,,Gay
    WinWait, ahk_pid %Gay%
    ControlSend, Edit1, {down}{backspace}%CEOCircleGlobalIndexAddedTogether%, ahk_pid %Gay%
-   sleep 30
+   Sleep(30)
    ControlClick, Button1, ahk_pid %Gay%
-   sleep 30
+   Sleep(30)
    ;msgbox 0
-   Loop, 32 { ; Recreates the function that determines what memory address this global should be in, and tests every possible combination of that.
+   Loop, 32 ; Recreates the function that determines what memory address this global should be in, and tests every possible combination of that.
+   {
       PlayerID := a_index
       PlayerID1 := PlayerID * 608
       ControlSend, Edit2, {down}{backspace 5}%PlayerID1%, ahk_pid %Gay%
-      sleep 30
+      Sleep(30)
       ControlClick, Button1, ahk_pid %Gay%
-      sleep 30
+      Sleep(30)
       ;msgbox %PlayerID1%
    }
-   sleep 250
+   Sleep(250)
    MsgBox, 0, Complete!, The fucking CEO circle should be back now. It will probably disappear again if you leave CEO or something.
    Process, Close, %Gay%
 Return
 
 HelpWhatsThis: ; Self explanatory
-   while GetKeyState(HelpWhatsThis,"P") {
-      PrepareChatMacro()
-      SendInput don't care {numpadadd} didn't ask {numpadadd} cry{space}
-      Send {Blind}{f24 up}
-      SendInput about it {numpadadd} stay mad {numpadadd} get real
-      Send {Blind}{f24 up}
-      SendInput {space}{numpadadd} L {numpadadd} mald {numpadadd} seethe {numpadadd} cope ha
-      Send {Blind}{f24 up}
-      SendInput rder {numpadadd} hoes mad {numpadadd} basic {numpadadd} skil
-      Send {Blind}{f24 up}
-      SendInput l issue {numpadadd} ratio
-      
-      Send {Blind}{enter up}
-      PrepareChatMacro()
-      
-      SendInput {numpadadd} you fell off {numpadadd} the audacity{space}
-      Send {Blind}{f24 up}
-      SendInput {numpadadd} triggered {numpadadd} any askers {numpadadd} red
-      Send {Blind}{f24 up}
-      SendInput pilled {numpadadd} get a life {numpadadd} ok and?{space}
-      Send {Blind}{f24 up}
-      SendInput {numpadadd} cringe {numpadadd} touch grass {numpadadd} donow
-      Send {Blind}{f24 up}
-      SendInput alled {numpadadd} not based
-      
-      Send {Blind}{enter up}
-      PrepareChatMacro()
-      
-      SendInput {numpadadd} you're a (insert stereotype)
-      Send {Blind}{f24 up}
-      SendInput {space}{numpadadd} not funny didn't laugh {numpadadd} yo
-      Send {Blind}{f24 up}
-      SendInput u're* {numpadadd} grammar issue {numpadadd} go out
-      Send {Blind}{f24 up}
-      SendInput side {numpadadd} get good {numpadadd} reported {numpadadd} a
-      Send {Blind}{f24 up}
-      SendInput d hominem {numpadadd} GG{shift down}1{shift up}
-      
-      Send {Blind}{enter up}
-      PrepareChatMacro()
-      
-      SendInput {z 30}
-      
-      Send {Blind}{enter up}
-   }
+   PrepareChatMacro()
+   SendInput don't care {numpadadd} didn't ask {numpadadd} cry{space}
+   Send {Blind}{f24 up}
+   SendInput about it {numpadadd} stay mad {numpadadd} get real
+   Send {Blind}{f24 up}
+   SendInput {space}{numpadadd} L {numpadadd} mald {numpadadd} seethe {numpadadd} cope ha
+   Send {Blind}{f24 up}
+   SendInput rder {numpadadd} hoes mad {numpadadd} basic {numpadadd} skil
+   Send {Blind}{f24 up}
+   SendInput l issue {numpadadd} ratio
+   
+   Send {Blind}{enter up}
+   PrepareChatMacro()
+   
+   SendInput {numpadadd} you fell off {numpadadd} the audacity{space}
+   Send {Blind}{f24 up}
+   SendInput {numpadadd} triggered {numpadadd} any askers {numpadadd} red
+   Send {Blind}{f24 up}
+   SendInput pilled {numpadadd} get a life {numpadadd} ok and?{space}
+   Send {Blind}{f24 up}
+   SendInput {numpadadd} cringe {numpadadd} touch grass {numpadadd} donow
+   Send {Blind}{f24 up}
+   SendInput alled {numpadadd} not based
+   
+   Send {Blind}{enter up}
+   PrepareChatMacro()
+   
+   SendInput {numpadadd} you're a (insert stereotype)
+   Send {Blind}{f24 up}
+   SendInput {space}{numpadadd} not funny didn't laugh {numpadadd} yo
+   Send {Blind}{f24 up}
+   SendInput u're* {numpadadd} grammar issue {numpadadd} go out
+   Send {Blind}{f24 up}
+   SendInput side {numpadadd} get good {numpadadd} reported {numpadadd} a
+   Send {Blind}{f24 up}
+   SendInput d hominem {numpadadd} GG{shift down}1{shift up}
+   
+   Send {Blind}{enter up}
+   PrepareChatMacro()
+   
+   SendInput {z 30}
+   
+   Send {Blind}{enter up}
 return
 
 EssayAboutGTA: ; Self explanatory
-   while GetKeyState(EssayAboutGTA,"P") {
-      PrepareChatMacro()
-      
-      SendInput why is my fps so shlt this gam
-      Send {Blind}{f24 up}
-      SendInput e has terrible optimization it
-      Send {Blind}{f24 up}
-      SendInput s chinese as shlt man i hate t
-      Send {Blind}{f24 up}
-      SendInput his game im gonna swat the r*{space}
-      Send {Blind}{f24 up}
-      SendInput headquarters man i
-      
-      Send {Blind}{enter up}
-      PrepareChatMacro()
-      
-      SendInput swear to god this game is so b
-      Send {Blind}{f24 up}
-      SendInput ad why do we all still play it
-      Send {Blind}{f24 up}
-      SendInput {space}idk but how can they not affo
-      Send {Blind}{f24 up}
-      SendInput rd some dedicated servers they
-      Send {Blind}{f24 up}
-      SendInput {space}are a multi billion
-      
-      Send {Blind}{enter up}
-      PrepareChatMacro()
-      
-      SendInput dollar company also why does i
-      Send {Blind}{f24 up}
-      SendInput t still use p2p technology for
-      Send {Blind}{f24 up}
-      SendInput {space}servers thats been out of dat
-      Send {Blind}{f24 up}
-      SendInput e since gta 4 man it honestly{space}
-      Send {Blind}{f24 up}
-      SendInput baffles me how
-      
-      Send {Blind}{enter up}
-      PrepareChatMacro()
-      
-      SendInput outdated gta online is and how
-      Send {Blind}{f24 up}
-      SendInput {space}bad the fps is its so cpu bou
-      Send {Blind}{f24 up}
-      SendInput nd its stupid also thanks for{space}
-      Send {Blind}{f24 up}
-      SendInput listening to my essay about ho
-      Send {Blind}{f24 up}
-      SendInput w bad gta online is
-      
-      Send {Blind}{enter up}
-   }
+   PrepareChatMacro()
+   
+   SendInput why is my fps so shlt this gam
+   Send {Blind}{f24 up}
+   SendInput e has terrible optimization it
+   Send {Blind}{f24 up}
+   SendInput s chinese as shlt man i hate t
+   Send {Blind}{f24 up}
+   SendInput his game im gonna swat the r*{space}
+   Send {Blind}{f24 up}
+   SendInput headquarters man i
+   
+   Send {Blind}{enter up}
+   PrepareChatMacro()
+   
+   SendInput swear to god this game is so b
+   Send {Blind}{f24 up}
+   SendInput ad why do we all still play it
+   Send {Blind}{f24 up}
+   SendInput {space}idk but how can they not affo
+   Send {Blind}{f24 up}
+   SendInput rd some dedicated servers they
+   Send {Blind}{f24 up}
+   SendInput {space}are a multi billion
+   
+   Send {Blind}{enter up}
+   PrepareChatMacro()
+   
+   SendInput dollar company also why does i
+   Send {Blind}{f24 up}
+   SendInput t still use p2p technology for
+   Send {Blind}{f24 up}
+   SendInput {space}servers thats been out of dat
+   Send {Blind}{f24 up}
+   SendInput e since gta 4 man it honestly{space}
+   Send {Blind}{f24 up}
+   SendInput baffles me how
+   
+   Send {Blind}{enter up}
+   PrepareChatMacro()
+   
+   SendInput outdated gta online is and how
+   Send {Blind}{f24 up}
+   SendInput {space}bad the fps is its so cpu bou
+   Send {Blind}{f24 up}
+   SendInput nd its stupid also thanks for{space}
+   Send {Blind}{f24 up}
+   SendInput listening to my essay about ho
+   Send {Blind}{f24 up}
+   SendInput w bad gta online is
+   
+   Send {Blind}{enter up}
 return
 
 CustomTextSpam: ; Self explanatory
-   while GetKeyState(CustomTextSpam,"P") {
-      GuiControlGet, RawText
-      Length := StrLen(CustomSpamText)
+   GuiControlGet, RawText
+   Length := StrLen(CustomSpamText)
+   if (Length >= 31)
+      Goto LongTextSpam
+   else if Length <= 30
+      Goto ShortTextSpam
+return
+
+LongTextSpam:
+   Loop, 140 {
+      ArrayYes%A_Index% =
+   }
+   StringSplit, ArrayYes, CustomSpamText
+   PrepareChatMacro()
+   If (RawText)
+   {
+      SendInput {Raw}%ArrayYes1%%ArrayYes2%%ArrayYes3%%ArrayYes4%%ArrayYes5%%ArrayYes6%%ArrayYes7%%ArrayYes8%%ArrayYes9%%ArrayYes10%%ArrayYes11%%ArrayYes12%%ArrayYes13%%ArrayYes14%%ArrayYes15%%ArrayYes16%%ArrayYes17%%ArrayYes18%%ArrayYes19%%ArrayYes20%%ArrayYes21%%ArrayYes22%%ArrayYes23%%ArrayYes24%%ArrayYes25%%ArrayYes26%%ArrayYes27%%ArrayYes28%%ArrayYes29%
+      Send {Blind}{f24 up}
+      SendInput {Raw}%ArrayYes30%%ArrayYes31%%ArrayYes32%%ArrayYes33%%ArrayYes34%%ArrayYes35%%ArrayYes36%%ArrayYes37%%ArrayYes38%%ArrayYes39%%ArrayYes40%%ArrayYes41%%ArrayYes42%%ArrayYes43%%ArrayYes44%%ArrayYes45%%ArrayYes46%%ArrayYes47%%ArrayYes48%%ArrayYes49%%ArrayYes50%%ArrayYes51%%ArrayYes52%%ArrayYes53%%ArrayYes54%%ArrayYes55%%ArrayYes56%%ArrayYes57%%ArrayYes58%%ArrayYes59%
+      Send {Blind}{f24 up}
+      SendInput {Raw}%ArrayYes60%%ArrayYes61%%ArrayYes62%%ArrayYes63%%ArrayYes64%%ArrayYes65%%ArrayYes66%%ArrayYes67%%ArrayYes68%%ArrayYes69%%ArrayYes70%%ArrayYes71%%ArrayYes72%%ArrayYes73%%ArrayYes74%%ArrayYes75%%ArrayYes76%%ArrayYes77%%ArrayYes78%%ArrayYes79%%ArrayYes80%%ArrayYes81%%ArrayYes82%%ArrayYes83%%ArrayYes84%%ArrayYes85%%ArrayYes86%%ArrayYes87%%ArrayYes88%%ArrayYes89%
+      Send {Blind}{f24 up}
+      SendInput {Raw}%ArrayYes90%%ArrayYes91%%ArrayYes92%%ArrayYes93%%ArrayYes94%%ArrayYes95%%ArrayYes96%%ArrayYes97%%ArrayYes98%%ArrayYes99%%ArrayYes100%%ArrayYes101%%ArrayYes102%%ArrayYes103%%ArrayYes104%%ArrayYes105%%ArrayYes106%%ArrayYes107%%ArrayYes108%%ArrayYes109%%ArrayYes110%%ArrayYes111%%ArrayYes112%%ArrayYes113%%ArrayYes114%%ArrayYes115%%ArrayYes116%%ArrayYes117%%ArrayYes118%%ArrayYes119%
+      Send {Blind}{f24 up}
+      SendInput {Raw}%ArrayYes120%%ArrayYes121%%ArrayYes122%%ArrayYes123%%ArrayYes124%%ArrayYes125%%ArrayYes126%%ArrayYes127%%ArrayYes128%%ArrayYes129%%ArrayYes130%%ArrayYes131%%ArrayYes132%%ArrayYes133%%ArrayYes134%%ArrayYes135%%ArrayYes136%%ArrayYes137%%ArrayYes138%%ArrayYes139%%ArrayYes140%
+      Send {Blind}{enter up}
+   } else
+   {
+      SendInput %ArrayYes1%%ArrayYes2%%ArrayYes3%%ArrayYes4%%ArrayYes5%%ArrayYes6%%ArrayYes7%%ArrayYes8%%ArrayYes9%%ArrayYes10%%ArrayYes11%%ArrayYes12%%ArrayYes13%%ArrayYes14%%ArrayYes15%%ArrayYes16%%ArrayYes17%%ArrayYes18%%ArrayYes19%%ArrayYes20%%ArrayYes21%%ArrayYes22%%ArrayYes23%%ArrayYes24%%ArrayYes25%%ArrayYes26%%ArrayYes27%%ArrayYes28%%ArrayYes29%
+      Send {Blind}{f24 up}
+      SendInput %ArrayYes30%%ArrayYes31%%ArrayYes32%%ArrayYes33%%ArrayYes34%%ArrayYes35%%ArrayYes36%%ArrayYes37%%ArrayYes38%%ArrayYes39%%ArrayYes40%%ArrayYes41%%ArrayYes42%%ArrayYes43%%ArrayYes44%%ArrayYes45%%ArrayYes46%%ArrayYes47%%ArrayYes48%%ArrayYes49%%ArrayYes50%%ArrayYes51%%ArrayYes52%%ArrayYes53%%ArrayYes54%%ArrayYes55%%ArrayYes56%%ArrayYes57%%ArrayYes58%%ArrayYes59%
+      Send {Blind}{f24 up}
+      SendInput %ArrayYes60%%ArrayYes61%%ArrayYes62%%ArrayYes63%%ArrayYes64%%ArrayYes65%%ArrayYes66%%ArrayYes67%%ArrayYes68%%ArrayYes69%%ArrayYes70%%ArrayYes71%%ArrayYes72%%ArrayYes73%%ArrayYes74%%ArrayYes75%%ArrayYes76%%ArrayYes77%%ArrayYes78%%ArrayYes79%%ArrayYes80%%ArrayYes81%%ArrayYes82%%ArrayYes83%%ArrayYes84%%ArrayYes85%%ArrayYes86%%ArrayYes87%%ArrayYes88%%ArrayYes89%
+      Send {Blind}{f24 up}
+      SendInput %ArrayYes90%%ArrayYes91%%ArrayYes92%%ArrayYes93%%ArrayYes94%%ArrayYes95%%ArrayYes96%%ArrayYes97%%ArrayYes98%%ArrayYes99%%ArrayYes100%%ArrayYes101%%ArrayYes102%%ArrayYes103%%ArrayYes104%%ArrayYes105%%ArrayYes106%%ArrayYes107%%ArrayYes108%%ArrayYes109%%ArrayYes110%%ArrayYes111%%ArrayYes112%%ArrayYes113%%ArrayYes114%%ArrayYes115%%ArrayYes116%%ArrayYes117%%ArrayYes118%%ArrayYes119%
+      Send {Blind}{f24 up}
+      SendInput %ArrayYes120%%ArrayYes121%%ArrayYes122%%ArrayYes123%%ArrayYes124%%ArrayYes125%%ArrayYes126%%ArrayYes127%%ArrayYes128%%ArrayYes129%%ArrayYes130%%ArrayYes131%%ArrayYes132%%ArrayYes133%%ArrayYes134%%ArrayYes135%%ArrayYes136%%ArrayYes137%%ArrayYes138%%ArrayYes139%%ArrayYes140%
+      Send {Blind}{enter up}
+   }
+Return
+
+ShortTextSpam:
+   If (WhileChat = 1)
+   {
+      Goto, WhileShortTextSpam
+   }
+   PrepareChatMacro()
+   If (RawText)
+   {
+      SendInput {Raw}%CustomSpamText%
+      Send {Blind}{enter up}
+   } else
+   {
+      SendInput %CustomSpamText%
+      Send {Blind}{enter up}
+   }
+Return
+
+WhileShortTextSpam:
+   while GetKeyState(CustomTextSpam,"P")
+   {
       PrepareChatMacro()
-      if (Length >= 31) {
-         Loop, 140 {
-            ArrayYes%A_Index% =
-         }
-         StringSplit, ArrayYes, CustomSpamText
-         If (RawText = 1) {
-            SendInput {Raw}%ArrayYes1%%ArrayYes2%%ArrayYes3%%ArrayYes4%%ArrayYes5%%ArrayYes6%%ArrayYes7%%ArrayYes8%%ArrayYes9%%ArrayYes10%%ArrayYes11%%ArrayYes12%%ArrayYes13%%ArrayYes14%%ArrayYes15%%ArrayYes16%%ArrayYes17%%ArrayYes18%%ArrayYes19%%ArrayYes20%%ArrayYes21%%ArrayYes22%%ArrayYes23%%ArrayYes24%%ArrayYes25%%ArrayYes26%%ArrayYes27%%ArrayYes28%%ArrayYes29%
-            Send {Blind}{f24 up}
-            SendInput {Raw}%ArrayYes30%%ArrayYes31%%ArrayYes32%%ArrayYes33%%ArrayYes34%%ArrayYes35%%ArrayYes36%%ArrayYes37%%ArrayYes38%%ArrayYes39%%ArrayYes40%%ArrayYes41%%ArrayYes42%%ArrayYes43%%ArrayYes44%%ArrayYes45%%ArrayYes46%%ArrayYes47%%ArrayYes48%%ArrayYes49%%ArrayYes50%%ArrayYes51%%ArrayYes52%%ArrayYes53%%ArrayYes54%%ArrayYes55%%ArrayYes56%%ArrayYes57%%ArrayYes58%%ArrayYes59%
-            Send {Blind}{f24 up}
-            SendInput {Raw}%ArrayYes60%%ArrayYes61%%ArrayYes62%%ArrayYes63%%ArrayYes64%%ArrayYes65%%ArrayYes66%%ArrayYes67%%ArrayYes68%%ArrayYes69%%ArrayYes70%%ArrayYes71%%ArrayYes72%%ArrayYes73%%ArrayYes74%%ArrayYes75%%ArrayYes76%%ArrayYes77%%ArrayYes78%%ArrayYes79%%ArrayYes80%%ArrayYes81%%ArrayYes82%%ArrayYes83%%ArrayYes84%%ArrayYes85%%ArrayYes86%%ArrayYes87%%ArrayYes88%%ArrayYes89%
-            Send {Blind}{f24 up}
-            SendInput {Raw}%ArrayYes90%%ArrayYes91%%ArrayYes92%%ArrayYes93%%ArrayYes94%%ArrayYes95%%ArrayYes96%%ArrayYes97%%ArrayYes98%%ArrayYes99%%ArrayYes100%%ArrayYes101%%ArrayYes102%%ArrayYes103%%ArrayYes104%%ArrayYes105%%ArrayYes106%%ArrayYes107%%ArrayYes108%%ArrayYes109%%ArrayYes110%%ArrayYes111%%ArrayYes112%%ArrayYes113%%ArrayYes114%%ArrayYes115%%ArrayYes116%%ArrayYes117%%ArrayYes118%%ArrayYes119%
-            Send {Blind}{f24 up}
-            SendInput {Raw}%ArrayYes120%%ArrayYes121%%ArrayYes122%%ArrayYes123%%ArrayYes124%%ArrayYes125%%ArrayYes126%%ArrayYes127%%ArrayYes128%%ArrayYes129%%ArrayYes130%%ArrayYes131%%ArrayYes132%%ArrayYes133%%ArrayYes134%%ArrayYes135%%ArrayYes136%%ArrayYes137%%ArrayYes138%%ArrayYes139%%ArrayYes140%
-            Send {Blind}{enter up}
-         } else {
-            SendInput %ArrayYes1%%ArrayYes2%%ArrayYes3%%ArrayYes4%%ArrayYes5%%ArrayYes6%%ArrayYes7%%ArrayYes8%%ArrayYes9%%ArrayYes10%%ArrayYes11%%ArrayYes12%%ArrayYes13%%ArrayYes14%%ArrayYes15%%ArrayYes16%%ArrayYes17%%ArrayYes18%%ArrayYes19%%ArrayYes20%%ArrayYes21%%ArrayYes22%%ArrayYes23%%ArrayYes24%%ArrayYes25%%ArrayYes26%%ArrayYes27%%ArrayYes28%%ArrayYes29%
-            Send {Blind}{f24 up}
-            SendInput %ArrayYes30%%ArrayYes31%%ArrayYes32%%ArrayYes33%%ArrayYes34%%ArrayYes35%%ArrayYes36%%ArrayYes37%%ArrayYes38%%ArrayYes39%%ArrayYes40%%ArrayYes41%%ArrayYes42%%ArrayYes43%%ArrayYes44%%ArrayYes45%%ArrayYes46%%ArrayYes47%%ArrayYes48%%ArrayYes49%%ArrayYes50%%ArrayYes51%%ArrayYes52%%ArrayYes53%%ArrayYes54%%ArrayYes55%%ArrayYes56%%ArrayYes57%%ArrayYes58%%ArrayYes59%
-            Send {Blind}{f24 up}
-            SendInput %ArrayYes60%%ArrayYes61%%ArrayYes62%%ArrayYes63%%ArrayYes64%%ArrayYes65%%ArrayYes66%%ArrayYes67%%ArrayYes68%%ArrayYes69%%ArrayYes70%%ArrayYes71%%ArrayYes72%%ArrayYes73%%ArrayYes74%%ArrayYes75%%ArrayYes76%%ArrayYes77%%ArrayYes78%%ArrayYes79%%ArrayYes80%%ArrayYes81%%ArrayYes82%%ArrayYes83%%ArrayYes84%%ArrayYes85%%ArrayYes86%%ArrayYes87%%ArrayYes88%%ArrayYes89%
-            Send {Blind}{f24 up}
-            SendInput %ArrayYes90%%ArrayYes91%%ArrayYes92%%ArrayYes93%%ArrayYes94%%ArrayYes95%%ArrayYes96%%ArrayYes97%%ArrayYes98%%ArrayYes99%%ArrayYes100%%ArrayYes101%%ArrayYes102%%ArrayYes103%%ArrayYes104%%ArrayYes105%%ArrayYes106%%ArrayYes107%%ArrayYes108%%ArrayYes109%%ArrayYes110%%ArrayYes111%%ArrayYes112%%ArrayYes113%%ArrayYes114%%ArrayYes115%%ArrayYes116%%ArrayYes117%%ArrayYes118%%ArrayYes119%
-            Send {Blind}{f24 up}
-            SendInput %ArrayYes120%%ArrayYes121%%ArrayYes122%%ArrayYes123%%ArrayYes124%%ArrayYes125%%ArrayYes126%%ArrayYes127%%ArrayYes128%%ArrayYes129%%ArrayYes130%%ArrayYes131%%ArrayYes132%%ArrayYes133%%ArrayYes134%%ArrayYes135%%ArrayYes136%%ArrayYes137%%ArrayYes138%%ArrayYes139%%ArrayYes140%
-            Send {Blind}{enter up}
-         }
-      }
-      else if Length <= 30
+      If (RawText)
       {
-         If (RawText = 1) {
-            SendInput {Raw}%CustomSpamText%
-            Send {Blind}{enter up}
-         } else {
-            SendInput %CustomSpamText%
-            Send {Blind}{enter up}
-         }
+         SendInput {Raw}%CustomSpamText%
+         Send {Blind}{enter up}
+      } else
+      {
+         SendInput %CustomSpamText%
+         Send {Blind}{enter up}
       }
    }
-return
+Return
 
 Paste: ; Self explanatory
    Send {Blind}v
    SendInput {backspace}
    Send {Blind}{f24 up}
    Length2 = StrLen(Clipboard)
-   if (Length2 >= 31) {
-      Loop, 140 {
+   if (Length2 >= 31)
+   {
+      Loop, 140
+      {
          ArrayYesPaste%A_Index% =
       }
       StringSplit, ArrayYesPaste, Clipboard
@@ -697,35 +745,44 @@ Paste: ; Self explanatory
       SendInput {Raw}%ArrayYesPaste90%%ArrayYesPaste91%%ArrayYesPaste92%%ArrayYesPaste93%%ArrayYesPaste94%%ArrayYesPaste95%%ArrayYesPaste96%%ArrayYesPaste97%%ArrayYesPaste98%%ArrayYesPaste99%%ArrayYesPaste100%%ArrayYesPaste101%%ArrayYesPaste102%%ArrayYesPaste103%%ArrayYesPaste104%%ArrayYesPaste105%%ArrayYesPaste106%%ArrayYesPaste107%%ArrayYesPaste108%%ArrayYesPaste109%%ArrayYesPaste110%%ArrayYesPaste111%%ArrayYesPaste112%%ArrayYesPaste113%%ArrayYesPaste114%%ArrayYesPaste115%%ArrayYesPaste116%%ArrayYesPaste117%%ArrayYesPaste118%%ArrayYesPaste119%
       Send {Blind}{f24 up}
       SendInput {Raw}%ArrayYesPaste120%%ArrayYesPaste121%%ArrayYesPaste122%%ArrayYesPaste123%%ArrayYesPaste124%%ArrayYesPaste125%%ArrayYesPaste126%%ArrayYesPaste127%%ArrayYesPaste128%%ArrayYesPaste129%%ArrayYesPaste130%%ArrayYesPaste131%%ArrayYesPaste132%%ArrayYesPaste133%%ArrayYesPaste134%%ArrayYesPaste135%%ArrayYesPaste136%%ArrayYesPaste137%%ArrayYesPaste138%%ArrayYesPaste139%%ArrayYesPaste140%
-   }
-   else {
+   } else
+   {
       SendInput {Raw}%Clipboard%
    }
 return
 
 ShutUp: ; Self explanatory
-   while GetKeyState(ShutUp,"P") {
+   If (WhileChat = 1)
+   {
+      Goto, WhileShutUp
+   }
+   PrepareChatMacro()
+   SendInput shut up
+   Send {Blind}{enter up}
+return
+
+WhileShutUp:
+   while GetKeyState(ShutUp,"P")
+   {
       PrepareChatMacro()
-      SendInput {Blind}shut up
+      SendInput shut up
       Send {Blind}{enter up}
    }
-return
+Return
 
 Paste2: ; Checks if Paste is enabled
    GuiControlGet, Paste
-   If (Paste = 0) {
+   If (!Paste)
       Hotkey, ^v, Paste, Off
-   }
-   else {
+   else
       Hotkey, ^v, Paste, On
-   }
 return
 
 ReloadOutfit: ; Self explanatory
    SendInput {Blind}{lbutton up}{enter down}
    GuiControlGet, CEOMode
    Send {Blind}{%InteractionMenuKey%}
-   If (CEOMode = 1)
+   If (CEOMode)
       Send {Blind}{down 4}
    Else
       Send {Blind}{down 3}
@@ -740,10 +797,12 @@ return
 Crosshair5: ; Self explanatory
    WinGetActiveTitle, OldActiveWindow
    GuiControlGet, CrosshairPos
-   If not (CrossHairPos = "") {
+   If (!CrossHairPos = "")
+   {
       CrosshairPosPro := CrosshairPos/500
       GuiControlGet, Crosshair
-      if(crossHair = 1) {
+      if(crossHair)
+      {
          Global crossHairW := 21
          Global crossHairH := 21
          
@@ -761,19 +820,23 @@ Crosshair5: ; Self explanatory
          Gui, Crosshair: New, +AlwaysOnTop -Border -Caption
          Gui, Color, backgroundColor
          Gui, Add, Picture, x0 y0 w%crossHairW% h%crossHairH%, %A_WorkingDir%\assets\crosshair.png
-         Try {
+         Try
+         {
             Gui, Show, w%crossHairW% h%crossHairH% x%crossHairX% y%crossHairY%, Crosshair
-         } Catch {
+         } Catch
+         {
             Gui, Crosshair: Hide
          }
          WinSet, TransColor, backgroundColor, Crosshair
          WinGet, ID, ID, Crosshair
          WinSet, ExStyle, ^0x80, ahk_id %ID% ; 0x80 is WS_EX_TOOLWINDOW
-      } else {
+      } else
+      {
          Gui, Crosshair: Hide
       }
    }
-   else {
+   else
+   {
       Gui, Crosshair: Hide
    }
    WinActivate, %OldActiveWindow%
@@ -782,10 +845,12 @@ return
 Crosshair6: ; Self explanatory
    WinGetActiveTitle, OldActiveWindow
    GuiControlGet, CrosshairPos
-   If not (CrossHairPos = "") {
+   If (!CrossHairPos = "")
+   {
       CrosshairPosPro := CrosshairPos/500
       GuiControlGet, Crosshair
-      if(crossHair = 1) {
+      if(crossHair)
+      {
          Global crossHairW := 21
          Global crossHairH := 21
          
@@ -803,19 +868,23 @@ Crosshair6: ; Self explanatory
          Gui, Crosshair: New, +AlwaysOnTop -Border -Caption
          Gui, Color, backgroundColor
          Gui, Add, Picture, x0 y0 w%crossHairW% h%crossHairH%, %A_WorkingDir%\assets\crosshair.png
-         Try {
+         Try
+         {
             Gui, Show, w%crossHairW% h%crossHairH% x%crossHairX% y%crossHairY%, Crosshair
-         } Catch {
+         } Catch
+         {
             Gui, Crosshair: Hide
          }
          WinSet, TransColor, backgroundColor, Crosshair
          WinGet, ID, ID, Crosshair
          WinSet, ExStyle, ^0x80, ahk_id %ID% ; 0x80 is WS_EX_TOOLWINDOW
-      } else {
+      } else
+      {
          Gui, Crosshair: Hide
       }
       WinActivate, ahk_exe GTA5.exe
-   } else {
+   } else
+   {
       Gui, Crosshair: Hide
    }
    WinActivate, %OldActiveWindow%
@@ -823,21 +892,22 @@ return
 
 ProcessCheck3: ; Self explanatory
    GuiControlGet, ProcessCheck2
-   if (ProcessCheck2 = 0) {
+   if (!ProcessCheck2)
       SetTimer, ProcessCheckTimer, Off, -2147483648
-   } else {
+   else
       SetTimer, ProcessCheckTimer, 100, -2147483648
-   }
 return
 
 TabWeapon2: ; If Fast Switch is enabled
    GuiControlGet, TabWeapon
-   If (TabWeapon = 0) {
+   If (!TabWeapon)
+   {
       Hotkey, *%SniperBind%, SniperBind, UseErrorLevel Off
       Hotkey, *%RPGBind%, RPGBind, UseErrorLevel Off
       Hotkey, *%StickyBind%, StickyBind, UseErrorLevel Off
       Hotkey, *%PistolBind%, PistolBind, UseErrorLevel Off
-   } else {
+   } else
+   {
       Hotkey, *%SniperBind%, SniperBind, UseErrorLevel On
       Hotkey, *%RPGBind%, RPGBind, UseErrorLevel On
       Hotkey, *%StickyBind%, StickyBind, UseErrorLevel On
@@ -847,7 +917,8 @@ return
 
 ShowUI:
    GuiControlGet, AlwaysOnTop
-   If (AlwaysOnTop = 1) {
+   If (AlwaysOnTop)
+   {
       WinSet, AlwaysOnTop, Off, ahk_exe GTA5.exe
       WinMinimize, ahk_exe GTA5.exe
    }
@@ -857,27 +928,32 @@ return
 ToggleCEO:
    SendInput {Blind}{lbutton up}{enter down}
    GuiControlGet, CEOMode
-   If (CEOMode = 0) {
+   If (!CEOMode)
+   {
       Send {Blind}{%InteractionMenuKey%}{down 6}
       SendInput {Blind}{enter up}
       Send {Blind}{enter}
       GUIControl,, CEOMode, 1
    }
-   else {
+   else
+   {
       Send {Blind}{%InteractionMenuKey%}{enter up}{up down}
       SendInput {Blind}{enter down}
       Send {Blind}{up up}
       SendInput {Blind}{enter up}
       GUIControl,, CEOMode, 0
    }
-   sleep 125
+   Sleep(125)
 return
 
 ProcessCheckTimer:
-   If (GTAAlreadyClosed = 0) {
+   If (!GTAAlreadyClosed)
+   {
       GuiControlGet, ProcessCheck2
-      If not (ProcessCheck2 = 0) {
-         If not WinExist("ahk_exe GTA5.exe") {
+      If (ProcessCheck2)
+      {
+         If !WinExist("ahk_exe GTA5.exe")
+         {
             Gosub, CloseGTAProcesses
             SetTimer, Write, Off, -2147483648
             SetTimer, CloseGTAHaX, 100, -2147483648
@@ -925,12 +1001,10 @@ return
 
 ToggleCrosshair:
    GuiControlGet, Crosshair
-   If (Crosshair = 1) {
+   If (Crosshair)
       GuiControl,, Crosshair, 0
-   }
-   else {
+   else
       GuiControl,, Crosshair, 1
-   }
    Goto, Crosshair6
 
 Jobs:
@@ -946,81 +1020,74 @@ return
 
 MCCEO:
    SendInput {lbutton up}{enter down}
-   if (MCCEO2 = 0) {
-      Send {Blind}{%InteractionMenuKey%}{enter up}{up down}
+   Send {Blind}{%InteractionMenuKey%}{enter up}{up down}
+   SendInput {Blind}{enter down}
+   Send {Blind}{up up}
+   SendInput {Blind}{enter up}
+   Sleep(200)
+   SendInput {Blind}{enter down}
+   Send {Blind}{%InteractionMenuKey%}{down 6}
+   If (!MCCEO2)
+      Send {Blind}{down}
+   SendInput {Blind}{enter up}
+   Send {Blind}{enter}
+   StartTimer()
+   Loop
+   {
+      CalculateTime()
+      If (EndTime > 1250)
+         break
+      Send {Blind}{backspace down}
       SendInput {Blind}{enter down}
-      Send {Blind}{up up}
-      SendInput {Blind}{enter up}
-      sleep 200
-      SendInput {Blind}{enter down}
-      Send {Blind}{%InteractionMenuKey%}{down 7}
+      Send {Blind}{backspace up}
       SendInput {Blind}{enter up}
       Send {Blind}{enter}
-      Loop, 35 {
-         Send {Blind}{backspace down}
-         SendInput {Blind}{enter down}
-         Send {Blind}{backspace up}
-         SendInput {Blind}{enter up}
-         Send {Blind}{enter}
-      }
-      sleep 25
-      MCCEO2 := 1
    }
-   else {
-      Send {Blind}{%InteractionMenuKey%}{enter up}{up down}
-      SendInput {Blind}{enter down}
-      Send {Blind}{up up}
-      SendInput {Blind}{enter up}
-      Send {Blind}{enter}
-      sleep 200
-      SendInput {Blind}{enter down}
-      Send {Blind}{%InteractionMenuKey%}{down 6}
-      SendInput {Blind}{enter up}
-      Send {Blind}{enter}
-      Loop, 35 {
-         Send {Blind}{backspace down}
-         SendInput {Blind}{enter down}
-         Send {Blind}{backspace up}
-         SendInput {Blind}{enter up}
-         Send {Blind}{enter}
-      }
-      sleep 25
-      MCCEO2 := 0
-   }
+   msgbox %endTime% i ended
+   Sleep(25)
    GuiControl,, CEOMode, 1
+   If (!MCCEO2)
+      MCCEO2 := 1
+   else
+      MCCEO2 := 0
 return
 
 LaunchCycle:
    GuiControlGet, Paste ; Checks if pasting chat messages is enabled, and then it will enable it.
-   If (Paste = 0)
+   If (!Paste)
       Hotkey, ^v, Paste, Off
    else
       Hotkey, ^v, Paste, On
    GuiControlGet, TabWeapon
-   If (TabWeapon = 0) {
+   If (!TabWeapon)
+   {
       Hotkey, *%SniperBind%, SniperBind, UseErrorLevel Off
       Hotkey, *%RPGBind%, RPGBind, UseErrorLevel Off
       Hotkey, *%StickyBind%, StickyBind, UseErrorLevel Off
       Hotkey, *%PistolBind%, PistolBind, UseErrorLevel Off
-   } else {
+   } else
+   {
       Hotkey, *%SniperBind%, SniperBind, UseErrorLevel On
       Hotkey, *%RPGBind%, RPGBind, UseErrorLevel On
       Hotkey, *%StickyBind%, StickyBind, UseErrorLevel On
       Hotkey, *%PistolBind%, PistolBind, UseErrorLevel On
    }
    GuiControlGet, Paste
-   If (Paste = 0)
+   If (!Paste)
       Hotkey, ^v, Paste, Off
    else
       Hotkey, ^v, Paste, On
    Gui, Submit, NoHide
    WinGetActiveTitle, OldActiveWindow
    GuiControlGet, CrosshairPos
-   If not (CrossHairPos = "") {
-      If (CrosshairDone = 0) {
+   If (!CrossHairPos = "")
+   {
+      If (!CrosshairDone)
+      {
          CrosshairPosPro := CrosshairPos/500
          GuiControlGet, Crosshair
-         if(crossHair = 1) {
+         if (crossHair)
+         {
             Global crossHairW := 21
             Global crossHairH := 21
             
@@ -1046,19 +1113,21 @@ LaunchCycle:
             WinSet, TransColor, backgroundColor, Crosshair
             WinGet, ID, ID, Crosshair
             WinSet, ExStyle, ^0x80, ahk_id %ID% ; 0x80 is WS_EX_TOOLWINDOW
-         } else {
+         } else
             Gui, Crosshair: Hide
-         }
       }
-   } else {
+   } else
+   {
       Gui, Crosshair: Hide
    }
    CrosshairDone := 1
    WinActivate, %OldActiveWindow%
    GuiControlGet, AlwaysOnTop
-   if (AlwaysOnTop = 0) {
+   if (!AlwaysOnTop)
+   {
       SetTimer, AlwaysOnTop, Delete, -2147483648
-   } else {
+   } else
+   {
       SetTimer, AlwaysOnTop, 100, -2147483648
    }
 return
@@ -1109,7 +1178,7 @@ NotExist1:
       GuiControl,,EssayAboutGTA,
       GuiControl,,CustomTextSpam,
       GuiControl,,ShutUp,
-      GuiControl,,CustomSpamText,Ryzen_5_3600XT is hot
+      GuiControl,,CustomSpamText,Ryzen_7_5800X3D is hot
       GuiControl,,ReloadOutfit,
       GuiControl,,ShowUI,
       GuiControl,,ToggleCEO,
@@ -1222,7 +1291,8 @@ MacroOptions:
    Gui, Add, Link,, Optimize Fast Respawn EWO for: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Optimize-Fast-Respawn-EWO-For">(?)</a>
    Gui, Add, Link,, Show EWO Score: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Show-EWO-Score">(?)</a>
    Gui, Add, Link,, Sing: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Show-EWO-Score">(?)</a>
-   If (DebugTesting = 1) {
+   If (DebugTesting)
+   {
       Gui, Add, Link,, Passive Disable Spam: <a href="">(?)</a>
       Gui, Add, Link,, Always On Top: <a href="">(?)</a>
    }
@@ -1239,7 +1309,8 @@ MacroOptions:
    Gui, Add, DropDownList, vBugRespawnMode, Homing|RPG
    Gui, Add, Checkbox, gEWOWrite vEWOWrite h20
    Gui, Add, Checkbox, gToggleSing vsingEnabled h20
-   If (DebugTesting = 1) {
+   If (DebugTesting)
+   {
       Gui, Add, Checkbox, gPassiveDisableSpamCheck vPassiveDisableSpam h20
       Gui, Add, Checkbox, gAlwaysOnTopCheck vAlwaysOnTop h32
    }
@@ -1254,7 +1325,7 @@ MiscMacros:
    Gui, Add, Link,, Toggle Jobs: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Toggle-Jobs">(?)</a>
    Gui, Add, Link,, Copy Paste: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Copy-Paste">(?)</a>
    Gui, Add, Link,, MCCEO toggle: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/MCCEO-Toggle">(?)</a>
-   If (DebugTesting = 1)
+   If (DebugTesting)
       Gui, Add, Link,, Passive Disable Spam Toggle: <a href="">(?)</a>
    
    Gui, Add, Hotkey, vKekEWO x+105 y60
@@ -1264,7 +1335,7 @@ MiscMacros:
    Gui, Add, Hotkey, vJobs
    Gui, Add, Checkbox, gPaste2 vPaste h20
    Gui, Add, Hotkey, vMCCEO
-   If (DebugTesting = 1)
+   If (DebugTesting)
       Gui, Add, Hotkey, vPassiveDisableSpamToggle
 Return
 
@@ -1278,7 +1349,8 @@ SavingAndButtonsAndMiscMacros:
    Gui, Add, Button, gGTAHax h20, Apply GTAHaX EWO Codes!
    Gui, Add, Button, gGTAHaxCEO h20, Apply CEO Circle!
    Gui, Add, Button, gOpenDirectory h20, Open Local Directory of Ryzen's Macros!
-   If (DebugTesting = 1) {
+   If (DebugTesting)
+   {
       Gui, Add, Button, gSpotify h20, get rid of noob spotify
       Gui, Add, Button, gClumsy h20, toggle clumsy
    }
@@ -1311,7 +1383,8 @@ SaveConfigRedirect:
    SetTimer, ProcessCheckTimer, Off, -2147483648
    Gosub,DisableAll
    Gui,Submit,NoHide
-   If (save = 1) {
+   If (save)
+   {
       IniWrite,%InteractionMenuKey%,%CFG%,Keybinds,Interaction Menu Key
       IniWrite,%FranklinBind%,%CFG%,Keybinds,Franklin Key
       IniWrite,%ThermalHelmet%,%CFG%,PVP Macros,Thermal Helmet
@@ -1380,19 +1453,20 @@ SaveConfigRedirect:
    Hotkey, *%MCCEO%, MCCEO, UseErrorLevel On
    Hotkey, *%RPGSpam%, RPGSpam, UseErrorLevel On
    Hotkey, *%PassiveDisableSpamToggle%, PassiveDisableSpamToggle, UseErrorLevel On
-   If (EWOWrite = 1) {
+   If (EWOWrite)
+   {
       SetTimer, Write, 10, -2147483648
       SetTimer, TabBackInnn, 10, -2147483648
    }
-   if (ProcessCheck2 = 1)
+   if (ProcessCheck2)
       SetTimer, ProcessCheckTimer, 100, -2147483648
    ;MsgBox, 0, Saved!, Your config has been saved and/or the macros have been started!, 2
-   If (GTAAlreadyClosed = 0 && save = 1)
-      TrayTip, Ryzen's Macros %MacroVersion%, Your config has been saved and/or the macros have been started!, 10, 1
-   else if (save = 0)
-      TrayTip, Ryzen's Macros %MacroVersion%, Your config has been applied and/or the macros have been started! Settings have not been saved., 10, 1
-   else if (GTAAlreadyClosed = 1) && (ProcessCheck2 = 1)
-      TrayTip, Ryzen's Macros %MacroVersion%, GTA has not been detected to be open`, the macros will not automatically close and Show EWO Score will not work`. Please restart the macros once you have restarted GTA., 10, 1
+   If (GTAAlreadyClosed = 0 && save)
+      TrayTip, %MacroVersion%, Your config has been saved and/or the macros have been started!, 10, 1
+   else if (!save)
+      TrayTip, %MacroVersion%, Your config has been applied and/or the macros have been started! Settings have not been saved., 10, 1
+   else if (GTAAlreadyClosed) && (ProcessCheck2)
+      TrayTip, %MacroVersion%, GTA has not been detected to be open`, the macros will not automatically close and Show EWO Score will not work`. Please restart the macros once you have restarted GTA., 10, 1
    #Include *i %A_MyDocuments%\Ryzen's Macros\DynamicScript.ahk
 Return
 
@@ -1408,7 +1482,8 @@ Nice1234:
 Return
 
 StandardTrayMenu:
-   If (TrayButtonInfo = 1) {
+   If (isCompiled)
+   {
       If (A_ThisMenuItem = "Open")
          DllCall("PostMessage", UInt,Gui0, UInt,0x111, UInt,65406, UInt,0 )
    }
@@ -1421,12 +1496,14 @@ StandardTrayMenu:
    If (A_ThisMenuItem = "Reload This Script" )
       DllCall("PostMessage", UInt,Gui0, UInt,0x111, UInt,65400, UInt,0 )
    
-   If (A_ThisMenuItem = "Suspend Hotkeys" ) {
+   If (A_ThisMenuItem = "Suspend Hotkeys" )
+   {
       Menu, Tray, ToggleCheck, %A_ThisMenuItem%
       DllCall("PostMessage", UInt,Gui0, UInt,0x111, UInt,65404, UInt,0 )
    }
    
-   If (A_ThisMenuItem = "Pause Script" ) {
+   If (A_ThisMenuItem = "Pause Script" )
+   {
       Menu, Tray, ToggleCheck, %A_ThisMenuItem%
       DllCall("PostMessage", UInt,Gui0, UInt,0x111, UInt,65403, UInt,0 )
    }
@@ -1606,17 +1683,17 @@ CheckHWID:
    
    key := % UUID()
    valid_ids := Object((Key1), y,(Key2), y,(Key3), y,(Key4), y,(Key5), y,(Key6), y,(Key7), y,(Key8), y,(Key9), y,(Key10), y,(Key11), y,(Key12), y,(Key13), y,(Key14), y,(Key15), y,(Key16), y,(Key17), y,(Key18), y,(Key19), y,(Key20), y,(Key21), y,(Key22), y,(Key23), y,(Key24), y,(Key25), y,(Key26), y,(Key27), y,(Key28), y,(Key29), y,(Key30), y,(Key31), y,(Key32), y,(Key33), y,(Key34), y,(Key35), y,(Key36), y,(Key37), y,(Key38), y,(Key39), y,(Key40), y,(Key41), y,(Key42), y,(Key43), y,(Key44), y,(Key45), y,(Key46), y,(Key47), y,(Key48), y,(Key49), y,(Key50), y,(Key51), y,(Key52), y,(Key53), y,(Key54), y,(Key55), y,(Key56), y,(Key57), y,(Key58), y,(Key59), y,(Key60), y)
-   if not (valid_ids.HasKey(key)) {
+   if (!valid_ids.HasKey(key))
+   {
       c0=D4D0C8
       Gui,2:Add, Link,w400, Your HWID has been copied to the clipboard. Please join the Discord Server and send it in the #macro-hwid channel. To gain access to the channel, you must react in the #macros channel.
       Gui,2:Add, Link,, <a href="https://discord.gg/5Y3zJK4KGW">Here</a> is an invite to the discord server.
       Gui,2:Add, Button,ym+80 gExitMacros2, OK
       Gui,2:Show,, HWID Mismatch
       Return
-   } else {
+   } else
       Goto, Back
-   }
-
+Return
 ExitMacros2:
    Clipboard := key
 ExitApp
@@ -1630,12 +1707,14 @@ Priority:
    for k, PID in PIDs
       Process, Priority, % PID, Level
    
-   EnumProcessesByName(procName) {
+   EnumProcessesByName(procName)
+   {
       if !DllCall("Wtsapi32\WTSEnumerateProcesses", Ptr, 0, UInt, 0, UInt, 1, PtrP, pProcessInfo, PtrP, count)
          throw Exception("WTSEnumerateProcesses failed. A_LastError: " . A_LastError)
       
       addr := pProcessInfo, PIDs := []
-      Loop % count {
+      Loop % count
+      {
          if StrGet(NumGet(addr + 8)) = procName
             PID := NumGet(addr + 4, "UInt"), PIDs.Push(PID)
          addr += A_PtrSize = 4 ? 16 : 24
@@ -1647,36 +1726,44 @@ Return
 
 PassiveDisableSpamCheck:
    GuiControlGet, PassiveDisableSpam
-   if (PassiveDisableSpam = 0) {
+   if (!PassiveDisableSpam)
+   {
       SetTimer, PassiveDisableSpam, Delete, -2147483648
-   } else {
+   } else
+   {
       SetTimer, PassiveDisableSpam, 7500, -2147483648
    }
 Return
 
 PassiveDisableSpamToggle:
    GuiControlGet, PassiveDisableSpam
-   if (PassiveDisableSpam = 1) {
+   if (PassiveDisableSpam)
+   {
       SetTimer, PassiveDisableSpam, Delete, -2147483648
       GuiControl,, PassiveDisableSpam, 0
-      MsgBox, 0, Ryzen's Macros %MacroVersion%, Passive Disable Spam disabled , 0.75
-   } else {
+      MsgBox, 0, %MacroVersion%, Passive Disable Spam disabled , 0.75
+   } else
+   {
       SetTimer, PassiveDisableSpam, 7500, -2147483648
       GuiControl,, PassiveDisableSpam, 1
-      TrayTip, Ryzen's Macros %MacroVersion%, Passive Disable Spam enabled, 10, 1
-      MsgBox, 0, Ryzen's Macros %MacroVersion%, Passive Disable Spam enabled , 0.75
+      TrayTip, %MacroVersion%, Passive Disable Spam enabled, 10, 1
+      MsgBox, 0, %MacroVersion%, Passive Disable Spam enabled , 0.75
    }
 Return
 
 PassiveDisableSpam:
    GuiControlGet, PassiveDisableSpam
-   If (PassiveDisableSpam = 1) {
-      If WinActive("ahk_exe GTA5.exe") {
-         If GetKeyState("LButton","P") {
+   If (PassiveDisableSpam)
+   {
+      If WinActive("ahk_exe GTA5.exe")
+      {
+         If GetKeyState("LButton","P")
+         {
             SendInput {Blind}{up down}{enter down}{lbutton up}
             Send {Blind}{backspace}{%InteractionMenuKey%}{enter up}{%InteractionMenuKey%}
             SendInput {Blind}{up up}{lbutton down}
-         } else {
+         } else
+         {
             SendInput {Blind}{up down}{enter down}{lbutton up}
             Send {Blind}{backspace}{%InteractionMenuKey%}{enter up}{%InteractionMenuKey%}
             SendInput {Blind}{up up}
@@ -1691,46 +1778,47 @@ Return
 
 AlwaysOnTopCheck:
    GuiControlGet, AlwaysOnTop
-   if (AlwaysOnTop = 0) {
+   if (!AlwaysOnTop)
       SetTimer, AlwaysOnTop, Delete, -2147483648
-   } else {
+   else
       SetTimer, AlwaysOnTop, 25, -2147483648
-   }
+
 Return
 
 AlwaysOnTop:
    GuiControlGet, AlwaysOnTop
-   If (AlwaysOnTop = 1) {
-      If WinActive("ahk_exe GTA5.exe") {
+   If (AlwaysOnTop)
+   {
+      If WinActive("ahk_exe GTA5.exe")
+      {
          WinSet, AlwaysOnTop, On, ahk_exe GTA5.exe
-      } else {
+      } else
+      {
          WinSet, AlwaysOnTop, Off, ahk_exe GTA5.exe
          WinMinimize, ahk_exe GTA5.exe
       }
    }
 Return
 
-SendInputTestV2() {
+SendInputTestV2()
+{
    BlockInput, On
    WinActivate, ahk_exe GTA5.exe
-   sleep 250
-   StartTime := A_TickCount
+   Sleep(250)
+   startTime := A_TickCount
    Send t{shift up}
    SendInput Loading{. 30}
-   EndTime := A_TickCount - StartTime
-   sleep 500
+   endTime := A_TickCount - startTime
+   Sleep(500)
    Send {Blind}{esc}
-   sleep 500
+   Sleep(500)
    BlockInput, Off
-   ; MsgBox %EndTime%
-   If (EndTime > 200)
-      MsgBox, 4, Ryzen's Macros %MacroVersion%, I have detected that macros are currently incredibly slow, most likely due to Flawless Widescreen, or a different program that also installs the keyboard hook. Would you like to continue anyway?
-   IfMsgBox No
-   { ExitApp
-}}
+   Return endTime
+}
 
 Clumsy:
-   if (clumsyEnabled = 0) {
+   if (!clumsyEnabled)
+   {
       Process, Close, %Gay3%
       Run, clumsy.exe, %ConfigDirectory%\clumsy,Min,Gay3
       WinWait, ahk_pid %Gay3%
@@ -1739,14 +1827,15 @@ Clumsy:
       Control, Choose, 4, ComboBox1, ahk_pid %Gay3%
       Control, Check,, Button4, ahk_pid %Gay3%
       ControlSetText,Edit2,%clumsyPing%,ahk_pid %Gay3%
-      sleep 100
+      Sleep(100)
       ControlClick, Button2, ahk_pid %Gay3%
       global clumsyStarted = 1
       global clumsyEnabled = 1
       global Notified = 0
       SetTimer, ClumsyClosed, 350, -2147483648
       msgbox, clumsy enabled
-   } else {
+   } else
+   {
       Process, Close, %Gay3%
       SetTimer, ClumsyClosed, Delete, -2147483648
       global clumsyEnabled = 0
@@ -1755,15 +1844,17 @@ Clumsy:
 Return
 
 ClumsyClosed:
-   If (clumsyStarted) && (!Notified) && (!ProcessExist(ahk_pid Gay3)) {
+   If (clumsyStarted) && (!Notified) && !ProcessExist(ahk_pid Gay3)
+   {
       msgbox, for some reason it closed`, idk why
       global Notified = 1
       SetTimer, ClumsyClosed, Delete, -2147483648
    }
 Return
 
-ProcessExist(Name) { ; For convenience sake
-   Process,Exist,%Name%
+ProcessExist(Name) ; For convenience sake
+{
+   Process, Exist, %Name%
    Return ErrorLevel
 }
 
@@ -1773,7 +1864,7 @@ CreateTrayOptions:
    Menu, Tray, Add, Hide UI, HideWindow
    Menu, Tray, Add, Save Macros, SaveConfig
    Menu, Tray, Add
-   If (TrayButtonInfo = 1)
+   If (isCompiled)
       Menu, Tray, Add, Open, StandardTrayMenu
    Menu, Tray, Add, Help, StandardTrayMenu
    Menu, Tray, Add
@@ -1783,10 +1874,10 @@ CreateTrayOptions:
    Menu, Tray, Add, Suspend Hotkeys, StandardTrayMenu
    Menu, Tray, Add, Pause Script, StandardTrayMenu
    Menu, Tray, Add, Exit, ExitMacros
-   If (TrayButtonInfo = 1)
+   If (isCompiled)
       Menu, Tray, Default, Open
    
-   Menu, Tray, Tip, Ryzen's Macros Version %MacroVersion%
+   Menu, Tray, Tip, %MacroVersion%
 Return
 
 ToggleSing: ; Toggles the sing
@@ -1805,90 +1896,102 @@ Return
 Sing: ; Sings in chat lmao
    global paused = 0
    global keepRunning = 1 ; Set to 1 at the start unless you use the Safeguard Hotkey.
-   global noWaitExistsTimeout := 3000 ; If there is no wait() in the lyrics file and no wait specified in the file, then it will sleep this amount per message automatically.
+   global noWaitExistsTimeout := 3000 ; If there is no wait() in the lyrics file and no wait specified in the file, then it will Sleep this amount per message automatically.
+   global i := 1
    noAutoWait = 0 ; Resets it when you restart. Probably not necessary but maybe.
    waitExistsInLyrics = 0 ; Resets it when you restart
    
    songFileLocation = %ConfigDirectory%\Lyrics.txt ; Location of the file
    WinActivate, ahk_exe GTA5.exe ; Activates the GTA window
    
-   Loop, Read, %songFileLocation% ; The part where the magic happens!
+   ; Loop, Read, %songFileLocation% ; The part where the magic happens!
+   Loop
    {
       if (keepRunning) && (singEnabledVariable) ; This will only be disabled if you press the safeguard key. Timers override basically any thread priority, so this is better than a hotkey. If you do not specify a value that in the if statement, it will be if it is 1.
       {
-         If (paused) { ; This cheeky bit of code will simply cause the loop to get stuck until the pause variable is no longer True. Pretty bad coding practice probably, but in this case it is probably the only way without disabling Timers.
+         If (paused) ; This cheeky bit of code will simply cause the loop to get stuck until the pause variable is no longer True. Pretty bad coding practice probably, but in this case it is probably the only way without disabling Timers.
+         {
             While (paused)
                {}
-            }
+               i--
+         }
+         i++
+         FileReadLine, currentLine, %songFileLocation%, i
          
-         If (A_LoopReadLine = "") { ; If the line is empty, skip it and go to the next loop.
+         If (currentLine = "") ; If the line is empty, skip it and go to the next loop.
+         {
             Continue ; Goes back to the top of the loop and continues with the next line
          }
-         else if InStr(A_LoopReadLine,"//") ; If it begins with // (a comment) then skip it.
+         else if InStr(currentLine,"//") ; If it begins with // (a comment) then skip it.
          {
-            foundPos := InStr(A_LoopReadLine,"//") ; The character "position" of //. Will only do something if it is in the front. I'm too dumb to make it parse the entire thing. Fuck regex.
-            if (foundPos = 1) || (foundPos = 2) ; Incase you have a space before // for some reason, then the "position" will be 2.
+            foundPos := InStr(currentLine,"//") ; The character "position" of //. Will only do something if it is in the front. I'm too dumb to make it parse the entire thing. Fuck regex.
+            if (foundPos) || (foundPos = 2) ; Incase you have a space before // for some reason, then the "position" will be 2.
                Continue ; Goes back to the top of the loop and continues with the next line
          }
-         else if InStr(A_LoopReadLine,"NoAutoWait()") ; If the line starts with "NoAutoWait" then it will NOT wait.
+         else if InStr(currentLine,"NoAutoWait()") ; If the line starts with "NoAutoWait" then it will NOT wait.
          {
             noAutoWait = 1
          }
-         else if InStr(A_LoopReadLine,"ExceptionWait(") ; If the line starts with "ExceptionWait(" then it will wait WITHOUT notifying the script of the fact that Wait() exists within the text file.
+         else if InStr(currentLine,"ExceptionWait(") ; If the line starts with "ExceptionWait(" then it will wait WITHOUT notifying the script of the fact that Wait() exists within the text file.
          {
-            waitTime := StrSplit(A_LoopReadLine,"(",")",2) ; Splits the array into wait( and the rest of the string. It will omit the ")" so only the number remains. This number is then used to sleep.
+            waitTime := StrSplit(currentLine,"(",")",2) ; Splits the array into wait( and the rest of the string. It will omit the ")" so only the number remains. This number is then used to sleep.
             waitTime := waitTime[2] ; Makes waitTime equal to the second value in the array to make it slightly simpler.
-            sleep %waitTime% ; It then waits the amount of time specified in the lyrics file.
+            Sleep %waitTime% ; It then waits the amount of time specified in the lyrics file.
          }
-         else if InStr(A_LoopReadLine,"Wait(") || InStr(A_LoopReadLine,"wait(") ; If the line starts with "wait(" then it will wait and notify the script of the fact that Wait() exists within the text file.
+         else if InStr(currentLine,"Wait(") || InStr(currentLine,"wait(") ; If the line starts with "wait(" then it will wait and notify the script of the fact that Wait() exists within the text file.
          {
             waitExistsInLyrics = 1 ; Variable that lets me know that wait exists somewhere in the lyrics, and it will not count commented waits, thanks to this being below the other ifs in an else statement.
-            waitTime := StrSplit(A_LoopReadLine,"(",")",2) ; Splits the array into wait( and the rest of the string. It will omit the ")" so only the number remains. This number is then used to sleep.
+            waitTime := StrSplit(currentLine,"(",")",2) ; Splits the array into wait( and the rest of the string. It will omit the ")" so only the number remains. This number is then used to sleep.
             waitTime := waitTime[2] ; Makes waitTime equal to the second value in the array to make it slightly simpler.
-            sleep %waitTime% ; It then waits the amount of time specified in the lyrics file.
+            Sleep %waitTime% ; It then waits the amount of time specified in the lyrics file.
          }
-         else if InStr(A_LoopReadLine,"SafeguardKey(") ; If the line starts with "SafeguardKey(" then it will use the key as the key to cancel singing.
+         else if InStr(currentLine,"SafeguardKey(") ; If the line starts with "SafeguardKey(" then it will use the key as the key to cancel singing.
          {
-            global safeguardKey := StrSplit(A_LoopReadLine,"(","y" ")",2) ; Uses delimiters again
+            global safeguardKey := StrSplit(currentLine,"(","y" ")",2) ; Uses delimiters again
             global safeguardKey := safeguardKey[2] ; Makes it slightly simpler
             SetTimer, UltraHighPriorityLoopBypassingThread,1,2147483647 ; Find out more at the bottom of the script
          }
-         else if InStr(A_LoopReadLine,"PauseKey(") ; If the line starts with "PauseKey(" then it will use the key as the key to pause singing.
+         else if InStr(currentLine,"PauseKey(") ; If the line starts with "PauseKey(" then it will use the key as the key to pause singing.
          {
-            global pauseKey := StrSplit(A_LoopReadLine,"(","y" ")",2) ; Uses delimiters again
+            global pauseKey := StrSplit(currentLine,"(","y" ")",2) ; Uses delimiters again
             global pauseKey := pauseKey[2] ; Makes it slightly simpler
             SetTimer, UltraHighPriorityLoopBypassingThread,1,2147483647 ; Find out more at the bottom of the script
          }
-         else if InStr(A_LoopReadLine,"StandardWaitTime(") ; Will change noWaitExistsTimeout variable to the new value. This will change how long it automatically waits between lines.
+         else if InStr(currentLine,"StandardWaitTime(") ; Will change noWaitExistsTimeout variable to the new value. This will change how long it automatically waits between lines.
          {
-            global noWaitExistsTimeout := StrSplit(A_LoopReadLine,"(","e" ")",2) ; Uses delimiters again
+            global noWaitExistsTimeout := StrSplit(currentLine,"(","e" ")",2) ; Uses delimiters again
             global noWaitExistsTimeout := noWaitExistsTimeout[2] ; Makes it slightly simpler
          }
          else
          {
             Gosub, IJustCopyPastedThisChatFunction ; If it is (most likely) part of a valid lyrics that you will actually want to be sent, then send the messages.
             If (!waitExistsInLyrics) && (!noAutoWait) ; Waits 2000ms (2 seconds) if there is no wait() specified anywhere in the file and if NoAutoWait is not enabled for the current line.
-               sleep %noWaitExistsTimeout%
+               Sleep %noWaitExistsTimeout%
             noAutoWait = 0 ; Resets NoAutoWait after it has sent something, so it doesn't stop waiting forever.
          }
       }
       else ; If the Safeguard Key has been pressed, stop the loop.
          break
    }
+   VarSetCapacity(i,0)
    GuiControl,,singEnabled,0 ; Once it is done, disable Sing.
+   global singEnabledVariable = 0
+   global paused = 0
+   global keepRunning = 1 ; Set to 1 at the start unless you use the Safeguard Hotkey.
    SetTimer, UltraHighPriorityLoopBypassingThread,Off,2147483647 ; Disables the timer after it is done
 Return
 
 IJustCopyPastedThisChatFunction: ; Pasted from CustomTextSpam.
-   Length := StrLen(A_LoopReadLine)
-   if (Length >= 31) {
+   Length := StrLen(currentLine)
+   if (Length >= 31)
+   {
       Loop, 140 {
          ArrayYes%A_Index% =
       }
       Send {Blind}{t down}
       SendInput {Blind}{enter down}
       Send {Blind}{t up}{f24 up}
-      StringSplit, ArrayYes, A_LoopReadLine
+      StringSplit, ArrayYes, currentLine
       SendInput {Raw}%ArrayYes1%%ArrayYes2%%ArrayYes3%%ArrayYes4%%ArrayYes5%%ArrayYes6%%ArrayYes7%%ArrayYes8%%ArrayYes9%%ArrayYes10%%ArrayYes11%%ArrayYes12%%ArrayYes13%%ArrayYes14%%ArrayYes15%%ArrayYes16%%ArrayYes17%%ArrayYes18%%ArrayYes19%%ArrayYes20%%ArrayYes21%%ArrayYes22%%ArrayYes23%%ArrayYes24%%ArrayYes25%%ArrayYes26%%ArrayYes27%%ArrayYes28%%ArrayYes29%
       Send {Blind}{f24 up}
       SendInput {Raw}%ArrayYes30%%ArrayYes31%%ArrayYes32%%ArrayYes33%%ArrayYes34%%ArrayYes35%%ArrayYes36%%ArrayYes37%%ArrayYes38%%ArrayYes39%%ArrayYes40%%ArrayYes41%%ArrayYes42%%ArrayYes43%%ArrayYes44%%ArrayYes45%%ArrayYes46%%ArrayYes47%%ArrayYes48%%ArrayYes49%%ArrayYes50%%ArrayYes51%%ArrayYes52%%ArrayYes53%%ArrayYes54%%ArrayYes55%%ArrayYes56%%ArrayYes57%%ArrayYes58%%ArrayYes59%
@@ -1900,11 +2003,12 @@ IJustCopyPastedThisChatFunction: ; Pasted from CustomTextSpam.
       SendInput {Raw}%ArrayYes120%%ArrayYes121%%ArrayYes122%%ArrayYes123%%ArrayYes124%%ArrayYes125%%ArrayYes126%%ArrayYes127%%ArrayYes128%%ArrayYes129%%ArrayYes130%%ArrayYes131%%ArrayYes132%%ArrayYes133%%ArrayYes134%%ArrayYes135%%ArrayYes136%%ArrayYes137%%ArrayYes138%%ArrayYes139%%ArrayYes140%
       Send {Blind}{enter up}
    }
-   else if (Length <= 30) {
+   else if (Length <= 30)
+   {
       Send {Blind}{t down}
       SendInput {enter down}
       Send {Blind}{t up}{f24 up}
-      SendInput {Raw}%A_LoopReadLine%
+      SendInput {Raw}%currentLine%
       Send {Blind}{enter up}
    }
 return
@@ -1918,7 +2022,7 @@ UltraHighPriorityLoopBypassingThread: ; SetTimers override basically any thread 
    {
       global singEnabledVariable = 0 ; Indicates that sing is disabled if you disable it while it is running.
       SetTimer, UltraHighPriorityLoopBypassingThread,Off,2147483647 ; Disables the timer after it is done
-      MsgBox, 0, Ryzen's Macros %MacroVersion%, Sing disabled mid-singing`, lyrics cancelled., 1
+      MsgBox, 0, %MacroVersion%, Sing disabled mid-singing`, lyrics cancelled., 1
    }
    
    if GetKeyState(pauseKey,"P") ; Pause function
@@ -1927,12 +2031,12 @@ UltraHighPriorityLoopBypassingThread: ; SetTimers override basically any thread 
       If (!paused) ; Pauses it
       {
          global paused = 1
-         MsgBox, 0, Ryzen's Macros %MacroVersion%, Pause Key pressed`, lyrics paused. Press again to resume where you left off., 1
+         MsgBox, 0, %MacroVersion%, Pause Key pressed`, lyrics paused. Press again to resume where you left off., 1
       }
       else if (paused) ; Unpauses it
       {
          global paused = 0
-         MsgBox, 0, Ryzen's Macros %MacroVersion%, Pause Key pressed`, lyrics resumed. Press again to pause again., 1
+         MsgBox, 0, %MacroVersion%, Pause Key pressed`, lyrics resumed. Press again to pause again., 1
       }
    }
    else if GetKeyState(safeguardKey,"P") ; Cancel function
@@ -1941,16 +2045,871 @@ UltraHighPriorityLoopBypassingThread: ; SetTimers override basically any thread 
       GuiControl,,singEnabled,0 ; Once it is done, disable Sing.
       global keepRunning = 0 ; Makes it stop running
       SetTimer, UltraHighPriorityLoopBypassingThread,Off,2147483647 ; Disables the timer after it is done
-      MsgBox, 0, Ryzen's Macros %MacroVersion%, Safeguard Key pressed`, lyrics cancelled., 1
+      MsgBox, 0, %MacroVersion%, Safeguard Key pressed`, lyrics cancelled., 1
    }
 Return
 
-Sleep(ms) {
+Sleep(ms)
+{
    DllCall("Sleep",UInt,ms)
 }
 
-PrepareChatMacro() {
+PrepareChatMacro()
+{
    Send {Blind}{t down}
    SendInput {Blind}{enter down}
    Send {Blind}{t up}{f24 up}
+}
+
+StartTimer()
+{
+   global originalTime = A_TickCount
+}
+
+CalculateTime()
+{
+   global originalTime
+   global endTime = A_TickCount - originalTime
+   
+}
+
+execute(CmdLine) ; Executes code dynamically, extrmely long. Not using #Include because it would be more of a hassle.
+{
+   global r1,r2,r3,r4,r5,r6,r7
+   
+   StringGetPos, cPos, CmdLine, `,
+   StringGetPos, sPos, CmdLine, %A_SPACE%
+   
+   IfGreater, sPos, 0
+   IfLess, sPos, %cPos%
+   cPos = %sPos%
+   
+   StringLeft, Command, CmdLine, %cPos%
+   cPos ++
+   StringTrimLeft, CmdLine, CmdLine, %cPos%
+   CmdLine = %CmdLine%
+   
+   IfEqual, Command,
+   Command = %CmdLine%
+   
+   Loop, Parse, CmdLine, `,, %A_Space%%A_Tab%
+      P%A_Index% = %A_LOOPFIELD%
+   
+   if command not in
+(Join
+AutoTrim,BlockInput,ClipWait,Control,ControlClick,ControlFocus,
+ControlGet,ControlGetFocus,ControlGetPos,ControlGetText,
+ControlMove,ControlSend,ControlSendRaw,ControlSetText,CoordMode,
+DetectHiddenText,DetectHiddenWindows,Drive,DriveGet,
+DriveSpaceFree,Edit,EnvAdd,EnvDiv,EnvMult,EnvSet,EnvSub,EnvUpdate,
+ExitApp,FileAppend,FileCopy,FileCopyDir,FileCreateDir,
+FileCreateShortcut,FileDelete,FileGetAttrib,FileGetShortcut,
+FileGetSize,FileGetTime,FileGetVersion,FileMove,FileMoveDir,
+FileRead,FileReadLine,FileRecycle,FileRecycleEmpty,FileRemoveDir,
+FileSelectFile,FileSelectFolder,FileSetAttrib,FileSetTime,
+GetKeyState,GroupActivate,GroupAdd,GroupClose,GroupDeactivate,Gui,
+GuiControl,GuiControlGet,Hotkey,IfEqual,IfNotEqual,IfExist,
+IfNotExist,IfGreater,IfGreaterOrEqual,IfInString,IfNotInString,
+IfLess,IfLessOrEqual,IfMsgBox,IfWinActive,IfWinNotActive,IfWinExist,
+IfWinNotExist,ImageSearch,IniDelete,IniRead,IniWrite,Input,InputBox,
+KeyHistory,KeyWait,ListHotkeys,ListLines,ListVars,Menu,MouseClick,
+MouseClickDrag,MouseGetPos,MouseMove,MsgBox,OnExit,OutputDebug,
+Pause,PixelGetColor,PixelSearch,PostMessage,Process,Progress,Random,
+RegDelete,RegRead,RegWrite,Reload,Run,RunAs,RunWait,Send,SendRaw,
+SendMessage,SetBatchLines,SetCapslockState,SetControlDelay,
+SetDefaultMouseSpeed,SetFormat,SetKeyDelay,SetMouseDelay,
+SetNumlockState,SetScrollLockState,SetStoreCapslockMode,SetTimer,
+SetTitleMatchMode,SetWinDelay,SetWorkingDir,Shutdown,Sleep,Sort,
+SoundBeep,SoundGet,SoundGetWaveVolume,SoundPlay,SoundSet,
+SoundSetWaveVolume,SplashImage,SplashTextOn,SplashTextOff,SplitPath,
+StatusBarGetText,StatusBarWait,StringCaseSense,StringGetPos,
+StringLeft,StringLen,StringLower,StringMid,StringReplace,StringRight,
+StringSplit,StringTrimLeft,StringTrimRight,StringUpper,Suspend,
+SysGet,Thread,ToolTip,Transform,TrayTip,URLDownloadToFile,
+WinActivate,WinActivateBottom,WinClose,WinGetActiveStats,
+WinGetActiveTitle,WinGetClass,WinGet,WinGetPos,WinGetText,
+WinGetTitle,WinHide,WinKill,WinMaximize,WinMenuSelectItem,
+WinMinimize,WinMinimizeAll,WinMinimizeAllUndo,WinMove,WinRestore,
+WinSet,WinSetTitle,WinShow,WinWait,WinWaitActive,WinWaitClose,
+WinWaitNotActive
+)
+      return 0
+   goto,%command%
+   
+   AutoTrim:
+   autotrim,%p1%
+   return
+   
+   BlockInput:
+   blockinput,%p1%
+   return
+   
+   ClipWait:
+   clipwait,%p1%,%p2%
+   return
+   
+   Control:
+   control,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%
+   return
+   
+   ControlClick:
+   controlclick,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,%p8%
+   return
+   
+   ControlFocus:
+   controlfocus,%p1%,%p2%,%p3%,%p4%,%p5%
+   return
+   
+   ControlGet:
+   controlget,ov,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%
+   return ov
+   
+   ControlGetFocus:
+   controlgetfocus,ov,%p1%,%p2%,%p3%,%p4%
+   return ov
+   
+   ControlGetPos:
+   controlgetpos,r1,r2,r3,r4,%p1%,%p2%,%p3%,%p4%,%p5%
+   return
+   
+   ControlGetText:
+   controlgettext,ov,%p1%,%p2%,%p3%,%p4%,%p5%
+   return ov
+   
+   ControlMove:
+   controlmove,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,%p8%,%p9%
+   return
+   
+   ControlSend:
+   controlsend,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%
+   return
+   
+   ControlSendRaw:
+   controlsendraw,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%
+   return
+   
+   ControlSetText:
+   controlsettext,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%
+   return
+   
+   CoordMode:
+   coordmode,%p1%,%p2%
+   return
+   
+   DetectHiddenText:
+   detecthiddentext,%p1%
+   return
+   
+   DetectHiddenWindows:
+   detecthiddenwindows,%p1%
+   return
+   
+   Drive:
+   drive,%p1%,%p2%,%p3%
+   return
+   
+   DriveGet:
+   driveget,ov,%p1%,%p2%
+   return ov
+   
+   DriveSpaceFree:
+   drivespacefree,ov,%p1%
+   return ov
+   
+   Edit:
+   edit
+   return
+   
+   EnvAdd:
+   envadd,%p1%,%p2%,%p3%
+   return
+   
+   EnvDiv:
+   envdiv,%p1%,%p2%
+   return
+   
+   EnvMult:
+   envmult,%p1%,%p2%
+   return
+   
+   EnvSet:
+   envset,%p1%,%p2%
+   return
+   
+   EnvSub:
+   envsub,%p1%,%p2%,%p3%
+   return
+   
+   EnvUpdate:
+   envupdate
+   return
+   
+   ExitApp:
+   exitapp
+   return
+   
+   FileAppend:
+   fileappend,%p1%,%p2%
+   return
+   
+   FileCopy:
+   filecopy,%p1%,%p2%,%p3%
+   return
+   
+   FileCopyDir:
+   filecopydir,%p1%,%p2%,%p3%
+   return
+   
+   FileCreateDir:
+   filecreatedir,%p1%
+   return
+   
+   FileCreateShortcut:
+   filecreateshortcut,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,%p8%,%p9%
+   return
+   
+   FileDelete:
+   filedelete,%p1%
+   return
+   
+   FileGetAttrib:
+   filegetattrib,ov,%p1%
+   return ov
+   
+   FileGetShortcut:
+   filegetshortcut,%p1%,r1,r2,r3,r4,r5,r6,r7
+   return
+   
+   FileGetSize:
+   filegetsize,ov,%p1%,%p2%
+   return ov
+   
+   FileGetTime:
+   filegettime,ov,%p1%,%p2%
+   return ov
+   
+   FileGetVersion:
+   filegetversion,ov,%p1%
+   return ov
+   
+   FileMove:
+   filemove,%p1%,%p2%,%p3%
+   return
+   
+   FileMoveDir:
+   filemovedir,%p1%,%p2%,%p3%
+   return
+   
+   FileRead:
+   fileread,ov,%p1%
+   return ov
+   
+   FileReadLine:
+   filereadline,ov,%p1%,%p2%
+   return ov
+   
+   FileRecycle:
+   filerecycle,%p1%
+   return
+   
+   FileRecycleEmpty:
+   filerecycleempty,%p1%
+   return
+   
+   FileRemoveDir:
+   fileremovedir,%p1%,%p2%
+   return
+   
+   FileSelectFile:
+   fileselectfile,ov,%p1%,%p2%,%p3%,%p4%
+   return ov
+   
+   FileSelectFolder:
+   fileselectfolder,ov,%p1%,%p2%,%p3%
+   return ov
+   
+   FileSetAttrib:
+   filesetattrib,%p1%,%p2%,%p3%,%p4%
+   return
+   
+   FileSetTime:
+   filesettime,%p1%,%p2%,%p3%,%p4%,%p5%
+   return
+   
+   GetKeyState:
+   getkeystate,ov,%p1%,%p2%
+   return ov
+   
+   GroupActivate:
+   groupactivate,%p1%,%p2%
+   return
+   
+   GroupAdd:
+   groupadd,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%
+   return
+   
+   GroupClose:
+   groupclose,%p1%,%p2%
+   return
+   
+   GroupDeactivate:
+   groupdeactivate,%p1%,%p2%
+   return
+   
+   Gui:
+   gui,%p1%,%p2%,%p3%,%p4%
+   return
+   
+   GuiControl:
+   guicontrol,%p1%,%p2%,%p3%
+   return
+   
+   GuiControlGet:
+   guicontrolget,ov,%p1%,%p2%,%p3%
+   return ov
+   
+   Hotkey:
+   hotkey,%p1%,%p2%,%p3%
+   return
+   
+   IfEqual:
+      ifequal,%p1%,%p2%
+   return 1
+   else
+      return 0
+   
+   IfNotEqual:
+      ifnotequal,%p1%,%p2%
+   return 1
+   else
+      return 0
+   
+   IfExist:
+      ifexist,%p1%
+         return 1
+else
+   return 0
+   
+   IfNotExist:
+      ifnotexist,%p1%
+         return 1
+else
+   return 0
+   
+   IfGreater:
+      ifgreater,%p1%,%p2%
+   return 1
+   else
+      return 0
+   
+   IfGreaterOrEqual:
+      ifgreaterorequal,%p1%,%p2%
+   return 1
+   else
+      return 0
+   
+   IfInString:
+      ifinstring,%p1%,%p2%
+         return 1
+else
+   return 0
+   
+   IfNotInString:
+      ifnotinstring,%p1%,%p2%
+         return 1
+else
+   return 0
+   
+   IfLess:
+      ifless,%p1%,%p2%
+   return 1
+   else
+      return 0
+   
+   IfLessOrEqual:
+      iflessorequal,%p1%,%p2%
+   return 1
+   else
+      return 0
+   
+   IfMsgBox:
+      ifmsgbox,%p1%
+         return 1
+else
+   return 0
+   
+   IfWinActive:
+      ifwinactive,%p1%,%p2%,%p3%,%p4%
+         return 1
+else
+   return 0
+   
+   IfWinNotActive:
+      ifwinnotactive,%p1%,%p2%,%p3%,%p4%
+         return 1
+else
+   return 0
+   
+   IfWinExist:
+      ifwinexist,%p1%,%p2%,%p3%,%p4%
+         return 1
+else
+   return 0
+   
+   IfWinNotExist:
+      ifwinnotexist,%p1%,%p2%,%p3%,%p4%
+         return 1
+else
+   return 0
+      
+      ImageSearch:
+      imagesearch,r1,r2,%p1%,%p2%,%p3%,%p4%,%p5%
+   return
+   
+   IniDelete:
+   inidelete,%p1%,%p2%,%p3%
+   return
+   
+   IniRead:
+   iniread,ov,%p1%,%p2%,%p3%,%p4%
+   return ov
+   
+   IniWrite:
+   iniwrite,%p1%,%p2%,%p3%,%p4%
+   return
+   
+   Input:
+   input,ov,%p1%,%p2%,%p3%
+   return ov
+   
+   InputBox:
+   inputbox,ov,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,,%p8%,%p9%
+   return ov
+   
+   KeyHistory:
+   keyhistory
+   return
+   
+   KeyWait:
+   keywait,%p1%,%p2%
+   return
+   
+   ListHotkeys:
+   listhotkeys
+   return
+   
+   ListLines:
+   listlines
+   return
+   
+   ListVars:
+   listvars
+   return
+   
+   Menu:
+   menu,%p1%,%p2%,%p3%,%p4%,%p5%
+   return
+   
+   MouseClick:
+   mouseclick,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%
+   return
+   
+   MouseClickDrag:
+   mouseclickdrag,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%
+   return
+   
+   MouseGetPos:
+   mousegetpos,r1,r2,r3,r4,%p1%
+   return
+   
+   MouseMove:
+   mousemove,%p1%,%p2%,%p3%,%p4%
+   return
+   
+   MsgBox:
+   if (p2 || p3)
+   {
+      if p4
+         msgbox,%p1%,%p2%,%p3%,%p4%
+      else
+         msgbox,%p1%,%p2%,%p3%
+   }
+   else
+      msgbox,%p1%
+   return
+   
+   OnExit:
+   onexit,%p1%
+   return
+   
+   OutputDebug:
+   outputdebug,%p1%
+   return
+   
+   Pause:
+   pause,%p1%
+   return
+   
+   PixelGetColor:
+   pixelgetcolor,ov,%p1%,%p2%,%p3%
+   return ov
+   
+   PixelSearch:
+   pixelsearch,r1,r2,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%
+   return
+   
+   PostMessage:
+   postmessage,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,%p8%
+   return
+   
+   Process:
+   process,%p1%,%p2%,%p3%
+   return
+   
+   Progress:
+   progress,%p1%,%p2%,%p3%,%p4%,%p5%
+   return
+   
+   Random:
+   random,ov,%p1%,%p2%
+   return ov
+   
+   RegDelete:
+   regdelete,%p1%,%p2%,%p3%
+   return
+   
+   RegRead:
+   regread,ov,%p1%,%p2%,%p3%
+   return ov
+   
+   RegWrite:
+   regwrite,%p1%,%p2%,%p3%,%p4%,%p5%
+   return
+   
+   Run:
+   run,%p1%,%p2%,%p3%,ov
+   return ov
+   
+   RunAs:
+   runas,%p1%,%p2%,%p3%
+   return
+   
+   RunWait:
+   runwait,%p1%,%p2%,%p3%,ov
+   return ov
+   
+   Send:
+   send,%p1%
+   return
+   
+   SendRaw:
+   sendraw,%p1%
+   return
+   
+   SendMessage:
+   sendmessage,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,%p8%
+   return errorlevel
+   
+   SetBatchLines:
+   setbatchlines,%p1%
+   return
+   
+   SetCapslockState:
+   setcapslockstate,%p1%
+   return
+   
+   SetControlDelay:
+   setcontroldelay,%p1%
+   return
+   
+   SetDefaultMouseSpeed:
+   setdefaultmousespeed,%p1%
+   return
+   
+   SetFormat:
+   setformat,%p1%,%p2%
+   return
+   
+   SetKeyDelay:
+   setkeydelay,%p1%,%p2%
+   return
+   
+   SetMouseDelay:
+   setmousedelay,%p1%
+   return
+   
+   SetNumlockState:
+   setnumlockstate,%p1%
+   return
+   
+   SetScrollLockState:
+   setscrolllockstate,%p1%
+   return
+   
+   SetStoreCapslockMode:
+   setstorecapslockmode,%p1%
+   return
+   
+   SetTimer:
+   settimer,%p1%,%p2%,%p3%
+   return
+   
+   SetTitleMatchMode:
+   settitlematchmode,%p1%,%p2%
+   return
+   
+   SetWinDelay:
+   setwindelay,%p1%
+   return
+   
+   SetWorkingDir:
+   setworkingdir,%p1%
+   return
+   
+   Shutdown:
+   shutdown,%p1%
+   return
+   
+   Sleep:
+   sleep,%p1%
+   return
+   
+   Sort:
+   sort,%p1%,%p2%
+   return
+   
+   SoundBeep:
+   soundbeep,%p1%,%p2%
+   return
+   
+   SoundGet:
+   soundget,ov,%p1%,%p2%,%p3%
+   return ov
+   
+   SoundGetWaveVolume:
+   soundgetwavevolume,ov,%p1%
+   return ov
+   
+   SoundPlay:
+   soundplay,%p1%,%p2%
+   return
+   
+   SoundSet:
+   soundset,%p1%,%p2%,%p3%,%p4%
+   return
+   
+   SoundSetWaveVolume:
+   soundsetwavevolume,%p1%,%p2%
+   return
+   
+   SplashImage:
+   splashimage,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%
+   return
+   
+   SplashTextOn:
+   splashtexton,%p1%,%p2%,%p3%,%p4%
+   return
+   
+   SplashTextOff:
+   splashtextoff
+   return
+   
+   SplitPath:
+   splitpath,%p1%,r1,r2,r3,r4,r5
+   return
+   
+   StatusBarGetText:
+   statusbargettext,ov,%p1%,%p2%,%p3%,%p4%,%p5%
+   return ov
+   
+   StatusBarWait:
+   statusbarwait,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,%p8%
+   return
+   
+   StringCaseSense:
+   stringcasesense,%p1%
+   return
+   
+   StringGetPos:
+   stringgetpos,ov,%p1%,%p2%,%p3%,%p4%
+   return ov
+   
+   StringLeft:
+   stringleft,ov,%p1%,%p2%
+   return ov
+   
+   StringLen:
+   stringlen,ov,%p1%
+   return ov
+   
+   StringLower:
+   stringlower,ov,%p1%,%p2%
+   return
+   
+   StringMid:
+   stringmid,ov,%p1%,%p2%,%p3%,%p4%
+   return ov
+   
+   StringReplace:
+   stringreplace,ov,%p1%,%p2%,%p3%,%p4%
+   return ov
+   
+   StringRight:
+   stringright,ov,%p1%,%p2%
+   return ov
+   
+   StringSplit:
+   stringsplit,%p1%,%p2%,%p3%,%p4%
+   return
+   
+   StringTrimLeft:
+   stringtrimleft,ov,%p1%,%p2%
+   return ov
+   
+   StringTrimRight:
+   stringtrimright,ov,%p1%,%p2%
+   return ov
+   
+   StringUpper:
+   stringupper,ov,%p1%,%p2%
+   return ov
+   
+   SysGet:
+   sysget,ov,%p1%,%p2%
+   return ov
+   
+   Thread:
+   thread,%p1%,%p2%,%p3%
+   return
+   
+   ToolTip:
+   tooltip,%p1%,%p2%,%p3%,%p4%
+   return
+   
+   Transform:
+   transform,ov,%p1%,%p2%,%p3%
+   return ov
+   
+   TrayTip:
+   traytip,%p1%,%p2%,%p3%,%p4%
+   return
+   
+   URLDownloadToFile:
+   urldownloadtofile,%p1%,%p2%
+   return
+   
+   WinActivate:
+   winactivate,%p1%,%p2%,%p3%,%p4%
+   return
+   
+   WinActivateBottom:
+   winactivatebottom,%p1%,%p2%,%p3%,%p4%
+   return
+   
+   WinClose:
+   winclose,%p1%,%p2%,%p3%,%p4%,%p5%
+   return
+   
+   WinGetActiveStats:
+   wingetactivestats,r1,r2,r3,r4,r5
+   return
+   
+   WinGetActiveTitle:
+   wingetactivetitle,ov
+   return ov
+   
+   WinGetClass:
+   wingetclass,ov,%p1%,%p2%,%p3%,%p4%
+   return ov
+   
+   WinGet:
+   winget,ov,%p1%,%p2%,%p3%,%p4%,%p5%
+   return ov
+   
+   WinGetPos:
+   wingetpos,r1,r2,r3,r4,%p1%,%p2%,%p3%,%p4%
+   return
+   
+   WinGetText:
+   wingettext,ov,%p1%,%p2%,%p3%,%p4%
+   return ov
+   
+   WinGetTitle:
+   wingettitle,ov,%p1%,%p2%,%p3%,%p4%
+   return ov
+   
+   WinHide:
+   winhide,%p1%,%p2%,%p3%,%p4%
+   return
+   
+   WinKill:
+   winkill,%p1%,%p2%,%p3%,%p4%,%p5%
+   return
+   
+   WinMaximize:
+   winmaximize,%p1%,%p2%,%p3%,%p4%
+   return
+   
+   WinMenuSelectItem:
+   winmenuselectitem,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,%p8%,%p9%,%p10%,%p11%
+   return
+   
+   WinMinimize:
+   winminimize,%p1%,%p2%,%p3%,%p4%
+   return
+   
+   WinMinimizeAll:
+   winminimizeall
+   return
+   
+   WinMinimizeAllUndo:
+   winminimizeallundo
+   return
+   
+   WinMove:
+   if p1 is integer
+   {
+      if p2 is integer
+         winmove,%p1%,%p2%
+      else
+         winmove,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,%p8%
+   }
+   else
+      winmove,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,%p8%
+   return
+   
+   WinRestore:
+   winrestore,%p1%,%p2%,%p3%,%p4%
+   return
+   
+   WinSet:
+   winset,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%
+   return
+   
+   WinSetTitle:
+   winsettitle,%p1%,%p2%,%p3%,%p4%,%p5%
+   return
+   
+   WinShow:
+   winshow,%p1%,%p2%,%p3%,%p4%
+   return
+   
+   WinWait:
+   winwait,%p1%,%p2%,%p3%,%p4%,%p5%
+   return
+   
+   WinWaitActive:
+   winwaitactive,%p1%,%p2%,%p3%,%p4%,%p5%
+   return
+   
+   WinWaitClose:
+   winwaitclose,%p1%,%p2%,%p3%,%p4%,%p5%
+   return
+   
+   WinWaitNotActive:
+   winwaitnotactive,%p1%,%p2%,%p3%,%p4%,%p5%
+   return
+   
+   suspend,permit
+   
 }
