@@ -60,7 +60,7 @@ CEOCircleGlobalOffset3 = 11
 ; Add them together
 FreemodeGlobalIndexAddedTogether := FreemodeGlobalIndex + EWOGlobalOffset1 ; Calculates the Global Index for EWO Cooldown
 EWOGlobalIndexAddedTogether := EWOGlobalIndex + EWOGlobalOffset0 ; Calculates the Global Index for active EWO Cooldown
-ScoreGlobalIndexAddedTogether := ScoreGlobalIndex + ScoreGlobalOffset1 + ScoreGlobalOffset2 ; Calculates the Global Index for EWO Score
+ScoreGlobalIndexAddedTogether := ScoreGlobalIndex + ScoreGlobalOffset1 + ScoreGlobalOffset2 + 1 ; Calculates the Global Index for EWO Score ; +1 is temporary until I figure out the real original value
 CEOCircleGlobalIndexAddedTogether := CEOCircleGlobalIndex + CEOCircleGlobalOffset1 + CEOCircleGlobalOffset2 + CEOCircleGlobalOffset3 ; Calculates the Global Index for CEO Circle
 
 Goto, CheckHWID ; Checks your PC's UUID. Shitty but it works
@@ -143,7 +143,7 @@ If (!isCompiled)
 Else
 {
    Process, Close, %Gay%
-   Process, Close, %Gay2%
+   Process, Close, %ewoWriteWindow%
    Process, Close, %Gay3%
    Process, Close, %Obese11%
    Run, Reload.exe, %A_MyDocuments%
@@ -172,7 +172,7 @@ ExitMacros: ; Self explanatory
       WinMinimize, ahk_exe GTA5.exe
    }
    Process, Close, %Gay%
-   Process, Close, %Gay2%
+   Process, Close, %ewoWriteWindow%
    Process, Close, %Gay3%
    Process, Close, %Obese11%
 ExitApp
@@ -373,29 +373,29 @@ return
 Write: ; Shows the score even if you have EWOd in the session via some advanced shit
    If (!GTAAlreadyClosed)
    {
-      if !WinExist("ahk_exe GTAHaXUI.exe") ; If window doesn't exist, make it exist and add shit to it
+      if !WinExist("ahk_pid " ewoWriteWindow) ; If window doesn't exist, make it exist and add shit to it
       {
-         Run, GTAHaXUI.exe, %ConfigDirectory%,Min,Gay2
-         WinWait, ahk_pid %Gay2%
-         WinGet, ID2, ID, ahk_pid %Gay2%
+         Run, GTAHaXUI.exe, %ConfigDirectory%,Min,ewoWriteWindow
+         WinWait, ahk_pid %ewoWriteWindow%
+         WinGet, ID2, ID, ahk_pid %ewoWriteWindow%
          WinSet, ExStyle, ^0x80, ahk_id %ID2% ; 0x80 is WS_EX_TOOLWINDOW
-         ControlSend, Edit1, {down}{backspace}%ScoreGlobalIndexAddedTogether%, ahk_pid %Gay2%
+         ControlSend, Edit1, {down}{backspace}%ScoreGlobalIndexAddedTogether%, ahk_pid %ewoWriteWindow%
          Sleep(20)
       } else ; If it does exist
       {
-         ControlGet, Cocaine,Line,1,Edit1,ahk_pid %Gay2% ; Get the value of controls and shiznit
-         ControlGet, Heroin,Line,1,Edit7,ahk_pid %Gay2%
-         ControlGet, AIDS,Line,1,Edit8,ahk_pid %Gay2%
-         If (Heroin) && (Cocaine = ScoreGlobalIndexAddedTogether) && (!AIDS) ; If the values are correct do this shit
+         ControlGet, currentScoreGlobalIndex,Line,1,Edit1,ahk_pid %ewoWriteWindow% ; Get the value of controls and shiznit
+         ControlGet, currentValue,Line,1,Edit7,ahk_pid %ewoWriteWindow%
+         ControlGet, newValue,Line,1,Edit8,ahk_pid %ewoWriteWindow%
+         If (currentValue = 1) && (currentScoreGlobalIndex = ScoreGlobalIndexAddedTogether) && (newValue = 0) ; If the values are correct do this shit
          {
-            ControlClick, Button1, ahk_pid %Gay2%
-            WriteWasJustPerformed = 1
+            ControlClick, Button1, ahk_pid %ewoWriteWindow%
+            global writeWasJustPerformed = 1
             SetTimer, WriteWasPerformed, -350, -2147483648
          } else
          {
-            If (!Cocaine = ScoreGlobalIndexAddedTogether) || (!AIDS = 0) ; If global index isn't correct, then close GTAHaX and remake the window. Too lazy to remove everything, this is better anyways.
+            If (!currentScoreGlobalIndex = ScoreGlobalIndexAddedTogether) || (!newValue = 0) ; If global index isn't correct, then close GTAHaX and remake the window. Too lazy to remove everything, this is better anyways.
             {
-               Process, Close, %Gay2%
+               Process, Close, %ewoWriteWindow%
                Goto, Write
             }
          }
@@ -404,11 +404,11 @@ Write: ; Shows the score even if you have EWOd in the session via some advanced 
 Return
 
 WriteWasPerformed: ; Submodule of the Write module
-   WriteWasJustPerformed = 0
+   global writeWasJustPerformed = 0
 Return
 
 TabBackInnn: ; Submodule of the submodule of the Write module
-   If (WriteWasJustPerformed)
+   If (writeWasJustPerformed)
       WinActivate, ahk_exe GTA5.exe
 Return
 
@@ -960,7 +960,7 @@ ProcessCheckTimer:
             SetTimer, ExitMacros, -10000, -2147483648
             MsgBox, 0, Macros will close now. RIP., GTA is no longer running. Macros will close now. RIP.
             Process, Close, %Gay%
-            Process, Close, %Gay2%
+            Process, Close, %ewoWriteWindow%
             Process, Close, %Gay3%
             Process, Close, %Obese11%
             ExitApp
@@ -1472,7 +1472,7 @@ Return
 
 CloseGTAHaX:
    Process, Close, %Gay%
-   Process, Close, %Gay2%
+   Process, Close, %ewoWriteWindow%
    Process, Close, %Gay3%
    Process, Close, %Obese11%
 Return
