@@ -25,6 +25,7 @@ If (isCompiled)
 
 ; Variables:
 RunningInScript = 1 ; Required for dynamic script to work properly
+Herpes := "No more bitches :(" ; ginlang asked me to add a variable named herpes
 CFG = %A_MyDocuments%\Ryzen's Macros\GTA Binds.ini ; Config file name
 global originalTime
 global endTime
@@ -41,7 +42,7 @@ IniRead,OriginalLocation, %ConfigDirectory%\FileLocationData.ini, Location, Loca
 IniRead,OriginalName, %ConfigDirectory%\FileLocationData.ini, Name, Name
 
 ; GTAHaX EWO Offsets:
-FreemodeGlobalIndex = 262145F
+FreemodeGlobalIndex = 262145
 EWOGlobalOffset1 = 28409
 ; GTAHaX EWO Offsets 2:
 EWOGlobalIndex = 2793046
@@ -359,13 +360,10 @@ EWO: ; Self explanatory
          Send {Blind}{f24}{f24 up}
          SendInput {Blind}{wheelup}{up up}{enter up}
       }
-      Send {Blind}{enter 2}{up down}
-      SendInput {Blind}{%EWOSpecialAbilitySlashActionKey% up}{enter down}
+      SendInput {up up}
+      Send {Blind}{enter 2}{up}{enter}{left}{down}{enter}
+      SendInput {Blind}{%EWOSpecialAbilitySlashActionKey% up}{%EWOLookBehindKey% up}{%EWOMelee% up}{%InteractionMenuKey% up}{up up}{g up}{%EWO% up}
       SetCapsLockState, Off
-      Send {Blind}{up up}
-      SendInput {Blind}{enter up}
-      Send {Blind}{left}{down}
-      SendInput {Blind}{%EWOLookBehindKey% up}{%EWOMelee% up}{%InteractionMenuKey% up}{up up}{g up}{%EWO% up}
       SetMouseDelay, 10
    }
 return
