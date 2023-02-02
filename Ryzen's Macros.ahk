@@ -21,7 +21,6 @@ If InStr(A_ScriptName,.ahk) && not (A_ScriptName = "AutoHotkey.ahk")
 If (isCompiled)
 {
    ListLines Off ; Removes line history, makes the script slightly more secret.
-   #KeyHistory 0 ; Removes key history, makes the script slightly more secret.
 }
 
 ; Variables:
@@ -42,14 +41,14 @@ IniRead,OriginalLocation, %ConfigDirectory%\FileLocationData.ini, Location, Loca
 IniRead,OriginalName, %ConfigDirectory%\FileLocationData.ini, Name, Name
 
 ; GTAHaX EWO Offsets:
-FreemodeGlobalIndex = 262145
+FreemodeGlobalIndex = 262145F
 EWOGlobalOffset1 = 28409
 ; GTAHaX EWO Offsets 2:
-EWOGlobalIndex = 2793044
+EWOGlobalIndex = 2793046
 EWOGlobalOffset0 = 6899
 ; GTAHaX EWO Score Offsets:
 ScoreGlobalIndex = 2672505
-ScoreGlobalOffset1 = 1684
+ScoreGlobalOffset1 = 1685
 ScoreGlobalOffset2 = 817
 ; CEO Circle Offsets:
 CEOCircleGlobalIndex = 1894573
@@ -60,7 +59,7 @@ CEOCircleGlobalOffset3 = 11
 ; Add them together
 FreemodeGlobalIndexAddedTogether := FreemodeGlobalIndex + EWOGlobalOffset1 ; Calculates the Global Index for EWO Cooldown
 EWOGlobalIndexAddedTogether := EWOGlobalIndex + EWOGlobalOffset0 ; Calculates the Global Index for active EWO Cooldown
-ScoreGlobalIndexAddedTogether := ScoreGlobalIndex + ScoreGlobalOffset1 + ScoreGlobalOffset2 + 1 ; Calculates the Global Index for EWO Score ; +1 is temporary until I figure out the real original value
+ScoreGlobalIndexAddedTogether := ScoreGlobalIndex + ScoreGlobalOffset1 + ScoreGlobalOffset2 ; Calculates the Global Index for EWO Score
 CEOCircleGlobalIndexAddedTogether := CEOCircleGlobalIndex + CEOCircleGlobalOffset1 + CEOCircleGlobalOffset2 + CEOCircleGlobalOffset3 ; Calculates the Global Index for CEO Circle
 
 Goto, CheckHWID ; Checks your PC's UUID. Shitty but it works
@@ -72,6 +71,7 @@ Back: ; It goes back to this checkpoint. It works.
    else
       GTAAlreadyClosed = 0
    #SingleInstance, force ; Forces single instance
+   #KeyHistory 0 ; Removes key history, makes the script slightly more secret. Isn't conditional so will always be removed.
    #HotkeyModifierTimeout -1 ; Changes hotkey modifier timeout, maybe does something lmao
 #IfWinActive ahk_exe GTA5.exe ; Hotkeys will only work if you are tabbed in.
    #MaxThreadsPerHotkey 1 ; Doesn't really matter
@@ -370,27 +370,26 @@ EWO: ; Self explanatory
    }
 return
 
-Write: ; Shows the score even if you have EWOd in the session via some advanced shit
+Write: ; Shows the score even if you have EWOd in the session using some advanced shit
    If (!GTAAlreadyClosed)
    {
       if !WinExist("ahk_pid " ewoWriteWindow) ; If window doesn't exist, make it exist and add shit to it
       {
-         Run, GTAHaXUI.exe, %ConfigDirectory%,Min,ewoWriteWindow
-         WinWait, ahk_pid %ewoWriteWindow%
-         WinGet, ID2, ID, ahk_pid %ewoWriteWindow%
-         WinSet, ExStyle, ^0x80, ahk_id %ID2% ; 0x80 is WS_EX_TOOLWINDOW
+         Run, GTAHaXUI.exe, %ConfigDirectory%,Min,ewoWriteWindow ; "Min" is a launch option you can specify. This makes the window invsible; however, it will still show up on Alt+Tab. I fix that 2 lines below.
+         WinWait, ahk_pid %ewoWriteWindow% ; Waits for GTAHaX to actually exist before continuing
+         WinSet, ExStyle, ^0x80, ahk_pid %ewoWriteWindow% ; Makes the window not show up on Alt+Tab
          ControlSend, Edit1, {down}{backspace}%ScoreGlobalIndexAddedTogether%, ahk_pid %ewoWriteWindow%
          Sleep(20)
       } else ; If it does exist
       {
-         ControlGet, currentScoreGlobalIndex,Line,1,Edit1,ahk_pid %ewoWriteWindow% ; Get the value of controls and shiznit
-         ControlGet, currentValue,Line,1,Edit7,ahk_pid %ewoWriteWindow%
-         ControlGet, newValue,Line,1,Edit8,ahk_pid %ewoWriteWindow%
+         ControlGet, currentScoreGlobalIndex,Line,1,Edit1,ahk_pid %ewoWriteWindow% ; GTAHaX uses a very basic window, so AHK can retrieve the values from "controls". These are the lines in this case. Here it is checking what the top line contains.
+         ControlGet, currentValue,Line,1,Edit7,ahk_pid %ewoWriteWindow% ; This is the current value. This is next to the lowest global variable-related line. It gets the current value of the global. It will only click if it is 1
+         ControlGet, newValue,Line,1,Edit8,ahk_pid %ewoWriteWindow% ; The value we want to set it to. We want this to be 0.
          If (currentValue = 1) && (currentScoreGlobalIndex = ScoreGlobalIndexAddedTogether) && (newValue = 0) ; If the values are correct do this shit
          {
-            ControlClick, Button1, ahk_pid %ewoWriteWindow%
-            global writeWasJustPerformed = 1
-            SetTimer, WriteWasPerformed, -350, -2147483648
+            ControlClick, Button1, ahk_pid %ewoWriteWindow% ; For some reason ControlClick can tab you out, so it will only click it if there is an actual to do so.
+            global writeWasJustPerformed = 1 ; If this is 1 then TabBackInnn will activate the GTA window; EWO Write sometimes tabs you out due to an issue.
+            SetTimer, WriteWasPerformed, -350, -2147483648 ; Runs this once after 350ms, and then deletes the timer. Better than Sleep in this case.
          } else
          {
             If (!currentScoreGlobalIndex = ScoreGlobalIndexAddedTogether) || (!newValue = 0) ; If global index isn't correct, then close GTAHaX and remake the window. Too lazy to remove everything, this is better anyways.
