@@ -41,7 +41,7 @@ IniRead,OriginalLocation, %ConfigDirectory%\FileLocationData.ini, Location, Loca
 IniRead,OriginalName, %ConfigDirectory%\FileLocationData.ini, Name, Name
 
 ; GTAHaX EWO Offsets:
-FreemodeGlobalIndex = 262145F
+FreemodeGlobalIndex = 262145
 EWOGlobalOffset1 = 28409
 ; GTAHaX EWO Offsets 2:
 EWOGlobalIndex = 2793046
