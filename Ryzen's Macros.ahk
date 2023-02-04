@@ -204,17 +204,20 @@ return
 FastSniperSwitch: ; Self explanatory
    SendInput {Blind}{%FastSniperSwitch% up}
    If (FasterSniper)
-      Send {Blind}{%SniperBind%}{lbutton}{%SniperBind%}{lbutton}
-   else
+   {
+      SendInput {Blind}{%StickyBind% down}
+      Send {Blind}{%SniperBind% down}{tab}
+      SendInput {Blind}{%SniperBind% up}{%StickyBind% up}
+   } else
    {
       Send {Blind}{%SniperBind%}
-      Sleep(30)
+      Sleep(15)
       Send {Blind}{lbutton down}
-      Sleep(20)
+      Sleep(10)
       Send {Blind}{lbutton up}{%SniperBind%}
-      Sleep(30)
+      Sleep(15)
       Send {Blind}{lbutton down}
-      Sleep(100)
+      Sleep(80)
       Send {Blind}{lbutton up}
    }
 return
@@ -265,11 +268,14 @@ EWO: ; Self explanatory
       {
          If (SmoothEWOMode = "Slow")
          {
-            If getKeyState("rbutton", "P")
+            /*
+            
+            If GetKeyState("rbutton", "P")
             {
                SendInput {Blind}{lbutton up}{rbutton up}
-               Sleep(100)
+               Sleep(95)
             }
+            */
          } else if (SmoothEWOMode = "Faster")
          {
             SendInput {Blind}{lbutton up}{rbutton up}
@@ -297,14 +303,14 @@ EWO: ; Self explanatory
             SendInput {Blind}{%EWOSpecialAbilitySlashActionKey% down}
             Send {Blind}{enter up}{%InteractionMenuKey% up}
             */
-            SendInput {Blind}{alt up}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{d up}{w up}{s up}{a up}{%InteractionMenuKey% down}{%EWOLookBehindKey% up}
+            SendInput {Blind}{alt up}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{d up}{w up}{s up}{a up}{%InteractionMenuKey% down}{%EWOLookBehindKey%}{%EWOSpecialAbilitySlashActionKey% down}
             Sleep(30)
-            SendInput {Blind}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey%}
-            Sleep(10)
+            SendInput {Blind}{%EWOLookBehindKey% down}
+            Sleep(8)
             SendInput {Blind}{up down}
-            Sleep(31)
+            Sleep(30.5)
             SendInput {Blind}{WheelUp}
-            Sleep(58)
+            Sleep(50)
             SendInput {Blind}{enter up}{%InteractionMenuKey% up}{%EWOLookBehindKey% up}
          }
          else if (SmoothEWOMode = "Fastest")
@@ -466,8 +472,6 @@ BST: ; Self explanatory
       SendInput {Blind}{enter down}
       Send {Blind}{down up}
       SendInput {Blind}{enter up}
-      Send {Blind}{%InteractionMenuKey%}
-      Sleep(110)
    }
 return
 
@@ -791,15 +795,13 @@ ReloadOutfit: ; Self explanatory
    Send {Blind}{%InteractionMenuKey%}
 return
 
-Crosshair5: ; Self explanatory
+Crosshair5:
    WinGetActiveTitle, OldActiveWindow
    GuiControlGet, CrosshairPos
-   If (!CrossHairPos = "")
-   {
+   If not (CrossHairPos = "") {
       CrosshairPosPro := CrosshairPos/500
       GuiControlGet, Crosshair
-      if(crossHair)
-      {
+      if(crossHair = 1) {
          Global crossHairW := 21
          Global crossHairH := 21
          
@@ -814,40 +816,36 @@ Crosshair5: ; Self explanatory
          IfNotExist, %A_WorkingDir%\assets
             FileCreateDir, %A_WorkingDir%\assets
          
+         FileInstall, assets\crosshair.png, %A_WorkingDir%\assets\crosshair.png, false
+         
          Gui, Crosshair: New, +AlwaysOnTop -Border -Caption
          Gui, Color, backgroundColor
          Gui, Add, Picture, x0 y0 w%crossHairW% h%crossHairH%, %A_WorkingDir%\assets\crosshair.png
-         Try
-         {
+         Try {
             Gui, Show, w%crossHairW% h%crossHairH% x%crossHairX% y%crossHairY%, Crosshair
-         } Catch
-         {
+         } Catch {
             Gui, Crosshair: Hide
          }
          WinSet, TransColor, backgroundColor, Crosshair
          WinGet, ID, ID, Crosshair
          WinSet, ExStyle, ^0x80, ahk_id %ID% ; 0x80 is WS_EX_TOOLWINDOW
-      } else
-      {
+      } else {
          Gui, Crosshair: Hide
       }
    }
-   else
-   {
+   else {
       Gui, Crosshair: Hide
    }
    WinActivate, %OldActiveWindow%
 return
 
-Crosshair6: ; Self explanatory
+Crosshair6:
    WinGetActiveTitle, OldActiveWindow
    GuiControlGet, CrosshairPos
-   If (!CrossHairPos = "")
-   {
+   If not (CrossHairPos = "") {
       CrosshairPosPro := CrosshairPos/500
       GuiControlGet, Crosshair
-      if(crossHair)
-      {
+      if(crossHair = 1) {
          Global crossHairW := 21
          Global crossHairH := 21
          
@@ -862,26 +860,24 @@ Crosshair6: ; Self explanatory
          IfNotExist, %A_WorkingDir%\assets
             FileCreateDir, %A_WorkingDir%\assets
          
+         FileInstall, assets\crosshair.png, %A_WorkingDir%\assets\crosshair.png, false
+         
          Gui, Crosshair: New, +AlwaysOnTop -Border -Caption
          Gui, Color, backgroundColor
          Gui, Add, Picture, x0 y0 w%crossHairW% h%crossHairH%, %A_WorkingDir%\assets\crosshair.png
-         Try
-         {
+         Try {
             Gui, Show, w%crossHairW% h%crossHairH% x%crossHairX% y%crossHairY%, Crosshair
-         } Catch
-         {
+         } Catch {
             Gui, Crosshair: Hide
          }
          WinSet, TransColor, backgroundColor, Crosshair
          WinGet, ID, ID, Crosshair
          WinSet, ExStyle, ^0x80, ahk_id %ID% ; 0x80 is WS_EX_TOOLWINDOW
-      } else
-      {
+      } else {
          Gui, Crosshair: Hide
       }
-      WinActivate, ahk_exe GTA5.exe
-   } else
-   {
+      WinActivate, ahk_class grcWindow
+   } else {
       Gui, Crosshair: Hide
    }
    WinActivate, %OldActiveWindow%
@@ -1077,14 +1073,11 @@ LaunchCycle:
    Gui, Submit, NoHide
    WinGetActiveTitle, OldActiveWindow
    GuiControlGet, CrosshairPos
-   If (!CrossHairPos = "")
-   {
-      If (!CrosshairDone)
-      {
+   If not (CrossHairPos = "") {
+      If (CrosshairDone = 0) {
          CrosshairPosPro := CrosshairPos/500
          GuiControlGet, Crosshair
-         if (crossHair)
-         {
+         if(crossHair = 1) {
             Global crossHairW := 21
             Global crossHairH := 21
             
@@ -1099,6 +1092,8 @@ LaunchCycle:
             IfNotExist, %A_WorkingDir%\assets
                FileCreateDir, %A_WorkingDir%\assets
             
+            FileInstall, assets\crosshair.png, %A_WorkingDir%\assets\crosshair.png, false
+            
             Gui, Crosshair: New, +AlwaysOnTop -Border -Caption
             Gui, Color, backgroundColor
             Gui, Add, Picture, x0 y0 w%crossHairW% h%crossHairH%, %A_WorkingDir%\assets\crosshair.png
@@ -1110,11 +1105,11 @@ LaunchCycle:
             WinSet, TransColor, backgroundColor, Crosshair
             WinGet, ID, ID, Crosshair
             WinSet, ExStyle, ^0x80, ahk_id %ID% ; 0x80 is WS_EX_TOOLWINDOW
-         } else
+         } else {
             Gui, Crosshair: Hide
+         }
       }
-   } else
-   {
+   } else {
       Gui, Crosshair: Hide
    }
    CrosshairDone := 1
@@ -1626,6 +1621,7 @@ CheckHWID:
    if (!valid_ids.HasKey(key))
    {
       c0=D4D0C8
+      Clipboard := key
       Gui,2:Add, Link,w400, Your HWID has been copied to the clipboard. Please join the Discord Server and send it in the #macro-hwid channel. To gain access to the channel, you must react in the #macros channel.
       Gui,2:Add, Link,, <a href="https://discord.gg/5Y3zJK4KGW">Here</a> is an invite to the discord server.
       Gui,2:Add, Button,ym+80 gExitMacros2, OK
@@ -1636,7 +1632,6 @@ CheckHWID:
 Return
 
 ExitMacros2:
-   Clipboard := key
 ExitApp
 
 Suspend:
@@ -1743,7 +1738,7 @@ Clumsy:
       WinWait, ahk_pid %Gay3%
       WinGet, ID3, ID, ahk_pid %Gay3%
       WinSet, ExStyle, ^0x80, ahk_id %ID3% ; 0x80 is WS_EX_TOOLWINDOW
-      Control, Choose, 4, ComboBox1, ahk_pid %Gay3%
+      Control, Choose, 5, ComboBox1, ahk_pid %Gay3%
       Control, Check,, Button4, ahk_pid %Gay3%
       ControlSetText,Edit2,%clumsyPing%,ahk_pid %Gay3%
       Sleep(100)
@@ -1783,7 +1778,7 @@ CreateTrayOptions:
    Menu, Tray, Add, Hide UI, HideWindow
    Menu, Tray, Add, Save Macros, SaveConfig
    Menu, Tray, Add
-   If (isCompiled)
+   If (!isCompiled)
       Menu, Tray, Add, Open, StandardTrayMenu
    Menu, Tray, Add, Help, StandardTrayMenu
    Menu, Tray, Add
@@ -1793,9 +1788,8 @@ CreateTrayOptions:
    Menu, Tray, Add, Suspend Hotkeys, StandardTrayMenu
    Menu, Tray, Add, Pause Script, StandardTrayMenu
    Menu, Tray, Add, Exit, ExitMacros
-   If (isCompiled)
+   If (!isCompiled)
       Menu, Tray, Default, Open
-   
    Menu, Tray, Tip, %MacroVersion%
 Return
 
