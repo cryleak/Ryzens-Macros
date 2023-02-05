@@ -226,7 +226,7 @@ EWO: ; Self explanatory
    GuiControlGet, SmoothEWO
    GuiControlGet, SmoothEWOMode
    GuiControlGet, EWOWrite
-   If (SmoothEWOMode = "Fast Respawn")
+   If (SmoothEWOMode = "Fast Respawn") && (SmoothEWO)
    {
       SendInput {Blind}{lshift down}{w up}{a up}{s up}{d up}
       Hotkey, Tab, ProBlocking, On
@@ -248,7 +248,7 @@ EWO: ; Self explanatory
       Hotkey, Tab, ProBlocking, Off
       Sleep 200
    }
-   else if (SmoothEWOMode = "Sticky")
+   else if (SmoothEWOMode = "Sticky") && (SmoothEWO)
    {
       SendInput {lbutton down}{rbutton up}
       Send {Blind}{%RifleBind%}
@@ -304,11 +304,11 @@ EWO: ; Self explanatory
             Send {Blind}{enter up}{%InteractionMenuKey% up}
             */
             SendInput {Blind}{alt up}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{d up}{w up}{s up}{a up}{%InteractionMenuKey% down}{%EWOLookBehindKey%}{%EWOSpecialAbilitySlashActionKey% down}
-            Sleep(30)
+            Sleep(30.5)
             SendInput {Blind}{%EWOLookBehindKey% down}
             Sleep(8)
             SendInput {Blind}{up down}
-            Sleep(30.5)
+            Sleep(30)
             SendInput {Blind}{WheelUp}
             Sleep(50)
             SendInput {Blind}{enter up}{%InteractionMenuKey% up}{%EWOLookBehindKey% up}
