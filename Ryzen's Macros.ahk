@@ -363,7 +363,7 @@ EWO: ; Self explanatory
       else if (!SmoothEWO)
       {
          SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{%EWOLookBehindKey% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}
-         Send {Blind}{f24 3}
+         Send {Blind}{f24 2}
          SendInput {Blind}{wheelup}{up up}{enter up}
       }
       SendInput {up up}
