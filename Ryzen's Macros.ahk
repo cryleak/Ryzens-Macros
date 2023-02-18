@@ -97,15 +97,19 @@ Back: ; It goes back to this checkpoint. It works.
       WinMinimize, ahk_exe GTA5.exe
       SetTimer, AlwaysOnTop, 25, -2147483648
    }
+   global sendInputWork = 1 ; SendInput works, will be changed to false if it doesn't work
    If (IsCompiled)
    {
       endTime := SendInputTestV2() ; Check to see if SendInput works or not
       If (endTime > 200)
+      {
          MsgBox, 2, %MacroVersion%, I have detected that macros are currently incredibly slow, most likely due to Flawless Widescreen, or a different program that also installs the keyboard hook.
+         global sendInputWork = 0 ; It doesn't work so change it to false
+      }
       IfMsgBox Abort
          ExitApp
       IfMsgBox Retry
-         Goto, Reload
+         Goto Reload
    }
    MsgBox, 0, %MacroVersion%, Successfully started. Welcome to Ryzen's Macros! , 0.75
    Gui, Add, Tab3,, Combat|Chat|In-Game Binds|Options|Misc|Buttons/Misc|| ; Adds tabs to the GUI
@@ -266,16 +270,14 @@ EWO: ; Self explanatory
       SetMouseDelay, -1
       if (SmoothEWO)
       {
-         If (SmoothEWOMode = "Slow")
+         If (SmoothEWOMode = "Staeni")
          {
-            /*
-            
+            SendInput {Blind}{lbutton up}{rbutton up}
+            Sleep(30)
             If GetKeyState("rbutton", "P")
             {
-               SendInput {Blind}{lbutton up}{rbutton up}
-               Sleep(95)
+               Sleep(70)
             }
-            */
          } else if (SmoothEWOMode = "Faster")
          {
             SendInput {Blind}{lbutton up}{rbutton up}
@@ -284,14 +286,14 @@ EWO: ; Self explanatory
          If (SmoothEWOMode = "Faster")
          {
             SendInput {Blind}{%EWOLookBehindKey% down}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{%InteractionMenuKey% down}{d up}{w up}{s up}{a up}
-            Sleep(13)
+            Sleep(13.5)
             Send {Blind}{shift down}{f24 up}{shift up}{up}
             Sleep(12)
             Send {Blind}{up}
             Sleep(9)
             Send {Blind}{%EWOSpecialAbilitySlashActionKey% down}{enter up}
          }
-         else if (SmoothEWOMode = "Slow")
+         else if (SmoothEWOMode = "Staeni")
          {
             /*
             SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{d up}{w up}{s up}{a up}{%InteractionMenuKey% down}
@@ -304,11 +306,11 @@ EWO: ; Self explanatory
             Send {Blind}{enter up}{%InteractionMenuKey% up}
             */
             SendInput {Blind}{alt up}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{d up}{w up}{s up}{a up}{%InteractionMenuKey% down}{%EWOLookBehindKey%}{%EWOSpecialAbilitySlashActionKey% down}
-            Sleep(30.5)
+            Sleep(30)
             SendInput {Blind}{%EWOLookBehindKey% down}
             Sleep(8)
             SendInput {Blind}{up down}
-            Sleep(30)
+            Sleep(30.5)
             SendInput {Blind}{WheelUp}
             Sleep(50)
             SendInput {Blind}{enter up}{%InteractionMenuKey% up}{%EWOLookBehindKey% up}
@@ -693,7 +695,7 @@ LongTextSpam:
 Return
 
 ShortTextSpam:
-   If (WhileChat = 1)
+   If (WhileChat = 1) && (sendInputWork)
    {
       Goto, WhileShortTextSpam
    }
@@ -753,7 +755,7 @@ Paste: ; Self explanatory
 return
 
 ShutUp: ; Self explanatory
-   If (WhileChat = 1)
+   If (WhileChat = 1) && (sendInputWork)
    {
       Goto, WhileShutUp
    }
@@ -1296,7 +1298,7 @@ MacroOptions:
    Gui, Add, Edit, gCrosshair5 vCrosshairPos h20,
    Gui, Add, CheckBox, vNightVision h20,
    Gui, Add, Checkbox, vSmoothEWO h20,
-   Gui, Add, DropDownList, vSmoothEWOMode, Fast Respawn|Sticky|Retarded|Retarded2|Slow|Faster|Fastest
+   Gui, Add, DropDownList, vSmoothEWOMode, Fast Respawn|Sticky|Retarded|Retarded2|Staeni|Faster|Fastest
    Gui, Add, CheckBox, vCEOMode h20,
    Gui, Add, DropDownList, vBugRespawnMode, Homing|RPG
    Gui, Add, Checkbox, gEWOWrite vEWOWrite h20
@@ -1738,7 +1740,7 @@ Clumsy:
       WinWait, ahk_pid %Gay3%
       WinGet, ID3, ID, ahk_pid %Gay3%
       WinSet, ExStyle, ^0x80, ahk_id %ID3% ; 0x80 is WS_EX_TOOLWINDOW
-      Control, Choose, 5, ComboBox1, ahk_pid %Gay3%
+      Control, Choose, 4, ComboBox1, ahk_pid %Gay3%
       Control, Check,, Button4, ahk_pid %Gay3%
       ControlSetText,Edit2,%clumsyPing%,ahk_pid %Gay3%
       Sleep(100)
@@ -1830,6 +1832,8 @@ Sing: ; Sings in chat lmao
          }
          i++
          FileReadLine, currentLine, %songFileLocation%, i
+         if ErrorLevel ; If it fails to read then stop the loop
+            break
          
          If (currentLine = "") ; If the line is empty, skip it and go to the next loop.
          {
@@ -1901,9 +1905,7 @@ IJustCopyPastedThisChatFunction: ; Pasted from CustomTextSpam.
       Loop, 140 {
          ArrayYes%A_Index% =
       }
-      Send {Blind}{t down}
-      SendInput {Blind}{enter down}
-      Send {Blind}{t up}{f24 up}
+      PrepareChatMacro()
       StringSplit, ArrayYes, currentLine
       SendInput {Raw}%ArrayYes1%%ArrayYes2%%ArrayYes3%%ArrayYes4%%ArrayYes5%%ArrayYes6%%ArrayYes7%%ArrayYes8%%ArrayYes9%%ArrayYes10%%ArrayYes11%%ArrayYes12%%ArrayYes13%%ArrayYes14%%ArrayYes15%%ArrayYes16%%ArrayYes17%%ArrayYes18%%ArrayYes19%%ArrayYes20%%ArrayYes21%%ArrayYes22%%ArrayYes23%%ArrayYes24%%ArrayYes25%%ArrayYes26%%ArrayYes27%%ArrayYes28%%ArrayYes29%
       Send {Blind}{f24 up}
@@ -1918,9 +1920,7 @@ IJustCopyPastedThisChatFunction: ; Pasted from CustomTextSpam.
    }
    else if (Length <= 30)
    {
-      Send {Blind}{t down}
-      SendInput {enter down}
-      Send {Blind}{t up}{f24 up}
+      PrepareChatMacro()
       SendInput {Raw}%currentLine%
       Send {Blind}{enter up}
    }
