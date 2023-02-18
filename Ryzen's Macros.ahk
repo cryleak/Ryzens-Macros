@@ -268,6 +268,7 @@ EWO: ; Self explanatory
    } else
    {
       SetMouseDelay, -1
+      
       if (SmoothEWO)
       {
          If (SmoothEWOMode = "Staeni")
@@ -283,7 +284,12 @@ EWO: ; Self explanatory
             SendInput {Blind}{lbutton up}{rbutton up}
             Sleep(20)
          }
-         If (SmoothEWOMode = "Faster")
+         If (SmoothEWOMode = "Fasterest")
+         {
+            SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
+            Send {Blind}{f24 2}
+            SendInput {Blind}{wheelup}{up up}{enter up}
+         } else if (SmoothEWOMode = "Faster")
          {
             SendInput {Blind}{%EWOLookBehindKey% down}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{%InteractionMenuKey% down}{d up}{w up}{s up}{a up}
             Sleep(13.5)
@@ -1298,7 +1304,7 @@ MacroOptions:
    Gui, Add, Edit, gCrosshair5 vCrosshairPos h20,
    Gui, Add, CheckBox, vNightVision h20,
    Gui, Add, Checkbox, vSmoothEWO h20,
-   Gui, Add, DropDownList, vSmoothEWOMode, Fast Respawn|Sticky|Retarded|Retarded2|Staeni|Faster|Fastest
+   Gui, Add, DropDownList, vSmoothEWOMode, Fast Respawn|Sticky|Retarded|Retarded2|Staeni|Faster|Fastest|Fasterest
    Gui, Add, CheckBox, vCEOMode h20,
    Gui, Add, DropDownList, vBugRespawnMode, Homing|RPG
    Gui, Add, Checkbox, gEWOWrite vEWOWrite h20
