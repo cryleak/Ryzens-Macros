@@ -277,7 +277,7 @@ EWO: ; Self explanatory
             Sleep(30)
             If GetKeyState("rbutton", "P")
             {
-               Sleep(70)
+               Sleep(80)
             }
          } else if (SmoothEWOMode = "Faster")
          {
@@ -312,7 +312,7 @@ EWO: ; Self explanatory
             Send {Blind}{enter up}{%InteractionMenuKey% up}
             */
             SendInput {Blind}{alt up}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{d up}{w up}{s up}{a up}{%InteractionMenuKey% down}{%EWOLookBehindKey%}{%EWOSpecialAbilitySlashActionKey% down}
-            Sleep(30)
+            Sleep(29.75)
             SendInput {Blind}{%EWOLookBehindKey% down}
             Sleep(8)
             SendInput {Blind}{up down}
@@ -347,10 +347,8 @@ EWO: ; Self explanatory
                Sleep(15)
             Send {Blind}{enter up}
             StringLower, EWOLookBehindKey, EWOLookBehindKey
-         }
-         else if (SmoothEWOMode = "Retarded2")
+         } else if (SmoothEWOMode = "Retarded2")
          {
-            
             SendInput {Blind}{lbutton up}{enter down}
             Send {Blind}{%InteractionMenuKey%}{enter up}{up down}
             SendInput {Blind}{enter down}
@@ -366,9 +364,19 @@ EWO: ; Self explanatory
             Send {Blind}{up}
             Sleep(9)
             Send {Blind}{%EWOSpecialAbilitySlashActionKey% down}{enter up}
+         } else if (SmoothEWOMode = "Retarded3")
+         {
+            SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%InteractionMenuKey% down}{%EWOSpecialAbilitySlashActionKey% down}{%EWOMelee% down}
+            Sleep(30)
+            Send {Blind}{up}
+            Sleep(20)
+            Send {Blind}{up}
+            Sleep(40)
+            SendInput {Blind}{space down}{%EWOLookBehindKey% down}
+            Send {Blind}{f24 up}{enter}
+            SendInput {Blind}{space up}
          }
-      }
-      else if (!SmoothEWO)
+      } else if (!SmoothEWO)
       {
          SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
          Send {Blind}{f24}{f24 up}
@@ -1304,7 +1312,7 @@ MacroOptions:
    Gui, Add, Edit, gCrosshair5 vCrosshairPos h20,
    Gui, Add, CheckBox, vNightVision h20,
    Gui, Add, Checkbox, vSmoothEWO h20,
-   Gui, Add, DropDownList, vSmoothEWOMode, Fast Respawn|Sticky|Retarded|Retarded2|Staeni|Faster|Fastest|Fasterest
+   Gui, Add, DropDownList, vSmoothEWOMode, Fast Respawn|Sticky|Retarded|Retarded2|Retarded3|Staeni|Faster|Fastest|Fasterest
    Gui, Add, CheckBox, vCEOMode h20,
    Gui, Add, DropDownList, vBugRespawnMode, Homing|RPG
    Gui, Add, Checkbox, gEWOWrite vEWOWrite h20
