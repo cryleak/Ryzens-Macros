@@ -1052,7 +1052,6 @@ MCCEO:
       SendInput {Blind}{enter up}
       Send {Blind}{enter}
    }
-   msgbox %endTime% i ended
    Sleep(25)
    GuiControl,, CEOMode, 1
    If (!MCCEO2)
