@@ -993,19 +993,23 @@ CloseGTAProcesses:
 Return
 
 SniperBind:
-   Send {Blind}{%SniperBind%}{tab}
+   Send {Blind}{%SniperBind% down}{tab}
+   SendInput {Blind}{%SniperBind% up}
 return
 
 RPGBind:
-   Send {Blind}{%RPGBind%}{tab}
+   Send {Blind}{%RPGBind% down}{tab}
+   SendInput {Blind}{%RPGBind% up}
 return
 
 StickyBind:
-   Send {Blind}{%StickyBind%}{tab}
+   Send {Blind}{%StickyBind% down}{tab}
+   SendInput {Blind}{%StickyBind% up}
 Return
 
 PistolBind:
-   Send {Blind}{%PistolBind%}{tab}
+   Send {Blind}{%PistolBind% down}{tab}
+   SendInput {Blind}{%PistolBind% up}
 return
 
 RPGSpam:
