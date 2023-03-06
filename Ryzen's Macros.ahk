@@ -311,12 +311,12 @@ EWO: ; Self explanatory
             SendInput {Blind}{%EWOSpecialAbilitySlashActionKey% down}
             Send {Blind}{enter up}{%InteractionMenuKey% up}
             */
-            SendInput {Blind}{alt up}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{d up}{w up}{s up}{a up}{%InteractionMenuKey% down}{%EWOLookBehindKey%}{%EWOSpecialAbilitySlashActionKey% down}
-            Sleep(29.75)
+            SendInput {Blind}{alt up}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{d up}{w up}{s up}{a up}{%InteractionMenuKey% down}{%EWOLookBehindKey%}s{%EWOSpecialAbilitySlashActionKey% down}
+            Sleep(30)
             SendInput {Blind}{%EWOLookBehindKey% down}
             Sleep(8)
             SendInput {Blind}{up down}
-            Sleep(30.5)
+            Sleep(31)
             SendInput {Blind}{WheelUp}
             Sleep(50)
             SendInput {Blind}{enter up}{%InteractionMenuKey% up}{%EWOLookBehindKey% up}
@@ -517,7 +517,13 @@ Ammo: ; Self explanatory
 return
 
 FastRespawn: ; Self explanatory
-   Send {Blind}{lbutton 30}
+   Loop 30
+   {
+      SendInput {Blind}{lbutton down}
+      Send {Blind}{f24 up}
+      SendInput {Blind}{lbutton up}
+      Send {Blind}{f24 up}
+   }
 return
 
 ProBlocking: ; I don't think I need this anymore
