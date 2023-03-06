@@ -267,7 +267,13 @@ EWO: ; Self explanatory
       SendInput {Blind}{lbutton up}
    } else
    {
+      GuiControlGet, shootEWO
       SetMouseDelay, -1
+      if (shootEWO)
+      {
+         Send {Blind}{lbutton down}{f24 up}
+         SendInput {Blind}{lbutton up}{rbutton up}
+      }
       
       if (SmoothEWO)
       {
@@ -312,11 +318,11 @@ EWO: ; Self explanatory
             Send {Blind}{enter up}{%InteractionMenuKey% up}
             */
             SendInput {Blind}{alt up}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{d up}{w up}{s up}{a up}{%InteractionMenuKey% down}{%EWOLookBehindKey%}s{%EWOSpecialAbilitySlashActionKey% down}
-            Sleep(30)
+            Sleep(29.75)
             SendInput {Blind}{%EWOLookBehindKey% down}
             Sleep(8)
             SendInput {Blind}{up down}
-            Sleep(31)
+            Sleep(30.75)
             SendInput {Blind}{WheelUp}
             Sleep(50)
             SendInput {Blind}{enter up}{%InteractionMenuKey% up}{%EWOLookBehindKey% up}
@@ -1216,6 +1222,7 @@ NotExist1:
       GuiControl,,Paste,0
       GuiControl,,MCCEO,
       GuiControl,,SmoothEWO,0
+      GuiControl,,shootEWO,0
       GuiControl,,FasterSniper,1
       GuiControl,Choose,SmoothEWOMode,Fastest
    }
@@ -1303,6 +1310,7 @@ MacroOptions:
    Gui, Add, Link,, Crosshair position: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Crosshair-position">(?)</a>
    Gui, Add, Link,, Night Vision Thermal <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Night-Vision-Thermal">(?)</a>
    Gui, Add, Link,, Slower EWO? <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Slower-EWO">(?)</a>
+   Gui, Add, Link,, Shoot EWO? <a href="">(?)</a>
    Gui, Add, Link,, Slower EWO Mode: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Slower-EWO">(?)</a>
    Gui, Add, Link,, CEO Mode: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/CEO-Mode">(?)</a>
    Gui, Add, Link,, Optimize Fast Respawn EWO for: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Optimize-Fast-Respawn-EWO-For">(?)</a>
@@ -1321,6 +1329,7 @@ MacroOptions:
    Gui, Add, Edit, gCrosshair5 vCrosshairPos h20,
    Gui, Add, CheckBox, vNightVision h20,
    Gui, Add, Checkbox, vSmoothEWO h20,
+   Gui, Add, Checkbox, vshootEWO h20,
    Gui, Add, DropDownList, vSmoothEWOMode, Fast Respawn|Sticky|Retarded|Retarded2|Retarded3|Staeni|Faster|Fastest|Fasterest
    Gui, Add, CheckBox, vCEOMode h20,
    Gui, Add, DropDownList, vBugRespawnMode, Homing|RPG
@@ -1442,6 +1451,7 @@ SaveConfigRedirect:
       IniWrite,%Paste%,%CFG%,Misc,Allow Copy Paste
       IniWrite,%MCCEO%,%CFG%,Misc,MC CEO Toggle
       IniWrite,%SmoothEWO%,%CFG%,Misc,Smooth EWO
+      IniWrite,%shootEWO%,%CFG%,Misc,Shoot EWO
       IniWrite,%SmoothEWOMode%,%CFG%,Misc,Smooth EWO Mode
       IniWrite,%BugRespawnMode%,%CFG%,Misc,Bug Respawn Mode
       IniWrite,%FasterSniper%,%CFG%,Misc,Faster Sniper
@@ -1573,6 +1583,7 @@ Read:
       IniRead,Read_Paste,%CFG%,Misc,Allow Copy Paste
       IniRead,Read_MCCEO,%CFG%,Misc,MC CEO Toggle
       IniRead,Read_SmoothEWO,%CFG%,Misc,Smooth EWO
+      IniRead,Read_shootEWO,%CFG%,Misc,Shoot EWO
       IniRead,Read_SmoothEWOMode,%CFG%,Misc,Smooth EWO Mode
       IniRead,Read_BugRespawnMode,%CFG%,Misc,Bug Respawn Mode
       IniRead,Read_FasterSniper,%CFG%,Misc,Faster Sniper
@@ -1624,6 +1635,7 @@ Read:
       GuiControl,,Paste,%Read_Paste%
       GuiControl,,MCCEO,%Read_MCCEO%
       GuiControl,,SmoothEWO,%Read_SmoothEWO%
+      GuiControl,,shootEWO,%Read_shootEWO%
       GuiControl,Choose,SmoothEWOMode,%Read_SmoothEWOMode%
       GuiControl,Choose,BugRespawnMode,%Read_BugRespawnMode%
       GuiControl,,FasterSniper,%Read_FasterSniper%
