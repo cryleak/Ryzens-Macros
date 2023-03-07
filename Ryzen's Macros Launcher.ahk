@@ -108,7 +108,7 @@ LaunchMacros:
    while IfExist, A_MyDocuments "\AutoHotkey.ahk"
       {}
       Run, *RunAs "AutoHotkey.exe", C:\Program Files\AutoHotkey, UseErrorLevel
-   sleep 200
+   sleep 85
    If ErrorLevel {
       FileDelete, %A_MyDocuments%\AutoHotkey.ahk
       MsgBox, 0, Please install AutoHotkey 64-bit, AutoHotkey 64-bit doesn't appear to be installed. Look for an exe named "AutoHotkey.exe" in the following directory: "C:\Program Files\AutoHotkey". Please install it and try again!
