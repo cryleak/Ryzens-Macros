@@ -678,6 +678,56 @@ EssayAboutGTA: ; Self explanatory
    Send {Blind}{enter up}
 return
 
+ProMassEffectCopypasta:
+   PrepareChatMacro()
+   
+   SendInput I fucking hate Batarians. Disg
+   Send {Blind}{f24 up}
+   SendInput usting spider-eye freaks. I'll
+   Send {Blind}{f24 up}
+   SendInput {space}never understand why the Coun
+   Send {Blind}{f24 up}
+   SendInput cil lets these vermin live. I'
+   Send {Blind}{f24 up}
+   SendInput d love to kick a
+   
+   Send {Blind}{enter up}
+   PrepareChatMacro()
+   
+   SendInput Batarian in the head. Just run
+   Send {Blind}{f24 up}
+   SendInput {space}up to one full speed and catc
+   Send {Blind}{f24 up}
+   SendInput h his head full force with my
+   Send {Blind}{f24 up}
+   SendInput steel tipped toe. Punt his hea
+   Send {Blind}{f24 up}
+   SendInput d like a football.
+   
+   SendInput Every single Batarian freak de
+   Send {Blind}{f24 up}
+   SendInput serves a firing squad, and ext
+   Send {Blind}{f24 up}
+   SendInput ensive post death mutilation.{space}
+   Send {Blind}{f24 up}
+   SendInput Khar'shan will burn, and may a
+   Send {Blind}{f24 up}
+   SendInput {space}Collector cruiser
+   
+   Send {Blind}{enter up}
+   PrepareChatMacro()
+   
+   SendInput blow up my ship this very even
+   Send {Blind}{f24 up}
+   SendInput ing if I'm lying. Anyway, that
+   Send {Blind}{f24 up}
+   SendInput 's why we should blow up the B
+   Send {Blind}{f24 up}
+   SendInput ahak system.
+   
+   Send {Blind}{enter up}
+Return
+
 CustomTextSpam: ; Self explanatory
    GuiControlGet, RawText
    Length := StrLen(CustomSpamText)
@@ -1259,7 +1309,8 @@ Return
 
 ChatMacros:
    Gui, Tab, 2
-   Gui, Add, Link,x+5 y60, Epic Roast: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Epic-Roast">(?)</a>
+   Gui, Add, Link,x+5 y60, Pro Mass Effect Copypasta: <a href="">(?)</a>
+   Gui, Add, Link,, Epic Roast: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Epic-Roast">(?)</a>
    Gui, Add, Link,, Essay About GTA: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Essay-About-GTA">(?)</a>
    Gui, Add, Link,, Custom Text Spam: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Custom-Text-Spam">(?)</a>
    Gui, Add, Link,, Custom Spam Text <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Custom-Spam-Text">(?)</a>
@@ -1267,7 +1318,8 @@ ChatMacros:
    Gui, Add, Link,, Shut Up: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Shut-Up">(?)</a>
    Gui, Add, Link,, Suspend: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Suspend">(?)</a>
    
-   Gui, Add, Hotkey,vHelpWhatsThis x+110 y60,
+   Gui, Add, Hotkey,vProMassEffectCopypasta x+100 y60,
+   Gui, Add, Hotkey,vHelpWhatsThis,
    Gui, Add, Hotkey,vEssayAboutGTA,
    Gui, Add, Hotkey,vCustomTextSpam,
    Gui, Add, Edit, Limit140 vCustomSpamText
@@ -1289,7 +1341,7 @@ InGameBinds:
    Gui, Add, Link,, Rifle: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Rifle-Bind">(?)</a>
    Gui, Add, Link,, Swap to Franklin Bind: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Swap-to-Franklin-Bind">(?)</a>
    
-   Gui, Add, Hotkey,vInteractionMenuKey x+110 y60,
+   Gui, Add, Hotkey,vInteractionMenuKey x+15 y60,
    Gui, Add, Hotkey,vSniperBind,
    Gui, Add, Hotkey,vEWOLookBehindKey,
    Gui, Add, Hotkey,vEWOSpecialAbilitySlashActionKey,
@@ -1354,7 +1406,7 @@ MiscMacros:
    If (DebugTesting)
       Gui, Add, Link,, Passive Disable Spam Toggle: <a href="">(?)</a>
    
-   Gui, Add, Hotkey, vKekEWO x+105 y60
+   Gui, Add, Hotkey, vKekEWO x+20 y60
    Gui, Add, Hotkey,vShowUI,
    Gui, Add, Hotkey,vToggleCEO,
    Gui, Add, Hotkey,vReloadOutfit,
@@ -1390,6 +1442,7 @@ SavingAndButtonsAndMiscMacros:
    Gui, Add, Link,x170 y193, <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Apply-GTAHaX-EWO-Codes">(?)</a>
    Gui, Add, Link,x120 y219, <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Apply-CEO-Circle">(?)</a>
    Gui, Add, Link,x235 y245, <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Open-Local-Directory-of-Ryzen's-Macros">(?)</a>
+   Gui, Add, Text,x+111, ; Makes the window size correct
 Return
 
 Apply:
@@ -1430,6 +1483,7 @@ SaveConfigRedirect:
       IniWrite,%Suspend%,%CFG%,Misc,Suspend Macro
       IniWrite,%HelpWhatsThis%,%CFG%,Chat Macros,idkwtfthisis
       IniWrite,%EssayAboutGTA%,%CFG%,Chat Macros,Essay About GTA
+      IniWrite,%ProMassEffectCopypasta%,%CFG%,Chat Macros,Pro Mass Effect Copypasta
       IniWrite,%CustomTextSpam%,%CFG%,Chat Macros,Custom Text Spam
       IniWrite,%ShutUp%,%CFG%,Chat Macros,Shut Up Spam
       IniWrite,%CustomSpamText%,%CFG%,Chat Macros,Custom Spam Text
@@ -1471,6 +1525,7 @@ SaveConfigRedirect:
    Hotkey, *%Suspend%, Suspend, UseErrorLevel On
    Hotkey, *%HelpWhatsThis%, HelpWhatsThis, UseErrorLevel On
    Hotkey, *%EssayAboutGTA%, EssayAboutGTA, UseErrorLevel On
+   Hotkey, *%ProMassEffectCopypasta%, ProMassEffectCopypasta, UseErrorLevel On
    Hotkey, *%CustomTextSpam%, CustomTextSpam, UseErrorLevel On
    Hotkey, *%ShutUp%, ShutUp, UseErrorLevel On
    Hotkey, *%ReloadOutfit%, ReloadOutfit, UseErrorLevel On
@@ -1562,6 +1617,7 @@ Read:
       IniRead,Read_Suspend,%CFG%,Misc,Suspend Macro
       IniRead,Read_HelpWhatsThis,%CFG%,Chat Macros,idkwtfthisis
       IniRead,Read_EssayAboutGTA,%CFG%,Chat Macros,Essay About GTA
+      IniRead,Read_ProMassEffectCopypasta,%CFG%,Chat Macros,Pro Mass Effect Copypasta
       IniRead,Read_CustomTextSpam,%CFG%,Chat Macros,Custom Text Spam
       IniRead,Read_ShutUp,%CFG%,Chat Macros,Shut Up Spam
       IniRead,Read_CustomSpamText,%CFG%,Chat Macros,Custom Spam Text
@@ -1611,6 +1667,7 @@ Read:
       GuiControl,,Suspend,%Read_Suspend%
       GuiControl,,HelpWhatsThis,%Read_HelpWhatsThis%
       GuiControl,,EssayAboutGTA,%Read_EssayAboutGTA%
+      GuiControl,,ProMassEffectCopypasta,%Read_ProMassEffectCopypasta%
       GuiControl,,CustomTextSpam,%Read_CustomTextSpam%
       GuiControl,,ShutUp,%Read_ShutUp%
       GuiControl,,CustomSpamText,%Read_CustomSpamText%
