@@ -703,6 +703,9 @@ ProMassEffectCopypasta:
    SendInput steel tipped toe. Punt his hea
    Send {Blind}{f24 up}
    SendInput d like a football.
+
+   Send {Blind}{enter up}
+   PrepareChatMacro()
    
    SendInput Every single Batarian freak de
    Send {Blind}{f24 up}
@@ -712,7 +715,7 @@ ProMassEffectCopypasta:
    Send {Blind}{f24 up}
    SendInput Khar'shan will burn, and may a
    Send {Blind}{f24 up}
-   SendInput {space}Collector cruiser
+   SendInput {space}Collector Cruiser
    
    Send {Blind}{enter up}
    PrepareChatMacro()
