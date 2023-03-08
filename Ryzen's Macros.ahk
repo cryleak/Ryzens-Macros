@@ -703,7 +703,7 @@ ProMassEffectCopypasta:
    SendInput steel tipped toe. Punt his hea
    Send {Blind}{f24 up}
    SendInput d like a football.
-
+   
    Send {Blind}{enter up}
    PrepareChatMacro()
    
@@ -729,6 +729,25 @@ ProMassEffectCopypasta:
    SendInput ahak system.
    
    Send {Blind}{enter up}
+Return
+
+Trippy:
+   end = 0
+   i := 0
+   Loop
+   {
+      If (!end)
+         i := i + 5
+      else if (end)
+         i := i - 5
+      If (i <= 0) && (end)
+         break
+      else if (i >= 30)
+         end = 1
+      PrepareChatMacro()
+      CancerFunction("ASC 241",i)
+      Send {Blind}{enter up}
+   }
 Return
 
 CustomTextSpam: ; Self explanatory
@@ -1313,6 +1332,7 @@ Return
 ChatMacros:
    Gui, Tab, 2
    Gui, Add, Link,x+5 y60, Pro Mass Effect Copypasta: <a href="">(?)</a>
+   Gui, Add, Link,, Trippy Chat Macro: <a href="">(?)</a>
    Gui, Add, Link,, Epic Roast: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Epic-Roast">(?)</a>
    Gui, Add, Link,, Essay About GTA: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Essay-About-GTA">(?)</a>
    Gui, Add, Link,, Custom Text Spam: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Custom-Text-Spam">(?)</a>
@@ -1322,6 +1342,7 @@ ChatMacros:
    Gui, Add, Link,, Suspend: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Suspend">(?)</a>
    
    Gui, Add, Hotkey,vProMassEffectCopypasta x+100 y60,
+   Gui, Add, Hotkey,vTrippy,
    Gui, Add, Hotkey,vHelpWhatsThis,
    Gui, Add, Hotkey,vEssayAboutGTA,
    Gui, Add, Hotkey,vCustomTextSpam,
@@ -1487,6 +1508,7 @@ SaveConfigRedirect:
       IniWrite,%HelpWhatsThis%,%CFG%,Chat Macros,idkwtfthisis
       IniWrite,%EssayAboutGTA%,%CFG%,Chat Macros,Essay About GTA
       IniWrite,%ProMassEffectCopypasta%,%CFG%,Chat Macros,Pro Mass Effect Copypasta
+      IniWrite,%Trippy%,%CFG%,Chat Macros,Trippy
       IniWrite,%CustomTextSpam%,%CFG%,Chat Macros,Custom Text Spam
       IniWrite,%ShutUp%,%CFG%,Chat Macros,Shut Up Spam
       IniWrite,%CustomSpamText%,%CFG%,Chat Macros,Custom Spam Text
@@ -1529,6 +1551,7 @@ SaveConfigRedirect:
    Hotkey, *%HelpWhatsThis%, HelpWhatsThis, UseErrorLevel On
    Hotkey, *%EssayAboutGTA%, EssayAboutGTA, UseErrorLevel On
    Hotkey, *%ProMassEffectCopypasta%, ProMassEffectCopypasta, UseErrorLevel On
+   Hotkey, *%Trippy%, Trippy, UseErrorLevel On
    Hotkey, *%CustomTextSpam%, CustomTextSpam, UseErrorLevel On
    Hotkey, *%ShutUp%, ShutUp, UseErrorLevel On
    Hotkey, *%ReloadOutfit%, ReloadOutfit, UseErrorLevel On
@@ -1567,7 +1590,7 @@ Nice1234:
 Return
 
 StandardTrayMenu:
-   If (isCompiled)
+   If (!isCompiled)
    {
       If (A_ThisMenuItem = "Open")
          DllCall("PostMessage", UInt,Gui0, UInt,0x111, UInt,65406, UInt,0 )
@@ -1621,6 +1644,7 @@ Read:
       IniRead,Read_HelpWhatsThis,%CFG%,Chat Macros,idkwtfthisis
       IniRead,Read_EssayAboutGTA,%CFG%,Chat Macros,Essay About GTA
       IniRead,Read_ProMassEffectCopypasta,%CFG%,Chat Macros,Pro Mass Effect Copypasta
+      IniRead,Read_Trippy,%CFG%,Chat Macros,Trippy
       IniRead,Read_CustomTextSpam,%CFG%,Chat Macros,Custom Text Spam
       IniRead,Read_ShutUp,%CFG%,Chat Macros,Shut Up Spam
       IniRead,Read_CustomSpamText,%CFG%,Chat Macros,Custom Spam Text
@@ -1671,6 +1695,7 @@ Read:
       GuiControl,,HelpWhatsThis,%Read_HelpWhatsThis%
       GuiControl,,EssayAboutGTA,%Read_EssayAboutGTA%
       GuiControl,,ProMassEffectCopypasta,%Read_ProMassEffectCopypasta%
+      GuiControl,,Trippy,%Read_Trippy%
       GuiControl,,CustomTextSpam,%Read_CustomTextSpam%
       GuiControl,,ShutUp,%Read_ShutUp%
       GuiControl,,CustomSpamText,%Read_CustomSpamText%
@@ -2940,4 +2965,72 @@ SetPriority(processName,priority)
    for k, PID in PIDs
       Process, Priority, % PID, %priority%
    
+}
+
+CancerFunction(char,count) ; It is the only way forward
+{
+   SendInput {ASC 241}
+   switch count
+   {
+   case 1:
+      SendInput {%char%}
+   case 2:
+      SendInput {%char%}{%char%}
+   case 3:
+      SendInput {%char%}{%char%}{%char%}
+   case 4:
+      SendInput {%char%}{%char%}{%char%}{%char%}
+   case 5:
+      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}
+   case 6:
+      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+   case 7:
+      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+   case 8:
+      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+   case 9:
+      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+   case 10:
+      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+   case 11:
+      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+   case 12:
+      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+   case 13:
+      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+   case 14:
+      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+   case 15:
+      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+   case 16:
+      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+   case 17:
+      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+   case 18:
+      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+   case 19:
+      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+   case 20:
+      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+   case 21:
+      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+   case 22:
+      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+   case 23:
+      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+   case 24:
+      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+   case 25:
+      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+   case 26:
+      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+   case 27:
+      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+   case 28:
+      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+   case 29:
+      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+   case 30:
+      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+   }
 }
