@@ -732,22 +732,29 @@ ProMassEffectCopypasta:
 Return
 
 Trippy:
+   AltCode = 0135
+   PrepareChatMacro()
+   SendInput {%AltCode%}
+   Send {Blind}{enter up}
    end = 0
    i := 0
    Loop
    {
       If (!end)
-         i := i + 5
+         i := i + 2
       else if (end)
-         i := i - 5
+         i := i - 2
       If (i <= 0) && (end)
          break
-      else if (i >= 30)
+      else if (i >= 12) ; x*6 = amount of characters which is this number
          end = 1
       PrepareChatMacro()
-      CancerFunction("ASC 241",i)
+      CancerFunction("ASC "AltCode,i)
       Send {Blind}{enter up}
    }
+   PrepareChatMacro()
+   SendInput {%AltCode%}
+   Send {Blind}{enter up}
 Return
 
 CustomTextSpam: ; Self explanatory
@@ -755,7 +762,7 @@ CustomTextSpam: ; Self explanatory
    Length := StrLen(CustomSpamText)
    if (Length >= 31)
       Goto LongTextSpam
-   else if Length <= 30
+   else if (Length <= 30)
       Goto ShortTextSpam
 return
 
@@ -1091,9 +1098,7 @@ PistolBind:
 return
 
 RPGSpam:
-   SendInput {Blind}{%StickyBind% down}
-   Send {Blind}{%RPGBind% down}{tab}
-   SendInput {Blind}{%RPGBind% up}{%StickyBind% up}
+   Send {Blind}{%StickyBind%}{%RPGBind%}{tab}
 return
 
 ToggleCrosshair:
