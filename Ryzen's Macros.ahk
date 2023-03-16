@@ -84,6 +84,7 @@ Back: ; It goes back to this checkpoint. It works.
    #UseHook On ; Idk
    #InstallKeybdHook ; Idk
    #InstallMouseHook ; Idk
+   DllCall("ntdll\ZwSetTimerResolution","Int",5000,"Int",1,"Int*",MyCurrentTimerResolution) ; yes
    SetTitleMatchMode, 2 ; I forgor :dead_skull:
    SetDefaultMouseSpeed, 0 ; Something
    SetKeyDelay, -1, -1 ; Sets key delay to the lowest possible, there is still delay due to the keyboard hook in GTA, but this makes it excecute as fast as possible WITHOUT skipping keystrokes. Set this a lot higher if you uninstalled the keyboard hook using mods.
@@ -283,7 +284,7 @@ EWO: ; Self explanatory
             Sleep(30)
             If GetKeyState("rbutton", "P")
             {
-               Sleep(80)
+               Sleep(70)
             }
          } else if (SmoothEWOMode = "Faster")
          {
@@ -322,7 +323,7 @@ EWO: ; Self explanatory
             SendInput {Blind}{%EWOLookBehindKey% down}
             Sleep(8)
             SendInput {Blind}{up down}
-            Sleep(30.75)
+            Sleep(31)
             SendInput {Blind}{WheelUp}
             Sleep(50)
             SendInput {Blind}{enter up}{%InteractionMenuKey% up}{%EWOLookBehindKey% up}
@@ -1002,16 +1003,16 @@ TabWeapon2: ; If Fast Switch is enabled
    GuiControlGet, TabWeapon
    If (!TabWeapon)
    {
-      Hotkey, *%SniperBind%, SniperBind, UseErrorLevel Off
-      Hotkey, *%RPGBind%, RPGBind, UseErrorLevel Off
-      Hotkey, *%StickyBind%, StickyBind, UseErrorLevel Off
-      Hotkey, *%PistolBind%, PistolBind, UseErrorLevel Off
+      Hotkey(SniperBind,"SniperBind","Off")
+      Hotkey(RPGBind,"RPGBind","Off")
+      Hotkey(StickyBind,"StickyBind","Off")
+      Hotkey(PistolBind,"PistolBind","Off")
    } else
    {
-      Hotkey, *%SniperBind%, SniperBind, UseErrorLevel On
-      Hotkey, *%RPGBind%, RPGBind, UseErrorLevel On
-      Hotkey, *%StickyBind%, StickyBind, UseErrorLevel On
-      Hotkey, *%PistolBind%, PistolBind, UseErrorLevel On
+      Hotkey(SniperBind,"SniperBind","On")
+      Hotkey(RPGBind,"RPGBind","On")
+      Hotkey(StickyBind,"StickyBind","On")
+      Hotkey(PistolBind,"PistolBind","On")
    }
 return
 
@@ -1162,16 +1163,16 @@ LaunchCycle:
    GuiControlGet, TabWeapon
    If (!TabWeapon)
    {
-      Hotkey, *%SniperBind%, SniperBind, UseErrorLevel Off
-      Hotkey, *%RPGBind%, RPGBind, UseErrorLevel Off
-      Hotkey, *%StickyBind%, StickyBind, UseErrorLevel Off
-      Hotkey, *%PistolBind%, PistolBind, UseErrorLevel Off
+      Hotkey(SniperBind,"SniperBind","Off")
+      Hotkey(RPGBind,"RPGBind","Off")
+      Hotkey(StickyBind,"StickyBind","Off")
+      Hotkey(PistolBind,"PistolBind","Off")
    } else
    {
-      Hotkey, *%SniperBind%, SniperBind, UseErrorLevel On
-      Hotkey, *%RPGBind%, RPGBind, UseErrorLevel On
-      Hotkey, *%StickyBind%, StickyBind, UseErrorLevel On
-      Hotkey, *%PistolBind%, PistolBind, UseErrorLevel On
+      Hotkey(SniperBind,"SniperBind","On")
+      Hotkey(RPGBind,"RPGBind","On")
+      Hotkey(StickyBind,"StickyBind","On")
+      Hotkey(PistolBind,"PistolBind","On")
    }
    GuiControlGet, Paste
    If (!Paste)
@@ -1233,26 +1234,26 @@ LaunchCycle:
 return
 
 DisableAll:
-   Hotkey, *%ThermalHelmet%, ThermalHelmet, UseErrorLevel Off
-   Hotkey, *%FastSniperSwitch%, FastSniperSwitch, UseErrorLevel Off
-   Hotkey, *%EWO%, EWO, UseErrorLevel Off
-   Hotkey, *%KekEWO%, KekEWO, UseErrorLevel Off
-   Hotkey, *%BST%, BST, UseErrorLevel Off
-   Hotkey, *%Ammo%, Ammo, UseErrorLevel Off
-   Hotkey, *%FastRespawn%, FastRespawn, UseErrorLevel Off
-   Hotkey, *%ToggleCrosshair%, ToggleCrosshair, UseErrorLevel Off
-   Hotkey, *%Suspend%, Suspend, UseErrorLevel Off
-   Hotkey, *%HelpWhatsThis%, HelpWhatsThis, UseErrorLevel Off
-   Hotkey, *%EssayAboutGTA%, EssayAboutGTA, UseErrorLevel Off
-   Hotkey, *%CustomTextSpam%, CustomTextSpam, UseErrorLevel Off
-   Hotkey, *%ShutUp%, ShutUp, UseErrorLevel Off
-   Hotkey, *%ReloadOutfit%, ReloadOutfit, UseErrorLevel Off
-   Hotkey, *%ShowUI%, ShowUI, UseErrorLevel Off
-   Hotkey, *%ToggleCEO%, ToggleCEO, UseErrorLevel Off
-   Hotkey, *%Jobs%, Jobs, UseErrorLevel Off
-   Hotkey, *%MCCEO%, MCCEO, UseErrorLevel Off
-   Hotkey, *%RPGSpam%, RPGSpam, UseErrorLevel Off
-   Hotkey, *%PassiveDisableSpamToggle%, PassiveDisableSpamToggle, UseErrorLevel Off
+   Hotkey(ThermalHelmet,"ThermalHelmet","Off")
+   Hotkey(FastSniperSwitch,"FastSniperSwitch","Off")
+   Hotkey(EWO,"EWO","Off")
+   Hotkey(KekEWO,"KekEWO","Off")
+   Hotkey(BST,"BST","Off")
+   Hotkey(Ammo,"Ammo","Off")
+   Hotkey(FastRespawn,"FastRespawn","Off")
+   Hotkey(ToggleCrosshair,"ToggleCrosshair","Off")
+   Hotkey(Suspend,"Suspend","Off")
+   Hotkey(HelpWhatsThis,"HelpWhatsThis","Off")
+   Hotkey(EssayAboutGTA,"EssayAboutGTA","Off")
+   Hotkey(CustomTextSpam,"CustomTextSpam","Off")
+   Hotkey(ShutUp,"ShutUp","Off")
+   Hotkey(ReloadOutfit,"ReloadOutfit","Off")
+   Hotkey(ShowUI,"ShowUI","Off")
+   Hotkey(ToggleCEO,"ToggleCEO","Off")
+   Hotkey(Jobs,"Jobs","Off")
+   Hotkey(MCCEO,"MCCEO","Off")
+   Hotkey(RPGSpam,"RPGSpam","Off")
+   Hotkey(PassiveDisableSpamToggle,"PassiveDisableSpamToggle","Off")
 Return
 
 NotExist1:
@@ -1330,7 +1331,7 @@ CombatMacros:
    Gui, Add, Hotkey,vAmmo,
    Gui, Add, Hotkey,vFastRespawn,
    Gui, Add, Hotkey,vToggleCrosshair,
-   Gui, Add, Hotkey, vRPGSpam,
+   Gui, Add, Hotkey,vRPGSpam,
    Gui, Add, Checkbox, gTabWeapon2 vTabWeapon,
 Return
 
@@ -1375,11 +1376,11 @@ InGameBinds:
    Gui, Add, Hotkey,vEWOLookBehindKey,
    Gui, Add, Hotkey,vEWOSpecialAbilitySlashActionKey,
    Gui, Add, Hotkey,vEWOMelee,
-   Gui, Add, Hotkey, vRPGBind,
-   Gui, Add, Hotkey, vStickyBind,
-   Gui, Add, Hotkey, vPistolBind,
-   Gui, Add, Hotkey, vRifleBind,
-   Gui, Add, Hotkey, vFranklinBind,
+   Gui, Add, Hotkey,vRPGBind,
+   Gui, Add, Hotkey,vStickyBind,
+   Gui, Add, Hotkey,vPistolBind,
+   Gui, Add, Hotkey,vRifleBind,
+   Gui, Add, Hotkey,vFranklinBind,
 Return
 
 MacroOptions:
@@ -1435,15 +1436,15 @@ MiscMacros:
    If (DebugTesting)
       Gui, Add, Link,, Passive Disable Spam Toggle: <a href="">(?)</a>
    
-   Gui, Add, Hotkey, vKekEWO x+20 y60
+   Gui, Add, Hotkey,vKekEWO x+20 y60
    Gui, Add, Hotkey,vShowUI,
    Gui, Add, Hotkey,vToggleCEO,
    Gui, Add, Hotkey,vReloadOutfit,
-   Gui, Add, Hotkey, vJobs
+   Gui, Add, Hotkey,vJobs
    Gui, Add, Checkbox, gPaste2 vPaste h20
-   Gui, Add, Hotkey, vMCCEO
+   Gui, Add, Hotkey,vMCCEO
    If (DebugTesting)
-      Gui, Add, Hotkey, vPassiveDisableSpamToggle
+      Gui, Add, Hotkey,vPassiveDisableSpamToggle
 Return
 
 SavingAndButtonsAndMiscMacros:
@@ -1544,28 +1545,28 @@ SaveConfigRedirect:
    }
    
    Gosub, LaunchCycle
-   Hotkey, *%ThermalHelmet%, ThermalHelmet, UseErrorLevel On
-   Hotkey, *%FastSniperSwitch%, FastSniperSwitch, UseErrorLevel On
-   Hotkey, *%EWO%, EWO, UseErrorLevel On
-   Hotkey, *%KekEWO%, KekEWO, UseErrorLevel On
-   Hotkey, *%BST%, BST, UseErrorLevel On
-   Hotkey, *%Ammo%, Ammo, UseErrorLevel On
-   Hotkey, *%FastRespawn%, FastRespawn, UseErrorLevel On
-   Hotkey, *%ToggleCrosshair%, ToggleCrosshair, UseErrorLevel On
-   Hotkey, *%Suspend%, Suspend, UseErrorLevel On
-   Hotkey, *%HelpWhatsThis%, HelpWhatsThis, UseErrorLevel On
-   Hotkey, *%EssayAboutGTA%, EssayAboutGTA, UseErrorLevel On
-   Hotkey, *%ProMassEffectCopypasta%, ProMassEffectCopypasta, UseErrorLevel On
-   Hotkey, *%Trippy%, Trippy, UseErrorLevel On
-   Hotkey, *%CustomTextSpam%, CustomTextSpam, UseErrorLevel On
-   Hotkey, *%ShutUp%, ShutUp, UseErrorLevel On
-   Hotkey, *%ReloadOutfit%, ReloadOutfit, UseErrorLevel On
-   Hotkey, *%ShowUI%, ShowUI, UseErrorLevel On
-   Hotkey, *%ToggleCEO%, ToggleCEO, UseErrorLevel On
-   Hotkey, *%Jobs%, Jobs, UseErrorLevel On
-   Hotkey, *%MCCEO%, MCCEO, UseErrorLevel On
-   Hotkey, *%RPGSpam%, RPGSpam, UseErrorLevel On
-   Hotkey, *%PassiveDisableSpamToggle%, PassiveDisableSpamToggle, UseErrorLevel On
+   Hotkey(ThermalHelmet,"ThermalHelmet","On")
+   Hotkey(FastSniperSwitch,"FastSniperSwitch","On")
+   Hotkey(EWO,"EWO","On")
+   Hotkey(KekEWO,"KekEWO","On")
+   Hotkey(BST,"BST","On")
+   Hotkey(Ammo,"Ammo","On")
+   Hotkey(FastRespawn,"FastRespawn","On")
+   Hotkey(ToggleCrosshair,"ToggleCrosshair","On")
+   Hotkey(Suspend,"Suspend","On")
+   Hotkey(HelpWhatsThis,"HelpWhatsThis","On")
+   Hotkey(EssayAboutGTA,"EssayAboutGTA","On")
+   Hotkey(ProMassEffectCopypasta,"ProMassEffectCopypasta","On")
+   Hotkey(Trippy,"Trippy","On")
+   Hotkey(CustomTextSpam, "CustomTextSpam","On")
+   Hotkey(ShutUp,"ShutUp","On")
+   Hotkey(ReloadOutfit, "ReloadOutfit","On")
+   Hotkey(ShowUI,"ShowUI","On")
+   Hotkey(ToggleCEO,"ToggleCEO","On")
+   Hotkey(Jobs,"Jobs","On")
+   Hotkey(MCCEO,"MCCEO","On")
+   Hotkey(RPGSpam,"RPGSpam","On")
+   Hotkey(PassiveDisableSpamToggle,"PassiveDisableSpamToggle","On")
    If (EWOWrite)
    {
       SetTimer, Write, 10, -2147483648
@@ -3038,4 +3039,14 @@ CancerFunction(char,count) ; It is the only way forward
    case 30:
       SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
    }
+}
+
+Hotkey(KeyName,Label,Enable)
+{
+   If (KeyName = "")
+      Return
+   If (Enable = "On")
+      Hotkey, *%KeyName%, %Label%, UseErrorLevel On
+   else
+      Hotkey, *%KeyName%, %Label%, UseErrorLevel Off
 }
