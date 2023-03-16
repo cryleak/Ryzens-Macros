@@ -1099,7 +1099,8 @@ PistolBind:
 return
 
 RPGSpam:
-   Send {Blind}{%StickyBind%}{%RPGBind%}{tab}
+   Send {%StickyBind% down}{%RPGBind% down}{tab}
+   SendInput {%RPGBind% up}{%StickyBind% up}
 return
 
 ToggleCrosshair:
