@@ -1,5 +1,5 @@
 # Ryzens-Macros-Public-Edition
-Very fast PVP macros written in AHK. You can't have the source code because fuck you. These are the fastest macros possible (probably?)
+Very fast PVP macros written in AHK. These are the fastest macros possible (probably?)
 
 These macros may boost FPS on low end rigs, and it may reduce FPS because of some commands that increase macro speed but put more strain on your CPU.
 
