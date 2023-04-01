@@ -28,7 +28,6 @@ RunningInScript = 1 ; Required for dynamic script to work properly
 Herpes := "No more bitches :(" ; ginlang asked me to add a variable named herpes
 CFG = %A_MyDocuments%\Ryzen's Macros\GTA Binds.ini ; Config file name
 global originalTime
-global endTime
 CrosshairDone := 0 ; If crosshair has been applied
 ; gtaWindow := This apparently doesn't work so I will just manually specify it
 MCCEO2 := 0 ; If you are in MC
@@ -122,9 +121,9 @@ Back: ; It goes back to this checkpoint. It works.
    Gosub, SavingAndButtonsAndMiscMacros ; Buttons and some more settings and shit
    
    Gosub, Read ; Reads your config file
-   GuiControl,,CEOMode,1 ; Sets CEO Mode to 1 whenever you start the script
+   GuiControl,1:,CEOMode,1 ; Sets CEO Mode to 1 whenever you start the script
    If (DebugTesting)
-      GuiControl,,PassiveDisableSpam,0 ; Sets CEO Mode to 1 whenever you start the script
+      GuiControl,1:,PassiveDisableSpam,0 ; Sets CEO Mode to 1 whenever you start the script
    DetectHiddenWindows, On ; It does something
    Gui0 := WinExist(A_ScriptFullpath "ahk_pid" DllCall("GetCurrentProcessId")) ; Somehow linked to tray items
    DetectHiddenWindows, Off ; It does something
@@ -207,22 +206,22 @@ ThermalHelmet: ; Self explanatory
 return
 
 FastSniperSwitch: ; Self explanatory
+   GuiControlGet, FasterSniper
    SendInput {Blind}{%FastSniperSwitch% up}
    If (FasterSniper)
    {
-      SendInput {Blind}{%StickyBind% down}
-      Send {Blind}{%SniperBind% down}{tab}
+      Send {%StickyBind% down}{%SniperBind% down}{tab}
       SendInput {Blind}{%SniperBind% up}{%StickyBind% up}
    } else
    {
       Send {Blind}{%SniperBind%}
-      Sleep(15)
+      Sleep(17)
       Send {Blind}{lbutton down}
-      Sleep(10)
+      Sleep(12)
       Send {Blind}{lbutton up}{%SniperBind%}
-      Sleep(15)
+      Sleep(17)
       Send {Blind}{lbutton down}
-      Sleep(80)
+      Sleep(110)
       Send {Blind}{lbutton up}
    }
 return
@@ -231,6 +230,7 @@ EWO: ; Self explanatory
    GuiControlGet, SmoothEWO
    GuiControlGet, SmoothEWOMode
    GuiControlGet, EWOWrite
+   GuiControlGet, shootEWO
    If (SmoothEWOMode = "Fast Respawn") && (SmoothEWO)
    {
       SendInput {Blind}{lshift down}{w up}{a up}{s up}{d up}
@@ -268,23 +268,36 @@ EWO: ; Self explanatory
       SendInput {Blind}{lbutton up}
    } else
    {
-      GuiControlGet, shootEWO
       SetMouseDelay, -1
       if (shootEWO)
       {
-         Send {Blind}{lbutton down}{f24 up}
+         RestartTimer()
+         SendInput {Blind}{lbutton down}
+         Send {Blind}{f24 up}
+         shootTime := CalculateTime()
+         if (shootTime = 0)
+            shootTime := "15"
          SendInput {Blind}{lbutton up}{rbutton up}
       }
       
       if (SmoothEWO)
       {
-         If (SmoothEWOMode = "Staeni")
+         If (SmoothEWOMode = "Staeni" || SmoothEWOMode = "Retarded")
          {
+            sleepTime := 65
             SendInput {Blind}{lbutton up}{rbutton up}
-            Sleep(30)
-            If GetKeyState("rbutton", "P")
+            If not GetKeyState("rbutton", "P") {
+               If (shootEWO)
+               {
+                  sleepTime2 := sleepTime - 15
+                  Sleep(sleepTime2)
+               }
+               else
+                  Sleep(sleepTime)
+            }
+            else
             {
-               Sleep(70)
+               Sleep(110)
             }
          } else if (SmoothEWOMode = "Faster")
          {
@@ -298,13 +311,13 @@ EWO: ; Self explanatory
             SendInput {Blind}{wheelup}{up up}{enter up}
          } else if (SmoothEWOMode = "Faster")
          {
-            SendInput {Blind}{%EWOLookBehindKey% down}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{%InteractionMenuKey% down}{d up}{w up}{s up}{a up}
-            Sleep(13.5)
-            Send {Blind}{shift down}{f24 up}{shift up}{up}
-            Sleep(12)
-            Send {Blind}{up}
-            Sleep(9)
-            Send {Blind}{%EWOSpecialAbilitySlashActionKey% down}{enter up}
+            SendInput {Blind}{alt up}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{d up}{w up}{s up}{a up}{%EWOMelee% down}{%InteractionMenuKey% down}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
+            Sleep(47)
+            SendInput {Blind}{up down}
+            Sleep(35)
+            SendInput {Blind}{WheelUp}
+            Sleep(28)
+            SendInput {Blind}{enter up}{%InteractionMenuKey% up}{%EWOLookBehindKey% up}
          }
          else if (SmoothEWOMode = "Staeni")
          {
@@ -318,12 +331,12 @@ EWO: ; Self explanatory
             SendInput {Blind}{%EWOSpecialAbilitySlashActionKey% down}
             Send {Blind}{enter up}{%InteractionMenuKey% up}
             */
-            SendInput {Blind}{alt up}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{d up}{w up}{s up}{a up}{%InteractionMenuKey% down}{%EWOLookBehindKey%}s{%EWOSpecialAbilitySlashActionKey% down}
-            Sleep(29.75)
+            SendInput {Blind}{alt up}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{d up}{w up}{s up}{a up}{%InteractionMenuKey% down}{%EWOLookBehindKey%}{%EWOSpecialAbilitySlashActionKey% down}
+            Sleep(33.5)
             SendInput {Blind}{%EWOLookBehindKey% down}
-            Sleep(8)
+            Sleep(14)
             SendInput {Blind}{up down}
-            Sleep(31)
+            Sleep(37.5)
             SendInput {Blind}{WheelUp}
             Sleep(50)
             SendInput {Blind}{enter up}{%InteractionMenuKey% up}{%EWOLookBehindKey% up}
@@ -339,19 +352,19 @@ EWO: ; Self explanatory
          {
             StringUpper, EWOLookBehindKey, EWOLookBehindKey
             Random, Var, 1, 3
-            SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%InteractionMenuKey% down}{%EWOSpecialAbilitySlashActionKey% down}{%EWOMelee% down}
-            Sleep(30)
+            SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%InteractionMenuKey% down}{%EWOSpecialAbilitySlashActionKey% down}
+            Sleep(25)
             Send {Blind}{up}
-            Sleep(20)
+            Sleep(25)
             Send {Blind}{up}
             Sleep(40)
             Send {Blind}{%EWOLookBehindKey% down}
             if (var) ; why the fuck did i do this
-               Sleep(10)
+               Send {Blind}{f24 2}
             else if (var = 2)
-               Sleep(5)
+               Send {Blind}{f24}
             else
-               Sleep(15)
+               Send {Blind}{f24 3}
             Send {Blind}{enter up}
             StringLower, EWOLookBehindKey, EWOLookBehindKey
          } else if (SmoothEWOMode = "Retarded2")
@@ -361,7 +374,7 @@ EWO: ; Self explanatory
             SendInput {Blind}{enter down}
             Send {Blind}{up up}
             SendInput {Blind}{enter up}
-            GUIControl,, CEOMode, 0
+            GuiControl,1:, CEOMode, 0
             Sleep(110)
             
             SendInput {Blind}{%EWOLookBehindKey% down}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{%InteractionMenuKey% down}{d up}{w up}{s up}{a up}
@@ -735,7 +748,7 @@ Return
 Trippy:
    AltCode = 0135
    PrepareChatMacro()
-   SendInput {%AltCode%}
+   SendInput {space}
    Send {Blind}{enter up}
    end = 0
    i := 0
@@ -754,7 +767,7 @@ Trippy:
       Send {Blind}{enter up}
    }
    PrepareChatMacro()
-   SendInput {%AltCode%}
+   SendInput {space}
    Send {Blind}{enter up}
 Return
 
@@ -1034,7 +1047,7 @@ ToggleCEO:
       Send {Blind}{%InteractionMenuKey%}{down 6}
       SendInput {Blind}{enter up}
       Send {Blind}{enter}
-      GUIControl,, CEOMode, 1
+      GuiControl,1:, CEOMode, 1
    }
    else
    {
@@ -1042,7 +1055,7 @@ ToggleCEO:
       SendInput {Blind}{enter down}
       Send {Blind}{up up}
       SendInput {Blind}{enter up}
-      GUIControl,, CEOMode, 0
+      GuiControl,1:, CEOMode, 0
    }
    Sleep(125)
 return
@@ -1106,9 +1119,9 @@ return
 ToggleCrosshair:
    GuiControlGet, Crosshair
    If (Crosshair)
-      GuiControl,, Crosshair, 0
+      GuiControl,1:, Crosshair, 0
    else
-      GuiControl,, Crosshair, 1
+      GuiControl,1:, Crosshair, 1
    Goto, Crosshair6
 
 Jobs:
@@ -1135,11 +1148,11 @@ MCCEO:
       Send {Blind}{down}
    SendInput {Blind}{enter up}
    Send {Blind}{enter}
-   StartTimer()
+   RestartTimer()
    Loop
    {
-      CalculateTime()
-      If (EndTime > 1250)
+      timeElapsed := CalculateTime()
+      If (timeElapsed > 1250)
          break
       Send {Blind}{backspace down}
       SendInput {Blind}{enter down}
@@ -1148,7 +1161,7 @@ MCCEO:
       Send {Blind}{enter}
    }
    Sleep(25)
-   GuiControl,, CEOMode, 1
+   GuiControl,1:, CEOMode, 1
    If (!MCCEO2)
       MCCEO2 := 1
    else
@@ -1260,49 +1273,49 @@ Return
 NotExist1:
    IfNotExist, %CFG%
    {
-      GuiControl,,InteractionMenuKey,m
-      GuiControl,,FranklinBind,F6
-      GuiControl,,ThermalHelmet,
-      GuiControl,,FastSniperSwitch,
-      GuiControl,,SniperBind,9
-      GuiControl,,RifleBind,8
-      GuiControl,,EWO,
-      GuiControl,,EWOWrite,0
-      GuiControl,,EWOLookBehindKey,c
-      GuiControl,,EWOSpecialAbilitySlashActionKey,CapsLock
-      GuiControl,,EWOMelee,r
-      GuiControl,,BST,
-      GuiControl,,BSTSpeed,0
-      GuiControl,,Ammo,
-      GuiControl,,FastRespawn,
-      GuiControl,,Suspend,
-      GuiControl,,HelpWhatsThis,
-      GuiControl,,EssayAboutGTA,
-      GuiControl,,CustomTextSpam,
-      GuiControl,,ShutUp,
-      GuiControl,,CustomSpamText,Ryzen_7_5800X3D is hot
-      GuiControl,,ReloadOutfit,
-      GuiControl,,ShowUI,
-      GuiControl,,ToggleCEO,
-      GuiControl,,ToggleCrosshair,
-      GuiControl,,SleepTime,200
-      GuiControl,,BuyCycles,4
-      GuiControl,,Reverse,0
-      GuiControl,,SpecialBuy,0
-      GuiControl,,ProcessCheck2,0
-      GuiControl,,NightVision,0
-      GuiControl,,RPGSpam,
-      GuiControl,,RPGBind,4
-      GuiControl,,StickyBind,5
-      GuiControl,,PistolBind,6
-      GuiControl,,TabWeapon,0
-      GuiControl,,Crosshair,0
-      GuiControl,,Jobs,
-      GuiControl,,Paste,0
-      GuiControl,,MCCEO,
-      GuiControl,,SmoothEWO,0
-      GuiControl,,shootEWO,0
-      GuiControl,,FasterSniper,1
+      GuiControl,1:,InteractionMenuKey,m
+      GuiControl,1:,FranklinBind,F6
+      GuiControl,1:,ThermalHelmet,
+      GuiControl,1:,FastSniperSwitch,
+      GuiControl,1:,SniperBind,9
+      GuiControl,1:,RifleBind,8
+      GuiControl,1:,EWO,
+      GuiControl,1:,EWOWrite,0
+      GuiControl,1:,EWOLookBehindKey,c
+      GuiControl,1:,EWOSpecialAbilitySlashActionKey,CapsLock
+      GuiControl,1:,EWOMelee,r
+      GuiControl,1:,BST,
+      GuiControl,1:,BSTSpeed,0
+      GuiControl,1:,Ammo,
+      GuiControl,1:,FastRespawn,
+      GuiControl,1:,Suspend,
+      GuiControl,1:,HelpWhatsThis,
+      GuiControl,1:,EssayAboutGTA,
+      GuiControl,1:,CustomTextSpam,
+      GuiControl,1:,ShutUp,
+      GuiControl,1:,CustomSpamText,Ryzen_7_5800X3D is hot
+      GuiControl,1:,ReloadOutfit,
+      GuiControl,1:,ShowUI,
+      GuiControl,1:,ToggleCEO,
+      GuiControl,1:,ToggleCrosshair,
+      GuiControl,1:,SleepTime,200
+      GuiControl,1:,BuyCycles,4
+      GuiControl,1:,Reverse,0
+      GuiControl,1:,SpecialBuy,0
+      GuiControl,1:,ProcessCheck2,0
+      GuiControl,1:,NightVision,0
+      GuiControl,1:,RPGSpam,
+      GuiControl,1:,RPGBind,4
+      GuiControl,1:,StickyBind,5
+      GuiControl,1:,PistolBind,6
+      GuiControl,1:,TabWeapon,0
+      GuiControl,1:,Crosshair,0
+      GuiControl,1:,Jobs,
+      GuiControl,1:,Paste,0
+      GuiControl,1:,MCCEO,
+      GuiControl,1:,SmoothEWO,0
+      GuiControl,1:,shootEWO,0
+      GuiControl,1:,FasterSniper,1
       GuiControl,Choose,SmoothEWOMode,Fastest
    }
 Return
@@ -1592,10 +1605,6 @@ CloseGTAHaX:
    Process, Close, %Obese11%
 Return
 
-Nice1234:
-   Gui,3:Hide
-Return
-
 StandardTrayMenu:
    If (!isCompiled)
    {
@@ -1680,59 +1689,59 @@ Read:
       IniRead,Read_PassiveDisableSpamToggle,%CFG%,Misc,Passive Disable Spam Toggle
       IniRead,Read_AlwaysOnTop,%CFG%,Misc,Always On Top
       
-      GuiControl,,InteractionMenuKey,%Read_InteractionMenuKey%
-      GuiControl,,FranklinBind,%Read_FranklinBind%
-      GuiControl,,ThermalHelmet,%Read_ThermalHelmet%
-      GuiControl,,FastSniperSwitch,%Read_FastSniperSwitch%
-      GuiControl,,SniperBind,%Read_SniperBind%
-      GuiControl,,RifleBind,%Read_RifleBind%
-      GuiControl,,EWO,%Read_EWO%
-      GuiControl,,EWOWrite,%Read_EWOWrite%
-      GuiControl,,KekEWO,%Read_KekEWO%
-      GuiControl,,EWOLookBehindKey,%Read_EWOLookBehindKey%
-      GuiControl,,EWOSpecialAbilitySlashActionKey,%Read_EWOSpecialAbilitySlashActionKey%
-      GuiControl,,EWOMelee,%Read_EWOMelee%
-      GuiControl,,BST,%Read_BST%
-      GuiControl,,BSTSpeed,%Read_BSTSpeed%
-      GuiControl,,Ammo,%Read_Ammo%
-      GuiControl,,SpecialBuy,%Read_SpecialBuy%
-      GuiControl,,BuyAll,%Read_BuyAll%
-      GuiControl,,FastRespawn,%Read_FastRespawn%
-      GuiControl,,Suspend,%Read_Suspend%
-      GuiControl,,HelpWhatsThis,%Read_HelpWhatsThis%
-      GuiControl,,EssayAboutGTA,%Read_EssayAboutGTA%
-      GuiControl,,ProMassEffectCopypasta,%Read_ProMassEffectCopypasta%
-      GuiControl,,Trippy,%Read_Trippy%
-      GuiControl,,CustomTextSpam,%Read_CustomTextSpam%
-      GuiControl,,ShutUp,%Read_ShutUp%
-      GuiControl,,CustomSpamText,%Read_CustomSpamText%
-      GuiControl,,RawText,%Read_RawText%
-      GuiControl,,ReloadOutfit,%Read_ReloadOutfit%
-      GuiControl,,ShowUI,%Read_ShowUI%
-      GuiControl,,ToggleCEO,%Read_ToggleCEO%
-      GuiControl,,ToggleCrosshair,%Read_ToggleCrosshair%
-      GuiControl,,SleepTime,%Read_SleepTime%
-      GuiControl,,BuyCycles,%Read_BuyCycles%
-      GuiControl,,Reverse,%Read_Reverse%
-      GuiControl,,ProcessCheck2,%Read_ProcessCheck2%
-      GuiControl,,NightVision,%Read_NightVision%
-      GuiControl,,RPGSpam,%Read_RPGSpam%
-      GuiControl,,RPGBind,%Read_RPGBind%
-      GuiControl,,StickyBind,%Read_StickyBind%
-      GuiControl,,PistolBind,%Read_PistolBind%
-      GuiControl,,TabWeapon,%Read_TabWeapon%
-      GuiControl,,Crosshair,%Read_Crosshair%
-      GuiControl,,CrosshairPos,%Read_CrosshairPos%
-      GuiControl,,Jobs,%Read_Jobs%
-      GuiControl,,Paste,%Read_Paste%
-      GuiControl,,MCCEO,%Read_MCCEO%
-      GuiControl,,SmoothEWO,%Read_SmoothEWO%
-      GuiControl,,shootEWO,%Read_shootEWO%
+      GuiControl,1:,InteractionMenuKey,%Read_InteractionMenuKey%
+      GuiControl,1:,FranklinBind,%Read_FranklinBind%
+      GuiControl,1:,ThermalHelmet,%Read_ThermalHelmet%
+      GuiControl,1:,FastSniperSwitch,%Read_FastSniperSwitch%
+      GuiControl,1:,SniperBind,%Read_SniperBind%
+      GuiControl,1:,RifleBind,%Read_RifleBind%
+      GuiControl,1:,EWO,%Read_EWO%
+      GuiControl,1:,EWOWrite,%Read_EWOWrite%
+      GuiControl,1:,KekEWO,%Read_KekEWO%
+      GuiControl,1:,EWOLookBehindKey,%Read_EWOLookBehindKey%
+      GuiControl,1:,EWOSpecialAbilitySlashActionKey,%Read_EWOSpecialAbilitySlashActionKey%
+      GuiControl,1:,EWOMelee,%Read_EWOMelee%
+      GuiControl,1:,BST,%Read_BST%
+      GuiControl,1:,BSTSpeed,%Read_BSTSpeed%
+      GuiControl,1:,Ammo,%Read_Ammo%
+      GuiControl,1:,SpecialBuy,%Read_SpecialBuy%
+      GuiControl,1:,BuyAll,%Read_BuyAll%
+      GuiControl,1:,FastRespawn,%Read_FastRespawn%
+      GuiControl,1:,Suspend,%Read_Suspend%
+      GuiControl,1:,HelpWhatsThis,%Read_HelpWhatsThis%
+      GuiControl,1:,EssayAboutGTA,%Read_EssayAboutGTA%
+      GuiControl,1:,ProMassEffectCopypasta,%Read_ProMassEffectCopypasta%
+      GuiControl,1:,Trippy,%Read_Trippy%
+      GuiControl,1:,CustomTextSpam,%Read_CustomTextSpam%
+      GuiControl,1:,ShutUp,%Read_ShutUp%
+      GuiControl,1:,CustomSpamText,%Read_CustomSpamText%
+      GuiControl,1:,RawText,%Read_RawText%
+      GuiControl,1:,ReloadOutfit,%Read_ReloadOutfit%
+      GuiControl,1:,ShowUI,%Read_ShowUI%
+      GuiControl,1:,ToggleCEO,%Read_ToggleCEO%
+      GuiControl,1:,ToggleCrosshair,%Read_ToggleCrosshair%
+      GuiControl,1:,SleepTime,%Read_SleepTime%
+      GuiControl,1:,BuyCycles,%Read_BuyCycles%
+      GuiControl,1:,Reverse,%Read_Reverse%
+      GuiControl,1:,ProcessCheck2,%Read_ProcessCheck2%
+      GuiControl,1:,NightVision,%Read_NightVision%
+      GuiControl,1:,RPGSpam,%Read_RPGSpam%
+      GuiControl,1:,RPGBind,%Read_RPGBind%
+      GuiControl,1:,StickyBind,%Read_StickyBind%
+      GuiControl,1:,PistolBind,%Read_PistolBind%
+      GuiControl,1:,TabWeapon,%Read_TabWeapon%
+      GuiControl,1:,Crosshair,%Read_Crosshair%
+      GuiControl,1:,CrosshairPos,%Read_CrosshairPos%
+      GuiControl,1:,Jobs,%Read_Jobs%
+      GuiControl,1:,Paste,%Read_Paste%
+      GuiControl,1:,MCCEO,%Read_MCCEO%
+      GuiControl,1:,SmoothEWO,%Read_SmoothEWO%
+      GuiControl,1:,shootEWO,%Read_shootEWO%
       GuiControl,Choose,SmoothEWOMode,%Read_SmoothEWOMode%
       GuiControl,Choose,BugRespawnMode,%Read_BugRespawnMode%
-      GuiControl,,FasterSniper,%Read_FasterSniper%
-      GuiControl,,PassiveDisableSpamToggle,%Read_PassiveDisableSpamToggle%
-      GuiControl,,AlwaysOnTop,%Read_AlwaysOnTop%
+      GuiControl,1:,FasterSniper,%Read_FasterSniper%
+      GuiControl,1:,PassiveDisableSpamToggle,%Read_PassiveDisableSpamToggle%
+      GuiControl,1:,AlwaysOnTop,%Read_AlwaysOnTop%
    }
 Return
 
@@ -1783,12 +1792,12 @@ PassiveDisableSpamToggle:
    if (PassiveDisableSpam)
    {
       SetTimer, PassiveDisableSpam, Delete, -2147483648
-      GuiControl,, PassiveDisableSpam, 0
+      GuiControl,1:, PassiveDisableSpam, 0
       MsgBox, 0, %MacroVersion%, Passive Disable Spam disabled , 0.75
    } else
    {
       SetTimer, PassiveDisableSpam, 7500, -2147483648
-      GuiControl,, PassiveDisableSpam, 1
+      GuiControl,1:, PassiveDisableSpam, 1
       TrayTip, %MacroVersion%, Passive Disable Spam enabled, 10, 1
       MsgBox, 0, %MacroVersion%, Passive Disable Spam enabled , 0.75
    }
@@ -1926,216 +1935,240 @@ ToggleSing: ; Toggles the sing
    GuiControlGet, singEnabled
    if (singEnabled) ; If sing is on
    {
-      global singEnabledVariable = 1 ; Indicates that sing is enabled.
-      Goto, Sing
+      global selecting = 1
+      Gui,List:Add, ListView, r20 w700 gSing, Name|Size (KB)
+      Gui,List:Default
+      
+      Loop, %ConfigDirectory%\*.*
+      {
+         If (A_LoopFileExt	= "txt")
+            LV_Add("", A_LoopFileName, A_LoopFileSizeKB)
+      }
+      LV_ModifyCol()
+      LV_ModifyCol(2, "Integer")
+      
+      Gui,List:Show,, Select a text file to sing
+      return
+      
+      ListGuiClose:
+         global singEnabledVariable = 0
+         GuiControl,1:,singEnabled,0
+         Gui,List:Destroy
+      Return
    }
    else
    {
       global singEnabledVariable = 0 ; Indicates that sing is disabled if you disable it while it is running.
    }
-Return
-
-Sing: ; Sings in chat lmao
-   global paused = 0
-   global keepRunning = 1 ; Set to 1 at the start unless you use the Safeguard Hotkey.
-   global noWaitExistsTimeout := 3000 ; If there is no wait() in the lyrics file and no wait specified in the file, then it will Sleep this amount per message automatically.
-   global i := 1
-   noAutoWait = 0 ; Resets it when you restart. Probably not necessary but maybe.
-   waitExistsInLyrics = 0 ; Resets it when you restart
+   Return
    
-   songFileLocation = %ConfigDirectory%\Lyrics.txt ; Location of the file
-   WinActivate, ahk_exe GTA5.exe ; Activates the GTA window
-   
-   ; Loop, Read, %songFileLocation% ; The part where the magic happens!
-   Loop
-   {
-      if (keepRunning) && (singEnabledVariable) ; This will only be disabled if you press the safeguard key. Timers override basically any thread priority, so this is better than a hotkey. If you do not specify a value that in the if statement, it will be if it is 1.
+   Sing: ; Sings in chat lmao
+      if (A_GuiEvent = "DoubleClick")
       {
-         If (paused) ; This cheeky bit of code will simply cause the loop to get stuck until the pause variable is no longer True. Pretty bad coding practice probably, but in this case it is probably the only way without disabling Timers.
+         LV_GetText(RowText, A_EventInfo)
+         global songFileLocation := ConfigDirectory "\" RowText
+         global singEnabledVariable = 1 ; Indicates that sing is enabled.
+         Gui,List:Destroy
+      }
+      global paused = 0
+      global keepRunning = 1 ; Set to 1 at the start unless you use the Safeguard Hotkey.
+      global noWaitExistsTimeout := 3000 ; If there is no wait() in the lyrics file and no wait specified in the file, then it will Sleep this amount per message automatically.
+      global i := 1
+      noAutoWait = 0 ; Resets it when you restart. Probably not necessary but maybe.
+      waitExistsInLyrics = 0 ; Resets it when you restart
+      WinActivate, ahk_exe GTA5.exe ; Activates the GTA window
+      
+      ; Loop, Read, %songFileLocation% ; The part where the magic happens!
+      Loop
+      {
+         if (keepRunning) && (singEnabledVariable) ; This will only be disabled if you press the safeguard key. Timers override basically any thread priority, so this is better than a hotkey. If you do not specify a value that in the if statement, it will be if it is 1.
          {
-            While (paused)
-               {}
-               i--
-         }
-         i++
-         FileReadLine, currentLine, %songFileLocation%, i
-         if ErrorLevel ; If it fails to read then stop the loop
-            break
-         
-         If (currentLine = "") ; If the line is empty, skip it and go to the next loop.
-         {
-            Continue ; Goes back to the top of the loop and continues with the next line
-         }
-         else if InStr(currentLine,"//") ; If it begins with // (a comment) then skip it.
-         {
-            foundPos := InStr(currentLine,"//") ; The character "position" of //. Will only do something if it is in the front. I'm too dumb to make it parse the entire thing. Fuck regex.
-            if (foundPos) || (foundPos = 2) ; Incase you have a space before // for some reason, then the "position" will be 2.
+            If (paused) ; This cheeky bit of code will simply cause the loop to get stuck until the pause variable is no longer True. Pretty bad coding practice probably, but in this case it is probably the only way without disabling Timers.
+            {
+               While (paused)
+                  {}
+                  i--
+            }
+            i++
+            FileReadLine, currentLine, %songFileLocation%, i
+            if ErrorLevel ; If it fails to read then stop the loop
+               break
+            currentLine := StrReplace(currentLine,"fucking", "fkn")
+            currentLine := StrReplace(currentLine," shit"," shlt")
+            currentLine := StrReplace(currentLine,"fuck", "fk")
+            
+            If (currentLine = "") ; If the line is empty, skip it and go to the next loop.
+            {
                Continue ; Goes back to the top of the loop and continues with the next line
+            }
+            else if InStr(currentLine,"//") ; If it begins with // (a comment) then skip it.
+            {
+               foundPos := InStr(currentLine,"//") ; The character "position" of //. Will only do something if it is in the front. I'm too dumb to make it parse the entire thing. Fuck regex.
+               if (foundPos = 1) || (foundPos = 2) ; Incase you have a space before // for some reason, then the "position" will be 2.
+                  Continue ; Goes back to the top of the loop and continues with the next line
+            }
+            else if InStr(currentLine,"NoAutoWait()") ; If the line starts with "NoAutoWait" then it will NOT wait.
+            {
+               noAutoWait = 1
+            }
+            else if InStr(currentLine,"ExceptionWait(") ; If the line starts with "ExceptionWait(" then it will wait WITHOUT notifying the script of the fact that Wait() exists within the text file.
+            {
+               waitTime := StrSplit(currentLine,"(",")",2) ; Splits the array into wait( and the rest of the string. It will omit the ")" so only the number remains. This number is then used to sleep.
+               waitTime := waitTime[2] ; Makes waitTime equal to the second value in the array to make it slightly simpler.
+               Sleep %waitTime% ; It then waits the amount of time specified in the lyrics file.
+            }
+            else if InStr(currentLine,"Wait(") || InStr(currentLine,"wait(") ; If the line starts with "wait(" then it will wait and notify the script of the fact that Wait() exists within the text file.
+            {
+               waitExistsInLyrics = 1 ; Variable that lets me know that wait exists somewhere in the lyrics, and it will not count commented waits, thanks to this being below the other ifs in an else statement.
+               waitTime := StrSplit(currentLine,"(",")",2) ; Splits the array into wait( and the rest of the string. It will omit the ")" so only the number remains. This number is then used to sleep.
+               waitTime := waitTime[2] ; Makes waitTime equal to the second value in the array to make it slightly simpler.
+               Sleep %waitTime% ; It then waits the amount of time specified in the lyrics file.
+            }
+            else if InStr(currentLine,"SafeguardKey(") ; If the line starts with "SafeguardKey(" then it will use the key as the key to cancel singing.
+            {
+               global safeguardKey := StrSplit(currentLine,"(","y" ")",2) ; Uses delimiters again
+               global safeguardKey := safeguardKey[2] ; Makes it slightly simpler
+               SetTimer, UltraHighPriorityLoopBypassingThread,1,2147483647 ; Find out more at the bottom of the script
+            }
+            else if InStr(currentLine,"PauseKey(") ; If the line starts with "PauseKey(" then it will use the key as the key to pause singing.
+            {
+               global pauseKey := StrSplit(currentLine,"(","y" ")",2) ; Uses delimiters again
+               global pauseKey := pauseKey[2] ; Makes it slightly simpler
+               SetTimer, UltraHighPriorityLoopBypassingThread,1,2147483647 ; Find out more at the bottom of the script
+            }
+            else if InStr(currentLine,"StandardWaitTime(") ; Will change noWaitExistsTimeout variable to the new value. This will change how long it automatically waits between lines.
+            {
+               global noWaitExistsTimeout := StrSplit(currentLine,"(","e" ")",2) ; Uses delimiters again
+               global noWaitExistsTimeout := noWaitExistsTimeout[2] ; Makes it slightly simpler
+            }
+            else
+            {
+               Gosub, IJustCopyPastedThisChatFunction ; If it is (most likely) part of a valid lyrics that you will actually want to be sent, then send the messages.
+               If (!waitExistsInLyrics) && (!noAutoWait) ; Waits 2000ms (2 seconds) if there is no wait() specified anywhere in the file and if NoAutoWait is not enabled for the current line.
+                  Sleep %noWaitExistsTimeout%
+               noAutoWait = 0 ; Resets NoAutoWait after it has sent something, so it doesn't stop waiting forever.
+            }
          }
-         else if InStr(currentLine,"NoAutoWait()") ; If the line starts with "NoAutoWait" then it will NOT wait.
-         {
-            noAutoWait = 1
-         }
-         else if InStr(currentLine,"ExceptionWait(") ; If the line starts with "ExceptionWait(" then it will wait WITHOUT notifying the script of the fact that Wait() exists within the text file.
-         {
-            waitTime := StrSplit(currentLine,"(",")",2) ; Splits the array into wait( and the rest of the string. It will omit the ")" so only the number remains. This number is then used to sleep.
-            waitTime := waitTime[2] ; Makes waitTime equal to the second value in the array to make it slightly simpler.
-            Sleep %waitTime% ; It then waits the amount of time specified in the lyrics file.
-         }
-         else if InStr(currentLine,"Wait(") || InStr(currentLine,"wait(") ; If the line starts with "wait(" then it will wait and notify the script of the fact that Wait() exists within the text file.
-         {
-            waitExistsInLyrics = 1 ; Variable that lets me know that wait exists somewhere in the lyrics, and it will not count commented waits, thanks to this being below the other ifs in an else statement.
-            waitTime := StrSplit(currentLine,"(",")",2) ; Splits the array into wait( and the rest of the string. It will omit the ")" so only the number remains. This number is then used to sleep.
-            waitTime := waitTime[2] ; Makes waitTime equal to the second value in the array to make it slightly simpler.
-            Sleep %waitTime% ; It then waits the amount of time specified in the lyrics file.
-         }
-         else if InStr(currentLine,"SafeguardKey(") ; If the line starts with "SafeguardKey(" then it will use the key as the key to cancel singing.
-         {
-            global safeguardKey := StrSplit(currentLine,"(","y" ")",2) ; Uses delimiters again
-            global safeguardKey := safeguardKey[2] ; Makes it slightly simpler
-            SetTimer, UltraHighPriorityLoopBypassingThread,1,2147483647 ; Find out more at the bottom of the script
-         }
-         else if InStr(currentLine,"PauseKey(") ; If the line starts with "PauseKey(" then it will use the key as the key to pause singing.
-         {
-            global pauseKey := StrSplit(currentLine,"(","y" ")",2) ; Uses delimiters again
-            global pauseKey := pauseKey[2] ; Makes it slightly simpler
-            SetTimer, UltraHighPriorityLoopBypassingThread,1,2147483647 ; Find out more at the bottom of the script
-         }
-         else if InStr(currentLine,"StandardWaitTime(") ; Will change noWaitExistsTimeout variable to the new value. This will change how long it automatically waits between lines.
-         {
-            global noWaitExistsTimeout := StrSplit(currentLine,"(","e" ")",2) ; Uses delimiters again
-            global noWaitExistsTimeout := noWaitExistsTimeout[2] ; Makes it slightly simpler
-         }
-         else
-         {
-            Gosub, IJustCopyPastedThisChatFunction ; If it is (most likely) part of a valid lyrics that you will actually want to be sent, then send the messages.
-            If (!waitExistsInLyrics) && (!noAutoWait) ; Waits 2000ms (2 seconds) if there is no wait() specified anywhere in the file and if NoAutoWait is not enabled for the current line.
-               Sleep %noWaitExistsTimeout%
-            noAutoWait = 0 ; Resets NoAutoWait after it has sent something, so it doesn't stop waiting forever.
-         }
+         else ; If the Safeguard Key has been pressed, stop the loop.
+            break
       }
-      else ; If the Safeguard Key has been pressed, stop the loop.
-         break
-   }
-   VarSetCapacity(i,0)
-   GuiControl,,singEnabled,0 ; Once it is done, disable Sing.
-   global singEnabledVariable = 0
-   global paused = 0
-   global keepRunning = 1 ; Set to 1 at the start unless you use the Safeguard Hotkey.
-   SetTimer, UltraHighPriorityLoopBypassingThread,Off,2147483647 ; Disables the timer after it is done
-Return
-
-IJustCopyPastedThisChatFunction: ; Pasted from CustomTextSpam.
-   Length := StrLen(currentLine)
-   if (Length >= 31)
-   {
-      Loop, 140 {
-         ArrayYes%A_Index% =
-      }
-      PrepareChatMacro()
-      StringSplit, ArrayYes, currentLine
-      SendInput {Raw}%ArrayYes1%%ArrayYes2%%ArrayYes3%%ArrayYes4%%ArrayYes5%%ArrayYes6%%ArrayYes7%%ArrayYes8%%ArrayYes9%%ArrayYes10%%ArrayYes11%%ArrayYes12%%ArrayYes13%%ArrayYes14%%ArrayYes15%%ArrayYes16%%ArrayYes17%%ArrayYes18%%ArrayYes19%%ArrayYes20%%ArrayYes21%%ArrayYes22%%ArrayYes23%%ArrayYes24%%ArrayYes25%%ArrayYes26%%ArrayYes27%%ArrayYes28%%ArrayYes29%
-      Send {Blind}{f24 up}
-      SendInput {Raw}%ArrayYes30%%ArrayYes31%%ArrayYes32%%ArrayYes33%%ArrayYes34%%ArrayYes35%%ArrayYes36%%ArrayYes37%%ArrayYes38%%ArrayYes39%%ArrayYes40%%ArrayYes41%%ArrayYes42%%ArrayYes43%%ArrayYes44%%ArrayYes45%%ArrayYes46%%ArrayYes47%%ArrayYes48%%ArrayYes49%%ArrayYes50%%ArrayYes51%%ArrayYes52%%ArrayYes53%%ArrayYes54%%ArrayYes55%%ArrayYes56%%ArrayYes57%%ArrayYes58%%ArrayYes59%
-      Send {Blind}{f24 up}
-      SendInput {Raw}%ArrayYes60%%ArrayYes61%%ArrayYes62%%ArrayYes63%%ArrayYes64%%ArrayYes65%%ArrayYes66%%ArrayYes67%%ArrayYes68%%ArrayYes69%%ArrayYes70%%ArrayYes71%%ArrayYes72%%ArrayYes73%%ArrayYes74%%ArrayYes75%%ArrayYes76%%ArrayYes77%%ArrayYes78%%ArrayYes79%%ArrayYes80%%ArrayYes81%%ArrayYes82%%ArrayYes83%%ArrayYes84%%ArrayYes85%%ArrayYes86%%ArrayYes87%%ArrayYes88%%ArrayYes89%
-      Send {Blind}{f24 up}
-      SendInput {Raw}%ArrayYes90%%ArrayYes91%%ArrayYes92%%ArrayYes93%%ArrayYes94%%ArrayYes95%%ArrayYes96%%ArrayYes97%%ArrayYes98%%ArrayYes99%%ArrayYes100%%ArrayYes101%%ArrayYes102%%ArrayYes103%%ArrayYes104%%ArrayYes105%%ArrayYes106%%ArrayYes107%%ArrayYes108%%ArrayYes109%%ArrayYes110%%ArrayYes111%%ArrayYes112%%ArrayYes113%%ArrayYes114%%ArrayYes115%%ArrayYes116%%ArrayYes117%%ArrayYes118%%ArrayYes119%
-      Send {Blind}{f24 up}
-      SendInput {Raw}%ArrayYes120%%ArrayYes121%%ArrayYes122%%ArrayYes123%%ArrayYes124%%ArrayYes125%%ArrayYes126%%ArrayYes127%%ArrayYes128%%ArrayYes129%%ArrayYes130%%ArrayYes131%%ArrayYes132%%ArrayYes133%%ArrayYes134%%ArrayYes135%%ArrayYes136%%ArrayYes137%%ArrayYes138%%ArrayYes139%%ArrayYes140%
-      Send {Blind}{enter up}
-   }
-   else if (Length <= 30)
-   {
-      PrepareChatMacro()
-      SendInput {Raw}%currentLine%
-      Send {Blind}{enter up}
-   }
-return
-
-UltraHighPriorityLoopBypassingThread: ; SetTimers override basically any thread priority, so this is a better way.
-   
-   GuiControlGet, singEnabled ; If you disable singing while singing it wouldn't stop singing but now it will thanks to this.
-   if (singEnabled) ; If sing is on
-      global singEnabledVariable = 1 ; Indicates that sing is enabled.
-   else
-   {
-      global singEnabledVariable = 0 ; Indicates that sing is disabled if you disable it while it is running.
+      VarSetCapacity(i,0)
+      GuiControl,1:,singEnabled,0 ; Once it is done, disable Sing.
+      global singEnabledVariable = 0
+      global paused = 0
+      global keepRunning = 1 ; Set to 1 at the start unless you use the Safeguard Hotkey.
       SetTimer, UltraHighPriorityLoopBypassingThread,Off,2147483647 ; Disables the timer after it is done
-      MsgBox, 0, %MacroVersion%, Sing disabled mid-singing`, lyrics cancelled., 1
-   }
+   Return
    
-   if GetKeyState(pauseKey,"P") ; Pause function
-   {
-      SendInput {Blind}{%pauseKey% up}
-      If (!paused) ; Pauses it
+   IJustCopyPastedThisChatFunction: ; Pasted from CustomTextSpam.
+      Length := StrLen(currentLine)
+      if (Length >= 31)
       {
-         global paused = 1
-         MsgBox, 0, %MacroVersion%, Pause Key pressed`, lyrics paused. Press again to resume where you left off., 1
+         Loop, 140 {
+            ArrayYes%A_Index% =
+         }
+         PrepareChatMacro()
+         StringSplit, ArrayYes, currentLine
+         SendInput {Raw}%ArrayYes1%%ArrayYes2%%ArrayYes3%%ArrayYes4%%ArrayYes5%%ArrayYes6%%ArrayYes7%%ArrayYes8%%ArrayYes9%%ArrayYes10%%ArrayYes11%%ArrayYes12%%ArrayYes13%%ArrayYes14%%ArrayYes15%%ArrayYes16%%ArrayYes17%%ArrayYes18%%ArrayYes19%%ArrayYes20%%ArrayYes21%%ArrayYes22%%ArrayYes23%%ArrayYes24%%ArrayYes25%%ArrayYes26%%ArrayYes27%%ArrayYes28%%ArrayYes29%
+         Send {Blind}{f24 up}
+         SendInput {Raw}%ArrayYes30%%ArrayYes31%%ArrayYes32%%ArrayYes33%%ArrayYes34%%ArrayYes35%%ArrayYes36%%ArrayYes37%%ArrayYes38%%ArrayYes39%%ArrayYes40%%ArrayYes41%%ArrayYes42%%ArrayYes43%%ArrayYes44%%ArrayYes45%%ArrayYes46%%ArrayYes47%%ArrayYes48%%ArrayYes49%%ArrayYes50%%ArrayYes51%%ArrayYes52%%ArrayYes53%%ArrayYes54%%ArrayYes55%%ArrayYes56%%ArrayYes57%%ArrayYes58%%ArrayYes59%
+         Send {Blind}{f24 up}
+         SendInput {Raw}%ArrayYes60%%ArrayYes61%%ArrayYes62%%ArrayYes63%%ArrayYes64%%ArrayYes65%%ArrayYes66%%ArrayYes67%%ArrayYes68%%ArrayYes69%%ArrayYes70%%ArrayYes71%%ArrayYes72%%ArrayYes73%%ArrayYes74%%ArrayYes75%%ArrayYes76%%ArrayYes77%%ArrayYes78%%ArrayYes79%%ArrayYes80%%ArrayYes81%%ArrayYes82%%ArrayYes83%%ArrayYes84%%ArrayYes85%%ArrayYes86%%ArrayYes87%%ArrayYes88%%ArrayYes89%
+         Send {Blind}{f24 up}
+         SendInput {Raw}%ArrayYes90%%ArrayYes91%%ArrayYes92%%ArrayYes93%%ArrayYes94%%ArrayYes95%%ArrayYes96%%ArrayYes97%%ArrayYes98%%ArrayYes99%%ArrayYes100%%ArrayYes101%%ArrayYes102%%ArrayYes103%%ArrayYes104%%ArrayYes105%%ArrayYes106%%ArrayYes107%%ArrayYes108%%ArrayYes109%%ArrayYes110%%ArrayYes111%%ArrayYes112%%ArrayYes113%%ArrayYes114%%ArrayYes115%%ArrayYes116%%ArrayYes117%%ArrayYes118%%ArrayYes119%
+         Send {Blind}{f24 up}
+         SendInput {Raw}%ArrayYes120%%ArrayYes121%%ArrayYes122%%ArrayYes123%%ArrayYes124%%ArrayYes125%%ArrayYes126%%ArrayYes127%%ArrayYes128%%ArrayYes129%%ArrayYes130%%ArrayYes131%%ArrayYes132%%ArrayYes133%%ArrayYes134%%ArrayYes135%%ArrayYes136%%ArrayYes137%%ArrayYes138%%ArrayYes139%%ArrayYes140%
+         Send {Blind}{enter up}
       }
-      else if (paused) ; Unpauses it
+      else if (Length <= 30)
       {
-         global paused = 0
-         MsgBox, 0, %MacroVersion%, Pause Key pressed`, lyrics resumed. Press again to pause again., 1
+         PrepareChatMacro()
+         SendInput {Raw}%currentLine%
+         Send {Blind}{enter up}
       }
-   }
-   else if GetKeyState(safeguardKey,"P") ; Cancel function
+   return
+   
+   UltraHighPriorityLoopBypassingThread: ; SetTimers override basically any thread priority, so this is a better way.
+      
+      GuiControlGet, singEnabled ; If you disable singing while singing it wouldn't stop singing but now it will thanks to this.
+      if (singEnabled) ; If sing is on
+         global singEnabledVariable = 1 ; Indicates that sing is enabled.
+      else
+      {
+         global singEnabledVariable = 0 ; Indicates that sing is disabled if you disable it while it is running.
+         SetTimer, UltraHighPriorityLoopBypassingThread,Off,2147483647 ; Disables the timer after it is done
+         MsgBox, 0, %MacroVersion%, Sing disabled mid-singing`, lyrics cancelled., 1
+      }
+      
+      if GetKeyState(pauseKey,"P") ; Pause function
+      {
+         SendInput {Blind}{%pauseKey% up}
+         If (!paused) ; Pauses it
+         {
+            global paused = 1
+            MsgBox, 0, %MacroVersion%, Pause Key pressed`, lyrics paused. Press again to resume where you left off., 1
+         }
+         else if (paused) ; Unpauses it
+         {
+            global paused = 0
+            MsgBox, 0, %MacroVersion%, Pause Key pressed`, lyrics resumed. Press again to pause again., 1
+         }
+      }
+      else if GetKeyState(safeguardKey,"P") ; Cancel function
+      {
+         SendInput {Blind}{%safeguardKey% up}
+         GuiControl,1:,singEnabled,0 ; Once it is done, disable Sing.
+         global keepRunning = 0 ; Makes it stop running
+         SetTimer, UltraHighPriorityLoopBypassingThread,Off,2147483647 ; Disables the timer after it is done
+         MsgBox, 0, %MacroVersion%, Safeguard Key pressed`, lyrics cancelled., 1
+      }
+   Return
+   
+   Sleep(ms)
    {
-      SendInput {Blind}{%safeguardKey% up}
-      GuiControl,,singEnabled,0 ; Once it is done, disable Sing.
-      global keepRunning = 0 ; Makes it stop running
-      SetTimer, UltraHighPriorityLoopBypassingThread,Off,2147483647 ; Disables the timer after it is done
-      MsgBox, 0, %MacroVersion%, Safeguard Key pressed`, lyrics cancelled., 1
+      DllCall("Sleep",UInt,ms)
    }
-Return
-
-Sleep(ms)
-{
-   DllCall("Sleep",UInt,ms)
-}
-
-PrepareChatMacro()
-{
-   Send {Blind}{t down}
-   SendInput {Blind}{enter down}
-   Send {Blind}{t up}{f24 up}
-}
-
-StartTimer()
-{
-   global originalTime = A_TickCount
-}
-
-CalculateTime()
-{
-   global originalTime
-   global endTime = A_TickCount - originalTime
    
-}
-
-execute(CmdLine) ; Executes code dynamically, extrmely long. Not using #Include because it would be more of a hassle.
-{
-   global r1,r2,r3,r4,r5,r6,r7
+   PrepareChatMacro()
+   {
+      Send {Blind}{t down}
+      SendInput {Blind}{enter down}
+      Send {Blind}{t up}{f24 up}
+   }
    
-   StringGetPos, cPos, CmdLine, `,
-   StringGetPos, sPos, CmdLine, %A_SPACE%
+   RestartTimer()
+   {
+      global originalTime := A_TickCount
+   }
    
-   IfGreater, sPos, 0
-   IfLess, sPos, %cPos%
-   cPos = %sPos%
+   CalculateTime()
+   {
+      return A_TickCount - originalTime
+   }
    
-   StringLeft, Command, CmdLine, %cPos%
-   cPos ++
-   StringTrimLeft, CmdLine, CmdLine, %cPos%
-   CmdLine = %CmdLine%
-   
-   IfEqual, Command,
-   Command = %CmdLine%
-   
-   Loop, Parse, CmdLine, `,, %A_Space%%A_Tab%
-      P%A_Index% = %A_LOOPFIELD%
-   
-   if command not in
+   execute(CmdLine) ; Executes code dynamically, extrmely long. Not using #Include because it would be more of a hassle.
+   {
+      global r1,r2,r3,r4,r5,r6,r7
+      
+      StringGetPos, cPos, CmdLine, `,
+      StringGetPos, sPos, CmdLine, %A_SPACE%
+      
+      IfGreater, sPos, 0
+      IfLess, sPos, %cPos%
+      cPos = %sPos%
+      
+      StringLeft, Command, CmdLine, %cPos%
+      cPos ++
+      StringTrimLeft, CmdLine, CmdLine, %cPos%
+      CmdLine = %CmdLine%
+      
+      IfEqual, Command,
+      Command = %CmdLine%
+      
+      Loop, Parse, CmdLine, `,, %A_Space%%A_Tab%
+         P%A_Index% = %A_LOOPFIELD%
+      
+      if command not in
 (Join
 AutoTrim,BlockInput,ClipWait,Control,ControlClick,ControlFocus,
 ControlGet,ControlGetFocus,ControlGetPos,ControlGetText,
@@ -2173,881 +2206,881 @@ WinMinimize,WinMinimizeAll,WinMinimizeAllUndo,WinMove,WinRestore,
 WinSet,WinSetTitle,WinShow,WinWait,WinWaitActive,WinWaitClose,
 WinWaitNotActive
 )
-      return 0
-   goto,%command%
-   
-   AutoTrim:
-   autotrim,%p1%
-   return
-   
-   BlockInput:
-   blockinput,%p1%
-   return
-   
-   ClipWait:
-   clipwait,%p1%,%p2%
-   return
-   
-   Control:
-   control,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%
-   return
-   
-   ControlClick:
-   controlclick,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,%p8%
-   return
-   
-   ControlFocus:
-   controlfocus,%p1%,%p2%,%p3%,%p4%,%p5%
-   return
-   
-   ControlGet:
-   controlget,ov,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%
-   return ov
-   
-   ControlGetFocus:
-   controlgetfocus,ov,%p1%,%p2%,%p3%,%p4%
-   return ov
-   
-   ControlGetPos:
-   controlgetpos,r1,r2,r3,r4,%p1%,%p2%,%p3%,%p4%,%p5%
-   return
-   
-   ControlGetText:
-   controlgettext,ov,%p1%,%p2%,%p3%,%p4%,%p5%
-   return ov
-   
-   ControlMove:
-   controlmove,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,%p8%,%p9%
-   return
-   
-   ControlSend:
-   controlsend,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%
-   return
-   
-   ControlSendRaw:
-   controlsendraw,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%
-   return
-   
-   ControlSetText:
-   controlsettext,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%
-   return
-   
-   CoordMode:
-   coordmode,%p1%,%p2%
-   return
-   
-   DetectHiddenText:
-   detecthiddentext,%p1%
-   return
-   
-   DetectHiddenWindows:
-   detecthiddenwindows,%p1%
-   return
-   
-   Drive:
-   drive,%p1%,%p2%,%p3%
-   return
-   
-   DriveGet:
-   driveget,ov,%p1%,%p2%
-   return ov
-   
-   DriveSpaceFree:
-   drivespacefree,ov,%p1%
-   return ov
-   
-   Edit:
-   edit
-   return
-   
-   EnvAdd:
-   envadd,%p1%,%p2%,%p3%
-   return
-   
-   EnvDiv:
-   envdiv,%p1%,%p2%
-   return
-   
-   EnvMult:
-   envmult,%p1%,%p2%
-   return
-   
-   EnvSet:
-   envset,%p1%,%p2%
-   return
-   
-   EnvSub:
-   envsub,%p1%,%p2%,%p3%
-   return
-   
-   EnvUpdate:
-   envupdate
-   return
-   
-   ExitApp:
-   exitapp
-   return
-   
-   FileAppend:
-   fileappend,%p1%,%p2%
-   return
-   
-   FileCopy:
-   filecopy,%p1%,%p2%,%p3%
-   return
-   
-   FileCopyDir:
-   filecopydir,%p1%,%p2%,%p3%
-   return
-   
-   FileCreateDir:
-   filecreatedir,%p1%
-   return
-   
-   FileCreateShortcut:
-   filecreateshortcut,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,%p8%,%p9%
-   return
-   
-   FileDelete:
-   filedelete,%p1%
-   return
-   
-   FileGetAttrib:
-   filegetattrib,ov,%p1%
-   return ov
-   
-   FileGetShortcut:
-   filegetshortcut,%p1%,r1,r2,r3,r4,r5,r6,r7
-   return
-   
-   FileGetSize:
-   filegetsize,ov,%p1%,%p2%
-   return ov
-   
-   FileGetTime:
-   filegettime,ov,%p1%,%p2%
-   return ov
-   
-   FileGetVersion:
-   filegetversion,ov,%p1%
-   return ov
-   
-   FileMove:
-   filemove,%p1%,%p2%,%p3%
-   return
-   
-   FileMoveDir:
-   filemovedir,%p1%,%p2%,%p3%
-   return
-   
-   FileRead:
-   fileread,ov,%p1%
-   return ov
-   
-   FileReadLine:
-   filereadline,ov,%p1%,%p2%
-   return ov
-   
-   FileRecycle:
-   filerecycle,%p1%
-   return
-   
-   FileRecycleEmpty:
-   filerecycleempty,%p1%
-   return
-   
-   FileRemoveDir:
-   fileremovedir,%p1%,%p2%
-   return
-   
-   FileSelectFile:
-   fileselectfile,ov,%p1%,%p2%,%p3%,%p4%
-   return ov
-   
-   FileSelectFolder:
-   fileselectfolder,ov,%p1%,%p2%,%p3%
-   return ov
-   
-   FileSetAttrib:
-   filesetattrib,%p1%,%p2%,%p3%,%p4%
-   return
-   
-   FileSetTime:
-   filesettime,%p1%,%p2%,%p3%,%p4%,%p5%
-   return
-   
-   GetKeyState:
-   getkeystate,ov,%p1%,%p2%
-   return ov
-   
-   GroupActivate:
-   groupactivate,%p1%,%p2%
-   return
-   
-   GroupAdd:
-   groupadd,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%
-   return
-   
-   GroupClose:
-   groupclose,%p1%,%p2%
-   return
-   
-   GroupDeactivate:
-   groupdeactivate,%p1%,%p2%
-   return
-   
-   Gui:
-   gui,%p1%,%p2%,%p3%,%p4%
-   return
-   
-   GuiControl:
-   guicontrol,%p1%,%p2%,%p3%
-   return
-   
-   GuiControlGet:
-   guicontrolget,ov,%p1%,%p2%,%p3%
-   return ov
-   
-   Hotkey:
-   hotkey,%p1%,%p2%,%p3%
-   return
-   
-   IfEqual:
-      ifequal,%p1%,%p2%
-   return 1
-   else
-      return 0
-   
-   IfNotEqual:
-      ifnotequal,%p1%,%p2%
-   return 1
-   else
-      return 0
-   
-   IfExist:
-      ifexist,%p1%
-         return 1
-else
-   return 0
-   
-   IfNotExist:
-      ifnotexist,%p1%
-         return 1
-else
-   return 0
-   
-   IfGreater:
-      ifgreater,%p1%,%p2%
-   return 1
-   else
-      return 0
-   
-   IfGreaterOrEqual:
-      ifgreaterorequal,%p1%,%p2%
-   return 1
-   else
-      return 0
-   
-   IfInString:
-      ifinstring,%p1%,%p2%
-         return 1
-else
-   return 0
-   
-   IfNotInString:
-      ifnotinstring,%p1%,%p2%
-         return 1
-else
-   return 0
-   
-   IfLess:
-      ifless,%p1%,%p2%
-   return 1
-   else
-      return 0
-   
-   IfLessOrEqual:
-      iflessorequal,%p1%,%p2%
-   return 1
-   else
-      return 0
-   
-   IfMsgBox:
-      ifmsgbox,%p1%
-         return 1
-else
-   return 0
-   
-   IfWinActive:
-      ifwinactive,%p1%,%p2%,%p3%,%p4%
-         return 1
-else
-   return 0
-   
-   IfWinNotActive:
-      ifwinnotactive,%p1%,%p2%,%p3%,%p4%
-         return 1
-else
-   return 0
-   
-   IfWinExist:
-      ifwinexist,%p1%,%p2%,%p3%,%p4%
-         return 1
-else
-   return 0
-   
-   IfWinNotExist:
-      ifwinnotexist,%p1%,%p2%,%p3%,%p4%
-         return 1
+         return 0
+      goto,%command%
+      
+      AutoTrim:
+      autotrim,%p1%
+      return
+      
+      BlockInput:
+      blockinput,%p1%
+      return
+      
+      ClipWait:
+      clipwait,%p1%,%p2%
+      return
+      
+      Control:
+      control,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%
+      return
+      
+      ControlClick:
+      controlclick,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,%p8%
+      return
+      
+      ControlFocus:
+      controlfocus,%p1%,%p2%,%p3%,%p4%,%p5%
+      return
+      
+      ControlGet:
+      controlget,ov,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%
+      return ov
+      
+      ControlGetFocus:
+      controlgetfocus,ov,%p1%,%p2%,%p3%,%p4%
+      return ov
+      
+      ControlGetPos:
+      controlgetpos,r1,r2,r3,r4,%p1%,%p2%,%p3%,%p4%,%p5%
+      return
+      
+      ControlGetText:
+      controlgettext,ov,%p1%,%p2%,%p3%,%p4%,%p5%
+      return ov
+      
+      ControlMove:
+      controlmove,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,%p8%,%p9%
+      return
+      
+      ControlSend:
+      controlsend,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%
+      return
+      
+      ControlSendRaw:
+      controlsendraw,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%
+      return
+      
+      ControlSetText:
+      controlsettext,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%
+      return
+      
+      CoordMode:
+      coordmode,%p1%,%p2%
+      return
+      
+      DetectHiddenText:
+      detecthiddentext,%p1%
+      return
+      
+      DetectHiddenWindows:
+      detecthiddenwindows,%p1%
+      return
+      
+      Drive:
+      drive,%p1%,%p2%,%p3%
+      return
+      
+      DriveGet:
+      driveget,ov,%p1%,%p2%
+      return ov
+      
+      DriveSpaceFree:
+      drivespacefree,ov,%p1%
+      return ov
+      
+      Edit:
+      edit
+      return
+      
+      EnvAdd:
+      envadd,%p1%,%p2%,%p3%
+      return
+      
+      EnvDiv:
+      envdiv,%p1%,%p2%
+      return
+      
+      EnvMult:
+      envmult,%p1%,%p2%
+      return
+      
+      EnvSet:
+      envset,%p1%,%p2%
+      return
+      
+      EnvSub:
+      envsub,%p1%,%p2%,%p3%
+      return
+      
+      EnvUpdate:
+      envupdate
+      return
+      
+      ExitApp:
+      exitapp
+      return
+      
+      FileAppend:
+      fileappend,%p1%,%p2%
+      return
+      
+      FileCopy:
+      filecopy,%p1%,%p2%,%p3%
+      return
+      
+      FileCopyDir:
+      filecopydir,%p1%,%p2%,%p3%
+      return
+      
+      FileCreateDir:
+      filecreatedir,%p1%
+      return
+      
+      FileCreateShortcut:
+      filecreateshortcut,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,%p8%,%p9%
+      return
+      
+      FileDelete:
+      filedelete,%p1%
+      return
+      
+      FileGetAttrib:
+      filegetattrib,ov,%p1%
+      return ov
+      
+      FileGetShortcut:
+      filegetshortcut,%p1%,r1,r2,r3,r4,r5,r6,r7
+      return
+      
+      FileGetSize:
+      filegetsize,ov,%p1%,%p2%
+      return ov
+      
+      FileGetTime:
+      filegettime,ov,%p1%,%p2%
+      return ov
+      
+      FileGetVersion:
+      filegetversion,ov,%p1%
+      return ov
+      
+      FileMove:
+      filemove,%p1%,%p2%,%p3%
+      return
+      
+      FileMoveDir:
+      filemovedir,%p1%,%p2%,%p3%
+      return
+      
+      FileRead:
+      fileread,ov,%p1%
+      return ov
+      
+      FileReadLine:
+      filereadline,ov,%p1%,%p2%
+      return ov
+      
+      FileRecycle:
+      filerecycle,%p1%
+      return
+      
+      FileRecycleEmpty:
+      filerecycleempty,%p1%
+      return
+      
+      FileRemoveDir:
+      fileremovedir,%p1%,%p2%
+      return
+      
+      FileSelectFile:
+      fileselectfile,ov,%p1%,%p2%,%p3%,%p4%
+      return ov
+      
+      FileSelectFolder:
+      fileselectfolder,ov,%p1%,%p2%,%p3%
+      return ov
+      
+      FileSetAttrib:
+      filesetattrib,%p1%,%p2%,%p3%,%p4%
+      return
+      
+      FileSetTime:
+      filesettime,%p1%,%p2%,%p3%,%p4%,%p5%
+      return
+      
+      GetKeyState:
+      getkeystate,ov,%p1%,%p2%
+      return ov
+      
+      GroupActivate:
+      groupactivate,%p1%,%p2%
+      return
+      
+      GroupAdd:
+      groupadd,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%
+      return
+      
+      GroupClose:
+      groupclose,%p1%,%p2%
+      return
+      
+      GroupDeactivate:
+      groupdeactivate,%p1%,%p2%
+      return
+      
+      Gui:
+      gui,%p1%,%p2%,%p3%,%p4%
+      return
+      
+      GuiControl:
+      guicontrol,%p1%,%p2%,%p3%
+      return
+      
+      GuiControlGet:
+      guicontrolget,ov,%p1%,%p2%,%p3%
+      return ov
+      
+      Hotkey:
+      hotkey,%p1%,%p2%,%p3%
+      return
+      
+      IfEqual:
+         ifequal,%p1%,%p2%
+      return 1
+      else
+         return 0
+      
+      IfNotEqual:
+         ifnotequal,%p1%,%p2%
+      return 1
+      else
+         return 0
+      
+      IfExist:
+         ifexist,%p1%
+            return 1
 else
    return 0
       
-      ImageSearch:
-      imagesearch,r1,r2,%p1%,%p2%,%p3%,%p4%,%p5%
-   return
-   
-   IniDelete:
-   inidelete,%p1%,%p2%,%p3%
-   return
-   
-   IniRead:
-   iniread,ov,%p1%,%p2%,%p3%,%p4%
-   return ov
-   
-   IniWrite:
-   iniwrite,%p1%,%p2%,%p3%,%p4%
-   return
-   
-   Input:
-   input,ov,%p1%,%p2%,%p3%
-   return ov
-   
-   InputBox:
-   inputbox,ov,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,,%p8%,%p9%
-   return ov
-   
-   KeyHistory:
-   keyhistory
-   return
-   
-   KeyWait:
-   keywait,%p1%,%p2%
-   return
-   
-   ListHotkeys:
-   listhotkeys
-   return
-   
-   ListLines:
-   listlines
-   return
-   
-   ListVars:
-   listvars
-   return
-   
-   Menu:
-   menu,%p1%,%p2%,%p3%,%p4%,%p5%
-   return
-   
-   MouseClick:
-   mouseclick,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%
-   return
-   
-   MouseClickDrag:
-   mouseclickdrag,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%
-   return
-   
-   MouseGetPos:
-   mousegetpos,r1,r2,r3,r4,%p1%
-   return
-   
-   MouseMove:
-   mousemove,%p1%,%p2%,%p3%,%p4%
-   return
-   
-   MsgBox:
-   if (p2 || p3)
-   {
-      if p4
-         msgbox,%p1%,%p2%,%p3%,%p4%
+      IfNotExist:
+         ifnotexist,%p1%
+            return 1
+else
+   return 0
+      
+      IfGreater:
+         ifgreater,%p1%,%p2%
+      return 1
       else
-         msgbox,%p1%,%p2%,%p3%
-   }
-   else
-      msgbox,%p1%
-   return
-   
-   OnExit:
-   onexit,%p1%
-   return
-   
-   OutputDebug:
-   outputdebug,%p1%
-   return
-   
-   Pause:
-   pause,%p1%
-   return
-   
-   PixelGetColor:
-   pixelgetcolor,ov,%p1%,%p2%,%p3%
-   return ov
-   
-   PixelSearch:
-   pixelsearch,r1,r2,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%
-   return
-   
-   PostMessage:
-   postmessage,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,%p8%
-   return
-   
-   Process:
-   process,%p1%,%p2%,%p3%
-   return
-   
-   Progress:
-   progress,%p1%,%p2%,%p3%,%p4%,%p5%
-   return
-   
-   Random:
-   random,ov,%p1%,%p2%
-   return ov
-   
-   RegDelete:
-   regdelete,%p1%,%p2%,%p3%
-   return
-   
-   RegRead:
-   regread,ov,%p1%,%p2%,%p3%
-   return ov
-   
-   RegWrite:
-   regwrite,%p1%,%p2%,%p3%,%p4%,%p5%
-   return
-   
-   Run:
-   run,%p1%,%p2%,%p3%,ov
-   return ov
-   
-   RunAs:
-   runas,%p1%,%p2%,%p3%
-   return
-   
-   RunWait:
-   runwait,%p1%,%p2%,%p3%,ov
-   return ov
-   
-   Send:
-   send,%p1%
-   return
-   
-   SendRaw:
-   sendraw,%p1%
-   return
-   
-   SendMessage:
-   sendmessage,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,%p8%
-   return errorlevel
-   
-   SetBatchLines:
-   setbatchlines,%p1%
-   return
-   
-   SetCapslockState:
-   setcapslockstate,%p1%
-   return
-   
-   SetControlDelay:
-   setcontroldelay,%p1%
-   return
-   
-   SetDefaultMouseSpeed:
-   setdefaultmousespeed,%p1%
-   return
-   
-   SetFormat:
-   setformat,%p1%,%p2%
-   return
-   
-   SetKeyDelay:
-   setkeydelay,%p1%,%p2%
-   return
-   
-   SetMouseDelay:
-   setmousedelay,%p1%
-   return
-   
-   SetNumlockState:
-   setnumlockstate,%p1%
-   return
-   
-   SetScrollLockState:
-   setscrolllockstate,%p1%
-   return
-   
-   SetStoreCapslockMode:
-   setstorecapslockmode,%p1%
-   return
-   
-   SetTimer:
-   settimer,%p1%,%p2%,%p3%
-   return
-   
-   SetTitleMatchMode:
-   settitlematchmode,%p1%,%p2%
-   return
-   
-   SetWinDelay:
-   setwindelay,%p1%
-   return
-   
-   SetWorkingDir:
-   setworkingdir,%p1%
-   return
-   
-   Shutdown:
-   shutdown,%p1%
-   return
-   
-   Sleep:
-   sleep,%p1%
-   return
-   
-   Sort:
-   sort,%p1%,%p2%
-   return
-   
-   SoundBeep:
-   soundbeep,%p1%,%p2%
-   return
-   
-   SoundGet:
-   soundget,ov,%p1%,%p2%,%p3%
-   return ov
-   
-   SoundGetWaveVolume:
-   soundgetwavevolume,ov,%p1%
-   return ov
-   
-   SoundPlay:
-   soundplay,%p1%,%p2%
-   return
-   
-   SoundSet:
-   soundset,%p1%,%p2%,%p3%,%p4%
-   return
-   
-   SoundSetWaveVolume:
-   soundsetwavevolume,%p1%,%p2%
-   return
-   
-   SplashImage:
-   splashimage,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%
-   return
-   
-   SplashTextOn:
-   splashtexton,%p1%,%p2%,%p3%,%p4%
-   return
-   
-   SplashTextOff:
-   splashtextoff
-   return
-   
-   SplitPath:
-   splitpath,%p1%,r1,r2,r3,r4,r5
-   return
-   
-   StatusBarGetText:
-   statusbargettext,ov,%p1%,%p2%,%p3%,%p4%,%p5%
-   return ov
-   
-   StatusBarWait:
-   statusbarwait,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,%p8%
-   return
-   
-   StringCaseSense:
-   stringcasesense,%p1%
-   return
-   
-   StringGetPos:
-   stringgetpos,ov,%p1%,%p2%,%p3%,%p4%
-   return ov
-   
-   StringLeft:
-   stringleft,ov,%p1%,%p2%
-   return ov
-   
-   StringLen:
-   stringlen,ov,%p1%
-   return ov
-   
-   StringLower:
-   stringlower,ov,%p1%,%p2%
-   return
-   
-   StringMid:
-   stringmid,ov,%p1%,%p2%,%p3%,%p4%
-   return ov
-   
-   StringReplace:
-   stringreplace,ov,%p1%,%p2%,%p3%,%p4%
-   return ov
-   
-   StringRight:
-   stringright,ov,%p1%,%p2%
-   return ov
-   
-   StringSplit:
-   stringsplit,%p1%,%p2%,%p3%,%p4%
-   return
-   
-   StringTrimLeft:
-   stringtrimleft,ov,%p1%,%p2%
-   return ov
-   
-   StringTrimRight:
-   stringtrimright,ov,%p1%,%p2%
-   return ov
-   
-   StringUpper:
-   stringupper,ov,%p1%,%p2%
-   return ov
-   
-   SysGet:
-   sysget,ov,%p1%,%p2%
-   return ov
-   
-   Thread:
-   thread,%p1%,%p2%,%p3%
-   return
-   
-   ToolTip:
-   tooltip,%p1%,%p2%,%p3%,%p4%
-   return
-   
-   Transform:
-   transform,ov,%p1%,%p2%,%p3%
-   return ov
-   
-   TrayTip:
-   traytip,%p1%,%p2%,%p3%,%p4%
-   return
-   
-   URLDownloadToFile:
-   urldownloadtofile,%p1%,%p2%
-   return
-   
-   WinActivate:
-   winactivate,%p1%,%p2%,%p3%,%p4%
-   return
-   
-   WinActivateBottom:
-   winactivatebottom,%p1%,%p2%,%p3%,%p4%
-   return
-   
-   WinClose:
-   winclose,%p1%,%p2%,%p3%,%p4%,%p5%
-   return
-   
-   WinGetActiveStats:
-   wingetactivestats,r1,r2,r3,r4,r5
-   return
-   
-   WinGetActiveTitle:
-   wingetactivetitle,ov
-   return ov
-   
-   WinGetClass:
-   wingetclass,ov,%p1%,%p2%,%p3%,%p4%
-   return ov
-   
-   WinGet:
-   winget,ov,%p1%,%p2%,%p3%,%p4%,%p5%
-   return ov
-   
-   WinGetPos:
-   wingetpos,r1,r2,r3,r4,%p1%,%p2%,%p3%,%p4%
-   return
-   
-   WinGetText:
-   wingettext,ov,%p1%,%p2%,%p3%,%p4%
-   return ov
-   
-   WinGetTitle:
-   wingettitle,ov,%p1%,%p2%,%p3%,%p4%
-   return ov
-   
-   WinHide:
-   winhide,%p1%,%p2%,%p3%,%p4%
-   return
-   
-   WinKill:
-   winkill,%p1%,%p2%,%p3%,%p4%,%p5%
-   return
-   
-   WinMaximize:
-   winmaximize,%p1%,%p2%,%p3%,%p4%
-   return
-   
-   WinMenuSelectItem:
-   winmenuselectitem,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,%p8%,%p9%,%p10%,%p11%
-   return
-   
-   WinMinimize:
-   winminimize,%p1%,%p2%,%p3%,%p4%
-   return
-   
-   WinMinimizeAll:
-   winminimizeall
-   return
-   
-   WinMinimizeAllUndo:
-   winminimizeallundo
-   return
-   
-   WinMove:
-   if p1 is integer
-   {
-      if p2 is integer
-         winmove,%p1%,%p2%
+         return 0
+      
+      IfGreaterOrEqual:
+         ifgreaterorequal,%p1%,%p2%
+      return 1
+      else
+         return 0
+      
+      IfInString:
+         ifinstring,%p1%,%p2%
+            return 1
+else
+   return 0
+      
+      IfNotInString:
+         ifnotinstring,%p1%,%p2%
+            return 1
+else
+   return 0
+      
+      IfLess:
+         ifless,%p1%,%p2%
+      return 1
+      else
+         return 0
+      
+      IfLessOrEqual:
+         iflessorequal,%p1%,%p2%
+      return 1
+      else
+         return 0
+      
+      IfMsgBox:
+         ifmsgbox,%p1%
+            return 1
+else
+   return 0
+      
+      IfWinActive:
+         ifwinactive,%p1%,%p2%,%p3%,%p4%
+            return 1
+else
+   return 0
+      
+      IfWinNotActive:
+         ifwinnotactive,%p1%,%p2%,%p3%,%p4%
+            return 1
+else
+   return 0
+      
+      IfWinExist:
+         ifwinexist,%p1%,%p2%,%p3%,%p4%
+            return 1
+else
+   return 0
+      
+      IfWinNotExist:
+         ifwinnotexist,%p1%,%p2%,%p3%,%p4%
+            return 1
+else
+   return 0
+         
+         ImageSearch:
+         imagesearch,r1,r2,%p1%,%p2%,%p3%,%p4%,%p5%
+      return
+      
+      IniDelete:
+      inidelete,%p1%,%p2%,%p3%
+      return
+      
+      IniRead:
+      iniread,ov,%p1%,%p2%,%p3%,%p4%
+      return ov
+      
+      IniWrite:
+      iniwrite,%p1%,%p2%,%p3%,%p4%
+      return
+      
+      Input:
+      input,ov,%p1%,%p2%,%p3%
+      return ov
+      
+      InputBox:
+      inputbox,ov,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,,%p8%,%p9%
+      return ov
+      
+      KeyHistory:
+      keyhistory
+      return
+      
+      KeyWait:
+      keywait,%p1%,%p2%
+      return
+      
+      ListHotkeys:
+      listhotkeys
+      return
+      
+      ListLines:
+      listlines
+      return
+      
+      ListVars:
+      listvars
+      return
+      
+      Menu:
+      menu,%p1%,%p2%,%p3%,%p4%,%p5%
+      return
+      
+      MouseClick:
+      mouseclick,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%
+      return
+      
+      MouseClickDrag:
+      mouseclickdrag,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%
+      return
+      
+      MouseGetPos:
+      mousegetpos,r1,r2,r3,r4,%p1%
+      return
+      
+      MouseMove:
+      mousemove,%p1%,%p2%,%p3%,%p4%
+      return
+      
+      MsgBox:
+      if (p2 || p3)
+      {
+         if p4
+            msgbox,%p1%,%p2%,%p3%,%p4%
+         else
+            msgbox,%p1%,%p2%,%p3%
+      }
+      else
+         msgbox,%p1%
+      return
+      
+      OnExit:
+      onexit,%p1%
+      return
+      
+      OutputDebug:
+      outputdebug,%p1%
+      return
+      
+      Pause:
+      pause,%p1%
+      return
+      
+      PixelGetColor:
+      pixelgetcolor,ov,%p1%,%p2%,%p3%
+      return ov
+      
+      PixelSearch:
+      pixelsearch,r1,r2,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%
+      return
+      
+      PostMessage:
+      postmessage,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,%p8%
+      return
+      
+      Process:
+      process,%p1%,%p2%,%p3%
+      return
+      
+      Progress:
+      progress,%p1%,%p2%,%p3%,%p4%,%p5%
+      return
+      
+      Random:
+      random,ov,%p1%,%p2%
+      return ov
+      
+      RegDelete:
+      regdelete,%p1%,%p2%,%p3%
+      return
+      
+      RegRead:
+      regread,ov,%p1%,%p2%,%p3%
+      return ov
+      
+      RegWrite:
+      regwrite,%p1%,%p2%,%p3%,%p4%,%p5%
+      return
+      
+      Run:
+      run,%p1%,%p2%,%p3%,ov
+      return ov
+      
+      RunAs:
+      runas,%p1%,%p2%,%p3%
+      return
+      
+      RunWait:
+      runwait,%p1%,%p2%,%p3%,ov
+      return ov
+      
+      Send:
+      send,%p1%
+      return
+      
+      SendRaw:
+      sendraw,%p1%
+      return
+      
+      SendMessage:
+      sendmessage,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,%p8%
+      return errorlevel
+      
+      SetBatchLines:
+      setbatchlines,%p1%
+      return
+      
+      SetCapslockState:
+      setcapslockstate,%p1%
+      return
+      
+      SetControlDelay:
+      setcontroldelay,%p1%
+      return
+      
+      SetDefaultMouseSpeed:
+      setdefaultmousespeed,%p1%
+      return
+      
+      SetFormat:
+      setformat,%p1%,%p2%
+      return
+      
+      SetKeyDelay:
+      setkeydelay,%p1%,%p2%
+      return
+      
+      SetMouseDelay:
+      setmousedelay,%p1%
+      return
+      
+      SetNumlockState:
+      setnumlockstate,%p1%
+      return
+      
+      SetScrollLockState:
+      setscrolllockstate,%p1%
+      return
+      
+      SetStoreCapslockMode:
+      setstorecapslockmode,%p1%
+      return
+      
+      SetTimer:
+      settimer,%p1%,%p2%,%p3%
+      return
+      
+      SetTitleMatchMode:
+      settitlematchmode,%p1%,%p2%
+      return
+      
+      SetWinDelay:
+      setwindelay,%p1%
+      return
+      
+      SetWorkingDir:
+      setworkingdir,%p1%
+      return
+      
+      Shutdown:
+      shutdown,%p1%
+      return
+      
+      Sleep:
+      sleep,%p1%
+      return
+      
+      Sort:
+      sort,%p1%,%p2%
+      return
+      
+      SoundBeep:
+      soundbeep,%p1%,%p2%
+      return
+      
+      SoundGet:
+      soundget,ov,%p1%,%p2%,%p3%
+      return ov
+      
+      SoundGetWaveVolume:
+      soundgetwavevolume,ov,%p1%
+      return ov
+      
+      SoundPlay:
+      soundplay,%p1%,%p2%
+      return
+      
+      SoundSet:
+      soundset,%p1%,%p2%,%p3%,%p4%
+      return
+      
+      SoundSetWaveVolume:
+      soundsetwavevolume,%p1%,%p2%
+      return
+      
+      SplashImage:
+      splashimage,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%
+      return
+      
+      SplashTextOn:
+      splashtexton,%p1%,%p2%,%p3%,%p4%
+      return
+      
+      SplashTextOff:
+      splashtextoff
+      return
+      
+      SplitPath:
+      splitpath,%p1%,r1,r2,r3,r4,r5
+      return
+      
+      StatusBarGetText:
+      statusbargettext,ov,%p1%,%p2%,%p3%,%p4%,%p5%
+      return ov
+      
+      StatusBarWait:
+      statusbarwait,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,%p8%
+      return
+      
+      StringCaseSense:
+      stringcasesense,%p1%
+      return
+      
+      StringGetPos:
+      stringgetpos,ov,%p1%,%p2%,%p3%,%p4%
+      return ov
+      
+      StringLeft:
+      stringleft,ov,%p1%,%p2%
+      return ov
+      
+      StringLen:
+      stringlen,ov,%p1%
+      return ov
+      
+      StringLower:
+      stringlower,ov,%p1%,%p2%
+      return
+      
+      StringMid:
+      stringmid,ov,%p1%,%p2%,%p3%,%p4%
+      return ov
+      
+      StringReplace:
+      stringreplace,ov,%p1%,%p2%,%p3%,%p4%
+      return ov
+      
+      StringRight:
+      stringright,ov,%p1%,%p2%
+      return ov
+      
+      StringSplit:
+      stringsplit,%p1%,%p2%,%p3%,%p4%
+      return
+      
+      StringTrimLeft:
+      stringtrimleft,ov,%p1%,%p2%
+      return ov
+      
+      StringTrimRight:
+      stringtrimright,ov,%p1%,%p2%
+      return ov
+      
+      StringUpper:
+      stringupper,ov,%p1%,%p2%
+      return ov
+      
+      SysGet:
+      sysget,ov,%p1%,%p2%
+      return ov
+      
+      Thread:
+      thread,%p1%,%p2%,%p3%
+      return
+      
+      ToolTip:
+      tooltip,%p1%,%p2%,%p3%,%p4%
+      return
+      
+      Transform:
+      transform,ov,%p1%,%p2%,%p3%
+      return ov
+      
+      TrayTip:
+      traytip,%p1%,%p2%,%p3%,%p4%
+      return
+      
+      URLDownloadToFile:
+      urldownloadtofile,%p1%,%p2%
+      return
+      
+      WinActivate:
+      winactivate,%p1%,%p2%,%p3%,%p4%
+      return
+      
+      WinActivateBottom:
+      winactivatebottom,%p1%,%p2%,%p3%,%p4%
+      return
+      
+      WinClose:
+      winclose,%p1%,%p2%,%p3%,%p4%,%p5%
+      return
+      
+      WinGetActiveStats:
+      wingetactivestats,r1,r2,r3,r4,r5
+      return
+      
+      WinGetActiveTitle:
+      wingetactivetitle,ov
+      return ov
+      
+      WinGetClass:
+      wingetclass,ov,%p1%,%p2%,%p3%,%p4%
+      return ov
+      
+      WinGet:
+      winget,ov,%p1%,%p2%,%p3%,%p4%,%p5%
+      return ov
+      
+      WinGetPos:
+      wingetpos,r1,r2,r3,r4,%p1%,%p2%,%p3%,%p4%
+      return
+      
+      WinGetText:
+      wingettext,ov,%p1%,%p2%,%p3%,%p4%
+      return ov
+      
+      WinGetTitle:
+      wingettitle,ov,%p1%,%p2%,%p3%,%p4%
+      return ov
+      
+      WinHide:
+      winhide,%p1%,%p2%,%p3%,%p4%
+      return
+      
+      WinKill:
+      winkill,%p1%,%p2%,%p3%,%p4%,%p5%
+      return
+      
+      WinMaximize:
+      winmaximize,%p1%,%p2%,%p3%,%p4%
+      return
+      
+      WinMenuSelectItem:
+      winmenuselectitem,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,%p8%,%p9%,%p10%,%p11%
+      return
+      
+      WinMinimize:
+      winminimize,%p1%,%p2%,%p3%,%p4%
+      return
+      
+      WinMinimizeAll:
+      winminimizeall
+      return
+      
+      WinMinimizeAllUndo:
+      winminimizeallundo
+      return
+      
+      WinMove:
+      if p1 is integer
+      {
+         if p2 is integer
+            winmove,%p1%,%p2%
+         else
+            winmove,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,%p8%
+      }
       else
          winmove,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,%p8%
+      return
+      
+      WinRestore:
+      winrestore,%p1%,%p2%,%p3%,%p4%
+      return
+      
+      WinSet:
+      winset,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%
+      return
+      
+      WinSetTitle:
+      winsettitle,%p1%,%p2%,%p3%,%p4%,%p5%
+      return
+      
+      WinShow:
+      winshow,%p1%,%p2%,%p3%,%p4%
+      return
+      
+      WinWait:
+      winwait,%p1%,%p2%,%p3%,%p4%,%p5%
+      return
+      
+      WinWaitActive:
+      winwaitactive,%p1%,%p2%,%p3%,%p4%,%p5%
+      return
+      
+      WinWaitClose:
+      winwaitclose,%p1%,%p2%,%p3%,%p4%,%p5%
+      return
+      
+      WinWaitNotActive:
+      winwaitnotactive,%p1%,%p2%,%p3%,%p4%,%p5%
+      return
+      
+      suspend,permit
+      
    }
-   else
-      winmove,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,%p8%
-   return
    
-   WinRestore:
-   winrestore,%p1%,%p2%,%p3%,%p4%
-   return
-   
-   WinSet:
-   winset,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%
-   return
-   
-   WinSetTitle:
-   winsettitle,%p1%,%p2%,%p3%,%p4%,%p5%
-   return
-   
-   WinShow:
-   winshow,%p1%,%p2%,%p3%,%p4%
-   return
-   
-   WinWait:
-   winwait,%p1%,%p2%,%p3%,%p4%,%p5%
-   return
-   
-   WinWaitActive:
-   winwaitactive,%p1%,%p2%,%p3%,%p4%,%p5%
-   return
-   
-   WinWaitClose:
-   winwaitclose,%p1%,%p2%,%p3%,%p4%,%p5%
-   return
-   
-   WinWaitNotActive:
-   winwaitnotactive,%p1%,%p2%,%p3%,%p4%,%p5%
-   return
-   
-   suspend,permit
-   
-}
-
-SetPriority(processName,priority)
-{
-   
-   if !DllCall("Wtsapi32\WTSEnumerateProcesses", Ptr, 0, UInt, 0, UInt, 1, PtrP, pProcessInfo, PtrP, count)
-      throw Exception("WTSEnumerateProcesses failed. A_LastError: " . A_LastError)
-   
-   addr := pProcessInfo, PIDs := []
-   Loop % count
+   SetPriority(processName,priority)
    {
-      if StrGet(NumGet(addr + 8)) = procName
-         PID := NumGet(addr + 4, "UInt"), PIDs.Push(PID)
-      addr += A_PtrSize = 4 ? 16 : 24
+      
+      if !DllCall("Wtsapi32\WTSEnumerateProcesses", Ptr, 0, UInt, 0, UInt, 1, PtrP, pProcessInfo, PtrP, count)
+         throw Exception("WTSEnumerateProcesses failed. A_LastError: " . A_LastError)
+      
+      addr := pProcessInfo, PIDs := []
+      Loop % count
+      {
+         if StrGet(NumGet(addr + 8)) = procName
+            PID := NumGet(addr + 4, "UInt"), PIDs.Push(PID)
+         addr += A_PtrSize = 4 ? 16 : 24
+      }
+      DllCall("Wtsapi32\WTSFreeMemory", Ptr, pProcessInfo)
+      
+      for k, PID in PIDs
+         Process, Priority, % PID, %priority%
+      
    }
-   DllCall("Wtsapi32\WTSFreeMemory", Ptr, pProcessInfo)
    
-   for k, PID in PIDs
-      Process, Priority, % PID, %priority%
-   
-}
-
-CancerFunction(char,count) ; It is the only way forward
-{
-   SendInput {ASC 241}
-   switch count
+   CancerFunction(char,count) ; It is the only way forward
    {
-   case 1:
-      SendInput {%char%}
-   case 2:
-      SendInput {%char%}{%char%}
-   case 3:
-      SendInput {%char%}{%char%}{%char%}
-   case 4:
-      SendInput {%char%}{%char%}{%char%}{%char%}
-   case 5:
-      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}
-   case 6:
-      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-   case 7:
-      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-   case 8:
-      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-   case 9:
-      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-   case 10:
-      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-   case 11:
-      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-   case 12:
-      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-   case 13:
-      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-   case 14:
-      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-   case 15:
-      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-   case 16:
-      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-   case 17:
-      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-   case 18:
-      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-   case 19:
-      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-   case 20:
-      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-   case 21:
-      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-   case 22:
-      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-   case 23:
-      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-   case 24:
-      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-   case 25:
-      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-   case 26:
-      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-   case 27:
-      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-   case 28:
-      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-   case 29:
-      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-   case 30:
-      SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+      SendInput {ASC 241}
+      switch count
+      {
+      case 1:
+         SendInput {%char%}
+      case 2:
+         SendInput {%char%}{%char%}
+      case 3:
+         SendInput {%char%}{%char%}{%char%}
+      case 4:
+         SendInput {%char%}{%char%}{%char%}{%char%}
+      case 5:
+         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}
+      case 6:
+         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+      case 7:
+         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+      case 8:
+         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+      case 9:
+         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+      case 10:
+         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+      case 11:
+         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+      case 12:
+         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+      case 13:
+         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+      case 14:
+         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+      case 15:
+         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+      case 16:
+         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+      case 17:
+         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+      case 18:
+         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+      case 19:
+         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+      case 20:
+         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+      case 21:
+         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+      case 22:
+         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+      case 23:
+         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+      case 24:
+         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+      case 25:
+         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+      case 26:
+         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+      case 27:
+         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+      case 28:
+         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+      case 29:
+         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+      case 30:
+         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+      }
    }
-}
-
-Hotkey(KeyName,Label,Enable)
-{
-   If (KeyName = "")
-      Return
-   If (Enable = "On")
-      Hotkey, *%KeyName%, %Label%, UseErrorLevel On
-   else
-      Hotkey, *%KeyName%, %Label%, UseErrorLevel Off
-}
+   
+   Hotkey(KeyName,Label,Enable)
+   {
+      If (KeyName = "")
+         Return
+      If (Enable = "On")
+         Hotkey, *%KeyName%, %Label%, UseErrorLevel On
+      else
+         Hotkey, *%KeyName%, %Label%, UseErrorLevel Off
+   }
