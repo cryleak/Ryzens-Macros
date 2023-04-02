@@ -17,7 +17,7 @@ TrayButtonInfo = 0
 #HotkeyInterval 99000000 ; Same as the other hotkey interval setting
 #Persistent ; Makes the script never exit, probably unneccassary because other commands (like hotkey) already cause it to never exit.
 
-LauncherVersion = sort of trolled
+LauncherVersion := "1.1"
 ConfigDirectory = %A_MyDocuments%\Ryzen's Macros
 FileDelete, %A_MyDocuments%\AutoHotkey.ahk
 Goto, CheckHWID ; Checks your PC's UUID. Shitty but it works
@@ -132,6 +132,12 @@ CheckHWID:
       {}
       Loop 60
          IniRead, Key%A_Index%, %A_Temp%\Keys.ini, Registration, Key%A_Index%
+   IniRead, latestLauncherVersion, %A_Temp%\Keys.ini, Versions, LatestLauncherVersion
+   if VerCompare(LauncherVersion, "<"latestLauncherVersion)
+   {
+      MsgBox,0,Your version is old., Please upgrade to the latest version. This is a threat.
+      ExitApp
+   }
    
    FileDelete, %A_Temp%\Keys.ini
    

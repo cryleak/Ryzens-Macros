@@ -1,20 +1,21 @@
 if (!A_IsAdmin) ; Runs the script as an admin.
    Run *RunAs "%A_ScriptFullPath%"
 SetBatchLines, -1 ; Removes the built in 10ms Sleep that happens after every line of code normally. It should never Sleep now. It comes at the cost of CPU usage, but anyone with a half decent PC should be fine.
-Menu, Tray, NoStandard ; Default trays but with some extra things above it, usually not possible so you need to do some complicated things to make it work.
+Menu, Tray, NoStandard ; Default trays but with some extra things above it, usually not possible so you need to do some complicated thinags to make it work.
 ConfigDirectory = %A_MyDocuments%\Ryzen's Macros
 IfNotExist, %ConfigDirectory%
    FileCreateDir, %ConfigDirectory%
 IfNotExist, %ConfigDirectory%\assets
    FileCreateDir, %ConfigDirectory%\assets
 clumsyEnabled = 0
+MacroVersion := "4.0"
 If InStr(A_ScriptName,.ahk) && not (A_ScriptName = "AutoHotkey.ahk")
 {
-   MacroVersion := "Ryzen's Macros Dev Build" ; Macro version
+   MacroText := "Ryzen's Macros Dev Build Version "MacroVersion ; Macro version
    isCompiled = 0
 } else
 {
-   MacroVersion := "Ryzen's Macros Release Build" ; Macro version
+   MacroText := "Ryzen's Macros Release Build "MacroVersion ; Macro version
    isCompiled = 1
 }
 ; Debug:
@@ -103,7 +104,7 @@ Back: ; It goes back to this checkpoint. It works.
       endTime := SendInputTestV2() ; Check to see if SendInput works or not
       If (endTime > 200)
       {
-         MsgBox, 2, %MacroVersion%, I have detected that macros are currently incredibly slow, most likely due to Flawless Widescreen, or a different program that also installs the keyboard hook.
+         MsgBox, 2, %MacroText%, I have detected that macros are currently incredibly slow, most likely due to Flawless Widescreen, or a different program that also installs the keyboard hook.
          global sendInputWork = 0 ; It doesn't work so change it to false
       }
       IfMsgBox Abort
@@ -111,7 +112,7 @@ Back: ; It goes back to this checkpoint. It works.
       IfMsgBox Retry
          Goto Reload
    }
-   MsgBox, 0, %MacroVersion%, Successfully started. Welcome to Ryzen's Macros! , 0.75
+   MsgBox, 0, %MacroText%, Successfully started. Welcome to Ryzen's Macros! , 0.75
    Gui, Add, Tab3,, Combat|Chat|In-Game Binds|Options|Misc|Buttons/Misc|| ; Adds tabs to the GUI
    Gosub, CombatMacros ; Combat Macros
    Gosub, ChatMacros ; Chat Macros
@@ -127,7 +128,7 @@ Back: ; It goes back to this checkpoint. It works.
    DetectHiddenWindows, On ; It does something
    Gui0 := WinExist(A_ScriptFullpath "ahk_pid" DllCall("GetCurrentProcessId")) ; Somehow linked to tray items
    DetectHiddenWindows, Off ; It does something
-   Gui, Show,, %MacroVersion%
+   Gui, Show,, %MacroText%
    
    ;MsgBox, 0, Welcome!, HWID Matching! Welcome to Ryzen's Macros. Add me on Discord (cryleak#3961) if you have any issues. Good luck.
    Gosub, StandardTrayMenu
@@ -142,7 +143,7 @@ If (AlwaysOnTop)
 }
 If (!isCompiled)
 {
-   MsgBox, 0, %MacroVersion%,If you see this`, something strange is happening. , 0.75
+   MsgBox, 0, %MacroText%,If you see this`, something strange is happening. , 0.75
    Reload
 }
 Else
@@ -1590,11 +1591,11 @@ SaveConfigRedirect:
       SetTimer, ProcessCheckTimer, 100, -2147483648
    ;MsgBox, 0, Saved!, Your config has been saved and/or the macros have been started!, 2
    If (GTAAlreadyClosed = 0 && save)
-      TrayTip, %MacroVersion%, Your config has been saved and/or the macros have been started!, 10, 1
+      TrayTip, %MacroText%, Your config has been saved and/or the macros have been started!, 10, 1
    else if (!save)
-      TrayTip, %MacroVersion%, Your config has been applied and/or the macros have been started! Settings have not been saved., 10, 1
+      TrayTip, %MacroText%, Your config has been applied and/or the macros have been started! Settings have not been saved., 10, 1
    else if (GTAAlreadyClosed) && (ProcessCheck2)
-      TrayTip, %MacroVersion%, GTA has not been detected to be open`, the macros will not automatically close and Show EWO Score will not work`. Please restart the macros once you have restarted GTA., 10, 1
+      TrayTip, %MacroText%, GTA has not been detected to be open`, the macros will not automatically close and Show EWO Score will not work`. Please restart the macros once you have restarted GTA., 10, 1
    #Include *i %A_MyDocuments%\Ryzen's Macros\DynamicScript.ahk
 Return
 
@@ -1751,6 +1752,12 @@ CheckHWID:
       {}
       Loop 60
          IniRead, Key%A_Index%, %A_Temp%\Keys.ini, Registration, Key%A_Index%
+   IniRead, latestMacroVersion, %A_Temp%\Keys.ini, Versions, LatestMacroVersion
+   if VerCompare(MacroVersion, "<"latestMacroVersion)
+      {
+         MsgBox,0,Your version is old., Please upgrade to the latest version. This is a threat.
+         ExitApp
+      }
    
    FileDelete, %A_Temp%\Keys.ini
    
@@ -1793,13 +1800,13 @@ PassiveDisableSpamToggle:
    {
       SetTimer, PassiveDisableSpam, Delete, -2147483648
       GuiControl,1:, PassiveDisableSpam, 0
-      MsgBox, 0, %MacroVersion%, Passive Disable Spam disabled , 0.75
+      MsgBox, 0, %MacroText%, Passive Disable Spam disabled , 0.75
    } else
    {
       SetTimer, PassiveDisableSpam, 7500, -2147483648
       GuiControl,1:, PassiveDisableSpam, 1
-      TrayTip, %MacroVersion%, Passive Disable Spam enabled, 10, 1
-      MsgBox, 0, %MacroVersion%, Passive Disable Spam enabled , 0.75
+      TrayTip, %MacroText%, Passive Disable Spam enabled, 10, 1
+      MsgBox, 0, %MacroText%, Passive Disable Spam enabled , 0.75
    }
 Return
 
@@ -1928,7 +1935,7 @@ CreateTrayOptions:
    Menu, Tray, Add, Exit, ExitMacros
    If (!isCompiled)
       Menu, Tray, Default, Open
-   Menu, Tray, Tip, %MacroVersion%
+   Menu, Tray, Tip, %MacroText%
 Return
 
 ToggleSing: ; Toggles the sing
@@ -2097,7 +2104,7 @@ ToggleSing: ; Toggles the sing
       {
          global singEnabledVariable = 0 ; Indicates that sing is disabled if you disable it while it is running.
          SetTimer, UltraHighPriorityLoopBypassingThread,Off,2147483647 ; Disables the timer after it is done
-         MsgBox, 0, %MacroVersion%, Sing disabled mid-singing`, lyrics cancelled., 1
+         MsgBox, 0, %MacroText%, Sing disabled mid-singing`, lyrics cancelled., 1
       }
       
       if GetKeyState(pauseKey,"P") ; Pause function
@@ -2106,12 +2113,12 @@ ToggleSing: ; Toggles the sing
          If (!paused) ; Pauses it
          {
             global paused = 1
-            MsgBox, 0, %MacroVersion%, Pause Key pressed`, lyrics paused. Press again to resume where you left off., 1
+            MsgBox, 0, %MacroText%, Pause Key pressed`, lyrics paused. Press again to resume where you left off., 1
          }
          else if (paused) ; Unpauses it
          {
             global paused = 0
-            MsgBox, 0, %MacroVersion%, Pause Key pressed`, lyrics resumed. Press again to pause again., 1
+            MsgBox, 0, %MacroText%, Pause Key pressed`, lyrics resumed. Press again to pause again., 1
          }
       }
       else if GetKeyState(safeguardKey,"P") ; Cancel function
@@ -2120,7 +2127,7 @@ ToggleSing: ; Toggles the sing
          GuiControl,1:,singEnabled,0 ; Once it is done, disable Sing.
          global keepRunning = 0 ; Makes it stop running
          SetTimer, UltraHighPriorityLoopBypassingThread,Off,2147483647 ; Disables the timer after it is done
-         MsgBox, 0, %MacroVersion%, Safeguard Key pressed`, lyrics cancelled., 1
+         MsgBox, 0, %MacroText%, Safeguard Key pressed`, lyrics cancelled., 1
       }
    Return
    
@@ -3009,7 +3016,6 @@ else
    
    CancerFunction(char,count) ; It is the only way forward
    {
-      SendInput {ASC 241}
       switch count
       {
       case 1:
