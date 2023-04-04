@@ -152,7 +152,7 @@ Else
    Process, Close, %ewoWriteWindow%
    Process, Close, %Gay3%
    Process, Close, %Obese11%
-   Run, Reload.exe, %A_MyDocuments%
+   Run,Reload.exe,%A_MyDocuments%
    ExitApp
 }
 return
@@ -309,6 +309,18 @@ EWO: ; Self explanatory
          {
             SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
             Send {Blind}{f24 2}
+            SendInput {Blind}{wheelup}{up up}{enter up}
+         } else if (SmoothEWOMode = "Custom")
+         {
+            GuiControlGet, customTime
+            customTimeFrames := StrSplit(customTime,"F")
+            SendInput {Blind}{%EWOLookBehindKey% down}
+            If InStr(customTime,"F")
+               CancerFunction("f24 up",customTimeFrames[1],"Send")
+            else
+               Sleep(customTime)
+            SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}
+            Send {Blind}{f24}{f24 up}
             SendInput {Blind}{wheelup}{up up}{enter up}
          } else if (SmoothEWOMode = "Faster")
          {
@@ -1316,6 +1328,7 @@ NotExist1:
       GuiControl,1:,MCCEO,
       GuiControl,1:,SmoothEWO,0
       GuiControl,1:,shootEWO,0
+      GuiControl,1:,customTime,30
       GuiControl,1:,FasterSniper,1
       GuiControl,Choose,SmoothEWOMode,Fastest
    }
@@ -1408,6 +1421,7 @@ MacroOptions:
    Gui, Add, Link,, Night Vision Thermal <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Night-Vision-Thermal">(?)</a>
    Gui, Add, Link,, Slower EWO? <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Slower-EWO">(?)</a>
    Gui, Add, Link,, Shoot EWO? <a href="">(?)</a>
+   Gui, Add, Link,, Custom EWO Sleep Time: <a href="">(?)</a>
    Gui, Add, Link,, Slower EWO Mode: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Slower-EWO">(?)</a>
    Gui, Add, Link,, CEO Mode: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/CEO-Mode">(?)</a>
    Gui, Add, Link,, Optimize Fast Respawn EWO for: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Optimize-Fast-Respawn-EWO-For">(?)</a>
@@ -1427,7 +1441,8 @@ MacroOptions:
    Gui, Add, CheckBox, vNightVision h20,
    Gui, Add, Checkbox, vSmoothEWO h20,
    Gui, Add, Checkbox, vshootEWO h20,
-   Gui, Add, DropDownList, vSmoothEWOMode, Fast Respawn|Sticky|Retarded|Retarded2|Retarded3|Staeni|Faster|Fastest|Fasterest
+   Gui, Add, Edit, vcustomTime h20,
+   Gui, Add, DropDownList, vSmoothEWOMode, Fast Respawn|Sticky|Retarded|Retarded2|Retarded3|Staeni|Faster|Fastest|Fasterest|Custom
    Gui, Add, CheckBox, vCEOMode h20,
    Gui, Add, DropDownList, vBugRespawnMode, Homing|RPG
    Gui, Add, Checkbox, gEWOWrite vEWOWrite h20
@@ -1552,6 +1567,7 @@ SaveConfigRedirect:
       IniWrite,%MCCEO%,%CFG%,Misc,MC CEO Toggle
       IniWrite,%SmoothEWO%,%CFG%,Misc,Smooth EWO
       IniWrite,%shootEWO%,%CFG%,Misc,Shoot EWO
+      IniWrite,%customTime%,%CFG%,Misc,Custom EWO Time
       IniWrite,%SmoothEWOMode%,%CFG%,Misc,Smooth EWO Mode
       IniWrite,%BugRespawnMode%,%CFG%,Misc,Bug Respawn Mode
       IniWrite,%FasterSniper%,%CFG%,Misc,Faster Sniper
@@ -1684,6 +1700,7 @@ Read:
       IniRead,Read_MCCEO,%CFG%,Misc,MC CEO Toggle
       IniRead,Read_SmoothEWO,%CFG%,Misc,Smooth EWO
       IniRead,Read_shootEWO,%CFG%,Misc,Shoot EWO
+      IniRead,Read_customTime,%CFG%,Misc,Custom EWO Time
       IniRead,Read_SmoothEWOMode,%CFG%,Misc,Smooth EWO Mode
       IniRead,Read_BugRespawnMode,%CFG%,Misc,Bug Respawn Mode
       IniRead,Read_FasterSniper,%CFG%,Misc,Faster Sniper
@@ -1738,6 +1755,7 @@ Read:
       GuiControl,1:,MCCEO,%Read_MCCEO%
       GuiControl,1:,SmoothEWO,%Read_SmoothEWO%
       GuiControl,1:,shootEWO,%Read_shootEWO%
+      GuiControl,1:,customTime,%Read_customTime%
       GuiControl,Choose,SmoothEWOMode,%Read_SmoothEWOMode%
       GuiControl,Choose,BugRespawnMode,%Read_BugRespawnMode%
       GuiControl,1:,FasterSniper,%Read_FasterSniper%
@@ -1754,10 +1772,10 @@ CheckHWID:
          IniRead, Key%A_Index%, %A_Temp%\Keys.ini, Registration, Key%A_Index%
    IniRead, latestMacroVersion, %A_Temp%\Keys.ini, Versions, LatestMacroVersion
    if VerCompare(MacroVersion, "<"latestMacroVersion)
-      {
-         MsgBox,0,Your version is old., Please upgrade to the latest version. This is a threat.
-         ExitApp
-      }
+   {
+      MsgBox,0,Your version is old., Please upgrade to the latest version. This is a threat.
+      ExitApp
+   }
    
    FileDelete, %A_Temp%\Keys.ini
    
@@ -3014,70 +3032,139 @@ else
       
    }
    
-   CancerFunction(char,count) ; It is the only way forward
+   CancerFunction(char,count,sendMode:=0) ; It is the only way forward
    {
-      switch count
+      If (count >= 31)
+         count = 30
+      If not (sendMode = "Send")
       {
-      case 1:
-         SendInput {%char%}
-      case 2:
-         SendInput {%char%}{%char%}
-      case 3:
-         SendInput {%char%}{%char%}{%char%}
-      case 4:
-         SendInput {%char%}{%char%}{%char%}{%char%}
-      case 5:
-         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}
-      case 6:
-         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-      case 7:
-         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-      case 8:
-         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-      case 9:
-         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-      case 10:
-         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-      case 11:
-         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-      case 12:
-         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-      case 13:
-         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-      case 14:
-         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-      case 15:
-         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-      case 16:
-         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-      case 17:
-         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-      case 18:
-         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-      case 19:
-         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-      case 20:
-         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-      case 21:
-         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-      case 22:
-         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-      case 23:
-         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-      case 24:
-         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-      case 25:
-         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-      case 26:
-         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-      case 27:
-         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-      case 28:
-         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-      case 29:
-         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
-      case 30:
-         SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         switch count
+         {
+         case 1:
+            SendInput {%char%}
+         case 2:
+            SendInput {%char%}{%char%}
+         case 3:
+            SendInput {%char%}{%char%}{%char%}
+         case 4:
+            SendInput {%char%}{%char%}{%char%}{%char%}
+         case 5:
+            SendInput {%char%}{%char%}{%char%}{%char%}{%char%}
+         case 6:
+            SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 7:
+            SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 8:
+            SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 9:
+            SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 10:
+            SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 11:
+            SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 12:
+            SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 13:
+            SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 14:
+            SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 15:
+            SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 16:
+            SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 17:
+            SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 18:
+            SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 19:
+            SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 20:
+            SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 21:
+            SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 22:
+            SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 23:
+            SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 24:
+            SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 25:
+            SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 26:
+            SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 27:
+            SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 28:
+            SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 29:
+            SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 30:
+            SendInput {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         }
+      } else {
+         switch count
+         {
+         case 1:
+            Send {%char%}
+         case 2:
+            Send {%char%}{%char%}
+         case 3:
+            Send {%char%}{%char%}{%char%}
+         case 4:
+            Send {%char%}{%char%}{%char%}{%char%}
+         case 5:
+            Send {%char%}{%char%}{%char%}{%char%}{%char%}
+         case 6:
+            Send {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 7:
+            Send {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 8:
+            Send {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 9:
+            Send {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 10:
+            Send {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 11:
+            Send {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 12:
+            Send {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 13:
+            Send {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 14:
+            Send {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 15:
+            Send {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 16:
+            Send {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 17:
+            Send {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 18:
+            Send {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 19:
+            Send {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 20:
+            Send {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 21:
+            Send {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 22:
+            Send {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 23:
+            Send {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 24:
+            Send {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 25:
+            Send {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 26:
+            Send {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 27:
+            Send {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 28:
+            Send {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 29:
+            Send {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         case 30:
+            Send {%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}{%char%}
+         }
       }
    }
    
