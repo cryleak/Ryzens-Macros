@@ -232,6 +232,156 @@ EWO: ; Self explanatory
    GuiControlGet, SmoothEWOMode
    GuiControlGet, EWOWrite
    GuiControlGet, shootEWO
+   If (SmoothEWOMode = "Fast Respawn") && (SmoothEWO) || (SmoothEWOMode = "Sticky") && (SmoothEWO)
+      Goto, MiscEWOModes
+   switch SmoothEWO
+   {
+   case 1:
+      If (shootEWO)
+      {
+         SendInput {Blind}{lbutton down}
+         Send {Blind}{f24 up}
+         SendInput {Blind}{lbutton up}
+      }
+      If GetKeyState("RButton","P")
+      {
+         switch SmoothEWOMode
+         {
+         case "Faster":
+            SendInput {Blind}{lbutton up}{rbutton up}
+            Sleep(20)
+         case "Fastest":
+            SendInput {Blind}{lbutton up}{rbutton up}
+            Sleep(20)
+         case "Staeni":
+            SendInput {Blind}{lbutton up}{rbutton up}
+            Sleep(110)
+         case "Faster":
+            SendInput {Blind}{lbutton up}{rbutton up}
+            Sleep(60)
+         }
+      }
+      
+      switch SmoothEWOMode
+      {
+      case "Fasterest":
+         SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
+         Send {Blind}{f24 2}
+         SendInput {Blind}{wheelup}{up up}{enter up}
+      case "Custom":
+         GuiControlGet, customTime
+         customTimeFrames := StrSplit(customTime,"F")
+         SendInput {%EWOLookBehindKey% down}
+         If InStr(customTime,"F")
+            CancerFunction("f24 up",customTimeFrames[1],"Send")
+         else
+            Sleep(customTime)
+         SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}
+         Send {Blind}{f24}{f24 up}
+         SendInput {Blind}{wheelup}{up up}{enter up}
+      case "Faster":
+         SendInput {Blind}{alt up}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%EWOMelee% down}{%InteractionMenuKey% down}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
+         Sleep(47)
+         SendInput {Blind}{up down}
+         Sleep(35)
+         SendInput {Blind}{WheelUp}
+         Sleep(28)
+         SendInput {Blind}{enter up}{%InteractionMenuKey% up}{%EWOLookBehindKey% up}
+      case "Staeni":
+         /*
+         SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{%InteractionMenuKey% down}
+         Sleep(20)
+         Send {Blind}{%EWOLookBehindKey% down}{up}
+         Sleep(25)
+         SendInput {Blind}{WheelUp}
+         Sleep(46)
+         SendInput {Blind}{%EWOSpecialAbilitySlashActionKey% down}
+         Send {Blind}{enter up}{%InteractionMenuKey% up}
+         */
+         SendInput {Blind}{alt up}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%InteractionMenuKey% down}{%EWOLookBehindKey%}{%EWOSpecialAbilitySlashActionKey% down}
+         Sleep(33.5)
+         SendInput {Blind}{%EWOLookBehindKey% down}
+         Sleep(14)
+         SendInput {Blind}{up down}
+         Sleep(37.5)
+         SendInput {Blind}{WheelUp}
+         Sleep(50)
+         SendInput {Blind}{enter up}{%InteractionMenuKey% up}{%EWOLookBehindKey% up}
+      case "Fastest":
+         /*
+         SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}
+         Send {Blind}{%InteractionMenuKey%}{up 2}
+         SendInput {%EWOSpecialAbilitySlashActionKey% down}
+         Send {Blind}{enter}
+         */
+         SendInput {Blind}{%EWOLookBehindKey% down}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{lbutton up}{rbutton up}{%InteractionMenuKey% down}{up down}
+         Sleep(28)
+         SendInput {Blind}{WheelUp}
+         Sleep(10)
+         SendInput {enter up}
+      case "Retarded":
+         StringUpper, EWOLookBehindKey, EWOLookBehindKey
+         Random, Var, 1, 3
+         SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%InteractionMenuKey% down}{%EWOSpecialAbilitySlashActionKey% down}
+         Sleep(25)
+         Send {Blind}{up}
+         Sleep(25)
+         Send {Blind}{up}
+         Sleep(40)
+         Send {Blind}{%EWOLookBehindKey% down}
+         if (var) ; why the fuck did i do this
+            Send {Blind}{f24 2}
+         else if (var = 2)
+            Send {Blind}{f24}
+         else
+            Send {Blind}{f24 3}
+         Send {Blind}{enter up}
+         StringLower, EWOLookBehindKey, EWOLookBehindKey
+      case "Retarded2":
+         SendInput {Blind}{lbutton up}{enter down}
+         Send {Blind}{%InteractionMenuKey%}{enter up}{up down}
+         SendInput {Blind}{enter down}
+         Send {Blind}{up up}
+         SendInput {Blind}{enter up}
+         GuiControl,1:, CEOMode, 0
+         Sleep(110)
+         
+         SendInput {Blind}{%EWOLookBehindKey% down}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{%InteractionMenuKey% down}
+         Sleep(13)
+         Send {Blind}{shift down}{f24 up}{shift up}{up}
+         Sleep(12)
+         Send {Blind}{up}
+         Sleep(9)
+         Send {Blind}{%EWOSpecialAbilitySlashActionKey% down}{enter up}
+      case "Retarded3":
+         SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%InteractionMenuKey% down}{%EWOSpecialAbilitySlashActionKey% down}{%EWOMelee% down}
+         Sleep(30)
+         Send {Blind}{up}
+         Sleep(20)
+         Send {Blind}{up}
+         Sleep(40)
+         SendInput {Blind}{space down}{%EWOLookBehindKey% down}
+         Send {Blind}{f24 up}{enter}
+         SendInput {Blind}{space up}
+      }
+   
+   Default:
+      SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
+      Send {Blind}{f24}{f24 up}
+      SendInput {Blind}{wheelup}{up up}{enter up}
+   }
+   SendInput {up up}
+   Send {Blind}{enter 2}{up}{enter}{left}{down}{enter}
+   SendInput {Blind}{%EWOSpecialAbilitySlashActionKey% up}{%EWOLookBehindKey% up}{%EWOMelee% up}{%InteractionMenuKey% up}{up up}{g up}{%EWO% up}
+   SetCapsLockState, Off
+   SetMouseDelay, 10
+return
+
+MiscEWOModes:
+   GuiControlGet, SmoothEWO
+   GuiControlGet, SmoothEWOMode
+   GuiControlGet, EWOWrite
+   GuiControlGet, shootEWO
    If (SmoothEWOMode = "Fast Respawn") && (SmoothEWO)
    {
       SendInput {Blind}{lshift down}{w up}{a up}{s up}{d up}
@@ -252,7 +402,7 @@ EWO: ; Self explanatory
       Sleep 1500
       Send {Blind}{%StickyBind%}{%RPGBind%}{tab}
       Hotkey, Tab, ProBlocking, Off
-      Sleep 200
+      Sleep 300
    }
    else if (SmoothEWOMode = "Sticky") && (SmoothEWO)
    {
@@ -267,161 +417,8 @@ EWO: ; Self explanatory
          }
       }
       SendInput {Blind}{lbutton up}
-   } else
-   {
-      SetMouseDelay, -1
-      if (shootEWO)
-      {
-         RestartTimer()
-         SendInput {Blind}{lbutton down}
-         Send {Blind}{f24 up}
-         shootTime := CalculateTime()
-         if (shootTime = 0)
-            shootTime := "15"
-         SendInput {Blind}{lbutton up}{rbutton up}
-      }
-      
-      if (SmoothEWO)
-      {
-         If (SmoothEWOMode = "Staeni" || SmoothEWOMode = "Retarded")
-         {
-            sleepTime := 65
-            SendInput {Blind}{lbutton up}{rbutton up}
-            If not GetKeyState("rbutton", "P") {
-               If (shootEWO)
-               {
-                  sleepTime2 := sleepTime - 15
-                  Sleep(sleepTime2)
-               }
-               else
-                  Sleep(sleepTime)
-            }
-            else
-            {
-               Sleep(110)
-            }
-         } else if (SmoothEWOMode = "Faster")
-         {
-            SendInput {Blind}{lbutton up}{rbutton up}
-            Sleep(20)
-         }
-         If (SmoothEWOMode = "Fasterest")
-         {
-            SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
-            Send {Blind}{f24 2}
-            SendInput {Blind}{wheelup}{up up}{enter up}
-         } else if (SmoothEWOMode = "Custom")
-         {
-            GuiControlGet, customTime
-            customTimeFrames := StrSplit(customTime,"F")
-            SendInput {Blind}{%EWOLookBehindKey% down}
-            If InStr(customTime,"F")
-               CancerFunction("f24 up",customTimeFrames[1],"Send")
-            else
-               Sleep(customTime)
-            SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}
-            Send {Blind}{f24}{f24 up}
-            SendInput {Blind}{wheelup}{up up}{enter up}
-         } else if (SmoothEWOMode = "Faster")
-         {
-            SendInput {Blind}{alt up}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{d up}{w up}{s up}{a up}{%EWOMelee% down}{%InteractionMenuKey% down}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
-            Sleep(47)
-            SendInput {Blind}{up down}
-            Sleep(35)
-            SendInput {Blind}{WheelUp}
-            Sleep(28)
-            SendInput {Blind}{enter up}{%InteractionMenuKey% up}{%EWOLookBehindKey% up}
-         }
-         else if (SmoothEWOMode = "Staeni")
-         {
-            /*
-            SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{d up}{w up}{s up}{a up}{%InteractionMenuKey% down}
-            Sleep(20)
-            Send {Blind}{%EWOLookBehindKey% down}{up}
-            Sleep(25)
-            SendInput {Blind}{WheelUp}
-            Sleep(46)
-            SendInput {Blind}{%EWOSpecialAbilitySlashActionKey% down}
-            Send {Blind}{enter up}{%InteractionMenuKey% up}
-            */
-            SendInput {Blind}{alt up}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{d up}{w up}{s up}{a up}{%InteractionMenuKey% down}{%EWOLookBehindKey%}{%EWOSpecialAbilitySlashActionKey% down}
-            Sleep(33.5)
-            SendInput {Blind}{%EWOLookBehindKey% down}
-            Sleep(14)
-            SendInput {Blind}{up down}
-            Sleep(37.5)
-            SendInput {Blind}{WheelUp}
-            Sleep(50)
-            SendInput {Blind}{enter up}{%InteractionMenuKey% up}{%EWOLookBehindKey% up}
-         }
-         else if (SmoothEWOMode = "Fastest")
-         {
-            SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}
-            Send {Blind}{%InteractionMenuKey%}{up 2}
-            SendInput {%EWOSpecialAbilitySlashActionKey% down}
-            Send {Blind}{enter}
-         }
-         else if (SmoothEWOMode = "Retarded")
-         {
-            StringUpper, EWOLookBehindKey, EWOLookBehindKey
-            Random, Var, 1, 3
-            SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%InteractionMenuKey% down}{%EWOSpecialAbilitySlashActionKey% down}
-            Sleep(25)
-            Send {Blind}{up}
-            Sleep(25)
-            Send {Blind}{up}
-            Sleep(40)
-            Send {Blind}{%EWOLookBehindKey% down}
-            if (var) ; why the fuck did i do this
-               Send {Blind}{f24 2}
-            else if (var = 2)
-               Send {Blind}{f24}
-            else
-               Send {Blind}{f24 3}
-            Send {Blind}{enter up}
-            StringLower, EWOLookBehindKey, EWOLookBehindKey
-         } else if (SmoothEWOMode = "Retarded2")
-         {
-            SendInput {Blind}{lbutton up}{enter down}
-            Send {Blind}{%InteractionMenuKey%}{enter up}{up down}
-            SendInput {Blind}{enter down}
-            Send {Blind}{up up}
-            SendInput {Blind}{enter up}
-            GuiControl,1:, CEOMode, 0
-            Sleep(110)
-            
-            SendInput {Blind}{%EWOLookBehindKey% down}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{%InteractionMenuKey% down}{d up}{w up}{s up}{a up}
-            Sleep(13)
-            Send {Blind}{shift down}{f24 up}{shift up}{up}
-            Sleep(12)
-            Send {Blind}{up}
-            Sleep(9)
-            Send {Blind}{%EWOSpecialAbilitySlashActionKey% down}{enter up}
-         } else if (SmoothEWOMode = "Retarded3")
-         {
-            SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%InteractionMenuKey% down}{%EWOSpecialAbilitySlashActionKey% down}{%EWOMelee% down}
-            Sleep(30)
-            Send {Blind}{up}
-            Sleep(20)
-            Send {Blind}{up}
-            Sleep(40)
-            SendInput {Blind}{space down}{%EWOLookBehindKey% down}
-            Send {Blind}{f24 up}{enter}
-            SendInput {Blind}{space up}
-         }
-      } else if (!SmoothEWO)
-      {
-         SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
-         Send {Blind}{f24}{f24 up}
-         SendInput {Blind}{wheelup}{up up}{enter up}
-      }
-      SendInput {up up}
-      Send {Blind}{enter 2}{up}{enter}{left}{down}{enter}
-      SendInput {Blind}{%EWOSpecialAbilitySlashActionKey% up}{%EWOLookBehindKey% up}{%EWOMelee% up}{%InteractionMenuKey% up}{up up}{g up}{%EWO% up}
-      SetCapsLockState, Off
-      SetMouseDelay, 10
    }
-return
+Return
 
 Write: ; Shows the score even if you have EWOd in the session using some advanced shit
    If (!GTAAlreadyClosed)
