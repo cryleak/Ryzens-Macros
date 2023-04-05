@@ -84,6 +84,8 @@ Back: ; It goes back to this checkpoint. It works.
    #UseHook On ; Idk
    #InstallKeybdHook ; Idk
    #InstallMouseHook ; Idk
+   Process, Priority, GTA5.exe, H ; I heard that high priority gives keyboard input priority. I only heard it improves input speed and didn't read into it because yes.
+   Process, Priority,, A ; Sets priority of the script to Above Normal because I can
    DllCall("ntdll\ZwSetTimerResolution","Int",5000,"Int",1,"Int*",MyCurrentTimerResolution) ; yes
    SetTitleMatchMode, 2 ; I forgor :dead_skull:
    SetDefaultMouseSpeed, 0 ; Something
