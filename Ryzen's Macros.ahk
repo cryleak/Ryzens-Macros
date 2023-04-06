@@ -236,15 +236,15 @@ EWO: ; Self explanatory
    GuiControlGet, shootEWO
    If (SmoothEWOMode = "Fast Respawn") && (SmoothEWO) || (SmoothEWOMode = "Sticky") && (SmoothEWO)
       Goto, MiscEWOModes
+   If (shootEWO)
+   {
+      SendInput {Blind}{lbutton down}
+      Send {Blind}{f24 up}
+      SendInput {Blind}{lbutton up}
+   }
    switch SmoothEWO
    {
    case 1:
-      If (shootEWO)
-      {
-         SendInput {Blind}{lbutton down}
-         Send {Blind}{f24 up}
-         SendInput {Blind}{lbutton up}
-      }
       If GetKeyState("RButton","P")
       {
          switch SmoothEWOMode
