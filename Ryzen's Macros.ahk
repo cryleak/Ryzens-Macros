@@ -249,29 +249,28 @@ EWO: ; Self explanatory
       {
          switch SmoothEWOMode
          {
-         case "Faster":
-            SendInput {Blind}{lbutton up}{rbutton up}
-            Sleep(20)
-         case "Fastest":
-            SendInput {Blind}{lbutton up}{rbutton up}
-            Sleep(20)
          case "Staeni":
             SendInput {Blind}{lbutton up}{rbutton up}
-            Sleep(110)
+            Sleep(95)
          case "Faster":
             SendInput {Blind}{lbutton up}{rbutton up}
-            Sleep(60)
+            Sleep(45)
          }
       }
       
       switch SmoothEWOMode
       {
       case "Fasterest":
+         SendInput {Blind}{rbutton down}
+         Send {Blind}{f24 up}
          SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
          Send {Blind}{f24 2}
          SendInput {Blind}{wheelup}{up up}{enter up}
       case "Custom":
          GuiControlGet, customTime
+         SendInput {Blind}{rbutton down}
+         Send {Blind}{f24 up}
+         SendInput {Blind}{rbutton up}
          customTimeFrames := StrSplit(customTime,"F")
          SendInput {%EWOLookBehindKey% down}
          If InStr(customTime,"F")
@@ -282,6 +281,8 @@ EWO: ; Self explanatory
          Send {Blind}{f24}{f24 up}
          SendInput {Blind}{wheelup}{up up}{enter up}
       case "Faster":
+         SendInput {Blind}{rbutton down}
+         Send {Blind}{f24 up}
          SendInput {Blind}{alt up}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%EWOMelee% down}{%InteractionMenuKey% down}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
          Sleep(47)
          SendInput {Blind}{up down}
@@ -300,6 +301,8 @@ EWO: ; Self explanatory
          SendInput {Blind}{%EWOSpecialAbilitySlashActionKey% down}
          Send {Blind}{enter up}{%InteractionMenuKey% up}
          */
+         SendInput {Blind}{rbutton down}
+         Send {Blind}{f24 up}
          SendInput {Blind}{alt up}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%InteractionMenuKey% down}{%EWOLookBehindKey%}{%EWOSpecialAbilitySlashActionKey% down}
          Sleep(33.5)
          SendInput {Blind}{%EWOLookBehindKey% down}
@@ -310,20 +313,17 @@ EWO: ; Self explanatory
          Sleep(50)
          SendInput {Blind}{enter up}{%InteractionMenuKey% up}{%EWOLookBehindKey% up}
       case "Fastest":
-         /*
+         SendInput {Blind}{rbutton down}
+         Send {Blind}{f24 up}
          SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}
          Send {Blind}{%InteractionMenuKey%}{up 2}
          SendInput {%EWOSpecialAbilitySlashActionKey% down}
          Send {Blind}{enter}
-         */
-         SendInput {Blind}{%EWOLookBehindKey% down}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{lbutton up}{rbutton up}{%InteractionMenuKey% down}{up down}
-         Sleep(28)
-         SendInput {Blind}{WheelUp}
-         Sleep(10)
-         SendInput {enter up}
       case "Retarded":
          StringUpper, EWOLookBehindKey, EWOLookBehindKey
          Random, Var, 1, 3
+         SendInput {Blind}{rbutton down}
+         Send {Blind}{f24 up}
          SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%InteractionMenuKey% down}{%EWOSpecialAbilitySlashActionKey% down}
          Sleep(25)
          Send {Blind}{up}
@@ -340,7 +340,9 @@ EWO: ; Self explanatory
          Send {Blind}{enter up}
          StringLower, EWOLookBehindKey, EWOLookBehindKey
       case "Retarded2":
-         SendInput {Blind}{lbutton up}{enter down}
+         SendInput {Blind}{rbutton down}
+         Send {Blind}{f24 up}
+         SendInput {Blind}{lbutton up}{rbutton up}{enter down}
          Send {Blind}{%InteractionMenuKey%}{enter up}{up down}
          SendInput {Blind}{enter down}
          Send {Blind}{up up}
@@ -356,6 +358,8 @@ EWO: ; Self explanatory
          Sleep(9)
          Send {Blind}{%EWOSpecialAbilitySlashActionKey% down}{enter up}
       case "Retarded3":
+         SendInput {Blind}{rbutton down}
+         Send {Blind}{f24 up}
          SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%InteractionMenuKey% down}{%EWOSpecialAbilitySlashActionKey% down}{%EWOMelee% down}
          Sleep(30)
          Send {Blind}{up}
@@ -368,6 +372,8 @@ EWO: ; Self explanatory
       }
    
    Default:
+      SendInput {Blind}{rbutton down}
+      Send {Blind}{f24 up}
       SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
       Send {Blind}{f24}{f24 up}
       SendInput {Blind}{wheelup}{up up}{enter up}
