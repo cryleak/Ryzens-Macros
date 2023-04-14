@@ -26,6 +26,7 @@ If (isCompiled)
 
 ; Variables:
 RunningInScript = 1 ; Required for dynamic script to work properly
+thermal = 0
 Herpes := "No more bitches :(" ; ginlang asked me to add a variable named herpes
 CFG = %A_MyDocuments%\Ryzen's Macros\GTA Binds.ini ; Config file name
 global originalTime
@@ -101,7 +102,7 @@ Back: ; It goes back to this checkpoint. It works.
       SetTimer, AlwaysOnTop, 25, -2147483648
    }
    global sendInputWork = 1 ; SendInput works, will be changed to false if it doesn't work
-   If (IsCompiled)
+   If (IsCompiled) && (!GTAAlreadyClosed)
    {
       endTime := SendInputTestV2() ; Check to see if SendInput works or not
       If (endTime > 200)
@@ -207,6 +208,46 @@ ThermalHelmet: ; Self explanatory
    Sleep(50)
    Send {Blind}{space}{%InteractionMenuKey%}
 return
+
+jetThermal:
+   GuiControlGet, CEOMode
+   GuiControlGet, NightVision
+   If (!thermal)
+      thermal = 1
+   else
+      thermal = 0
+   If (CEOMode)
+   {
+      SendInput {Blind}{enter down}
+      Send {Blind}{%InteractionMenuKey%}{enter up}{down down}
+      SendInput {Blind}{enter down}
+      Send {Blind}{down up}
+      SendInput {Blind}{enter up}
+      Send {Blind}{down down}
+      SendInput {Blind}{enter down}
+      Send {Blind}{down up}
+      SendInput {Blind}{enter up}
+      Send {Blind}{f24 up}{right}{left}
+      if (!thermal)
+         Send {Blind}{backspace 3}
+      else
+         Send {Blind}{%InteractionMenuKey%}
+   }
+   if (!thermal)
+   {
+      SendInput {Blind}{lbutton up}{enter down}
+      Send {Blind}{down 3}
+      If (CEOMode)
+         Send {Blind}{down}
+      SendInput {Blind}{enter up}
+      Send {Blind}{down down}
+      SendInput {Blind}{enter down}
+      Send {Blind}{down up}
+      SendInput {Blind}{enter up}
+      Sleep(50)
+      Send {Blind}{space}{%InteractionMenuKey%}
+   }
+Return
 
 FastSniperSwitch: ; Self explanatory
    GuiControlGet, FasterSniper
@@ -389,29 +430,7 @@ MiscEWOModes:
    GuiControlGet, SmoothEWOMode
    GuiControlGet, EWOWrite
    GuiControlGet, shootEWO
-   If (SmoothEWOMode = "Fast Respawn") && (SmoothEWO)
-   {
-      SendInput {Blind}{lshift down}{w up}{a up}{s up}{d up}
-      Hotkey, Tab, ProBlocking, On
-      BlockInput, On
-      MouseMove,0,5000,,R
-      SendInput {Blind}{%FranklinBind% down}
-      Sleep(50)
-      SendInput {Blind}{lbutton down}
-      If (BugRespawnMode = "Homing")
-         Sleep 340
-      else if (BugRespawnMode = "RPG")
-         Sleep 393
-      SendInput {Blind}{%FranklinBind% up}{lshift up}
-      BlockInput, Off
-      Sleep 75
-      Send {Blind}{esc}{lbutton up}
-      Sleep 1500
-      Send {Blind}{%StickyBind%}{%RPGBind%}{tab}
-      Hotkey, Tab, ProBlocking, Off
-      Sleep 300
-   }
-   else if (SmoothEWOMode = "Sticky") && (SmoothEWO)
+   If (SmoothEWOMode = "Sticky") && (SmoothEWO)
    {
       SendInput {lbutton down}{rbutton up}
       Send {Blind}{%RifleBind%}
@@ -563,7 +582,36 @@ FastRespawn: ; Self explanatory
    }
 return
 
-ProBlocking: ; I don't think I need this anymore
+FastRespawnEWO:
+   GuiControlGet, BugRespawnMode
+   If (BugRespawnMode = "Sticky")
+   {
+      SendInput {Blind}{lshift down}{w up}{a up}{s up}{d up}
+      BlockInput, On
+      SendInput {Blind}{%FranklinBind% down}
+      Sleep(400)
+      Send {Blind}{g}
+      SendInput {Blind}{%FranklinBind% up}{lshift up}
+      BlockInput, Off
+      Sleep 75
+      Send {Blind}{esc}{lbutton up}
+   } else
+   {
+      SendInput {Blind}{lshift down}{w up}{a up}{s up}{d up}
+      BlockInput, On
+      MouseMove,0,5000,,R
+      SendInput {Blind}{%FranklinBind% down}
+      Sleep(50)
+      SendInput {Blind}{lbutton down}
+      If (BugRespawnMode = "Homing")
+         Sleep 340
+      else if (BugRespawnMode = "RPG")
+         Sleep 393
+      SendInput {Blind}{%FranklinBind% up}{lshift up}
+      BlockInput, Off
+      Sleep 75
+      Send {Blind}{esc}{lbutton up}
+   }
 Return
 
 GTAHax: ; Self explanatory
@@ -919,12 +967,12 @@ return
 
 ReloadOutfit: ; Self explanatory
    SendInput {Blind}{lbutton up}{enter down}
-   GuiControlGet, CEOMode
+   GuicontrolGet, CEOMode
    Send {Blind}{%InteractionMenuKey%}
    If (CEOMode)
-      Send {Blind}{down 4}
-   Else
-      Send {Blind}{down 3}
+      Send {Blind}{up 11}
+   else
+      Send {Blind}{up 13}
    SendInput {Blind}{enter up}
    Send {Blind}{down}
    SendInput {Blind}{enter down}
@@ -1266,12 +1314,14 @@ return
 
 DisableAll:
    Hotkey(ThermalHelmet,"ThermalHelmet","Off")
+   Hotkey(jetThermal,"JetThermal","Off")
    Hotkey(FastSniperSwitch,"FastSniperSwitch","Off")
    Hotkey(EWO,"EWO","Off")
    Hotkey(KekEWO,"KekEWO","Off")
    Hotkey(BST,"BST","Off")
    Hotkey(Ammo,"Ammo","Off")
    Hotkey(FastRespawn,"FastRespawn","Off")
+   Hotkey(FastRespawnEWO,"FastRespawnEWO","Off")
    Hotkey(ToggleCrosshair,"ToggleCrosshair","Off")
    Hotkey(Suspend,"Suspend","Off")
    Hotkey(HelpWhatsThis,"HelpWhatsThis","Off")
@@ -1293,6 +1343,7 @@ NotExist1:
       GuiControl,1:,InteractionMenuKey,m
       GuiControl,1:,FranklinBind,F6
       GuiControl,1:,ThermalHelmet,
+      GuiControl,1:,jetThermal,
       GuiControl,1:,FastSniperSwitch,
       GuiControl,1:,SniperBind,9
       GuiControl,1:,RifleBind,8
@@ -1347,21 +1398,25 @@ UUID()
 CombatMacros:
    Gui, Tab, 1
    Gui, Add, Link,x+5 y60, Toggle Thermal: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Toggle-Thermal">(?)</a>
+   Gui, Add, Link,, Jet Thermal: <a href="">(?)</a>
    Gui, Add, Link,, Sniper Switch: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Sniper-Switch">(?)</a>
    Gui, Add, Link,, EWO: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/EWO">(?)</a>
    Gui, Add, Link,, BST: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/BST">(?)</a>
    Gui, Add, Link,, Ammo: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Ammo">(?)</a>
    Gui, Add, Link,, Fast Respawn: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Fast-Respawn">(?)</a>
+   Gui, Add, Link,, Fast Respawn EWO:
    Gui, Add, Link,, Toggle Crosshair: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Toggle-Crosshair">(?)</a>
    Gui, Add, Link,, RPG Spam: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/RPG-Spam">(?)</a>
    Gui, Add, Link,, Fast Switch <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Fast-Switch">(?)</a>
    
    Gui, Add, Hotkey,vThermalHelmet x+40 y60,
+   Gui, Add, Hotkey,vjetThermal,
    Gui, Add, Hotkey,vFastSniperSwitch,
    Gui, Add, Hotkey,vEWO,
    Gui, Add, Hotkey,vBST,
    Gui, Add, Hotkey,vAmmo,
    Gui, Add, Hotkey,vFastRespawn,
+   Gui, Add, Hotkey,vFastRespawnEWO,
    Gui, Add, Hotkey,vToggleCrosshair,
    Gui, Add, Hotkey,vRPGSpam,
    Gui, Add, Checkbox, gTabWeapon2 vTabWeapon,
@@ -1446,9 +1501,9 @@ MacroOptions:
    Gui, Add, Checkbox, vSmoothEWO h20,
    Gui, Add, Checkbox, vshootEWO h20,
    Gui, Add, Edit, vcustomTime h20,
-   Gui, Add, DropDownList, vSmoothEWOMode, Fast Respawn|Sticky|Retarded|Retarded2|Retarded3|Staeni|Faster|Fastest|Fasterest|Custom
+   Gui, Add, DropDownList, vSmoothEWOMode, Sticky|Retarded|Retarded2|Retarded3|Staeni|Faster|Fastest|Fasterest|Custom
    Gui, Add, CheckBox, vCEOMode h20,
-   Gui, Add, DropDownList, vBugRespawnMode, Homing|RPG
+   Gui, Add, DropDownList, vBugRespawnMode, Sticky|Homing|RPG
    Gui, Add, Checkbox, gEWOWrite vEWOWrite h20
    Gui, Add, Checkbox, gToggleSing vsingEnabled h20
    If (DebugTesting)
@@ -1531,6 +1586,7 @@ SaveConfigRedirect:
       IniWrite,%InteractionMenuKey%,%CFG%,Keybinds,Interaction Menu Key
       IniWrite,%FranklinBind%,%CFG%,Keybinds,Franklin Key
       IniWrite,%ThermalHelmet%,%CFG%,PVP Macros,Thermal Helmet
+      IniWrite,%jetThermal%,%CFG%,PVP Macros,Jet Thermal
       IniWrite,%FastSniperSwitch%,%CFG%,PVP Macros,Fast Sniper Switch
       IniWrite,%SniperBind%,%CFG%,Keybinds,Sniper Bind
       IniWrite,%RifleBind%,%CFG%,Keybinds,Rifle Bind
@@ -1544,6 +1600,7 @@ SaveConfigRedirect:
       IniWrite,%BSTSpeed%,%CFG%,PVP Macros,BST Speed
       IniWrite,%Ammo%,%CFG%,PVP Macros,Buy Ammo
       IniWrite,%FastRespawn%,%CFG%,Misc,Fast Respawn
+      IniWrite,%FastRespawnEWO%,%CFG%,Misc,Fast Respawn EWO
       IniWrite,%Suspend%,%CFG%,Misc,Suspend Macro
       IniWrite,%HelpWhatsThis%,%CFG%,Chat Macros,idkwtfthisis
       IniWrite,%EssayAboutGTA%,%CFG%,Chat Macros,Essay About GTA
@@ -1581,12 +1638,14 @@ SaveConfigRedirect:
    
    Gosub, LaunchCycle
    Hotkey(ThermalHelmet,"ThermalHelmet","On")
+   Hotkey(jetThermal,"JetThermal","On")
    Hotkey(FastSniperSwitch,"FastSniperSwitch","On")
    Hotkey(EWO,"EWO","On")
    Hotkey(KekEWO,"KekEWO","On")
    Hotkey(BST,"BST","On")
    Hotkey(Ammo,"Ammo","On")
    Hotkey(FastRespawn,"FastRespawn","On")
+   Hotkey(FastRespawnEWO,"FastRespawnEWO","On")
    Hotkey(ToggleCrosshair,"ToggleCrosshair","On")
    Hotkey(Suspend,"Suspend","On")
    Hotkey(HelpWhatsThis,"HelpWhatsThis","On")
@@ -1664,6 +1723,7 @@ Read:
       IniRead,Read_InteractionMenuKey,%CFG%,Keybinds,Interaction Menu Key
       IniRead,Read_FranklinBind,%CFG%,Keybinds,Franklin Key
       IniRead,Read_ThermalHelmet,%CFG%,PVP Macros,Thermal Helmet
+      IniRead,Read_jetThermal,%CFG%,PVP Macros,Jet Thermal
       IniRead,Read_FastSniperSwitch,%CFG%,PVP Macros,Fast Sniper Switch
       IniRead,Read_SniperBind,%CFG%,Keybinds,Sniper Bind
       IniRead,Read_RifleBind,%CFG%,Keybinds,Rifle Bind
@@ -1677,6 +1737,7 @@ Read:
       IniRead,Read_BSTSpeed,%CFG%,PVP Macros,BST Speed
       IniRead,Read_Ammo,%CFG%,PVP Macros,Buy Ammo
       IniRead,Read_FastRespawn,%CFG%,Misc,Fast Respawn
+      IniRead,Read_FastRespawnEWO,%CFG%,Misc,Fast Respawn EWO
       IniRead,Read_Suspend,%CFG%,Misc,Suspend Macro
       IniRead,Read_HelpWhatsThis,%CFG%,Chat Macros,idkwtfthisis
       IniRead,Read_EssayAboutGTA,%CFG%,Chat Macros,Essay About GTA
@@ -1714,6 +1775,7 @@ Read:
       GuiControl,1:,InteractionMenuKey,%Read_InteractionMenuKey%
       GuiControl,1:,FranklinBind,%Read_FranklinBind%
       GuiControl,1:,ThermalHelmet,%Read_ThermalHelmet%
+      GuiControl,1:,jetThermal,%Read_jetThermal%
       GuiControl,1:,FastSniperSwitch,%Read_FastSniperSwitch%
       GuiControl,1:,SniperBind,%Read_SniperBind%
       GuiControl,1:,RifleBind,%Read_RifleBind%
@@ -1729,6 +1791,7 @@ Read:
       GuiControl,1:,SpecialBuy,%Read_SpecialBuy%
       GuiControl,1:,BuyAll,%Read_BuyAll%
       GuiControl,1:,FastRespawn,%Read_FastRespawn%
+      GuiControl,1:,FastRespawnEWO,%Read_FastRespawnEWO%
       GuiControl,1:,Suspend,%Read_Suspend%
       GuiControl,1:,HelpWhatsThis,%Read_HelpWhatsThis%
       GuiControl,1:,EssayAboutGTA,%Read_EssayAboutGTA%
