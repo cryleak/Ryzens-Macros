@@ -572,6 +572,7 @@ FastRespawn: ; Self explanatory
 return
 
 FastRespawnEWO:
+   sleepTime := 200
    SendInput {Blind}{ctrl up}{lshift up}{rshift up}
    GuiControlGet, BugRespawnMode
    If (BugRespawnMode = "Sticky")
@@ -583,7 +584,7 @@ FastRespawnEWO:
       Send {Blind}{g}
       SendInput {Blind}{%FranklinBind% up}{lshift up}
       BlockInput, Off
-      Sleep 75
+      Sleep sleepTime
       Send {Blind}{esc}{lbutton up}
    } else
    {
@@ -599,7 +600,7 @@ FastRespawnEWO:
          Sleep 393
       SendInput {Blind}{%FranklinBind% up}{lshift up}
       BlockInput, Off
-      Sleep 75
+      Sleep sleepTime
       Send {Blind}{esc}{lbutton up}
    }
 Return
