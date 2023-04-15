@@ -250,6 +250,11 @@ jetThermal:
 Return
 
 FastSniperSwitch: ; Self explanatory
+   If (FastSniperSwitch = "F1") && GetKeyState("LShift","P") && (DebugTesting)
+   {
+      Send {Blind}{lshift down}{f1 down}{lshift up}{f1 up}
+      Return
+   }
    GuiControlGet, FasterSniper
    SendInput {Blind}{%FastSniperSwitch% up}
    If (FasterSniper)
@@ -300,7 +305,7 @@ EWO: ; Self explanatory
       {
       case "Fasterest":
          Send {Blind}{lbutton down}{rbutton down}{lbutton up}{rbutton up}
-         SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}{%EWOLookBehindKey% down}
+         SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{%explodeBind% down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}{%EWOLookBehindKey% down}
          Send {Blind}{f24 2}{f24 up}
          SendInput {Blind}{wheelup}{up up}{enter up}
       case "Custom":
@@ -313,7 +318,7 @@ EWO: ; Self explanatory
             CancerFunction("f24 up",customTimeFrames[1],"Send")
          else
             Sleep(customTime)
-         SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}
+         SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{%explodeBind% down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}
          Send {Blind}{f24}{f24 up}
          SendInput {Blind}{wheelup}{up up}{enter up}
       case "Faster":
@@ -403,13 +408,13 @@ EWO: ; Self explanatory
       }
    } else
    {
-      SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
+      SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{%explodeBind% down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
       Send {Blind}{f24}{f24 up}
       SendInput {Blind}{wheelup}{up up}{enter up}
    }
    SendInput {up up}
    Send {Blind}{enter 2}{up}{enter}{left}{down}{enter}
-   SendInput {Blind}{%EWOSpecialAbilitySlashActionKey% up}{%EWOLookBehindKey% up}{%EWOMelee% up}{%InteractionMenuKey% up}{up up}{g up}{%EWO% up}
+   SendInput {Blind}{%EWOSpecialAbilitySlashActionKey% up}{%EWOLookBehindKey% up}{%EWOMelee% up}{%InteractionMenuKey% up}{up up}{%explodeBind% up}{%EWO% up}
    SetCapsLockState, Off
    SetMouseDelay, 10
 return
@@ -428,7 +433,7 @@ MiscEWOModes:
       Loop, 15 {
          if WinActive("ahk_exe GTA5.exe")
          {
-            Send {Blind}{g 4} ; {lbutton}
+            Send {Blind}{%explodeBind% 4} ; {lbutton}
          }
       }
       SendInput {Blind}{lbutton up}
@@ -579,7 +584,7 @@ FastRespawnEWO:
    {
       SendInput {Blind}{%FranklinBind% down}
       Sleep(400)
-      Send {Blind}{g}
+      Send {Blind}{%explodeBind%}
       SendInput {Blind}{%FranklinBind% up}
       Sleep sleepTime
       Send {Blind}{backspace}{lbutton up}
@@ -1447,6 +1452,7 @@ InGameBinds:
    Gui, Add, Link,, Pistol: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Pistol-Bind">(?)</a>
    Gui, Add, Link,, Rifle: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Rifle-Bind">(?)</a>
    Gui, Add, Link,, Swap to Franklin Bind: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Swap-to-Franklin-Bind">(?)</a>
+   Gui, Add, Link,, Sticky Explode Bind: <a href="">(?)</a>
    
    Gui, Add, Hotkey,vInteractionMenuKey x+15 y60,
    Gui, Add, Hotkey,vSniperBind,
@@ -1458,6 +1464,7 @@ InGameBinds:
    Gui, Add, Hotkey,vPistolBind,
    Gui, Add, Hotkey,vRifleBind,
    Gui, Add, Hotkey,vFranklinBind,
+   Gui, Add, Hotkey,vexplodeBind,
 Return
 
 MacroOptions:
@@ -1573,6 +1580,7 @@ SaveConfigRedirect:
    {
       IniWrite,%InteractionMenuKey%,%CFG%,Keybinds,Interaction Menu Key
       IniWrite,%FranklinBind%,%CFG%,Keybinds,Franklin Key
+      IniWrite,%explodeBind%,%CFG%,Keybinds,Explode Key
       IniWrite,%ThermalHelmet%,%CFG%,PVP Macros,Thermal Helmet
       IniWrite,%jetThermal%,%CFG%,PVP Macros,Jet Thermal
       IniWrite,%FastSniperSwitch%,%CFG%,PVP Macros,Fast Sniper Switch
@@ -1710,6 +1718,7 @@ Read:
    {
       IniRead,Read_InteractionMenuKey,%CFG%,Keybinds,Interaction Menu Key
       IniRead,Read_FranklinBind,%CFG%,Keybinds,Franklin Key
+      IniRead,Read_explodeBind,%CFG%,Keybinds,Explode Key
       IniRead,Read_ThermalHelmet,%CFG%,PVP Macros,Thermal Helmet
       IniRead,Read_jetThermal,%CFG%,PVP Macros,Jet Thermal
       IniRead,Read_FastSniperSwitch,%CFG%,PVP Macros,Fast Sniper Switch
@@ -1762,6 +1771,7 @@ Read:
       
       GuiControl,1:,InteractionMenuKey,%Read_InteractionMenuKey%
       GuiControl,1:,FranklinBind,%Read_FranklinBind%
+      GuiControl,1:,explodeBind,%Read_explodeBind%
       GuiControl,1:,ThermalHelmet,%Read_ThermalHelmet%
       GuiControl,1:,jetThermal,%Read_jetThermal%
       GuiControl,1:,FastSniperSwitch,%Read_FastSniperSwitch%
