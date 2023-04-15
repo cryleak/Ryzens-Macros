@@ -577,15 +577,12 @@ FastRespawnEWO:
    GuiControlGet, BugRespawnMode
    If (BugRespawnMode = "Sticky")
    {
-      SendInput {Blind}{lshift down}{w up}{a up}{s up}{d up}
-      BlockInput, On
       SendInput {Blind}{%FranklinBind% down}
       Sleep(400)
       Send {Blind}{g}
-      SendInput {Blind}{%FranklinBind% up}{lshift up}
-      BlockInput, Off
+      SendInput {Blind}{%FranklinBind% up}
       Sleep sleepTime
-      Send {Blind}{esc}{lbutton up}
+      Send {Blind}{backspace}{lbutton up}
    } else
    {
       SendInput {Blind}{lshift down}{w up}{a up}{s up}{d up}
@@ -601,8 +598,10 @@ FastRespawnEWO:
       SendInput {Blind}{%FranklinBind% up}{lshift up}
       BlockInput, Off
       Sleep sleepTime
-      Send {Blind}{esc}{lbutton up}
+      Send {Blind}{backspace}{lbutton up}
    }
+   If (FastRespawnEWO = "CapsLock")
+      SetCapsLockState Off
 Return
 
 GTAHax: ; Self explanatory
