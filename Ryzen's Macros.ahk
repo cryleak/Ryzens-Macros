@@ -281,37 +281,27 @@ EWO: ; Self explanatory
    {
       SendInput {Blind}{lbutton down}
       Send {Blind}{f24 up}
-      SendInput {Blind}{lbutton up}{rbutton up}
    }
-   switch SmoothEWO
+   SendInput {Blind}{lbutton up}{rbutton up}
+   If (SmoothEWO)
    {
-   case 1:
       If GetKeyState("RButton","P")
       {
          switch SmoothEWOMode
          {
          case "Staeni":
-            SendInput {Blind}{lbutton up}{rbutton up}
             Sleep(100)
          case "Faster":
-            SendInput {Blind}{lbutton up}{rbutton up}
             Sleep(45)
-         case "Fastest":
-            SendInput {Blind}{lbutton up}{rbutton up}
-            Sleep(60)
-         case "Fasterest":
-            SendInput {Blind}{lbutton up}{rbutton up}
-            Sleep(60)
          }
       }
       
       switch SmoothEWOMode
       {
       case "Fasterest":
-         SendInput {Blind}{lbutton down}{rbutton down}
-         Send {Blind}{%EWOLookBehindKey% down}
-         SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}
-         Send {Blind}{f24 2}
+         Send {Blind}{lbutton down}{rbutton down}{lbutton up}{rbutton up}
+         SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}{%EWOLookBehindKey% down}
+         Send {Blind}{f24 2}{f24 up}
          SendInput {Blind}{wheelup}{up up}{enter up}
       case "Custom":
          GuiControlGet, customTime
@@ -357,10 +347,9 @@ EWO: ; Self explanatory
          Sleep(50)
          SendInput {Blind}{enter up}{%InteractionMenuKey% up}{%EWOLookBehindKey% up}
       case "Fastest":
-         SendInput {Blind}{lbutton down}{rbutton down}
-         Send {Blind}{%EWOLookBehindKey% down}
-         SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}
-         Send {Blind}{%InteractionMenuKey%}{up 2}{enter}
+         Send {Blind}{lbutton down}{rbutton down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}{f24 up}
+         SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}{enter down}
+         Send {Blind}{%InteractionMenuKey%}{f24 up}{up}{up}{enter up}
       case "Retarded":
          StringUpper, EWOLookBehindKey, EWOLookBehindKey
          Random, Var, 1, 3
@@ -412,8 +401,8 @@ EWO: ; Self explanatory
          Send {Blind}{f24 up}{enter}
          SendInput {Blind}{space up}
       }
-   
-   Default:
+   } else
+   {
       SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{g down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
       Send {Blind}{f24}{f24 up}
       SendInput {Blind}{wheelup}{up up}{enter up}
@@ -583,6 +572,7 @@ FastRespawn: ; Self explanatory
 return
 
 FastRespawnEWO:
+   SendInput {Blind}{ctrl up}{lshift up}{rshift up}
    GuiControlGet, BugRespawnMode
    If (BugRespawnMode = "Sticky")
    {
@@ -1567,12 +1557,10 @@ Return
 Apply:
    Global save = 0
    Goto SaveConfigRedirect
-Return
 
 SaveConfig:
    Global save = 1
    Goto SaveConfigRedirect
-Return
 
 SaveConfigRedirect:
    GuiControlGet, ProcessCheck2
@@ -1833,7 +1821,7 @@ Return
 
 CheckHWID:
    UrlDownloadToFile, https://pastebin.com/raw/dpBPUkBM, %A_Temp%\Keys.ini
-   while IfExist, A_Temp "\Keys.ini" ; This cheeky little piece of code makes it wait until the file exists.
+   while not FileExist(A_Temp "\Keys.ini") ; This cheeky little piece of code makes it wait until the file exists.
       {}
       Loop 60
          IniRead, Key%A_Index%, %A_Temp%\Keys.ini, Registration, Key%A_Index%
@@ -1952,12 +1940,12 @@ SendInputTestV2()
    startTime := A_TickCount
    Send t{shift up}
    SendInput Loading{. 30}
-   endTime := A_TickCount - startTime
+   calculatedTime := A_TickCount - startTime
    Sleep(500)
    Send {Blind}{esc}
    Sleep(500)
    BlockInput, Off
-   Return endTime
+   Return calculatedTime
 }
 
 Clumsy:
@@ -3074,8 +3062,6 @@ else
       WinWaitNotActive:
       winwaitnotactive,%p1%,%p2%,%p3%,%p4%,%p5%
       return
-      
-      suspend,permit
       
    }
    
