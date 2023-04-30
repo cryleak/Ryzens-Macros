@@ -8,7 +8,7 @@ IfNotExist, %ConfigDirectory%
 IfNotExist, %ConfigDirectory%\assets
    FileCreateDir, %ConfigDirectory%\assets
 clumsyEnabled = 0
-MacroVersion := "4.0"
+MacroVersion := "4.1"
 If InStr(A_ScriptName,.ahk) && not (A_ScriptName = "AutoHotkey.ahk")
 {
    MacroText := "Ryzen's Macros Dev Build Version "MacroVersion ; Macro version
@@ -36,7 +36,6 @@ MCCEO2 := 0 ; If you are in MC
 SendInputFallbackText = I have detected that it has taken a very long time to complete the chat message. First, check if the characters are being sent one by one, or in instant `"batches`". If it is being sent in batches, then your FPS is likely very low. Please complain to me on Discord and I will raise the threshold for this message. If it is being sent one by one, try this: If you are running Flawless Widescreen, you must close it, as it causes issues, and makes most macros far slower. Please open a support ticket on the Discord Server if the problem persists, or if Flawless Widescreen is not running.
 WriteWasJustPerformed = 0 ; EWO Score Write was just performed
 IniRead,DebugTesting,%CFG%,Debug,Debug Testing ; Checks if debug testing is true, usually false.
-IniRead,clumsyPing,%CFG%,Debug,clumsy ping ; yes
 IniRead,WhileChat,%CFG%,Debug,Improve Chat Macros But You Can't Use Multiple Keybinds ; yes
 IniWrite,%WhileChat%,%CFG%,Debug,Improve Chat Macros But You Can't Use Multiple Keybinds
 IniRead,OriginalLocation, %ConfigDirectory%\FileLocationData.ini, Location, Location
@@ -85,22 +84,19 @@ Back: ; It goes back to this checkpoint. It works.
    #UseHook On ; Idk
    #InstallKeybdHook ; Idk
    #InstallMouseHook ; Idk
-   Process, Priority, GTA5.exe, H ; I heard that high priority gives keyboard input priority. I only heard it improves input speed and didn't read into it because yes.
+   Process, Priority, GTA5.exe, A ; I heard that high priority gives keyboard input priority. I only heard it improves input speed and didn't read into it because yes.
    Process, Priority,, A ; Sets priority of the script to Above Normal because I can
    DllCall("ntdll\ZwSetTimerResolution","Int",5000,"Int",1,"Int*",MyCurrentTimerResolution) ; yes
    SetTitleMatchMode, 2 ; I forgor :dead_skull:
    SetDefaultMouseSpeed, 0 ; Something
    SetKeyDelay, -1, -1 ; Sets key delay to the lowest possible, there is still delay due to the keyboard hook in GTA, but this makes it excecute as fast as possible WITHOUT skipping keystrokes. Set this a lot higher if you uninstalled the keyboard hook using mods.
    SetWinDelay, -1 ; After any window modifying command, the script has a built in delay. Fuck delays.
+   SetMouseDelay, -1
    SetControlDelay, 0 ; After any control modifying command, for example; ControlSend, there is a built in delay. Set to 0 instead of -1 because having a slight delay may improve reliability, and is unnoticable anyways.
    Gui,Font,q5,Segoe UI Semibold ; Sets font to something
-   IniRead,Read_AlwaysOnTop,%CFG%,Misc,Always On Top ; Secret module
-   If (Read_AlwaysOnTop)
-   {
-      WinSet, AlwaysOnTop, Off, ahk_exe GTA5.exe
-      WinMinimize, ahk_exe GTA5.exe
-      SetTimer, AlwaysOnTop, 25, -2147483648
-   }
+   IniRead,neverOnTop,%CFG%,Debug,Never On Top ; Secret module
+   If (neverOnTop)
+      SetTimer, NeverOnTop, 25, -2147483648
    global sendInputWork = 1 ; SendInput works, will be changed to false if it doesn't work
    If (IsCompiled) && (!GTAAlreadyClosed)
    {
@@ -138,12 +134,6 @@ Back: ; It goes back to this checkpoint. It works.
 Return
 
 Reload: ; Reloads the macros
-GuiControlGet, AlwaysOnTop
-If (AlwaysOnTop)
-{
-   WinSet, AlwaysOnTop, Off, ahk_exe GTA5.exe
-   WinMinimize, ahk_exe GTA5.exe
-}
 If (!isCompiled)
 {
    MsgBox, 0, %MacroText%,If you see this`, something strange is happening. , 0.75
@@ -174,12 +164,6 @@ Flawless: ; Flawless Widescreen fix
 Return
 
 ExitMacros: ; Self explanatory
-   GuiControlGet, AlwaysOnTop
-   If (AlwaysOnTop)
-   {
-      WinSet, AlwaysOnTop, Off, ahk_exe GTA5.exe
-      WinMinimize, ahk_exe GTA5.exe
-   }
    Process, Close, %Gay%
    Process, Close, %ewoWriteWindow%
    Process, Close, %Gay3%
@@ -204,7 +188,10 @@ ThermalHelmet: ; Self explanatory
    Send {Blind}{down up}
    SendInput {Blind}{enter up}
    If (!NightVision)
-      Send {Blind}{down 4}
+   {
+      Send {Blind}{down 3}
+      SendInput {Blind}{WheelDown}
+   }
    Sleep(50)
    Send {Blind}{space}{%InteractionMenuKey%}
 return
@@ -250,11 +237,7 @@ jetThermal:
 Return
 
 FastSniperSwitch: ; Self explanatory
-   If (FastSniperSwitch = "F1") && GetKeyState("LShift","P") && (DebugTesting)
-   {
-      Send {Blind}{lshift down}{f1 down}{lshift up}{f1 up}
-      Return
-   }
+   SetMouseDelay 10
    GuiControlGet, FasterSniper
    SendInput {Blind}{%FastSniperSwitch% up}
    If (FasterSniper)
@@ -273,6 +256,7 @@ FastSniperSwitch: ; Self explanatory
       Sleep(110)
       Send {Blind}{lbutton up}
    }
+   SetMouseDelay -1
 return
 
 EWO: ; Self explanatory
@@ -282,10 +266,15 @@ EWO: ; Self explanatory
    GuiControlGet, shootEWO
    If (SmoothEWOMode = "Fast Respawn") && (SmoothEWO) || (SmoothEWOMode = "Sticky") && (SmoothEWO)
       Goto, MiscEWOModes
+   priorHotkey := StrReplace(A_PriorHotkey, "*")
+   if (priorHotkey = StickyBind) || (priorHotkey = RPGBind) || (priorHotkey = SniperBind) || (priorHotkey = PistolBind) ; If you switch to a different weapon sometimes the EWO animation will play which we don't want, this sort of fixes it
+      if (A_TimeSincePriorHotkey	< 50) ; I'm too lazy to add "&&" 4 times.
+         Sleep(50)
+   SendInput {Blind}{%EWOLookBehindKey% up}{lbutton up}{%EWOMelee% down}{lshift up}{rshift up}{lctrl up}{rctrl up}
    If (shootEWO)
    {
       SendInput {Blind}{lbutton down}
-      Send {Blind}{f24 up}
+      Send {Blind}{f24}
    }
    SendInput {Blind}{lbutton up}{rbutton up}
    If (SmoothEWO)
@@ -298,16 +287,21 @@ EWO: ; Self explanatory
             Sleep(100)
          case "Faster":
             Sleep(45)
+         case "Retarded":
+            Sleep(100)
+            
          }
       }
       
       switch SmoothEWOMode
       {
       case "Fasterest":
+         SetMouseDelay 10
          Send {Blind}{lbutton down}{rbutton down}{lbutton up}{rbutton up}
          SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{%explodeBind% down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}{%EWOLookBehindKey% down}
          Send {Blind}{f24 2}{f24 up}
          SendInput {Blind}{wheelup}{up up}{enter up}
+         SetMouseDelay -1
       case "Custom":
          GuiControlGet, customTime
          customTimeFrames := StrSplit(customTime,"F")
@@ -318,13 +312,13 @@ EWO: ; Self explanatory
             CancerFunction("f24 up",customTimeFrames[1],"Send")
          else
             Sleep(customTime)
-         SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{%explodeBind% down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}
+         SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{up down}{%InteractionMenuKey% down}{%explodeBind% down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}
          Send {Blind}{f24}{f24 up}
          SendInput {Blind}{wheelup}{up up}{enter up}
       case "Faster":
          SendInput {Blind}{lbutton down}{rbutton down}
          Send {Blind}{f24 up}
-         SendInput {Blind}{alt up}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%EWOMelee% down}{%InteractionMenuKey% down}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
+         SendInput {Blind}{alt up}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%InteractionMenuKey% down}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
          Sleep(47)
          SendInput {Blind}{up down}
          Sleep(35)
@@ -333,7 +327,7 @@ EWO: ; Self explanatory
          SendInput {Blind}{enter up}{%InteractionMenuKey% up}{%EWOLookBehindKey% up}
       case "Staeni":
          /*
-         SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{%InteractionMenuKey% down}
+         SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%InteractionMenuKey% down}
          Sleep(20)
          Send {Blind}{%EWOLookBehindKey% down}{up}
          Sleep(25)
@@ -352,14 +346,14 @@ EWO: ; Self explanatory
          Sleep(50)
          SendInput {Blind}{enter up}{%InteractionMenuKey% up}{%EWOLookBehindKey% up}
       case "Fastest":
-         Send {Blind}{lbutton down}{rbutton down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}{f24 up}
+         SetMouseDelay 10
+         Send {Blind}{lbutton down}{rbutton down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}
          SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}{enter down}
-         Send {Blind}{%InteractionMenuKey%}{f24 up}{up}{up}{enter up}
+         Send {Blind}{%InteractionMenuKey%}{f24 up}{up 2}{enter up}
+         SetMouseDelay -1
       case "Retarded":
          StringUpper, EWOLookBehindKey, EWOLookBehindKey
          Random, Var, 1, 3
-         SendInput {Blind}{lbutton down}{rbutton down}
-         Send {Blind}{f24 up}
          SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%InteractionMenuKey% down}{%EWOSpecialAbilitySlashActionKey% down}
          Sleep(25)
          Send {Blind}{up}
@@ -376,8 +370,6 @@ EWO: ; Self explanatory
          Send {Blind}{enter up}
          StringLower, EWOLookBehindKey, EWOLookBehindKey
       case "Retarded2":
-         SendInput {Blind}{lbutton down}{rbutton down}
-         Send {Blind}{f24 up}
          SendInput {Blind}{lbutton up}{rbutton up}{enter down}
          Send {Blind}{%InteractionMenuKey%}{enter up}{up down}
          SendInput {Blind}{enter down}
@@ -386,7 +378,7 @@ EWO: ; Self explanatory
          GuiControl,1:, CEOMode, 0
          Sleep(110)
          
-         SendInput {Blind}{%EWOLookBehindKey% down}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{%InteractionMenuKey% down}
+         SendInput {Blind}{%EWOLookBehindKey% down}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%InteractionMenuKey% down}
          Sleep(13)
          Send {Blind}{shift down}{f24 up}{shift up}{up}
          Sleep(12)
@@ -394,9 +386,7 @@ EWO: ; Self explanatory
          Sleep(9)
          Send {Blind}{%EWOSpecialAbilitySlashActionKey% down}{enter up}
       case "Retarded3":
-         SendInput {Blind}{lbutton down}{rbutton down}
-         Send {Blind}{f24 up}
-         SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%InteractionMenuKey% down}{%EWOSpecialAbilitySlashActionKey% down}{%EWOMelee% down}
+         SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%InteractionMenuKey% down}{%EWOSpecialAbilitySlashActionKey% down}
          Sleep(30)
          Send {Blind}{up}
          Sleep(20)
@@ -408,15 +398,14 @@ EWO: ; Self explanatory
       }
    } else
    {
-      SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{%explodeBind% down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
+      SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{up down}{%InteractionMenuKey% down}{%explodeBind% down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
       Send {Blind}{f24}{f24 up}
       SendInput {Blind}{wheelup}{up up}{enter up}
    }
    SendInput {up up}
    Send {Blind}{enter 2}{up}{enter}{left}{down}{enter}
-   SendInput {Blind}{%EWOSpecialAbilitySlashActionKey% up}{%EWOLookBehindKey% up}{%EWOMelee% up}{%InteractionMenuKey% up}{up up}{%explodeBind% up}{%EWO% up}
+   SendInput {%EWOMelee% up}{%InteractionMenuKey% up}{%EWOLookBehindKey% up}{EWOSpecialAbilitySlashActionKey up}
    SetCapsLockState, Off
-   SetMouseDelay, 10
 return
 
 MiscEWOModes:
@@ -496,19 +485,40 @@ EWOWrite: ; Checks if EWO Write is enabled
 Return
 
 KekEWO: ; Opens the options menu to EWO, works even if you are stunned or ragdolled
-   Send {Blind}{esc}
-   Sleep(150)
-   Send {Blind}e
-   Sleep(500)
-   Send {Blind}{enter}
-   Sleep(400)
-   Send {Blind}{up 4}
-   Sleep(250)
-   Send {Blind}{enter}
-   Sleep(100)
-   Send {Blind}{up 6}
-   Sleep(100)
-   Send {Blind}{enter 20}
+   GuiControlGet, antiKekMode
+   if (antiKekMode = "Options Menu")
+   {
+      SendInput {Blind}{%EWOMelee% down}{lshift down}
+      Send {Blind}{p}
+      Sleep(65)
+      Send {Blind}{right}
+      Sleep(440)
+      Send {Blind}{enter}
+      Sleep(200)
+      Send {Blind}{up 5}
+      Sleep(190)
+      Send {Blind}{enter}
+      Sleep(40)
+      Send {Blind}{up 6}
+      Sleep(15)
+      RestartTimer()
+      Loop
+      {
+         timeElapsed := CalculateTime()
+         If (timeElapsed > 200)
+            break
+         Send {Blind}{enter}
+      }
+      SendInput {Blind}{%EWOMelee% up}{lshift up}
+   } else if (antiKekMode = "Interaction Menu Spam")
+   {
+      SendInput {Blind}{shift up}{up down}{enter down}{%EWOLookBehindKey% down}{%InteractionMenuKey% down}{%EWOMelee% down}
+      Send {Blind}{f24}{%InteractionMenuKey% up}
+      SendInput {Blind}{wheelup}{up up}{enter up}{%EWOLookBehindKey% up}{%EWOMelee% up}
+      Send {Blind}{%InteractionMenuKey%}
+      SetCapsLockState Off
+      Sleep(50)
+   }
 return
 
 BST: ; Self explanatory
@@ -546,14 +556,13 @@ Ammo: ; Self explanatory
    GuiControlGet, CEOMode
    Send {Blind}{%InteractionMenuKey%}
    If (CEOMode) = 1 {
-      Send {Blind}{down 2}
-      SendInput {Blind}{WheelDown}
+      Send {Blind}{down 3}
    } else
    {
-      Send {Blind}{down}
-      SendInput {Blind}{WheelDown}
+      Send {Blind}{down 2}
    }
-   Send {Blind}{enter up}{down 4}
+   SendInput {Blind}{enter up}
+   Send {Blind}{down 4}
    SendInput {Blind}{enter down}
    Send {Blind}{down 2}
    SendInput {Blind}{enter up}
@@ -577,17 +586,17 @@ FastRespawn: ; Self explanatory
 return
 
 FastRespawnEWO:
-   sleepTime := 200
-   SendInput {Blind}{ctrl up}{lshift up}{rshift up}
    GuiControlGet, BugRespawnMode
+   sleepTime := 200
+   SendInput {Blind}{ctrl up}{lshift up}{rshift up}{lbutton up}{rbutton up}
    If (BugRespawnMode = "Sticky")
    {
       SendInput {Blind}{%FranklinBind% down}
-      Sleep(400)
-      Send {Blind}{%explodeBind%}
+      Sleep(350)
+      Send {Blind}{%explodeBind% down}
       SendInput {Blind}{%FranklinBind% up}
       Sleep sleepTime
-      Send {Blind}{backspace}{lbutton up}
+      Send {Blind}{backspace}{lbutton up}{%explodeBind% up}
    } else
    {
       SendInput {Blind}{lshift down}{w up}{a up}{s up}{d up}
@@ -605,8 +614,6 @@ FastRespawnEWO:
       Sleep sleepTime
       Send {Blind}{backspace}{lbutton up}
    }
-   If (FastRespawnEWO = "CapsLock")
-      SetCapsLockState Off
 Return
 
 GTAHax: ; Self explanatory
@@ -1090,12 +1097,6 @@ TabWeapon2: ; If Fast Switch is enabled
 return
 
 ShowUI:
-   GuiControlGet, AlwaysOnTop
-   If (AlwaysOnTop)
-   {
-      WinSet, AlwaysOnTop, Off, ahk_exe GTA5.exe
-      WinMinimize, ahk_exe GTA5.exe
-   }
    Gui, Show
 return
 
@@ -1297,14 +1298,6 @@ LaunchCycle:
    }
    CrosshairDone := 1
    WinActivate, %OldActiveWindow%
-   GuiControlGet, AlwaysOnTop
-   if (!AlwaysOnTop)
-   {
-      SetTimer, AlwaysOnTop, Delete, -2147483648
-   } else
-   {
-      SetTimer, AlwaysOnTop, 100, -2147483648
-   }
 return
 
 DisableAll:
@@ -1361,8 +1354,6 @@ NotExist1:
       GuiControl,1:,ShowUI,
       GuiControl,1:,ToggleCEO,
       GuiControl,1:,ToggleCrosshair,
-      GuiControl,1:,SleepTime,200
-      GuiControl,1:,BuyCycles,4
       GuiControl,1:,Reverse,0
       GuiControl,1:,SpecialBuy,0
       GuiControl,1:,ProcessCheck2,0
@@ -1381,6 +1372,7 @@ NotExist1:
       GuiControl,1:,customTime,30
       GuiControl,1:,FasterSniper,1
       GuiControl,Choose,SmoothEWOMode,Fastest
+      GuiControl,Choose,clumsyLagMode,sending
    }
 Return
 
@@ -1435,7 +1427,7 @@ ChatMacros:
    Gui, Add, Hotkey,vEssayAboutGTA,
    Gui, Add, Hotkey,vCustomTextSpam,
    Gui, Add, Edit, Limit140 vCustomSpamText
-   Gui, Add, Checkbox, vRawText h20,
+   Gui, Add, Checkbox, vRawText h21,
    Gui, Add, Hotkey,vShutUp,
    Gui, Add, Hotkey,vSuspend,
 Return
@@ -1475,44 +1467,48 @@ MacroOptions:
    Gui, Add, Link,, Crosshair: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Crosshair">(?)</a>
    Gui, Add, Link,, Crosshair position: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Crosshair-position">(?)</a>
    Gui, Add, Link,, Night Vision Thermal <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Night-Vision-Thermal">(?)</a>
-   Gui, Add, Link,, Slower EWO? <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Slower-EWO">(?)</a>
    Gui, Add, Link,, Shoot EWO? <a href="">(?)</a>
    Gui, Add, Link,, Custom EWO Sleep Time: <a href="">(?)</a>
-   Gui, Add, Link,, Slower EWO Mode: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Slower-EWO">(?)</a>
    Gui, Add, Link,, CEO Mode: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/CEO-Mode">(?)</a>
-   Gui, Add, Link,, Optimize Fast Respawn EWO for: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Optimize-Fast-Respawn-EWO-For">(?)</a>
    Gui, Add, Link,, Show EWO Score: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Show-EWO-Score">(?)</a>
-   Gui, Add, Link,, Sing: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Show-EWO-Score">(?)</a>
+   Gui, Add, Link,, Sing: <a href="">(?)</a>
    If (DebugTesting)
    {
       Gui, Add, Link,, Passive Disable Spam: <a href="">(?)</a>
       Gui, Add, Link,, Always On Top: <a href="">(?)</a>
+      Gui, Add, Link,, clumsy ping: <a href="">(?)</a>
+      Gui, Add, Link,, clumsy lag mode: <a href="">(?)</a>
    }
+   Gui, Add, Link,, Slower EWO Mode: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Slower-EWO">(?)</a>
+   Gui, Add, Link,, AntiKek Mode: <a href="">(?)</a>
+   Gui, Add, Link,, Optimize Fast Respawn EWO for: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Optimize-Fast-Respawn-EWO-For">(?)</a>
    
-   Gui, Add, Checkbox,vBSTSpeed h20 x+105 y60,
-   Gui, Add, CheckBox, gProcessCheck3 vProcessCheck2 h20,
-   Gui, Add, CheckBox, vFasterSniper h20,
-   Gui, Add, Checkbox, gCrossHair5 vCrossHair h20,
-   Gui, Add, Edit, gCrosshair5 vCrosshairPos h20,
-   Gui, Add, CheckBox, vNightVision h20,
-   Gui, Add, Checkbox, vSmoothEWO h20,
-   Gui, Add, Checkbox, vshootEWO h20,
-   Gui, Add, Edit, vcustomTime h20,
-   Gui, Add, DropDownList, vSmoothEWOMode, Sticky|Retarded|Retarded2|Retarded3|Staeni|Faster|Fastest|Fasterest|Custom
-   Gui, Add, CheckBox, vCEOMode h20,
-   Gui, Add, DropDownList, vBugRespawnMode, Sticky|Homing|RPG
-   Gui, Add, Checkbox, gEWOWrite vEWOWrite h20
-   Gui, Add, Checkbox, gToggleSing vsingEnabled h20
+   Gui, Add, Checkbox,vBSTSpeed h21 x+105 y60,
+   Gui, Add, CheckBox, gProcessCheck3 vProcessCheck2 h21,
+   Gui, Add, CheckBox, vFasterSniper h21,
+   Gui, Add, Checkbox, gCrossHair5 vCrossHair h21,
+   Gui, Add, Edit, gCrosshair5 vCrosshairPos h21,
+   Gui, Add, CheckBox, vNightVision h21,
+   Gui, Add, Checkbox, vSmoothEWO h21,
+   Gui, Add, Checkbox, vshootEWO h21,
+   Gui, Add, Edit, vcustomTime h21,
+   Gui, Add, CheckBox, vCEOMode h21,
+   Gui, Add, Checkbox, gEWOWrite vEWOWrite h21
+   Gui, Add, Checkbox, gToggleSing vsingEnabled h21
    If (DebugTesting)
    {
-      Gui, Add, Checkbox, gPassiveDisableSpamCheck vPassiveDisableSpam h20
-      Gui, Add, Checkbox, gAlwaysOnTopCheck vAlwaysOnTop h32
+      Gui, Add, Checkbox, gPassiveDisableSpamCheck vPassiveDisableSpam h21
+      Gui, Add, Edit, gClumsyPing vclumsyPing h21,
+      Gui, Add, DropDownList, gclumsyLagMode vclumsyLagMode, sending|recieving
    }
+   Gui, Add, DropDownList, vSmoothEWOMode, Sticky|Retarded|Retarded2|Retarded3|Staeni|Faster|Fastest|Fasterest|Custom
+   Gui, Add, DropDownList, vantiKekMode, Options Menu|Interaction Menu Spam
+   Gui, Add, DropDownList, vBugRespawnMode, Sticky|Homing|RPG
 Return
 
 MiscMacros:
    Gui, Tab, 5
-   Gui, Add, Link,x+5 y60, Kek EWO: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Kek-EWO">(?)</a>
+   Gui, Add, Link,x+5 y60, AntiKek: (120+ FPS Only) <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Kek-EWO">(?)</a>
    Gui, Add, Link,, Show UI: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Show-UI">(?)</a>
    Gui, Add, Link,, Toggle CEO: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Toggle-CEO">(?)</a>
    Gui, Add, Link,, Reload Outfit: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Reload-Outfit">(?)</a>
@@ -1527,7 +1523,7 @@ MiscMacros:
    Gui, Add, Hotkey,vToggleCEO,
    Gui, Add, Hotkey,vReloadOutfit,
    Gui, Add, Hotkey,vJobs
-   Gui, Add, Checkbox, gPaste2 vPaste h20
+   Gui, Add, Checkbox, gPaste2 vPaste h21
    Gui, Add, Hotkey,vMCCEO
    If (DebugTesting)
       Gui, Add, Hotkey,vPassiveDisableSpamToggle
@@ -1559,6 +1555,8 @@ SavingAndButtonsAndMiscMacros:
    Gui, Add, Link,x120 y219, <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Apply-CEO-Circle">(?)</a>
    Gui, Add, Link,x235 y245, <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Open-Local-Directory-of-Ryzen's-Macros">(?)</a>
    Gui, Add, Text,x+111, ; Makes the window size correct
+   
+   Gui -DPIScale
 Return
 
 Apply:
@@ -1613,6 +1611,7 @@ SaveConfigRedirect:
       IniWrite,%ProcessCheck2%,%CFG%,Misc,Process Check
       IniWrite,%NightVision%,%CFG%,Misc,Use Night Vision Thermal
       IniWrite,%RPGSpam%,%CFG%,PVP Macros,RPG Spam
+      IniWrite,%antiKekMode%,%CFG%,PVP Macros,AntiKek Mode
       IniWrite,%RPGBind%,%CFG%,Keybinds,RPG Bind
       IniWrite,%StickyBind%,%CFG%,Keybinds,Sticky Bind
       IniWrite,%PistolBind%,%CFG%,Keybinds,Pistol Bind
@@ -1629,7 +1628,8 @@ SaveConfigRedirect:
       IniWrite,%BugRespawnMode%,%CFG%,Misc,Bug Respawn Mode
       IniWrite,%FasterSniper%,%CFG%,Misc,Faster Sniper
       IniWrite,%PassiveDisableSpamToggle%,%CFG%,Misc,Passive Disable Spam Toggle
-      IniWrite,%AlwaysOnTop%,%CFG%,Misc,Always On Top
+      IniWrite,%clumsyPing%,%CFG%,Debug,clumsy ping
+      IniWrite,%clumsyLagMode%,%CFG%,Debug,clumsy lag mode
    }
    
    Gosub, LaunchCycle
@@ -1751,6 +1751,7 @@ Read:
       IniRead,Read_ProcessCheck2,%CFG%,Misc,Process Check
       IniRead,Read_NightVision,%CFG%,Misc,Use Night Vision Thermal
       IniRead,Read_RPGSpam,%CFG%,PVP Macros,RPG Spam
+      IniRead,Read_antiKekMode,%CFG%,PVP Macros,AntiKek Mode
       IniRead,Read_RPGBind,%CFG%,Keybinds,RPG Bind
       IniRead,Read_StickyBind,%CFG%,Keybinds,Sticky Bind
       IniRead,Read_PistolBind,%CFG%,Keybinds,Pistol Bind
@@ -1767,7 +1768,8 @@ Read:
       IniRead,Read_BugRespawnMode,%CFG%,Misc,Bug Respawn Mode
       IniRead,Read_FasterSniper,%CFG%,Misc,Faster Sniper
       IniRead,Read_PassiveDisableSpamToggle,%CFG%,Misc,Passive Disable Spam Toggle
-      IniRead,Read_AlwaysOnTop,%CFG%,Misc,Always On Top
+      IniRead,Read_clumsyPing,%CFG%,Debug,clumsy ping
+      IniRead,Read_clumsyLagMode,%CFG%,Debug,clumsy lag mode
       
       GuiControl,1:,InteractionMenuKey,%Read_InteractionMenuKey%
       GuiControl,1:,FranklinBind,%Read_FranklinBind%
@@ -1803,12 +1805,11 @@ Read:
       GuiControl,1:,ShowUI,%Read_ShowUI%
       GuiControl,1:,ToggleCEO,%Read_ToggleCEO%
       GuiControl,1:,ToggleCrosshair,%Read_ToggleCrosshair%
-      GuiControl,1:,SleepTime,%Read_SleepTime%
-      GuiControl,1:,BuyCycles,%Read_BuyCycles%
       GuiControl,1:,Reverse,%Read_Reverse%
       GuiControl,1:,ProcessCheck2,%Read_ProcessCheck2%
       GuiControl,1:,NightVision,%Read_NightVision%
       GuiControl,1:,RPGSpam,%Read_RPGSpam%
+      GuiControl,1:Choose,antiKekMode,%Read_antiKekMode%
       GuiControl,1:,RPGBind,%Read_RPGBind%
       GuiControl,1:,StickyBind,%Read_StickyBind%
       GuiControl,1:,PistolBind,%Read_PistolBind%
@@ -1821,11 +1822,12 @@ Read:
       GuiControl,1:,SmoothEWO,%Read_SmoothEWO%
       GuiControl,1:,shootEWO,%Read_shootEWO%
       GuiControl,1:,customTime,%Read_customTime%
-      GuiControl,Choose,SmoothEWOMode,%Read_SmoothEWOMode%
-      GuiControl,Choose,BugRespawnMode,%Read_BugRespawnMode%
+      GuiControl,1:Choose,SmoothEWOMode,%Read_SmoothEWOMode%
+      GuiControl,1:Choose,BugRespawnMode,%Read_BugRespawnMode%
       GuiControl,1:,FasterSniper,%Read_FasterSniper%
       GuiControl,1:,PassiveDisableSpamToggle,%Read_PassiveDisableSpamToggle%
-      GuiControl,1:,AlwaysOnTop,%Read_AlwaysOnTop%
+      GuiControl,1:,clumsyPing,%Read_clumsyPing%
+      GuiControl,1:Choose,clumsyLagMode,%Read_clumsyLagMode%
    }
 Return
 
@@ -1918,28 +1920,8 @@ OpenDirectory:
    Run, %ConfigDirectory%
 Return
 
-AlwaysOnTopCheck:
-   GuiControlGet, AlwaysOnTop
-   if (!AlwaysOnTop)
-      SetTimer, AlwaysOnTop, Delete, -2147483648
-   else
-      SetTimer, AlwaysOnTop, 25, -2147483648
-
-Return
-
-AlwaysOnTop:
-   GuiControlGet, AlwaysOnTop
-   If (AlwaysOnTop)
-   {
-      If WinActive("ahk_exe GTA5.exe")
-      {
-         WinSet, AlwaysOnTop, On, ahk_exe GTA5.exe
-      } else
-      {
-         WinSet, AlwaysOnTop, Off, ahk_exe GTA5.exe
-         WinMinimize, ahk_exe GTA5.exe
-      }
-   }
+NeverOnTop:
+   WinSet, AlwaysOnTop, Off, ahk_exe GTA5.exe
 Return
 
 SendInputTestV2()
@@ -1958,15 +1940,33 @@ SendInputTestV2()
    Return calculatedTime
 }
 
+ClumsyLagMode:
+   GuiControlGet, clumsyLagMode
+   if (clumsyLagMode = "sending")
+      Control, Choose, 4, ComboBox1, ahk_pid %Gay3%
+   else if (clumsyLagMode = "recieving")
+      Control, Choose, 5, ComboBox1, ahk_pid %Gay3%
+Return
+
+ClumsyPing:
+   GuiControlGet, clumsyPing
+   ControlSetText,Edit2,%clumsyPing%,ahk_pid %Gay3%
+Return
+
 Clumsy:
+   GuiControlGet, clumsyPing
+   GuiControlGet, clumsyLagMode
    if (!clumsyEnabled)
    {
       Process, Close, %Gay3%
-      Run, clumsy.exe, %ConfigDirectory%\clumsy,Min,Gay3
+      Run, *RunAs clumsy.exe, %ConfigDirectory%\clumsy,Min,Gay3
       WinWait, ahk_pid %Gay3%
       WinGet, ID3, ID, ahk_pid %Gay3%
-      WinSet, ExStyle, ^0x80, ahk_id %ID3% ; 0x80 is WS_EX_TOOLWINDOW
-      Control, Choose, 4, ComboBox1, ahk_pid %Gay3%
+      WinSet, ExStyle, ^0x80, ahk_id %ID3%
+      if (clumsyLagMode = "sending")
+         Control, Choose, 4, ComboBox1, ahk_pid %Gay3%
+      else if (clumsyLagMode = "recieving")
+         Control, Choose, 5, ComboBox1, ahk_pid %Gay3%
       Control, Check,, Button4, ahk_pid %Gay3%
       ControlSetText,Edit2,%clumsyPing%,ahk_pid %Gay3%
       Sleep(100)
@@ -3240,3 +3240,11 @@ else
       else
          Hotkey, *%KeyName%, %Label%, UseErrorLevel Off
    }
+   
+   /*
+   DllCall("QueryPerformanceFrequency", "Int64*", freq)
+   DllCall("QueryPerformanceCounter", "Int64*", CounterBefore)
+   
+   DllCall("QueryPerformanceCounter", "Int64*", CounterAfter)
+   MsgBox % "Elapsed QPC time is " . (CounterAfter - CounterBefore) / freq * 1000 " ms"
+   */
