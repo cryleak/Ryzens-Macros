@@ -95,6 +95,7 @@ Back: ; It goes back to this checkpoint. It works.
    SetControlDelay, 0 ; After any control modifying command, for example; ControlSend, there is a built in delay. Set to 0 instead of -1 because having a slight delay may improve reliability, and is unnoticable anyways.
    Gui,Font,q5,Segoe UI Semibold ; Sets font to something
    IniRead,neverOnTop,%CFG%,Debug,Never On Top ; Secret module
+   IniRead,fuckYou,%CFG%,Debug,Fuck You ; Secret module
    If (neverOnTop)
       SetTimer, NeverOnTop, 25, -2147483648
    global sendInputWork = 1 ; SendInput works, will be changed to false if it doesn't work
@@ -266,10 +267,17 @@ EWO: ; Self explanatory
    GuiControlGet, shootEWO
    If (SmoothEWOMode = "Fast Respawn") && (SmoothEWO) || (SmoothEWOMode = "Sticky") && (SmoothEWO)
       Goto, MiscEWOModes
-   priorHotkey := StrReplace(A_PriorHotkey, "*")
-   if (priorHotkey = StickyBind) || (priorHotkey = RPGBind) || (priorHotkey = SniperBind) || (priorHotkey = PistolBind) ; If you switch to a different weapon sometimes the EWO animation will play which we don't want, this sort of fixes it
-      if (A_TimeSincePriorHotkey	< 50) ; I'm too lazy to add "&&" 4 times.
-         Sleep(50)
+   
+   if (fuckYou <> 1)
+   {
+      priorHotkey := StrReplace(A_PriorHotkey, "*")
+      if (priorHotkey = StickyBind) || (priorHotkey = RPGBind) || (priorHotkey = PistolBind) ; If you switch to a different weapon sometimes the EWO animation will play which we don't want, this sort of fixes it
+      {
+         if (A_TimeSincePriorHotkey	< 90) ; I'm too lazy to add "&&" 4 times.
+            Sleep(90 - A_TimeSincePriorHotkey)
+      } else if (priorHotkey = SniperBind) && (A_TimeSincePriorHotkey < 200)
+         Sleep(200 - A_TimeSincePriorHotkey)
+   }
    SendInput {Blind}{%EWOLookBehindKey% up}{lbutton up}{%EWOMelee% down}{lshift up}{rshift up}{lctrl up}{rctrl up}
    If (shootEWO)
    {
@@ -285,8 +293,6 @@ EWO: ; Self explanatory
          {
          case "Staeni":
             Sleep(100)
-         case "Faster":
-            Sleep(45)
          case "Retarded":
             Sleep(100)
             
@@ -297,17 +303,16 @@ EWO: ; Self explanatory
       {
       case "Fasterest":
          SetMouseDelay 10
+         Sleep(15)
          Send {Blind}{lbutton down}{rbutton down}{lbutton up}{rbutton up}
          SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{%explodeBind% down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}{%EWOLookBehindKey% down}
-         Send {Blind}{f24 2}{f24 up}
+         Send {Blind}{f24 3}
          SendInput {Blind}{wheelup}{up up}{enter up}
          SetMouseDelay -1
       case "Custom":
          GuiControlGet, customTime
          customTimeFrames := StrSplit(customTime,"F")
-         SendInput {Blind}{lbutton down}{rbutton down}
-         Send {Blind}{%EWOLookBehindKey% down}
-         SendInput {Blind}{rbutton up}{lbutton up}
+         SendInput {Blind}{%EWOLookBehindKey% down}
          If InStr(customTime,"F")
             CancerFunction("f24 up",customTimeFrames[1],"Send")
          else
@@ -316,15 +321,11 @@ EWO: ; Self explanatory
          Send {Blind}{f24}{f24 up}
          SendInput {Blind}{wheelup}{up up}{enter up}
       case "Faster":
-         SendInput {Blind}{lbutton down}{rbutton down}
-         Send {Blind}{f24 up}
-         SendInput {Blind}{alt up}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%InteractionMenuKey% down}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
-         Sleep(47)
-         SendInput {Blind}{up down}
-         Sleep(35)
-         SendInput {Blind}{WheelUp}
-         Sleep(28)
-         SendInput {Blind}{enter up}{%InteractionMenuKey% up}{%EWOLookBehindKey% up}
+         Sleep(50)
+         SendInput {Blind}{%EWOLookBehindKey% down}
+         Sleep(40)
+         SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}
+         Send {Blind}{%InteractionMenuKey%}{up}{f24 up}{up}{enter}
       case "Staeni":
          /*
          SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%InteractionMenuKey% down}
@@ -349,7 +350,7 @@ EWO: ; Self explanatory
          SetMouseDelay 10
          Send {Blind}{lbutton down}{rbutton down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}
          SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}{enter down}
-         Send {Blind}{%InteractionMenuKey%}{f24 up}{up 2}{enter up}
+         Send {Blind}{%InteractionMenuKey%}{up}{f24 up}{up}{enter up}
          SetMouseDelay -1
       case "Retarded":
          StringUpper, EWOLookBehindKey, EWOLookBehindKey
@@ -402,9 +403,9 @@ EWO: ; Self explanatory
       Send {Blind}{f24}{f24 up}
       SendInput {Blind}{wheelup}{up up}{enter up}
    }
-   SendInput {up up}
-   Send {Blind}{enter 2}{up}{enter}{left}{down}{enter}
-   SendInput {%EWOMelee% up}{%InteractionMenuKey% up}{%EWOLookBehindKey% up}{EWOSpecialAbilitySlashActionKey up}
+   SendInput {up up}{%InteractionMenuKey% up}{%EWOMelee% up}{%EWOSpecialAbilitySlashActionKey% up}{%explodeBind% up}
+   Send {Blind}{enter 2}{up}{enter}{left}{down}{enter}{%InteractionMenuKey%}
+   SendInput {%EWOLookBehindKey% up}
    SetCapsLockState, Off
 return
 
@@ -485,6 +486,7 @@ EWOWrite: ; Checks if EWO Write is enabled
 Return
 
 KekEWO: ; Opens the options menu to EWO, works even if you are stunned or ragdolled
+   SetCapsLockState Off
    GuiControlGet, antiKekMode
    if (antiKekMode = "Options Menu")
    {
@@ -512,13 +514,14 @@ KekEWO: ; Opens the options menu to EWO, works even if you are stunned or ragdol
       SendInput {Blind}{%EWOMelee% up}{lshift up}
    } else if (antiKekMode = "Interaction Menu Spam")
    {
-      SendInput {Blind}{shift up}{up down}{enter down}{%EWOLookBehindKey% down}{%InteractionMenuKey% down}{%EWOMelee% down}
-      Send {Blind}{f24}{%InteractionMenuKey% up}
-      SendInput {Blind}{wheelup}{up up}{enter up}{%EWOLookBehindKey% up}{%EWOMelee% up}
-      Send {Blind}{%InteractionMenuKey%}
-      SetCapsLockState Off
-      Sleep(50)
+      SendInput {Blind}{lbutton down}
+      Send {Blind}{f24}
+      SendInput {Blind}{shift up}{up down}{enter down}{%EWOLookBehindKey% down}{%InteractionMenuKey% down}{lbutton up}{rbutton up}
+      Send {Blind}{%EWOMelee%}{%InteractionMenuKey% up}
+      SendInput {Blind}{wheelup}{up up}{enter up}{%EWOLookBehindKey% up}
+      Sleep(25)
    }
+   SetCapsLockState Off
 return
 
 BST: ; Self explanatory
@@ -1467,6 +1470,7 @@ MacroOptions:
    Gui, Add, Link,, Crosshair: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Crosshair">(?)</a>
    Gui, Add, Link,, Crosshair position: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Crosshair-position">(?)</a>
    Gui, Add, Link,, Night Vision Thermal <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Night-Vision-Thermal">(?)</a>
+   Gui, Add, Link,, Slower EWO? <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Slower-EWO">(?)</a>
    Gui, Add, Link,, Shoot EWO? <a href="">(?)</a>
    Gui, Add, Link,, Custom EWO Sleep Time: <a href="">(?)</a>
    Gui, Add, Link,, CEO Mode: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/CEO-Mode">(?)</a>
@@ -1475,7 +1479,6 @@ MacroOptions:
    If (DebugTesting)
    {
       Gui, Add, Link,, Passive Disable Spam: <a href="">(?)</a>
-      Gui, Add, Link,, Always On Top: <a href="">(?)</a>
       Gui, Add, Link,, clumsy ping: <a href="">(?)</a>
       Gui, Add, Link,, clumsy lag mode: <a href="">(?)</a>
    }
