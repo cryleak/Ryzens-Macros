@@ -261,6 +261,7 @@ FastSniperSwitch: ; Self explanatory
 return
 
 EWO: ; Self explanatory
+   SendInput {Blind}{%EWOLookBehindKey% up}
    GuiControlGet, SmoothEWO
    GuiControlGet, SmoothEWOMode
    GuiControlGet, EWOWrite
@@ -268,7 +269,7 @@ EWO: ; Self explanatory
    If (SmoothEWOMode = "Fast Respawn") && (SmoothEWO) || (SmoothEWOMode = "Sticky") && (SmoothEWO)
       Goto, MiscEWOModes
    
-   if (fuckYou <> 1)
+   if (fuckYou <> 1) ; This is the fastest way to check if a variable is anything other than 1
    {
       priorHotkey := StrReplace(A_PriorHotkey, "*")
       if (priorHotkey = StickyBind) || (priorHotkey = RPGBind) || (priorHotkey = PistolBind) ; If you switch to a different weapon sometimes the EWO animation will play which we don't want, this sort of fixes it
@@ -282,7 +283,7 @@ EWO: ; Self explanatory
    If (shootEWO)
    {
       SendInput {Blind}{lbutton down}
-      Send {Blind}{f24}
+      Send {Blind}{f24 up}
    }
    SendInput {Blind}{lbutton up}{rbutton up}
    If (SmoothEWO)
@@ -292,21 +293,35 @@ EWO: ; Self explanatory
          switch SmoothEWOMode
          {
          case "Staeni":
-            Sleep(100)
+            SetMouseDelay 10
+            Send {Blind}{lbutton down}{rbutton down}
+            SendInput {Blind}{rbutton up}{lbutton up}
+            Sleep(80)
          case "Retarded":
             Sleep(100)
-            
+         case "Fast":
+            SetMouseDelay 10
+            Send {Blind}{lbutton down}{rbutton down}
+            SendInput {Blind}{rbutton up}{lbutton up}
+            Sleep(50)
          }
+         SetMouseDelay -1
       }
       
       switch SmoothEWOMode
       {
+      case "Fastest":
+         SetMouseDelay 10
+         Send {Blind}{lbutton down}{rbutton down}{rbutton up}{lbutton up}
+         SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{%explodeBind% down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}{%EWOLookBehindKey% down}
+         Send {Blind}{f24 2}{f24 up}
+         SendInput {Blind}{wheelup}{up up}{enter up}
+         SetMouseDelay -1
       case "Fasterest":
          SetMouseDelay 10
-         Sleep(15)
-         Send {Blind}{lbutton down}{rbutton down}{lbutton up}{rbutton up}
-         SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{%explodeBind% down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}{%EWOLookBehindKey% down}
-         Send {Blind}{f24 3}
+         Send {Blind}{lbutton down}{rbutton down}
+         SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{up down}{%InteractionMenuKey% down}{%explodeBind% down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
+         Send {Blind}{f24 2}
          SendInput {Blind}{wheelup}{up up}{enter up}
          SetMouseDelay -1
       case "Custom":
@@ -320,12 +335,14 @@ EWO: ; Self explanatory
          SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{up down}{%InteractionMenuKey% down}{%explodeBind% down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}
          Send {Blind}{f24}{f24 up}
          SendInput {Blind}{wheelup}{up up}{enter up}
-      case "Faster":
-         Sleep(50)
-         SendInput {Blind}{%EWOLookBehindKey% down}
-         Sleep(40)
-         SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}
-         Send {Blind}{%InteractionMenuKey%}{up}{f24 up}{up}{enter}
+      case "Fast":
+         SendInput {Blind}{alt up}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%EWOLookBehindKey%}{%EWOSpecialAbilitySlashActionKey% down}{%EWOLookBehindKey% down}
+         Sleep(14)
+         SendInput {Blind}{up down}{%InteractionMenuKey% down}
+         Sleep(33)
+         SendInput {Blind}{WheelUp}
+         Sleep(25)
+         SendInput {Blind}{enter up}{%InteractionMenuKey% up}{%EWOLookBehindKey% up}
       case "Staeni":
          /*
          SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%InteractionMenuKey% down}
@@ -346,15 +363,15 @@ EWO: ; Self explanatory
          SendInput {Blind}{WheelUp}
          Sleep(50)
          SendInput {Blind}{enter up}{%InteractionMenuKey% up}{%EWOLookBehindKey% up}
-      case "Fastest":
+      case "Faster":
          SetMouseDelay 10
-         Send {Blind}{lbutton down}{rbutton down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}
-         SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}{enter down}
-         Send {Blind}{%InteractionMenuKey%}{up}{f24 up}{up}{enter up}
+         Send {Blind}{lbutton down}{rbutton down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}{f24 up}
+         SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}
+         Send {Blind}{%InteractionMenuKey%}{up}{f24 up}{up}{enter}
          SetMouseDelay -1
       case "Retarded":
          StringUpper, EWOLookBehindKey, EWOLookBehindKey
-         Random, Var, 1, 3
+         Random, var, 1, 4
          SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%InteractionMenuKey% down}{%EWOSpecialAbilitySlashActionKey% down}
          Sleep(25)
          Send {Blind}{up}
@@ -362,12 +379,12 @@ EWO: ; Self explanatory
          Send {Blind}{up}
          Sleep(40)
          Send {Blind}{%EWOLookBehindKey% down}
-         if (var) ; why the fuck did i do this
-            Send {Blind}{f24 2}
+         if (var = 1) ; why the fuck did i do this
+            Send {Blind}{f24}{f24 up}
          else if (var = 2)
-            Send {Blind}{f24}
-         else
-            Send {Blind}{f24 3}
+            Send {Blind}{f24 2}{f24 up}
+         else if (var = 3)
+            Send {Blind}{f24 3}{f24 up}
          Send {Blind}{enter up}
          StringLower, EWOLookBehindKey, EWOLookBehindKey
       case "Retarded2":
@@ -399,12 +416,15 @@ EWO: ; Self explanatory
       }
    } else
    {
+      SetMouseDelay 10
+      Send {Blind}{lbutton down}{rbutton down}
       SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{up down}{%InteractionMenuKey% down}{%explodeBind% down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
       Send {Blind}{f24}{f24 up}
       SendInput {Blind}{wheelup}{up up}{enter up}
+      SetMouseDelay -1
    }
    SendInput {up up}{%InteractionMenuKey% up}{%EWOMelee% up}{%EWOSpecialAbilitySlashActionKey% up}{%explodeBind% up}
-   Send {Blind}{enter 2}{up}{enter}{left}{down}{enter}{%InteractionMenuKey%}
+   Send {Blind}{enter 2}{up}{enter}{left}{down}{enter}{backspace}
    SendInput {%EWOLookBehindKey% up}
    SetCapsLockState, Off
 return
@@ -488,6 +508,7 @@ Return
 KekEWO: ; Opens the options menu to EWO, works even if you are stunned or ragdolled
    SetCapsLockState Off
    GuiControlGet, antiKekMode
+   SendInput {Blind}{%EWOLookBehindKey% up}
    if (antiKekMode = "Options Menu")
    {
       SendInput {Blind}{%EWOMelee% down}{lshift down}
@@ -515,7 +536,7 @@ KekEWO: ; Opens the options menu to EWO, works even if you are stunned or ragdol
    } else if (antiKekMode = "Interaction Menu Spam")
    {
       SendInput {Blind}{lbutton down}
-      Send {Blind}{f24}
+      Send {Blind}{f24 up}
       SendInput {Blind}{shift up}{up down}{enter down}{%EWOLookBehindKey% down}{%InteractionMenuKey% down}{lbutton up}{rbutton up}
       Send {Blind}{%EWOMelee%}{%InteractionMenuKey% up}
       SendInput {Blind}{wheelup}{up up}{enter up}{%EWOLookBehindKey% up}
@@ -1504,7 +1525,7 @@ MacroOptions:
       Gui, Add, Edit, gClumsyPing vclumsyPing h21,
       Gui, Add, DropDownList, gclumsyLagMode vclumsyLagMode, sending|recieving
    }
-   Gui, Add, DropDownList, vSmoothEWOMode, Sticky|Retarded|Retarded2|Retarded3|Staeni|Faster|Fastest|Fasterest|Custom
+   Gui, Add, DropDownList, vSmoothEWOMode, Sticky|Retarded|Retarded2|Retarded3|Staeni|Fast|Faster|Fastest|Fasterest|Custom
    Gui, Add, DropDownList, vantiKekMode, Options Menu|Interaction Menu Spam
    Gui, Add, DropDownList, vBugRespawnMode, Sticky|Homing|RPG
 Return
