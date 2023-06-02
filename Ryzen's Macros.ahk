@@ -268,9 +268,7 @@ EWO: ; Self explanatory
    GuiControlGet, shootEWO
    If (SmoothEWOMode = "Fast Respawn") && (SmoothEWO) || (SmoothEWOMode = "Sticky") && (SmoothEWO)
       Goto, MiscEWOModes
-   If GetKeyState("LButton","P")
-      Send {Blind}{f24}
-
+   
    if (fuckYou <> 1) ; This is the fastest way to check if a variable is anything other than 1
    {
       priorHotkey := StrReplace(A_PriorHotkey, "*")
