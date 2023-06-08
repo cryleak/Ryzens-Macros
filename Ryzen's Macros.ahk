@@ -33,6 +33,7 @@ global originalTime
 CrosshairDone := 0 ; If crosshair has been applied
 ; gtaWindow := This apparently doesn't work so I will just manually specify it
 MCCEO2 := 0 ; If you are in MC
+China := "Bind"
 SendInputFallbackText = I have detected that it has taken a very long time to complete the chat message. First, check if the characters are being sent one by one, or in instant `"batches`". If it is being sent in batches, then your FPS is likely very low. Please complain to me on Discord and I will raise the threshold for this message. If it is being sent one by one, try this: If you are running Flawless Widescreen, you must close it, as it causes issues, and makes most macros far slower. Please open a support ticket on the Discord Server if the problem persists, or if Flawless Widescreen is not running.
 WriteWasJustPerformed = 0 ; EWO Score Write was just performed
 IniRead,DebugTesting,%CFG%,Debug,Debug Testing ; Checks if debug testing is true, usually false.
@@ -84,8 +85,6 @@ Back: ; It goes back to this checkpoint. It works.
    #UseHook On ; Idk
    #InstallKeybdHook ; Idk
    #InstallMouseHook ; Idk
-   Process, Priority, GTA5.exe, A ; I heard that high priority gives keyboard input priority. I only heard it improves input speed and didn't read into it because yes.
-   Process, Priority,, A ; Sets priority of the script to Above Normal because I can
    DllCall("ntdll\ZwSetTimerResolution","Int",5000,"Int",1,"Int*",MyCurrentTimerResolution) ; yes
    SetTitleMatchMode, 2 ; I forgor :dead_skull:
    SetDefaultMouseSpeed, 0 ; Something
@@ -243,15 +242,15 @@ FastSniperSwitch: ; Self explanatory
    SendInput {Blind}{%FastSniperSwitch% up}
    If (FasterSniper)
    {
-      Send {%StickyBind% down}{%SniperBind% down}{tab}
-      SendInput {Blind}{%SniperBind% up}{%StickyBind% up}
+      Send {%BindSticky% down}{%BindSniper% down}{tab}
+      SendInput {Blind}{%BindSniper% up}{%BindSticky% up}
    } else
    {
-      Send {Blind}{%SniperBind%}
+      Send {Blind}{%BindSniper%}
       Sleep(17)
       Send {Blind}{lbutton down}
       Sleep(12)
-      Send {Blind}{lbutton up}{%SniperBind%}
+      Send {Blind}{lbutton up}{%BindSniper%}
       Sleep(17)
       Send {Blind}{lbutton down}
       Sleep(110)
@@ -261,25 +260,26 @@ FastSniperSwitch: ; Self explanatory
 return
 
 EWO: ; Self explanatory
-   SendInput {Blind}{%EWOLookBehindKey% up}
+   SendInput {Blind}{%EWOLookBehindKey% up}{lbutton up}{%EWOMelee% down}{lshift up}{rshift up}{lctrl up}{rctrl up}
+   
    GuiControlGet, SmoothEWO
    GuiControlGet, SmoothEWOMode
    GuiControlGet, EWOWrite
    GuiControlGet, shootEWO
+   GuiControlGet, customTime
    If (SmoothEWOMode = "Fast Respawn") && (SmoothEWO) || (SmoothEWOMode = "Sticky") && (SmoothEWO)
       Goto, MiscEWOModes
    
    if (fuckYou <> 1) ; This is the fastest way to check if a variable is anything other than 1
    {
       priorHotkey := StrReplace(A_PriorHotkey, "*")
-      if (priorHotkey = StickyBind) || (priorHotkey = RPGBind) || (priorHotkey = PistolBind) ; If you switch to a different weapon sometimes the EWO animation will play which we don't want, this sort of fixes it
+      if (priorHotkey = BindSticky) || (priorHotkey = BindRPG) || (priorHotkey = BindPistol) ; If you switch to a different weapon sometimes the EWO animation will play which we don't want, this sort of fixes it
       {
          if (A_TimeSincePriorHotkey	< 90) ; I'm too lazy to add "&&" 4 times.
             Sleep(90 - A_TimeSincePriorHotkey)
-      } else if (priorHotkey = SniperBind) && (A_TimeSincePriorHotkey < 200)
+      } else if (priorHotkey = BindSniper) && (A_TimeSincePriorHotkey < 200)
          Sleep(200 - A_TimeSincePriorHotkey)
    }
-   SendInput {Blind}{%EWOLookBehindKey% up}{lbutton up}{%EWOMelee% down}{lshift up}{rshift up}{lctrl up}{rctrl up}
    If (shootEWO)
    {
       SendInput {Blind}{lbutton down}
@@ -312,7 +312,7 @@ EWO: ; Self explanatory
       {
       case "Fastest":
          SetMouseDelay 10
-         Send {Blind}{lbutton down}{rbutton down}{rbutton up}{lbutton up}
+         Send {Blind}{lbutton down}{rbutton down}
          SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{%explodeBind% down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}{%EWOLookBehindKey% down}
          Send {Blind}{f24 2}{f24 up}
          SendInput {Blind}{wheelup}{up up}{enter up}
@@ -325,8 +325,9 @@ EWO: ; Self explanatory
          SendInput {Blind}{wheelup}{up up}{enter up}
          SetMouseDelay -1
       case "Custom":
-         GuiControlGet, customTime
          customTimeFrames := StrSplit(customTime,"F")
+         SetMouseDelay 10
+         Send {Blind}{lbutton down}{rbutton down}{rbutton up}{lbutton up}
          SendInput {Blind}{%EWOLookBehindKey% down}
          If InStr(customTime,"F")
             CancerFunction("f24 up",customTimeFrames[1],"Send")
@@ -335,6 +336,7 @@ EWO: ; Self explanatory
          SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{up down}{%InteractionMenuKey% down}{%explodeBind% down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}
          Send {Blind}{f24}{f24 up}
          SendInput {Blind}{wheelup}{up up}{enter up}
+         SetMouseDelay -1
       case "Fast":
          SendInput {Blind}{alt up}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%EWOLookBehindKey%}{%EWOSpecialAbilitySlashActionKey% down}{%EWOLookBehindKey% down}
          Sleep(14)
@@ -365,7 +367,7 @@ EWO: ; Self explanatory
          SendInput {Blind}{enter up}{%InteractionMenuKey% up}{%EWOLookBehindKey% up}
       case "Faster":
          SetMouseDelay 10
-         Send {Blind}{lbutton down}{rbutton down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}{f24 up}
+         Send {Blind}{lbutton down}{rbutton down}{%EWOLookBehindKey% down}{f24 up}
          SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}
          Send {Blind}{%InteractionMenuKey%}{up}{f24 up}{up}{enter}
          SetMouseDelay -1
@@ -404,15 +406,10 @@ EWO: ; Self explanatory
          Sleep(9)
          Send {Blind}{%EWOSpecialAbilitySlashActionKey% down}{enter up}
       case "Retarded3":
-         SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{%InteractionMenuKey% down}{%EWOSpecialAbilitySlashActionKey% down}
-         Sleep(30)
-         Send {Blind}{up}
-         Sleep(20)
-         Send {Blind}{up}
-         Sleep(40)
-         SendInput {Blind}{space down}{%EWOLookBehindKey% down}
-         Send {Blind}{f24 up}{enter}
-         SendInput {Blind}{space up}
+         Send {Blind}{lbutton down}{rbutton down}
+         SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{up down}{%InteractionMenuKey% down}{%explodeBind% down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
+         Send {Blind}{space down}{f24}
+         SendInput {Blind}{wheelup}{up up}{enter up}
       }
    } else
    {
@@ -424,7 +421,7 @@ EWO: ; Self explanatory
       SetMouseDelay -1
    }
    SendInput {up up}{%InteractionMenuKey% up}{%EWOMelee% up}{%EWOSpecialAbilitySlashActionKey% up}{%explodeBind% up}
-   Send {Blind}{enter 2}{up}{enter}{left}{down}{enter}{backspace}
+   Send {Blind}{enter 2}{up}{enter}{left}{down}{enter}{backspace}{space up}
    SendInput {%EWOLookBehindKey% up}
    SetCapsLockState, Off
 return
@@ -437,7 +434,7 @@ MiscEWOModes:
    If (SmoothEWOMode = "Sticky") && (SmoothEWO)
    {
       SendInput {lbutton down}{rbutton up}
-      Send {Blind}{%RifleBind%}
+      Send {Blind}{%BindRifle%}
       SendInput {lbutton up}
       Send {Blind}{tab} ; {lbutton 5}
       Loop, 15 {
@@ -1107,16 +1104,18 @@ TabWeapon2: ; If Fast Switch is enabled
    GuiControlGet, TabWeapon
    If (!TabWeapon)
    {
-      Hotkey(SniperBind,"SniperBind","Off")
-      Hotkey(RPGBind,"RPGBind","Off")
-      Hotkey(StickyBind,"StickyBind","Off")
-      Hotkey(PistolBind,"PistolBind","Off")
+      Hotkey(BindSniper,"BindSniper","Off")
+      Hotkey(BindRPG,"BindRPG","Off")
+      Hotkey(BindSticky,"BindSticky","Off")
+      Hotkey(BindPistol,"BindPistol","Off")
+      Hotkey(BindRifle,"BindRifle","Off")
    } else
    {
-      Hotkey(SniperBind,"SniperBind","On")
-      Hotkey(RPGBind,"RPGBind","On")
-      Hotkey(StickyBind,"StickyBind","On")
-      Hotkey(PistolBind,"PistolBind","On")
+      Hotkey(BindSniper,"BindSniper","On")
+      Hotkey(BindRPG,"BindRPG","On")
+      Hotkey(BindSticky,"BindSticky","On")
+      Hotkey(BindPistol,"BindPistol","On")
+      Hotkey(BindRifle,"BindRifle","On")
    }
 return
 
@@ -1176,29 +1175,59 @@ CloseGTAProcesses:
    Process, Close, LauncherPatcher.exe
 Return
 
-SniperBind:
-   Send {Blind}{%SniperBind% down}{tab}
-   SendInput {Blind}{%SniperBind% up}
+BindSniper:
+   currentLabel := StrSplit(A_ThisLabel, "B" "i" "n" "d")
+   currentBind := CurrentLabel[2]
+   thisWasHorribleToMake := Bind%currentBind%
+   
+   SendInput {Blind}{%thisWasHorribleToMake% down}
+   Send {Blind}{tab}
+   SendInput {Blind}{%thisWasHorribleToMake% up}
 return
 
-RPGBind:
-   Send {Blind}{%RPGBind% down}{tab}
-   SendInput {Blind}{%RPGBind% up}
+BindRPG:
+   currentLabel := StrSplit(A_ThisLabel, "B" "i" "n" "d")
+   currentBind := CurrentLabel[2]
+   thisWasHorribleToMake := Bind%currentBind%
+   
+   SendInput {Blind}{%thisWasHorribleToMake% down}
+   Send {Blind}{tab}
+   SendInput {Blind}{%thisWasHorribleToMake% up}
 return
 
-StickyBind:
-   Send {Blind}{%StickyBind% down}{tab}
-   SendInput {Blind}{%StickyBind% up}
+BindSticky:
+   currentLabel := StrSplit(A_ThisLabel, "B" "i" "n" "d")
+   currentBind := CurrentLabel[2]
+   thisWasHorribleToMake := Bind%currentBind%
+   
+   SendInput {Blind}{%thisWasHorribleToMake% down}
+   Send {Blind}{tab}
+   SendInput {Blind}{%thisWasHorribleToMake% up}
 Return
 
-PistolBind:
-   Send {Blind}{%PistolBind% down}{tab}
-   SendInput {Blind}{%PistolBind% up}
+BindPistol:
+   currentLabel := StrSplit(A_ThisLabel, "B" "i" "n" "d")
+   currentBind := CurrentLabel[2]
+   thisWasHorribleToMake := Bind%currentBind%
+   
+   SendInput {Blind}{%thisWasHorribleToMake% down}
+   Send {Blind}{tab}
+   SendInput {Blind}{%thisWasHorribleToMake% up}
+return
+
+BindRifle:
+   currentLabel := StrSplit(A_ThisLabel, "B" "i" "n" "d")
+   currentBind := CurrentLabel[2]
+   thisWasHorribleToMake := Bind%currentBind%
+   
+   SendInput {Blind}{%thisWasHorribleToMake% down}
+   Send {Blind}{tab}
+   SendInput {Blind}{%thisWasHorribleToMake% up}
 return
 
 RPGSpam:
-   Send {%StickyBind% down}{%RPGBind% down}{tab}
-   SendInput {%RPGBind% up}{%StickyBind% up}
+   Send {%BindSticky% down}{%BindRPG% down}{tab}
+   SendInput {%BindRPG% up}{%BindSticky% up}
 return
 
 ToggleCrosshair:
@@ -1262,16 +1291,18 @@ LaunchCycle:
    GuiControlGet, TabWeapon
    If (!TabWeapon)
    {
-      Hotkey(SniperBind,"SniperBind","Off")
-      Hotkey(RPGBind,"RPGBind","Off")
-      Hotkey(StickyBind,"StickyBind","Off")
-      Hotkey(PistolBind,"PistolBind","Off")
+      Hotkey(BindSniper,"BindSniper","Off")
+      Hotkey(BindRPG,"BindRPG","Off")
+      Hotkey(BindSticky,"BindSticky","Off")
+      Hotkey(BindPistol,"BindPistol","Off")
+      Hotkey(BindRifle,"BindRifle","Off")
    } else
    {
-      Hotkey(SniperBind,"SniperBind","On")
-      Hotkey(RPGBind,"RPGBind","On")
-      Hotkey(StickyBind,"StickyBind","On")
-      Hotkey(PistolBind,"PistolBind","On")
+      Hotkey(BindSniper,"BindSniper","On")
+      Hotkey(BindRPG,"BindRPG","On")
+      Hotkey(BindSticky,"BindSticky","On")
+      Hotkey(BindPistol,"BindPistol","On")
+      Hotkey(BindRifle,"BindRifle","On")
    }
    GuiControlGet, Paste
    If (!Paste)
@@ -1357,8 +1388,8 @@ NotExist1:
       GuiControl,1:,ThermalHelmet,
       GuiControl,1:,jetThermal,
       GuiControl,1:,FastSniperSwitch,
-      GuiControl,1:,SniperBind,9
-      GuiControl,1:,RifleBind,8
+      GuiControl,1:,BindSniper,9
+      GuiControl,1:,BindRifle,8
       GuiControl,1:,EWO,
       GuiControl,1:,EWOWrite,0
       GuiControl,1:,EWOLookBehindKey,c
@@ -1383,9 +1414,9 @@ NotExist1:
       GuiControl,1:,ProcessCheck2,0
       GuiControl,1:,NightVision,0
       GuiControl,1:,RPGSpam,
-      GuiControl,1:,RPGBind,4
-      GuiControl,1:,StickyBind,5
-      GuiControl,1:,PistolBind,6
+      GuiControl,1:,BindRPG,4
+      GuiControl,1:,BindSticky,5
+      GuiControl,1:,BindPistol,6
       GuiControl,1:,TabWeapon,0
       GuiControl,1:,Crosshair,0
       GuiControl,1:,Jobs,
@@ -1471,14 +1502,14 @@ InGameBinds:
    Gui, Add, Link,, Sticky Explode Bind: <a href="">(?)</a>
    
    Gui, Add, Hotkey,vInteractionMenuKey x+15 y60,
-   Gui, Add, Hotkey,vSniperBind,
+   Gui, Add, Hotkey,vBindSniper,
    Gui, Add, Hotkey,vEWOLookBehindKey,
    Gui, Add, Hotkey,vEWOSpecialAbilitySlashActionKey,
    Gui, Add, Hotkey,vEWOMelee,
-   Gui, Add, Hotkey,vRPGBind,
-   Gui, Add, Hotkey,vStickyBind,
-   Gui, Add, Hotkey,vPistolBind,
-   Gui, Add, Hotkey,vRifleBind,
+   Gui, Add, Hotkey,vBindRPG,
+   Gui, Add, Hotkey,vBindSticky,
+   Gui, Add, Hotkey,vBindPistol,
+   Gui, Add, Hotkey,vBindRifle,
    Gui, Add, Hotkey,vFranklinBind,
    Gui, Add, Hotkey,vexplodeBind,
 Return
@@ -1606,8 +1637,8 @@ SaveConfigRedirect:
       IniWrite,%ThermalHelmet%,%CFG%,PVP Macros,Thermal Helmet
       IniWrite,%jetThermal%,%CFG%,PVP Macros,Jet Thermal
       IniWrite,%FastSniperSwitch%,%CFG%,PVP Macros,Fast Sniper Switch
-      IniWrite,%SniperBind%,%CFG%,Keybinds,Sniper Bind
-      IniWrite,%RifleBind%,%CFG%,Keybinds,Rifle Bind
+      IniWrite,%BindSniper%,%CFG%,Keybinds,Sniper Bind
+      IniWrite,%BindRifle%,%CFG%,Keybinds,Rifle Bind
       IniWrite,%EWO%,%CFG%,PVP Macros,EWO
       IniWrite,%EWOWrite%,%CFG%,PVP Macros,EWO Write
       IniWrite,%KekEWO%,%CFG%,PVP Macros,Kek EWO
@@ -1636,9 +1667,9 @@ SaveConfigRedirect:
       IniWrite,%NightVision%,%CFG%,Misc,Use Night Vision Thermal
       IniWrite,%RPGSpam%,%CFG%,PVP Macros,RPG Spam
       IniWrite,%antiKekMode%,%CFG%,PVP Macros,AntiKek Mode
-      IniWrite,%RPGBind%,%CFG%,Keybinds,RPG Bind
-      IniWrite,%StickyBind%,%CFG%,Keybinds,Sticky Bind
-      IniWrite,%PistolBind%,%CFG%,Keybinds,Pistol Bind
+      IniWrite,%BindRPG%,%CFG%,Keybinds,RPG Bind
+      IniWrite,%BindSticky%,%CFG%,Keybinds,Sticky Bind
+      IniWrite,%BindPistol%,%CFG%,Keybinds,Pistol Bind
       IniWrite,%TabWeapon%,%CFG%,Misc,Tab Weapon
       IniWrite,%Crosshair%,%CFG%,Misc,Crosshair
       IniWrite,%CrosshairPos%,%CFG%,Misc,Crosshair Position
@@ -1746,8 +1777,8 @@ Read:
       IniRead,Read_ThermalHelmet,%CFG%,PVP Macros,Thermal Helmet
       IniRead,Read_jetThermal,%CFG%,PVP Macros,Jet Thermal
       IniRead,Read_FastSniperSwitch,%CFG%,PVP Macros,Fast Sniper Switch
-      IniRead,Read_SniperBind,%CFG%,Keybinds,Sniper Bind
-      IniRead,Read_RifleBind,%CFG%,Keybinds,Rifle Bind
+      IniRead,Read_BindSniper,%CFG%,Keybinds,Sniper Bind
+      IniRead,Read_BindRifle,%CFG%,Keybinds,Rifle Bind
       IniRead,Read_EWO,%CFG%,PVP Macros,EWO
       IniRead,Read_EWOWrite,%CFG%,PVP Macros,EWO Write
       IniRead,Read_KekEWO,%CFG%,PVP Macros,Kek EWO
@@ -1776,9 +1807,9 @@ Read:
       IniRead,Read_NightVision,%CFG%,Misc,Use Night Vision Thermal
       IniRead,Read_RPGSpam,%CFG%,PVP Macros,RPG Spam
       IniRead,Read_antiKekMode,%CFG%,PVP Macros,AntiKek Mode
-      IniRead,Read_RPGBind,%CFG%,Keybinds,RPG Bind
-      IniRead,Read_StickyBind,%CFG%,Keybinds,Sticky Bind
-      IniRead,Read_PistolBind,%CFG%,Keybinds,Pistol Bind
+      IniRead,Read_BindRPG,%CFG%,Keybinds,RPG Bind
+      IniRead,Read_BindSticky,%CFG%,Keybinds,Sticky Bind
+      IniRead,Read_BindPistol,%CFG%,Keybinds,Pistol Bind
       IniRead,Read_TabWeapon,%CFG%,Misc,Tab Weapon
       IniRead,Read_Crosshair,%CFG%,Misc,Crosshair
       IniRead,Read_CrosshairPos,%CFG%,Misc,Crosshair Position
@@ -1801,8 +1832,8 @@ Read:
       GuiControl,1:,ThermalHelmet,%Read_ThermalHelmet%
       GuiControl,1:,jetThermal,%Read_jetThermal%
       GuiControl,1:,FastSniperSwitch,%Read_FastSniperSwitch%
-      GuiControl,1:,SniperBind,%Read_SniperBind%
-      GuiControl,1:,RifleBind,%Read_RifleBind%
+      GuiControl,1:,BindSniper,%Read_BindSniper%
+      GuiControl,1:,BindRifle,%Read_BindRifle%
       GuiControl,1:,EWO,%Read_EWO%
       GuiControl,1:,EWOWrite,%Read_EWOWrite%
       GuiControl,1:,KekEWO,%Read_KekEWO%
@@ -1834,9 +1865,9 @@ Read:
       GuiControl,1:,NightVision,%Read_NightVision%
       GuiControl,1:,RPGSpam,%Read_RPGSpam%
       GuiControl,1:Choose,antiKekMode,%Read_antiKekMode%
-      GuiControl,1:,RPGBind,%Read_RPGBind%
-      GuiControl,1:,StickyBind,%Read_StickyBind%
-      GuiControl,1:,PistolBind,%Read_PistolBind%
+      GuiControl,1:,BindRPG,%Read_BindRPG%
+      GuiControl,1:,BindSticky,%Read_BindSticky%
+      GuiControl,1:,BindPistol,%Read_BindPistol%
       GuiControl,1:,TabWeapon,%Read_TabWeapon%
       GuiControl,1:,Crosshair,%Read_Crosshair%
       GuiControl,1:,CrosshairPos,%Read_CrosshairPos%
