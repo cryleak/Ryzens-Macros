@@ -1180,8 +1180,7 @@ BindSniper:
    currentBind := CurrentLabel[2]
    thisWasHorribleToMake := Bind%currentBind%
    
-   SendInput {Blind}{%thisWasHorribleToMake% down}
-   Send {Blind}{tab}
+   Send {Blind}{%thisWasHorribleToMake% down}{tab}
    SendInput {Blind}{%thisWasHorribleToMake% up}
 return
 
@@ -1190,8 +1189,7 @@ BindRPG:
    currentBind := CurrentLabel[2]
    thisWasHorribleToMake := Bind%currentBind%
    
-   SendInput {Blind}{%thisWasHorribleToMake% down}
-   Send {Blind}{tab}
+   Send {Blind}{%thisWasHorribleToMake% down}{tab}
    SendInput {Blind}{%thisWasHorribleToMake% up}
 return
 
@@ -1200,8 +1198,7 @@ BindSticky:
    currentBind := CurrentLabel[2]
    thisWasHorribleToMake := Bind%currentBind%
    
-   SendInput {Blind}{%thisWasHorribleToMake% down}
-   Send {Blind}{tab}
+   Send {Blind}{%thisWasHorribleToMake% down}{tab}
    SendInput {Blind}{%thisWasHorribleToMake% up}
 Return
 
@@ -1210,8 +1207,7 @@ BindPistol:
    currentBind := CurrentLabel[2]
    thisWasHorribleToMake := Bind%currentBind%
    
-   SendInput {Blind}{%thisWasHorribleToMake% down}
-   Send {Blind}{tab}
+   Send {Blind}{%thisWasHorribleToMake% down}{tab}
    SendInput {Blind}{%thisWasHorribleToMake% up}
 return
 
@@ -1220,8 +1216,7 @@ BindRifle:
    currentBind := CurrentLabel[2]
    thisWasHorribleToMake := Bind%currentBind%
    
-   SendInput {Blind}{%thisWasHorribleToMake% down}
-   Send {Blind}{tab}
+   Send {Blind}{%thisWasHorribleToMake% down}{tab}
    SendInput {Blind}{%thisWasHorribleToMake% up}
 return
 
