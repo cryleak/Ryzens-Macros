@@ -85,6 +85,7 @@ Back: ; It goes back to this checkpoint. It works.
    #UseHook On ; Idk
    #InstallKeybdHook ; Idk
    #InstallMouseHook ; Idk
+   #Requires AutoHotkey >=1.1.36.02 <1.2
    DllCall("ntdll\ZwSetTimerResolution","Int",5000,"Int",1,"Int*",MyCurrentTimerResolution) ; yes
    SetTitleMatchMode, 2 ; I forgor :dead_skull:
    SetDefaultMouseSpeed, 0 ; Something

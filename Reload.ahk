@@ -1,4 +1,6 @@
 ﻿#SingleInstance Ignore
+#Requires AutoHotkey >=1.1.36.02 <1.2
+
 if not A_IsAdmin
    Run *RunAs "%A_ScriptFullPath%"
 SetBatchLines, -1 ; Removes the built in 10ms sleep that happens after every line of code normally. It should never sleep now. It comes at the cost of CPU usage, but anyone with a half decent PC should be fine.

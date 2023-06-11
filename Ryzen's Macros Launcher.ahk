@@ -16,6 +16,7 @@ TrayButtonInfo = 0
 #MaxHotkeysPerInterval 99000000 ; Doesn't matter but AHK may give you an error if you spam hotkeys really really fast otherwise.
 #HotkeyInterval 99000000 ; Same as the other hotkey interval setting
 #Persistent ; Makes the script never exit, probably unneccassary because other commands (like hotkey) already cause it to never exit.
+#Requires AutoHotkey >=1.1.36.02 <1.2
 
 LauncherVersion := "1.1.1"
 ConfigDirectory = %A_MyDocuments%\Ryzen's Macros
