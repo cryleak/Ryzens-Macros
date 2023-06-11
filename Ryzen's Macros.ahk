@@ -8,7 +8,7 @@ IfNotExist, %ConfigDirectory%
 IfNotExist, %ConfigDirectory%\assets
    FileCreateDir, %ConfigDirectory%\assets
 clumsyEnabled = 0
-MacroVersion := "4.1"
+MacroVersion := "4.2"
 If InStr(A_ScriptName,.ahk) && not (A_ScriptName = "AutoHotkey.ahk")
 {
    MacroText := "Ryzen's Macros Dev Build Version "MacroVersion ; Macro version
@@ -177,32 +177,24 @@ HideWindow: ; Hides the GUI
 return
 
 ThermalHelmet: ; Self explanatory
-   DllCall("QueryPerformanceFrequency", "Int64*", freq)
-   DllCall("QueryPerformanceCounter", "Int64*", CounterBefore)
-   Send {Blind}{f24 up}
-   DllCall("QueryPerformanceCounter", "Int64*", CounterAfter)
-   MsgBox % "Elapsed QPC time is " . (CounterAfter - CounterBefore) / freq * 1000 " ms"
-   /*
-      
-      SendInput {Blind}{lbutton up}{enter down}
-      GuiControlGet, CEOMode
-      GuiControlGet, NightVision
-      Send {Blind}{%InteractionMenuKey%}{down 3}
-      If (CEOMode)
-         Send {Blind}{down}
-      SendInput {Blind}{enter up}
-      Send {Blind}{down down}
-      SendInput {Blind}{enter down}
-      Send {Blind}{down up}
-      SendInput {Blind}{enter up}
-      If (!NightVision)
-      {
-         Send {Blind}{down 3}
-         SendInput {Blind}{WheelDown}
-      }
-      Sleep(50)
-      Send {Blind}{space}{%InteractionMenuKey%}
-      */
+   SendInput {Blind}{lbutton up}{enter down}
+   GuiControlGet, CEOMode
+   GuiControlGet, NightVision
+   Send {Blind}{%InteractionMenuKey%}{down 3}
+   If (CEOMode)
+      Send {Blind}{down}
+   SendInput {Blind}{enter up}
+   Send {Blind}{down down}
+   SendInput {Blind}{enter down}
+   Send {Blind}{down up}
+   SendInput {Blind}{enter up}
+   If (!NightVision)
+   {
+      Send {Blind}{down 3}
+      SendInput {Blind}{WheelDown}
+   }
+   Sleep(50)
+   Send {Blind}{space}{%InteractionMenuKey%}
 return
 
 jetThermal:
