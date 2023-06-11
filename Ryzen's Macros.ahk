@@ -176,24 +176,32 @@ HideWindow: ; Hides the GUI
 return
 
 ThermalHelmet: ; Self explanatory
-   SendInput {Blind}{lbutton up}{enter down}
-   GuiControlGet, CEOMode
-   GuiControlGet, NightVision
-   Send {Blind}{%InteractionMenuKey%}{down 3}
-   If (CEOMode)
-      Send {Blind}{down}
-   SendInput {Blind}{enter up}
-   Send {Blind}{down down}
-   SendInput {Blind}{enter down}
-   Send {Blind}{down up}
-   SendInput {Blind}{enter up}
-   If (!NightVision)
-   {
-      Send {Blind}{down 3}
-      SendInput {Blind}{WheelDown}
-   }
-   Sleep(50)
-   Send {Blind}{space}{%InteractionMenuKey%}
+   DllCall("QueryPerformanceFrequency", "Int64*", freq)
+   DllCall("QueryPerformanceCounter", "Int64*", CounterBefore)
+   Send {Blind}{f24 up}
+   DllCall("QueryPerformanceCounter", "Int64*", CounterAfter)
+   MsgBox % "Elapsed QPC time is " . (CounterAfter - CounterBefore) / freq * 1000 " ms"
+   /*
+      
+      SendInput {Blind}{lbutton up}{enter down}
+      GuiControlGet, CEOMode
+      GuiControlGet, NightVision
+      Send {Blind}{%InteractionMenuKey%}{down 3}
+      If (CEOMode)
+         Send {Blind}{down}
+      SendInput {Blind}{enter up}
+      Send {Blind}{down down}
+      SendInput {Blind}{enter down}
+      Send {Blind}{down up}
+      SendInput {Blind}{enter up}
+      If (!NightVision)
+      {
+         Send {Blind}{down 3}
+         SendInput {Blind}{WheelDown}
+      }
+      Sleep(50)
+      Send {Blind}{space}{%InteractionMenuKey%}
+      */
 return
 
 jetThermal:
@@ -260,7 +268,6 @@ FastSniperSwitch: ; Self explanatory
 return
 
 EWO: ; Self explanatory
-   SendInput {Blind}{%EWOLookBehindKey% up}{lbutton up}{%EWOMelee% down}{lshift up}{rshift up}{lctrl up}{rctrl up}
    
    GuiControlGet, SmoothEWO
    GuiControlGet, SmoothEWOMode
@@ -270,16 +277,21 @@ EWO: ; Self explanatory
    If (SmoothEWOMode = "Fast Respawn") && (SmoothEWO) || (SmoothEWOMode = "Sticky") && (SmoothEWO)
       Goto, MiscEWOModes
    
-   if (fuckYou <> 1) ; This is the fastest way to check if a variable is anything other than 1
+   ; Sometimes if you quickly switch to another weapon before you EWO it won't be instant. This fix only works if you have "Fast Switch" enabled, aka if you are an AW player most likely.
+   if (fuckYou <> 1)
    {
+      ; This will give me the bind of the hotkey that was last executed before this one. There will be an asterisk in the bind name, which StrReplace() removes.
       priorHotkey := StrReplace(A_PriorHotkey, "*")
-      if (priorHotkey = BindSticky) || (priorHotkey = BindRPG) || (priorHotkey = BindPistol) ; If you switch to a different weapon sometimes the EWO animation will play which we don't want, this sort of fixes it
+      ; If the previous hotkey's bind is the same as any of the weapon-switching binds, then it will wait a few milliseconds before EWOing.
+      if (priorHotkey = BindSticky) || (priorHotkey = BindRPG) || (priorHotkey = BindPistol) || (priorHotkey = BindRifle) ||(priorHotkey = BindShotgun) || (priorHotkey = BindSMG) || (priorHotkey = BindSniper)
       {
-         if (A_TimeSincePriorHotkey	< 90) ; I'm too lazy to add "&&" 4 times.
-            Sleep(90 - A_TimeSincePriorHotkey)
-      } else if (priorHotkey = BindSniper) && (A_TimeSincePriorHotkey < 200)
-         Sleep(200 - A_TimeSincePriorHotkey)
+         ; If it has been less than 150ms since you pressed it, it will wait that amount of time, minus the time since the prior hotkey.
+         if (A_TimeSincePriorHotkey	< 150)
+            Sleep(150 - A_TimeSincePriorHotkey) ; Maths
+      }
    }
+   
+   SendInput {Blind}{%EWOLookBehindKey% up}{lbutton up}{%EWOMelee% down}{lshift up}{rshift up}{lctrl up}{rctrl up}
    If (shootEWO)
    {
       SendInput {Blind}{lbutton down}
@@ -303,7 +315,7 @@ EWO: ; Self explanatory
             SetMouseDelay 10
             Send {Blind}{lbutton down}{rbutton down}
             SendInput {Blind}{rbutton up}{lbutton up}
-            Sleep(50)
+            Sleep(10)
          }
          SetMouseDelay -1
       }
@@ -313,15 +325,15 @@ EWO: ; Self explanatory
       case "Fastest":
          SetMouseDelay 10
          Send {Blind}{lbutton down}{rbutton down}
-         SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{enter down}{up down}{%InteractionMenuKey% down}{%explodeBind% down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}{%EWOLookBehindKey% down}
-         Send {Blind}{f24 2}{f24 up}
+         SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{up down}{%InteractionMenuKey% down}{%explodeBind% down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}
+         Send {Blind}{%EWOLookBehindKey% down}{f24 2}{f24 up}
          SendInput {Blind}{wheelup}{up up}{enter up}
          SetMouseDelay -1
       case "Fasterest":
          SetMouseDelay 10
          Send {Blind}{lbutton down}{rbutton down}
-         SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{up down}{%InteractionMenuKey% down}{%explodeBind% down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
-         Send {Blind}{f24 2}
+         SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{up down}{%InteractionMenuKey% down}{%explodeBind% down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}
+         Send {Blind}{%EWOLookBehindKey% down}{f24 2}
          SendInput {Blind}{wheelup}{up up}{enter up}
          SetMouseDelay -1
       case "Custom":
@@ -338,12 +350,14 @@ EWO: ; Self explanatory
          SendInput {Blind}{wheelup}{up up}{enter up}
          SetMouseDelay -1
       case "Fast":
-         SendInput {Blind}{alt up}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%EWOLookBehindKey%}{%EWOSpecialAbilitySlashActionKey% down}{%EWOLookBehindKey% down}
-         Sleep(14)
-         SendInput {Blind}{up down}{%InteractionMenuKey% down}
-         Sleep(33)
+         SendInput {Blind}{alt up}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%InteractionMenuKey% down}{%EWOSpecialAbilitySlashActionKey% down}
+         Sleep(28)
+         SendInput {Blind}{%EWOLookBehindKey% down}
+         Sleep(13)
+         SendInput {Blind}{up down}
+         Sleep(32)
          SendInput {Blind}{WheelUp}
-         Sleep(25)
+         Sleep(20)
          SendInput {Blind}{enter up}{%InteractionMenuKey% up}{%EWOLookBehindKey% up}
       case "Staeni":
          /*
@@ -356,7 +370,7 @@ EWO: ; Self explanatory
          SendInput {Blind}{%EWOSpecialAbilitySlashActionKey% down}
          Send {Blind}{enter up}{%InteractionMenuKey% up}
          */
-         SendInput {Blind}{alt up}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%InteractionMenuKey% down}{%EWOLookBehindKey%}{%EWOSpecialAbilitySlashActionKey% down}
+         SendInput {Blind}{alt up}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%InteractionMenuKey% down}{%EWOSpecialAbilitySlashActionKey% down}
          Sleep(33.5)
          SendInput {Blind}{%EWOLookBehindKey% down}
          Sleep(14)
@@ -367,9 +381,9 @@ EWO: ; Self explanatory
          SendInput {Blind}{enter up}{%InteractionMenuKey% up}{%EWOLookBehindKey% up}
       case "Faster":
          SetMouseDelay 10
-         Send {Blind}{lbutton down}{rbutton down}{%EWOLookBehindKey% down}{f24 up}
-         SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{%EWOMelee% down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}
-         Send {Blind}{%InteractionMenuKey%}{up}{f24 up}{up}{enter}
+         Send {Blind}{lbutton down}{rbutton down}
+         SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}{%InteractionMenuKey% down}
+         Send {Blind}{%EWOLookBehindKey% down}{f24 up}{up}{f24}{up}{f24 up}{enter}
          SetMouseDelay -1
       case "Retarded":
          StringUpper, EWOLookBehindKey, EWOLookBehindKey
@@ -415,8 +429,8 @@ EWO: ; Self explanatory
    {
       SetMouseDelay 10
       Send {Blind}{lbutton down}{rbutton down}
-      SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{up down}{%InteractionMenuKey% down}{%explodeBind% down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
-      Send {Blind}{f24}{f24 up}
+      SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{up down}{%InteractionMenuKey% down}{%explodeBind% down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}
+      Send {Blind}{%EWOLookBehindKey% down}{f24}{f24 up}
       SendInput {Blind}{wheelup}{up up}{enter up}
       SetMouseDelay -1
    }
@@ -502,8 +516,7 @@ EWOWrite: ; Checks if EWO Write is enabled
    }
 Return
 
-KekEWO: ; Opens the options menu to EWO, works even if you are stunned or ragdolled
-   SetCapsLockState Off
+KekEWO: ; Opens the options menu to EWO, works even if you are stunned or ragdolledF
    GuiControlGet, antiKekMode
    SendInput {Blind}{%EWOLookBehindKey% up}
    if (antiKekMode = "Options Menu")
@@ -529,17 +542,16 @@ KekEWO: ; Opens the options menu to EWO, works even if you are stunned or ragdol
             break
          Send {Blind}{enter}
       }
-      SendInput {Blind}{%EWOMelee% up}{lshift up}
    } else if (antiKekMode = "Interaction Menu Spam")
    {
       SendInput {Blind}{lbutton down}
-      Send {Blind}{f24 up}
-      SendInput {Blind}{shift up}{up down}{enter down}{%EWOLookBehindKey% down}{%InteractionMenuKey% down}{lbutton up}{rbutton up}
-      Send {Blind}{%EWOMelee%}{%InteractionMenuKey% up}
-      SendInput {Blind}{wheelup}{up up}{enter up}{%EWOLookBehindKey% up}
-      Sleep(25)
+      Send {Blind}{f24}
+      SendInput {Blind}{shift up}{up down}{enter down}{%InteractionMenuKey% down}{lbutton up}{rbutton up}{%EWOMelee% down}
+      Send {Blind}{%EWOLookBehindKey% down}{f24}{f24 up}
+      SendInput {Blind}{wheelup}{up up}{enter up}
    }
-   SetCapsLockState Off
+   SendInput {Blind}{%EWOMelee% up}{lshift up}{%EWOLookBehindKey% up}{%InteractionMenuKey% up}
+   Send {Blind}{f24}
 return
 
 BST: ; Self explanatory
@@ -1109,6 +1121,9 @@ TabWeapon2: ; If Fast Switch is enabled
       Hotkey(BindSticky,"BindSticky","Off")
       Hotkey(BindPistol,"BindPistol","Off")
       Hotkey(BindRifle,"BindRifle","Off")
+      Hotkey(BindShotgun,"BindShotgun","Off")
+      Hotkey(BindSMG,"BindSMG","Off")
+      Hotkey(BindFists,"BindFists","Off")
    } else
    {
       Hotkey(BindSniper,"BindSniper","On")
@@ -1116,6 +1131,9 @@ TabWeapon2: ; If Fast Switch is enabled
       Hotkey(BindSticky,"BindSticky","On")
       Hotkey(BindPistol,"BindPistol","On")
       Hotkey(BindRifle,"BindRifle","On")
+      Hotkey(BindShotgun,"BindShotgun","On")
+      Hotkey(BindSMG,"BindSMG","On")
+      Hotkey(BindFists,"BindFists","On")
    }
 return
 
@@ -1175,50 +1193,46 @@ CloseGTAProcesses:
    Process, Close, LauncherPatcher.exe
 Return
 
-BindSniper:
-   currentLabel := StrSplit(A_ThisLabel, "B" "i" "n" "d")
-   currentBind := CurrentLabel[2]
-   thisWasHorribleToMake := Bind%currentBind%
+WeaponSwitch(labelName)
+{
+   currentBind := labelName[2] ; This works in conjunction with the label names to split the variable. The StrSplit below splits it into "Bind" and for example "Sniper". The currentBind variable is now equal to the previously executed label name, minus Bind, so for example it will now just be "Sniper"
+   thisWasHorribleToMake := Bind%currentBind% ; Using this, I will access the variable named "Bind" and then for example "Sniper", which is "BindSniper", which is the variable name. This is what we want to access.
    
-   Send {Blind}{%thisWasHorribleToMake% down}{tab}
+   Send {Blind}{%thisWasHorribleToMake% down}{tab} ; It then sends the state of the "BindSniper" variable, for example.
    SendInput {Blind}{%thisWasHorribleToMake% up}
+}
+
+BindSniper:
+   WeaponSwitch(StrSplit(A_ThisLabel, "B" "i" "n" "d"))
 return
 
 BindRPG:
-   currentLabel := StrSplit(A_ThisLabel, "B" "i" "n" "d")
-   currentBind := CurrentLabel[2]
-   thisWasHorribleToMake := Bind%currentBind%
-   
-   Send {Blind}{%thisWasHorribleToMake% down}{tab}
-   SendInput {Blind}{%thisWasHorribleToMake% up}
+   WeaponSwitch(StrSplit(A_ThisLabel, "B" "i" "n" "d"))
 return
 
 BindSticky:
-   currentLabel := StrSplit(A_ThisLabel, "B" "i" "n" "d")
-   currentBind := CurrentLabel[2]
-   thisWasHorribleToMake := Bind%currentBind%
-   
-   Send {Blind}{%thisWasHorribleToMake% down}{tab}
-   SendInput {Blind}{%thisWasHorribleToMake% up}
+   WeaponSwitch(StrSplit(A_ThisLabel, "B" "i" "n" "d"))
 Return
 
 BindPistol:
-   currentLabel := StrSplit(A_ThisLabel, "B" "i" "n" "d")
-   currentBind := CurrentLabel[2]
-   thisWasHorribleToMake := Bind%currentBind%
-   
-   Send {Blind}{%thisWasHorribleToMake% down}{tab}
-   SendInput {Blind}{%thisWasHorribleToMake% up}
+   WeaponSwitch(StrSplit(A_ThisLabel, "B" "i" "n" "d"))
 return
 
 BindRifle:
-   currentLabel := StrSplit(A_ThisLabel, "B" "i" "n" "d")
-   currentBind := CurrentLabel[2]
-   thisWasHorribleToMake := Bind%currentBind%
-   
-   Send {Blind}{%thisWasHorribleToMake% down}{tab}
-   SendInput {Blind}{%thisWasHorribleToMake% up}
+   WeaponSwitch(StrSplit(A_ThisLabel, "B" "i" "n" "d"))
 return
+
+BindShotgun:
+   WeaponSwitch(StrSplit(A_ThisLabel, "B" "i" "n" "d"))
+Return
+
+BindSMG:
+   WeaponSwitch(StrSplit(A_ThisLabel, "B" "i" "n" "d"))
+Return
+
+BindFists:
+   WeaponSwitch(StrSplit(A_ThisLabel, "B" "i" "n" "d"))
+Return
 
 RPGSpam:
    Send {%BindSticky% down}{%BindRPG% down}{tab}
@@ -1291,6 +1305,9 @@ LaunchCycle:
       Hotkey(BindSticky,"BindSticky","Off")
       Hotkey(BindPistol,"BindPistol","Off")
       Hotkey(BindRifle,"BindRifle","Off")
+      Hotkey(BindShotgun,"BindShotgun","Off")
+      Hotkey(BindSMG,"BindSMG","Off")
+      Hotkey(BindFists,"BindFists","Off")
    } else
    {
       Hotkey(BindSniper,"BindSniper","On")
@@ -1298,6 +1315,9 @@ LaunchCycle:
       Hotkey(BindSticky,"BindSticky","On")
       Hotkey(BindPistol,"BindPistol","On")
       Hotkey(BindRifle,"BindRifle","On")
+      Hotkey(BindShotgun,"BindShotgun","On")
+      Hotkey(BindSMG,"BindSMG","On")
+      Hotkey(BindFists,"BindFists","On")
    }
    GuiControlGet, Paste
    If (!Paste)
@@ -1383,8 +1403,6 @@ NotExist1:
       GuiControl,1:,ThermalHelmet,
       GuiControl,1:,jetThermal,
       GuiControl,1:,FastSniperSwitch,
-      GuiControl,1:,BindSniper,9
-      GuiControl,1:,BindRifle,8
       GuiControl,1:,EWO,
       GuiControl,1:,EWOWrite,0
       GuiControl,1:,EWOLookBehindKey,c
@@ -1412,6 +1430,11 @@ NotExist1:
       GuiControl,1:,BindRPG,4
       GuiControl,1:,BindSticky,5
       GuiControl,1:,BindPistol,6
+      GuiControl,1:,BindSniper,9
+      GuiControl,1:,BindRifle,8
+      GuiControl,1:,BindShotgun,3
+      GuiControl,1:,BindSMG,7
+      GuiControl,1:,BindFists,1
       GuiControl,1:,TabWeapon,0
       GuiControl,1:,Crosshair,0
       GuiControl,1:,Jobs,
@@ -1493,6 +1516,9 @@ InGameBinds:
    Gui, Add, Link,, Sticky Bomb: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Sticky-Bomb-Bind">(?)</a>
    Gui, Add, Link,, Pistol: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Pistol-Bind">(?)</a>
    Gui, Add, Link,, Rifle: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Rifle-Bind">(?)</a>
+   Gui, Add, Link,, Shotgun: <a href="">(?)</a>
+   Gui, Add, Link,, SMG: <a href="">(?)</a>
+   Gui, Add, Link,, Melee: <a href="">(?)</a>
    Gui, Add, Link,, Swap to Franklin Bind: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Swap-to-Franklin-Bind">(?)</a>
    Gui, Add, Link,, Sticky Explode Bind: <a href="">(?)</a>
    
@@ -1505,6 +1531,9 @@ InGameBinds:
    Gui, Add, Hotkey,vBindSticky,
    Gui, Add, Hotkey,vBindPistol,
    Gui, Add, Hotkey,vBindRifle,
+   Gui, Add, Hotkey,vBindShotgun,
+   Gui, Add, Hotkey,vBindSMG,
+   Gui, Add, Hotkey,vBindFists,
    Gui, Add, Hotkey,vFranklinBind,
    Gui, Add, Hotkey,vexplodeBind,
 Return
@@ -1565,18 +1594,25 @@ MiscMacros:
    Gui, Add, Link,, Toggle Jobs: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Toggle-Jobs">(?)</a>
    Gui, Add, Link,, Copy Paste: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Copy-Paste">(?)</a>
    Gui, Add, Link,, MCCEO toggle: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/MCCEO-Toggle">(?)</a>
+   
    If (DebugTesting)
       Gui, Add, Link,, Passive Disable Spam Toggle: <a href="">(?)</a>
    
-   Gui, Add, Hotkey,vKekEWO x+20 y60
+   Gui, Add, Link,, Press a Key: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Press-a-Key">(?)</a>
+   
+   Gui, Add, Hotkey,vKekEWO x+100 y60
    Gui, Add, Hotkey,vShowUI,
    Gui, Add, Hotkey,vToggleCEO,
    Gui, Add, Hotkey,vReloadOutfit,
    Gui, Add, Hotkey,vJobs
    Gui, Add, Checkbox, gPaste2 vPaste h21
    Gui, Add, Hotkey,vMCCEO
+   
    If (DebugTesting)
       Gui, Add, Hotkey,vPassiveDisableSpamToggle
+   
+   Gui, Add, Edit, vkeyToSend
+   Gui, Add, Button, x-10 y-10 w1 h1 +default gAwaitKeyPress vThisDoesNotFuckingExist ; This will only trigger when you press "enter". Thanks "n-i-l-d" from the AHK forums whoever you are!
 Return
 
 SavingAndButtonsAndMiscMacros:
@@ -1634,6 +1670,9 @@ SaveConfigRedirect:
       IniWrite,%FastSniperSwitch%,%CFG%,PVP Macros,Fast Sniper Switch
       IniWrite,%BindSniper%,%CFG%,Keybinds,Sniper Bind
       IniWrite,%BindRifle%,%CFG%,Keybinds,Rifle Bind
+      IniWrite,%BindShotgun%,%CFG%,Keybinds,Shotgun Bind
+      IniWrite,%BindSMG%,%CFG%,Keybinds,SMG Bind
+      IniWrite,%BindFists%,%CFG%,Keybinds,Fists Bind
       IniWrite,%EWO%,%CFG%,PVP Macros,EWO
       IniWrite,%EWOWrite%,%CFG%,PVP Macros,EWO Write
       IniWrite,%KekEWO%,%CFG%,PVP Macros,Kek EWO
@@ -1774,6 +1813,9 @@ Read:
       IniRead,Read_FastSniperSwitch,%CFG%,PVP Macros,Fast Sniper Switch
       IniRead,Read_BindSniper,%CFG%,Keybinds,Sniper Bind
       IniRead,Read_BindRifle,%CFG%,Keybinds,Rifle Bind
+      IniRead,Read_BindShotgun,%CFG%,Keybinds,Shotgun Bind
+      IniRead,Read_BindSMG,%CFG%,Keybinds,SMG Bind
+      IniRead,Read_BindFists,%CFG%,Keybinds,Fists Bind
       IniRead,Read_EWO,%CFG%,PVP Macros,EWO
       IniRead,Read_EWOWrite,%CFG%,PVP Macros,EWO Write
       IniRead,Read_KekEWO,%CFG%,PVP Macros,Kek EWO
@@ -1829,6 +1871,9 @@ Read:
       GuiControl,1:,FastSniperSwitch,%Read_FastSniperSwitch%
       GuiControl,1:,BindSniper,%Read_BindSniper%
       GuiControl,1:,BindRifle,%Read_BindRifle%
+      GuiControl,1:,BindShotgun,%Read_BindShotgun%
+      GuiControl,1:,BindSMG,%Read_BindSMG%
+      GuiControl,1:,BindFists,%Read_BindFists%
       GuiControl,1:,EWO,%Read_EWO%
       GuiControl,1:,EWOWrite,%Read_EWOWrite%
       GuiControl,1:,KekEWO,%Read_KekEWO%
@@ -3291,6 +3336,23 @@ else
          Hotkey, *%KeyName%, %Label%, UseErrorLevel Off
    }
    
+   ; This will send the specified key once you press K.
+   AwaitKeyPress:
+      Gui, Submit, NoHide
+      {
+         MsgBox, 0, Press K to send the key!, Press K to send the key. Use this to bind something to a random bind, up to F15 if you are using function keys. Please note that many keys are not able to be used as binds for GTA.
+         Hotkey, *K, SendKey, On
+      }
+   Return
+   
+   SendKey:
+      If WinActive(ahk_exe GTA5.exe)
+         Send {Blind}{%keyToSend%}
+      Hotkey, *K, SendKey, Off
+   Return
+   
+   ; ==========================================
+   
    /*
    DllCall("QueryPerformanceFrequency", "Int64*", freq)
    DllCall("QueryPerformanceCounter", "Int64*", CounterBefore)
@@ -3298,3 +3360,4 @@ else
    DllCall("QueryPerformanceCounter", "Int64*", CounterAfter)
    MsgBox % "Elapsed QPC time is " . (CounterAfter - CounterBefore) / freq * 1000 " ms"
    */
+
