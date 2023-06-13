@@ -42,20 +42,20 @@ IniRead,OriginalLocation, %ConfigDirectory%\FileLocationData.ini, Location, Loca
 IniRead,OriginalName, %ConfigDirectory%\FileLocationData.ini, Name, Name
 
 ; GTAHaX EWO Offsets:
-FreemodeGlobalIndex = 262145
-EWOGlobalOffset1 = 28616
+FreemodeGlobalIndex := 262145
+EWOGlobalOffset1 := 28616
 ; GTAHaX EWO Offsets 2:
-EWOGlobalIndex = 2793046
-EWOGlobalOffset0 = 6899
+EWOGlobalIndex := 2793046
+EWOGlobalOffset0 := 6899
 ; GTAHaX EWO Score Offsets:
-ScoreGlobalIndex = 2672505
-ScoreGlobalOffset1 = 1685
-ScoreGlobalOffset2 = 817 + 19
+ScoreGlobalIndex := 2672505
+ScoreGlobalOffset1 := 1685
+ScoreGlobalOffset2 := 817 + 19
 ; CEO Circle Offsets:
-CEOCircleGlobalIndex = 1894573
-CEOCircleGlobalOffset1 = 5
-CEOCircleGlobalOffset2 = 10
-CEOCircleGlobalOffset3 = 11
+CEOCircleGlobalIndex := 1894573
+CEOCircleGlobalOffset1 := 5
+CEOCircleGlobalOffset2 := 10
+CEOCircleGlobalOffset3 := 11
 
 ; Add them together
 FreemodeGlobalIndexAddedTogether := FreemodeGlobalIndex + EWOGlobalOffset1 ; Calculates the Global Index for EWO Cooldown
