@@ -1,5 +1,5 @@
 ﻿#SingleInstance Ignore
-#Requires AutoHotkey >=1.1.36.02 <1.2
+#Requires AutoHotkey >=1.1.36.02 Unicode <1.2
 
 if not A_IsAdmin
    Run *RunAs "%A_ScriptFullPath%"
