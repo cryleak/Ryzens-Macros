@@ -32,7 +32,7 @@ CFG = %A_MyDocuments%\Ryzen's Macros\GTA Binds.ini ; Config file name
 global originalTime
 CrosshairDone := 0 ; If crosshair has been applied
 ; gtaWindow := This apparently doesn't work so I will just manually specify it
-MCCEO2 := 0 ; If you are in MC
+China := "Bind"
 SendInputFallbackText = I have detected that it has taken a very long time to complete the chat message. First, check if the characters are being sent one by one, or in instant `"batches`". If it is being sent in batches, then your FPS is likely very low. Please complain to me on Discord and I will raise the threshold for this message. If it is being sent one by one, try this: If you are running Flawless Widescreen, you must close it, as it causes issues, and makes most macros far slower. Please open a support ticket on the Discord Server if the problem persists, or if Flawless Widescreen is not running.
 WriteWasJustPerformed = 0 ; EWO Score Write was just performed
 IniRead,DebugTesting,%CFG%,Debug,Debug Testing ; Checks if debug testing is true, usually false.
@@ -43,14 +43,14 @@ IniRead,OriginalName, %ConfigDirectory%\FileLocationData.ini, Name, Name
 
 ; GTAHaX EWO Offsets:
 FreemodeGlobalIndex = 262145
-EWOGlobalOffset1 = 28409
+EWOGlobalOffset1 = 28616
 ; GTAHaX EWO Offsets 2:
 EWOGlobalIndex = 2793046
 EWOGlobalOffset0 = 6899
 ; GTAHaX EWO Score Offsets:
 ScoreGlobalIndex = 2672505
 ScoreGlobalOffset1 = 1685
-ScoreGlobalOffset2 = 817
+ScoreGlobalOffset2 = 817 + 19
 ; CEO Circle Offsets:
 CEOCircleGlobalIndex = 1894573
 CEOCircleGlobalOffset1 = 5
@@ -177,11 +177,8 @@ return
 
 ThermalHelmet: ; Self explanatory
    SendInput {Blind}{lbutton up}{enter down}
-   GuiControlGet, CEOMode
    GuiControlGet, NightVision
-   Send {Blind}{%InteractionMenuKey%}{down 3}
-   If (CEOMode)
-      Send {Blind}{down}
+   Send {Blind}{%InteractionMenuKey%}{down 4}
    SendInput {Blind}{enter up}
    Send {Blind}{down down}
    SendInput {Blind}{enter down}
@@ -203,7 +200,12 @@ jetThermal:
       thermal = 1
    else
       thermal = 0
-   If (CEOMode)
+   If (!CEOMode) || (isInMC) && (CEOMode)
+   {
+      MsgBox, 0, %MacroText%, You are not in a CEO retard , 0.75
+      Return
+   }
+   else if (CEOMode) && (isInMC)
    {
       SendInput {Blind}{enter down}
       Send {Blind}{%InteractionMenuKey%}{enter up}{down down}
@@ -578,14 +580,7 @@ return
 
 Ammo: ; Self explanatory
    SendInput {Blind}{lbutton up}{enter down}
-   GuiControlGet, CEOMode
-   Send {Blind}{%InteractionMenuKey%}
-   If (CEOMode) = 1 {
-      Send {Blind}{down 3}
-   } else
-   {
-      Send {Blind}{down 2}
-   }
+   Send {Blind}{%InteractionMenuKey%}{down 3}
    SendInput {Blind}{enter up}
    Send {Blind}{down 4}
    SendInput {Blind}{enter down}
@@ -661,27 +656,59 @@ GTAHax: ; Self explanatory
 return
 
 GTAHaxCEO: ; GTAHaX CEO Circle
+   MsgBox, 0, %MacroText%, This feature currently doesn't work due to the global variables required to apply this being unknown! , 10
+Return
+Run, GTAHaXUI.exe, %ConfigDirectory%,,Gay
+WinWait, ahk_pid %Gay%
+ControlSend, Edit1, {down}{backspace}%CEOCircleGlobalIndexAddedTogether%, ahk_pid %Gay%
+Sleep(30)
+ControlClick, Button1, ahk_pid %Gay%
+Sleep(30)
+;msgbox 0
+Loop, 32 ; Recreates the function that determines what memory address this global should be in, and tests every possible combination of that.
+{
+   PlayerID := a_index
+   PlayerID1 := PlayerID * 608
+   ControlSend, Edit2, {down}{backspace 5}%PlayerID1%, ahk_pid %Gay%
+   Sleep(30)
+   ControlClick, Button1, ahk_pid %Gay%
+   Sleep(30)
+   ;msgbox %PlayerID1%
+}
+Sleep(250)
+MsgBox, 0, Complete!, The fucking CEO circle should be back now. It will probably disappear again if you leave CEO or something.
+Process, Close, %Gay%
+Return
+
+/*
+This finds a global with the rigth value
+
+GTAHaxCEO: ; GTAHaX CEO Circle
    Run, GTAHaXUI.exe, %ConfigDirectory%,,Gay
    WinWait, ahk_pid %Gay%
-   ControlSend, Edit1, {down}{backspace}%CEOCircleGlobalIndexAddedTogether%, ahk_pid %Gay%
+   ControlSend, Edit1, {down}{backspace}%FreemodeGlobalIndexAddedTogether%, ahk_pid %Gay%
    Sleep(30)
    ControlClick, Button1, ahk_pid %Gay%
    Sleep(30)
    ;msgbox 0
-   Loop, 32 ; Recreates the function that determines what memory address this global should be in, and tests every possible combination of that.
+   Loop, 1000 ; Recreates the function that determines what memory address this global should be in, and tests every possible combination of that.
    {
-      PlayerID := a_index
-      PlayerID1 := PlayerID * 608
-      ControlSend, Edit2, {down}{backspace 5}%PlayerID1%, ahk_pid %Gay%
-      Sleep(30)
-      ControlClick, Button1, ahk_pid %Gay%
-      Sleep(30)
-      ;msgbox %PlayerID1%
+      PlayerID1 := a_index
+      ; PlayerID1 := PlayerID * 608
+      ControlSend, Edit2, {down}{backspace 10}%PlayerID1%, ahk_pid %Gay%
+      Sleep(100)
+      ControlGet, currentValue1,Line,1,Edit7,ahk_pid %Gay% ; This is the current value. This is next to the lowest global variable-related line. It gets the current value of the global. It will only click if it is 1
+if (currentValue1 = 300000)
+   {
+      Msgbox we imghtve found it!!!!!!!!
+   }
+      
    }
    Sleep(250)
    MsgBox, 0, Complete!, The fucking CEO circle should be back now. It will probably disappear again if you leave CEO or something.
    Process, Close, %Gay%
 Return
+*/
 
 HelpWhatsThis: ; Self explanatory
    PrepareChatMacro()
@@ -994,12 +1021,8 @@ return
 
 ReloadOutfit: ; Self explanatory
    SendInput {Blind}{lbutton up}{enter down}
-   GuicontrolGet, CEOMode
    Send {Blind}{%InteractionMenuKey%}
-   If (CEOMode)
-      Send {Blind}{up 11}
-   else
-      Send {Blind}{up 13}
+   Send {Blind}{up 11}
    SendInput {Blind}{enter up}
    Send {Blind}{down}
    SendInput {Blind}{enter down}
@@ -1138,9 +1161,9 @@ ToggleCEO:
    GuiControlGet, CEOMode
    If (!CEOMode)
    {
-      Send {Blind}{%InteractionMenuKey%}{down 6}
+      Send {Blind}{%InteractionMenuKey%}{down}
       SendInput {Blind}{enter up}
-      Send {Blind}{enter}
+      Send {Blind}{enter}{enter}
       GuiControl,1:, CEOMode, 1
    }
    else
@@ -1151,6 +1174,7 @@ ToggleCEO:
       SendInput {Blind}{enter up}
       GuiControl,1:, CEOMode, 0
    }
+   isInMC := 0
    Sleep(125)
 return
 
@@ -1251,18 +1275,21 @@ Jobs:
 return
 
 MCCEO:
+   ; Unregisters as a CEO/MC President
    SendInput {lbutton up}{enter down}
    Send {Blind}{%InteractionMenuKey%}{enter up}{up down}
    SendInput {Blind}{enter down}
    Send {Blind}{up up}
    SendInput {Blind}{enter up}
-   Sleep(200)
+   Sleep(150)
+   
    SendInput {Blind}{enter down}
-   Send {Blind}{%InteractionMenuKey%}{down 6}
-   If (!MCCEO2)
-      Send {Blind}{down}
-   SendInput {Blind}{enter up}
-   Send {Blind}{enter}
+   Send {Blind}{%InteractionMenuKey%}{down down}{enter up}
+   SendInput {Blind}{down up}
+   If (isInMC)
+      Send {Blind}{up}
+   SendInput {Blind}{up up}
+   
    RestartTimer()
    Loop
    {
@@ -1271,16 +1298,22 @@ MCCEO:
          break
       Send {Blind}{backspace down}
       SendInput {Blind}{enter down}
-      Send {Blind}{backspace up}
+      Send {Blind}{backspace up}{enter up}{enter down}
+      If (isInMC)
+         Send {Blind}{up down}
+      else
+         Send {Blind}{f24 up}
       SendInput {Blind}{enter up}
       Send {Blind}{enter}
+      SendInput {Blind}{up up}
    }
+   
    Sleep(25)
    GuiControl,1:, CEOMode, 1
-   If (!MCCEO2)
-      MCCEO2 := 1
+   If (!isInMC)
+      isInMC := 1
    else
-      MCCEO2 := 0
+      isInMC := 0
 return
 
 LaunchCycle:
