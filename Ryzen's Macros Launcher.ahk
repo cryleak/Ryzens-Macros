@@ -18,7 +18,7 @@ TrayButtonInfo = 0
 #Persistent ; Makes the script never exit, probably unneccassary because other commands (like hotkey) already cause it to never exit.
 #Requires AutoHotkey >=1.1.36.02 Unicode <1.2
 
-LauncherVersion := "1.1.1.1"
+LauncherVersion := "1.1.1.2"
 ConfigDirectory = %A_MyDocuments%\Ryzen's Macros
 FileDelete, %A_MyDocuments%\AutoHotkey.ahk
 Goto, CheckHWID ; Checks your PC's UUID. Shitty but it works

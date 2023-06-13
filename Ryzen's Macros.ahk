@@ -8,7 +8,7 @@ IfNotExist, %ConfigDirectory%
 IfNotExist, %ConfigDirectory%\assets
    FileCreateDir, %ConfigDirectory%\assets
 clumsyEnabled = 0
-MacroVersion := "4.2"
+MacroVersion := "4.2.1"
 If InStr(A_ScriptName,.ahk) && not (A_ScriptName = "AutoHotkey.ahk")
 {
    MacroText := "Ryzen's Macros Dev Build Version "MacroVersion ; Macro version
