@@ -200,12 +200,7 @@ jetThermal:
       thermal = 1
    else
       thermal = 0
-   If (!CEOMode) || (isInMC) && (CEOMode)
-   {
-      MsgBox, 0, %MacroText%, You are not in a CEO retard , 0.75
-      Return
-   }
-   else if (CEOMode) && (isInMC)
+   If (CEOMode)
    {
       SendInput {Blind}{enter down}
       Send {Blind}{%InteractionMenuKey%}{enter up}{down down}
