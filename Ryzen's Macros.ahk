@@ -581,12 +581,7 @@ Ammo: ; Self explanatory
    SendInput {Blind}{lbutton up}{enter down}
    GuiControlGet, CEOMode
    Send {Blind}{%InteractionMenuKey%}
-   If (CEOMode) = 1 {
-      Send {Blind}{down 3}
-   } else
-   {
-      Send {Blind}{down 2}
-   }
+   Send {Blind}{down 3}
    SendInput {Blind}{enter up}
    Send {Blind}{down 4}
    SendInput {Blind}{enter down}
@@ -997,10 +992,7 @@ ReloadOutfit: ; Self explanatory
    SendInput {Blind}{lbutton up}{enter down}
    GuicontrolGet, CEOMode
    Send {Blind}{%InteractionMenuKey%}
-   If (CEOMode)
       Send {Blind}{up 11}
-   else
-      Send {Blind}{up 13}
    SendInput {Blind}{enter up}
    Send {Blind}{down}
    SendInput {Blind}{enter down}
@@ -1139,9 +1131,9 @@ ToggleCEO:
    GuiControlGet, CEOMode
    If (!CEOMode)
    {
-      Send {Blind}{%InteractionMenuKey%}{down 6}
+      Send {Blind}{%InteractionMenuKey%}{down}
       SendInput {Blind}{enter up}
-      Send {Blind}{enter}
+      Send {Blind}{enter}{enter}
       GuiControl,1:, CEOMode, 1
    }
    else
@@ -1252,18 +1244,18 @@ Jobs:
 return
 
 MCCEO:
-   SendInput {lbutton up}{enter down}
+   SendInput {lbutton up}{enter down} 
    Send {Blind}{%InteractionMenuKey%}{enter up}{up down}
    SendInput {Blind}{enter down}
    Send {Blind}{up up}
    SendInput {Blind}{enter up}
    Sleep(200)
    SendInput {Blind}{enter down}
-   Send {Blind}{%InteractionMenuKey%}{down 6}
+   Send {Blind}{%InteractionMenuKey%}{down}
    If (!MCCEO2)
       Send {Blind}{down}
    SendInput {Blind}{enter up}
-   Send {Blind}{enter}
+   Send {Blind}{enter}{enter}
    RestartTimer()
    Loop
    {
