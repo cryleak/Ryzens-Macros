@@ -32,7 +32,6 @@ CFG = %A_MyDocuments%\Ryzen's Macros\GTA Binds.ini ; Config file name
 global originalTime
 CrosshairDone := 0 ; If crosshair has been applied
 ; gtaWindow := This apparently doesn't work so I will just manually specify it
-isInMC := 0 ; If you are in MC. 0 = not in MC.
 China := "Bind"
 SendInputFallbackText = I have detected that it has taken a very long time to complete the chat message. First, check if the characters are being sent one by one, or in instant `"batches`". If it is being sent in batches, then your FPS is likely very low. Please complain to me on Discord and I will raise the threshold for this message. If it is being sent one by one, try this: If you are running Flawless Widescreen, you must close it, as it causes issues, and makes most macros far slower. Please open a support ticket on the Discord Server if the problem persists, or if Flawless Widescreen is not running.
 WriteWasJustPerformed = 0 ; EWO Score Write was just performed
@@ -85,7 +84,7 @@ Back: ; It goes back to this checkpoint. It works.
    #UseHook On ; Idk
    #InstallKeybdHook ; Idk
    #InstallMouseHook ; Idk
-   #Requires AutoHotkey >=1.1.36.02 <1.2
+   #Requires AutoHotkey >=1.1.36.02 Unicode <1.2
    DllCall("ntdll\ZwSetTimerResolution","Int",5000,"Int",1,"Int*",MyCurrentTimerResolution) ; yes
    SetTitleMatchMode, 2 ; I forgor :dead_skull:
    SetDefaultMouseSpeed, 0 ; Something
@@ -378,7 +377,7 @@ EWO: ; Self explanatory
          SetMouseDelay 10
          Send {Blind}{lbutton down}{rbutton down}
          SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}{%InteractionMenuKey% down}
-         Send {Blind}{%EWOLookBehindKey% down}{f24 up}{up}{f24}{up}{f24 up}{enter}
+         Send {Blind}{%EWOLookBehindKey% down}{f24 up}{up}{f24}{up}{enter}
          SetMouseDelay -1
       case "Retarded":
          StringUpper, EWOLookBehindKey, EWOLookBehindKey
@@ -1829,7 +1828,7 @@ StandardTrayMenu:
 return
 
 Read:
-   IfExist, %CFG%
+   If FileExist(CFG)
    {
       IniRead,Read_InteractionMenuKey,%CFG%,Keybinds,Interaction Menu Key
       IniRead,Read_FranklinBind,%CFG%,Keybinds,Franklin Key
