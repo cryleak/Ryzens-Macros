@@ -47,7 +47,7 @@ Start:
     Loop %iterationCount%
     {
         i++
-        ControlSend, Edit2, {down}{backspace 10}%i%, ahk_pid %Gay%
+        ControlSetText, Edit2,%i%, ahk_pid %Gay%
         Sleep %delay%
         ControlGet, currentValue,Line,1,Edit7,ahk_pid %Gay%
         if (currentValue = valueToFind)
@@ -72,6 +72,8 @@ Start:
                 Continue
             }
         }
+        if not ProcessExist(ahk_pid Gay)
+            break
     }
     i = 0
     Process, Close, ahk_pid %Gay%
@@ -79,3 +81,9 @@ Return
 
 GuiClose:
 ExitApp
+
+ProcessExist(Name) ; For convenience sake
+{
+   Process, Exist, %Name%
+   Return ErrorLevel
+}

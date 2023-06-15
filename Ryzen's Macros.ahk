@@ -8,7 +8,7 @@ IfNotExist, %ConfigDirectory%
 IfNotExist, %ConfigDirectory%\assets
    FileCreateDir, %ConfigDirectory%\assets
 clumsyEnabled = 0
-MacroVersion := "4.2.1"
+MacroVersion := "4.2.1.1"
 If InStr(A_ScriptName,.ahk) && not (A_ScriptName = "AutoHotkey.ahk")
 {
    MacroText := "Ryzen's Macros Dev Build Version "MacroVersion ; Macro version
@@ -45,23 +45,23 @@ IniRead,OriginalName, %ConfigDirectory%\FileLocationData.ini, Name, Name
 FreemodeGlobalIndex := 262145
 EWOGlobalOffset1 := 28616
 ; GTAHaX EWO Offsets 2:
-EWOGlobalIndex := 2793046
-EWOGlobalOffset0 := 6899
+EWOGlobalIndex := 2794162
+EWOGlobalOffset0 := 6898
 ; GTAHaX EWO Score Offsets:
-ScoreGlobalIndex := 2672505
+ScoreGlobalIndex := 2672524
 ScoreGlobalOffset1 := 1685
-ScoreGlobalOffset2 := 817 + 19
+ScoreGlobalOffset2 := 817
 ; CEO Circle Offsets:
-CEOCircleGlobalIndex := 1894573
+CEOCircleGlobalIndex := 1895156
 CEOCircleGlobalOffset1 := 5
 CEOCircleGlobalOffset2 := 10
 CEOCircleGlobalOffset3 := 11
 
 ; Add them together
-FreemodeGlobalIndexAddedTogether := FreemodeGlobalIndex + EWOGlobalOffset1 ; Calculates the Global Index for EWO Cooldown
-EWOGlobalIndexAddedTogether := EWOGlobalIndex + EWOGlobalOffset0 ; Calculates the Global Index for active EWO Cooldown
-ScoreGlobalIndexAddedTogether := ScoreGlobalIndex + ScoreGlobalOffset1 + ScoreGlobalOffset2 ; Calculates the Global Index for EWO Score
-CEOCircleGlobalIndexAddedTogether := CEOCircleGlobalIndex + CEOCircleGlobalOffset1 + CEOCircleGlobalOffset2 + CEOCircleGlobalOffset3 ; Calculates the Global Index for CEO Circle
+FreemodeGlobalIndexAddedTogether := FreemodeGlobalIndex + EWOGlobalOffset1 ; 290761
+EWOGlobalIndexAddedTogether := EWOGlobalIndex + EWOGlobalOffset0 ; 2801060
+ScoreGlobalIndexAddedTogether := ScoreGlobalIndex + ScoreGlobalOffset1 + ScoreGlobalOffset2 ; 2675026
+CEOCircleGlobalIndexAddedTogether := CEOCircleGlobalIndex + CEOCircleGlobalOffset1 + CEOCircleGlobalOffset2 + CEOCircleGlobalOffset3 ; 1895182
 
 Goto, CheckHWID ; Checks your PC's UUID. Shitty but it works
 Back: ; It goes back to this checkpoint. It works.
@@ -91,7 +91,7 @@ Back: ; It goes back to this checkpoint. It works.
    SetKeyDelay, -1, -1 ; Sets key delay to the lowest possible, there is still delay due to the keyboard hook in GTA, but this makes it excecute as fast as possible WITHOUT skipping keystrokes. Set this a lot higher if you uninstalled the keyboard hook using mods.
    SetWinDelay, -1 ; After any window modifying command, the script has a built in delay. Fuck delays.
    SetMouseDelay, -1
-   SetControlDelay, 0 ; After any control modifying command, for example; ControlSend, there is a built in delay. Set to 0 instead of -1 because having a slight delay may improve reliability, and is unnoticable anyways.
+   SetControlDelay, -1 ; After any control modifying command, for example; ControlSend, there is a built in delay.
    Gui,Font,q5,Segoe UI Semibold ; Sets font to something
    IniRead,neverOnTop,%CFG%,Debug,Never On Top ; Secret module
    IniRead,fuckYou,%CFG%,Debug,Fuck You ; Secret module
@@ -304,7 +304,7 @@ EWO: ; Self explanatory
             SetMouseDelay 10
             Send {Blind}{lbutton down}{rbutton down}
             SendInput {Blind}{rbutton up}{lbutton up}
-            Sleep(10)
+            Sleep(20)
          }
          SetMouseDelay -1
       }
@@ -344,9 +344,9 @@ EWO: ; Self explanatory
          SendInput {Blind}{%EWOLookBehindKey% down}
          Sleep(13)
          SendInput {Blind}{up down}
-         Sleep(32)
+         Sleep(35)
          SendInput {Blind}{WheelUp}
-         Sleep(20)
+         Sleep(30)
          SendInput {Blind}{enter up}{%InteractionMenuKey% up}{%EWOLookBehindKey% up}
       case "Staeni":
          /*
@@ -457,9 +457,9 @@ Write: ; Shows the score even if you have EWOd in the session using some advance
       {
          Run, GTAHaXUI.exe, %ConfigDirectory%,Min,ewoWriteWindow ; "Min" is a launch option you can specify. This makes the window invsible; however, it will still show up on Alt+Tab. I fix that 2 lines below.
          WinWait, ahk_pid %ewoWriteWindow% ; Waits for GTAHaX to actually exist before continuing
+         Sleep(25)
          WinSet, ExStyle, ^0x80, ahk_pid %ewoWriteWindow% ; Makes the window not show up on Alt+Tab
-         ControlSend, Edit1, {down}{backspace}%ScoreGlobalIndexAddedTogether%, ahk_pid %ewoWriteWindow%
-         Sleep(20)
+         ControlSetText, Edit1, %ScoreGlobalIndexAddedTogether%, ahk_pid %ewoWriteWindow%
       } else ; If it does exist
       {
          ControlGet, currentScoreGlobalIndex,Line,1,Edit1,ahk_pid %ewoWriteWindow% ; GTAHaX uses a very basic window, so AHK can retrieve the values from "controls". These are the lines in this case. Here it is checking what the top line contains.
@@ -631,19 +631,20 @@ FastRespawnEWO:
    }
 Return
 
-GTAHax: ; Self explanatory
+GTAHax: ; EWO Cooldown
    Run, GTAHaXUI.exe, %ConfigDirectory%,,Gay
    WinWait, ahk_pid %Gay%
-   ControlSend, Edit1, {down}{backspace}%FreemodeGlobalIndexAddedTogether%, ahk_pid %Gay%
+   Sleep(25)
+   ControlSetText, Edit1, %FreemodeGlobalIndexAddedTogether%, ahk_pid %Gay%
    Sleep(100)
    ControlClick, Button1, ahk_pid %Gay%
    Sleep(100)
-   ControlSend, Edit2, {down}{backspace}1, ahk_pid %Gay%
+   ControlSetText, Edit2, 1, ahk_pid %Gay%
    Sleep(100)
    ControlClick, Button1, ahk_pid %Gay%
    Sleep(100)
-   ControlSend, Edit1, {down}{backspace 7}%EWOGlobalIndexAddedTogether%, ahk_pid %Gay%
-   ControlSend, Edit2, {down}{backspace 2}0, ahk_pid %Gay%
+   ControlSetText, Edit1, %EWOGlobalIndexAddedTogether%, ahk_pid %Gay%
+   ControlSetText, Edit2, 0, ahk_pid %Gay%
    Sleep(100)
    ControlClick, Button1, ahk_pid %Gay%
    MsgBox, 0, Complete!, You should now have no EWO cooldown. Kill yourself with a Sticky/RPG if you currently have a cooldown.
@@ -651,59 +652,29 @@ GTAHax: ; Self explanatory
 return
 
 GTAHaxCEO: ; GTAHaX CEO Circle
-   MsgBox, 0, %MacroText%, This feature currently doesn't work due to the global variables required to apply this being unknown! , 10
-Return
-Run, GTAHaXUI.exe, %ConfigDirectory%,,Gay
-WinWait, ahk_pid %Gay%
-ControlSend, Edit1, {down}{backspace}%CEOCircleGlobalIndexAddedTogether%, ahk_pid %Gay%
-Sleep(30)
-ControlClick, Button1, ahk_pid %Gay%
-Sleep(30)
-;msgbox 0
-Loop, 32 ; Recreates the function that determines what memory address this global should be in, and tests every possible combination of that.
-{
-   PlayerID := a_index
-   PlayerID1 := PlayerID * 608
-   ControlSend, Edit2, {down}{backspace 5}%PlayerID1%, ahk_pid %Gay%
-   Sleep(30)
-   ControlClick, Button1, ahk_pid %Gay%
-   Sleep(30)
-   ;msgbox %PlayerID1%
-}
-Sleep(250)
-MsgBox, 0, Complete!, The fucking CEO circle should be back now. It will probably disappear again if you leave CEO or something.
-Process, Close, %Gay%
-Return
-
-/*
-This finds a global with the rigth value
-
-GTAHaxCEO: ; GTAHaX CEO Circle
    Run, GTAHaXUI.exe, %ConfigDirectory%,,Gay
    WinWait, ahk_pid %Gay%
-   ControlSend, Edit1, {down}{backspace}%FreemodeGlobalIndexAddedTogether%, ahk_pid %Gay%
+   Sleep(25)
+   ControlSetText, Edit1, %CEOCircleGlobalIndexAddedTogether%, ahk_pid %Gay%
    Sleep(30)
    ControlClick, Button1, ahk_pid %Gay%
    Sleep(30)
-   ;msgbox 0
-   Loop, 1000 ; Recreates the function that determines what memory address this global should be in, and tests every possible combination of that.
+   
+   Loop, 32 ; Recreates the function that determines what memory address this global should be in, and tests every possible combination of that.
    {
-      PlayerID1 := a_index
-      ; PlayerID1 := PlayerID * 608
-      ControlSend, Edit2, {down}{backspace 10}%PlayerID1%, ahk_pid %Gay%
-      Sleep(100)
-      ControlGet, currentValue1,Line,1,Edit7,ahk_pid %Gay% ; This is the current value. This is next to the lowest global variable-related line. It gets the current value of the global. It will only click if it is 1
-if (currentValue1 = 300000)
-   {
-      Msgbox we imghtve found it!!!!!!!!
+      PlayerID := a_index
+      PlayerID1 := PlayerID * 609
+      ControlSetText, Edit2, %PlayerID1%, ahk_pid %Gay%
+      Sleep(30)
+      ControlClick, Button1, ahk_pid %Gay%
+      Sleep(30)
+      ;msgbox %PlayerID1%
    }
-      
-   }
+   
    Sleep(250)
    MsgBox, 0, Complete!, The fucking CEO circle should be back now. It will probably disappear again if you leave CEO or something.
    Process, Close, %Gay%
 Return
-*/
 
 HelpWhatsThis: ; Self explanatory
    PrepareChatMacro()
@@ -2349,845 +2320,6 @@ ToggleSing: ; Toggles the sing
    CalculateTime()
    {
       return A_TickCount - originalTime
-   }
-   
-   execute(CmdLine) ; Executes code dynamically, extrmely long. Not using #Include because it would be more of a hassle.
-   {
-      global r1,r2,r3,r4,r5,r6,r7
-      
-      StringGetPos, cPos, CmdLine, `,
-      StringGetPos, sPos, CmdLine, %A_SPACE%
-      
-      IfGreater, sPos, 0
-      IfLess, sPos, %cPos%
-      cPos = %sPos%
-      
-      StringLeft, Command, CmdLine, %cPos%
-      cPos ++
-      StringTrimLeft, CmdLine, CmdLine, %cPos%
-      CmdLine = %CmdLine%
-      
-      IfEqual, Command,
-      Command = %CmdLine%
-      
-      Loop, Parse, CmdLine, `,, %A_Space%%A_Tab%
-         P%A_Index% = %A_LOOPFIELD%
-      
-      if command not in
-(Join
-AutoTrim,BlockInput,ClipWait,Control,ControlClick,ControlFocus,
-ControlGet,ControlGetFocus,ControlGetPos,ControlGetText,
-ControlMove,ControlSend,ControlSendRaw,ControlSetText,CoordMode,
-DetectHiddenText,DetectHiddenWindows,Drive,DriveGet,
-DriveSpaceFree,Edit,EnvAdd,EnvDiv,EnvMult,EnvSet,EnvSub,EnvUpdate,
-ExitApp,FileAppend,FileCopy,FileCopyDir,FileCreateDir,
-FileCreateShortcut,FileDelete,FileGetAttrib,FileGetShortcut,
-FileGetSize,FileGetTime,FileGetVersion,FileMove,FileMoveDir,
-FileRead,FileReadLine,FileRecycle,FileRecycleEmpty,FileRemoveDir,
-FileSelectFile,FileSelectFolder,FileSetAttrib,FileSetTime,
-GetKeyState,GroupActivate,GroupAdd,GroupClose,GroupDeactivate,Gui,
-GuiControl,GuiControlGet,Hotkey,IfEqual,IfNotEqual,IfExist,
-IfNotExist,IfGreater,IfGreaterOrEqual,IfInString,IfNotInString,
-IfLess,IfLessOrEqual,IfMsgBox,IfWinActive,IfWinNotActive,IfWinExist,
-IfWinNotExist,ImageSearch,IniDelete,IniRead,IniWrite,Input,InputBox,
-KeyHistory,KeyWait,ListHotkeys,ListLines,ListVars,Menu,MouseClick,
-MouseClickDrag,MouseGetPos,MouseMove,MsgBox,OnExit,OutputDebug,
-Pause,PixelGetColor,PixelSearch,PostMessage,Process,Progress,Random,
-RegDelete,RegRead,RegWrite,Reload,Run,RunAs,RunWait,Send,SendRaw,
-SendMessage,SetBatchLines,SetCapslockState,SetControlDelay,
-SetDefaultMouseSpeed,SetFormat,SetKeyDelay,SetMouseDelay,
-SetNumlockState,SetScrollLockState,SetStoreCapslockMode,SetTimer,
-SetTitleMatchMode,SetWinDelay,SetWorkingDir,Shutdown,Sleep,Sort,
-SoundBeep,SoundGet,SoundGetWaveVolume,SoundPlay,SoundSet,
-SoundSetWaveVolume,SplashImage,SplashTextOn,SplashTextOff,SplitPath,
-StatusBarGetText,StatusBarWait,StringCaseSense,StringGetPos,
-StringLeft,StringLen,StringLower,StringMid,StringReplace,StringRight,
-StringSplit,StringTrimLeft,StringTrimRight,StringUpper,Suspend,
-SysGet,Thread,ToolTip,Transform,TrayTip,URLDownloadToFile,
-WinActivate,WinActivateBottom,WinClose,WinGetActiveStats,
-WinGetActiveTitle,WinGetClass,WinGet,WinGetPos,WinGetText,
-WinGetTitle,WinHide,WinKill,WinMaximize,WinMenuSelectItem,
-WinMinimize,WinMinimizeAll,WinMinimizeAllUndo,WinMove,WinRestore,
-WinSet,WinSetTitle,WinShow,WinWait,WinWaitActive,WinWaitClose,
-WinWaitNotActive
-)
-         return 0
-      goto,%command%
-      
-      AutoTrim:
-      autotrim,%p1%
-      return
-      
-      BlockInput:
-      blockinput,%p1%
-      return
-      
-      ClipWait:
-      clipwait,%p1%,%p2%
-      return
-      
-      Control:
-      control,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%
-      return
-      
-      ControlClick:
-      controlclick,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,%p8%
-      return
-      
-      ControlFocus:
-      controlfocus,%p1%,%p2%,%p3%,%p4%,%p5%
-      return
-      
-      ControlGet:
-      controlget,ov,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%
-      return ov
-      
-      ControlGetFocus:
-      controlgetfocus,ov,%p1%,%p2%,%p3%,%p4%
-      return ov
-      
-      ControlGetPos:
-      controlgetpos,r1,r2,r3,r4,%p1%,%p2%,%p3%,%p4%,%p5%
-      return
-      
-      ControlGetText:
-      controlgettext,ov,%p1%,%p2%,%p3%,%p4%,%p5%
-      return ov
-      
-      ControlMove:
-      controlmove,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,%p8%,%p9%
-      return
-      
-      ControlSend:
-      controlsend,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%
-      return
-      
-      ControlSendRaw:
-      controlsendraw,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%
-      return
-      
-      ControlSetText:
-      controlsettext,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%
-      return
-      
-      CoordMode:
-      coordmode,%p1%,%p2%
-      return
-      
-      DetectHiddenText:
-      detecthiddentext,%p1%
-      return
-      
-      DetectHiddenWindows:
-      detecthiddenwindows,%p1%
-      return
-      
-      Drive:
-      drive,%p1%,%p2%,%p3%
-      return
-      
-      DriveGet:
-      driveget,ov,%p1%,%p2%
-      return ov
-      
-      DriveSpaceFree:
-      drivespacefree,ov,%p1%
-      return ov
-      
-      Edit:
-      edit
-      return
-      
-      EnvAdd:
-      envadd,%p1%,%p2%,%p3%
-      return
-      
-      EnvDiv:
-      envdiv,%p1%,%p2%
-      return
-      
-      EnvMult:
-      envmult,%p1%,%p2%
-      return
-      
-      EnvSet:
-      envset,%p1%,%p2%
-      return
-      
-      EnvSub:
-      envsub,%p1%,%p2%,%p3%
-      return
-      
-      EnvUpdate:
-      envupdate
-      return
-      
-      ExitApp:
-      exitapp
-      return
-      
-      FileAppend:
-      fileappend,%p1%,%p2%
-      return
-      
-      FileCopy:
-      filecopy,%p1%,%p2%,%p3%
-      return
-      
-      FileCopyDir:
-      filecopydir,%p1%,%p2%,%p3%
-      return
-      
-      FileCreateDir:
-      filecreatedir,%p1%
-      return
-      
-      FileCreateShortcut:
-      filecreateshortcut,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,%p8%,%p9%
-      return
-      
-      FileDelete:
-      filedelete,%p1%
-      return
-      
-      FileGetAttrib:
-      filegetattrib,ov,%p1%
-      return ov
-      
-      FileGetShortcut:
-      filegetshortcut,%p1%,r1,r2,r3,r4,r5,r6,r7
-      return
-      
-      FileGetSize:
-      filegetsize,ov,%p1%,%p2%
-      return ov
-      
-      FileGetTime:
-      filegettime,ov,%p1%,%p2%
-      return ov
-      
-      FileGetVersion:
-      filegetversion,ov,%p1%
-      return ov
-      
-      FileMove:
-      filemove,%p1%,%p2%,%p3%
-      return
-      
-      FileMoveDir:
-      filemovedir,%p1%,%p2%,%p3%
-      return
-      
-      FileRead:
-      fileread,ov,%p1%
-      return ov
-      
-      FileReadLine:
-      filereadline,ov,%p1%,%p2%
-      return ov
-      
-      FileRecycle:
-      filerecycle,%p1%
-      return
-      
-      FileRecycleEmpty:
-      filerecycleempty,%p1%
-      return
-      
-      FileRemoveDir:
-      fileremovedir,%p1%,%p2%
-      return
-      
-      FileSelectFile:
-      fileselectfile,ov,%p1%,%p2%,%p3%,%p4%
-      return ov
-      
-      FileSelectFolder:
-      fileselectfolder,ov,%p1%,%p2%,%p3%
-      return ov
-      
-      FileSetAttrib:
-      filesetattrib,%p1%,%p2%,%p3%,%p4%
-      return
-      
-      FileSetTime:
-      filesettime,%p1%,%p2%,%p3%,%p4%,%p5%
-      return
-      
-      GetKeyState:
-      getkeystate,ov,%p1%,%p2%
-      return ov
-      
-      GroupActivate:
-      groupactivate,%p1%,%p2%
-      return
-      
-      GroupAdd:
-      groupadd,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%
-      return
-      
-      GroupClose:
-      groupclose,%p1%,%p2%
-      return
-      
-      GroupDeactivate:
-      groupdeactivate,%p1%,%p2%
-      return
-      
-      Gui:
-      gui,%p1%,%p2%,%p3%,%p4%
-      return
-      
-      GuiControl:
-      guicontrol,%p1%,%p2%,%p3%
-      return
-      
-      GuiControlGet:
-      guicontrolget,ov,%p1%,%p2%,%p3%
-      return ov
-      
-      Hotkey:
-      hotkey,%p1%,%p2%,%p3%
-      return
-      
-      IfEqual:
-         ifequal,%p1%,%p2%
-      return 1
-      else
-         return 0
-      
-      IfNotEqual:
-         ifnotequal,%p1%,%p2%
-      return 1
-      else
-         return 0
-      
-      IfExist:
-         ifexist,%p1%
-            return 1
-else
-   return 0
-      
-      IfNotExist:
-         ifnotexist,%p1%
-            return 1
-else
-   return 0
-      
-      IfGreater:
-         ifgreater,%p1%,%p2%
-      return 1
-      else
-         return 0
-      
-      IfGreaterOrEqual:
-         ifgreaterorequal,%p1%,%p2%
-      return 1
-      else
-         return 0
-      
-      IfInString:
-         ifinstring,%p1%,%p2%
-            return 1
-else
-   return 0
-      
-      IfNotInString:
-         ifnotinstring,%p1%,%p2%
-            return 1
-else
-   return 0
-      
-      IfLess:
-         ifless,%p1%,%p2%
-      return 1
-      else
-         return 0
-      
-      IfLessOrEqual:
-         iflessorequal,%p1%,%p2%
-      return 1
-      else
-         return 0
-      
-      IfMsgBox:
-         ifmsgbox,%p1%
-            return 1
-else
-   return 0
-      
-      IfWinActive:
-         ifwinactive,%p1%,%p2%,%p3%,%p4%
-            return 1
-else
-   return 0
-      
-      IfWinNotActive:
-         ifwinnotactive,%p1%,%p2%,%p3%,%p4%
-            return 1
-else
-   return 0
-      
-      IfWinExist:
-         ifwinexist,%p1%,%p2%,%p3%,%p4%
-            return 1
-else
-   return 0
-      
-      IfWinNotExist:
-         ifwinnotexist,%p1%,%p2%,%p3%,%p4%
-            return 1
-else
-   return 0
-         
-         ImageSearch:
-         imagesearch,r1,r2,%p1%,%p2%,%p3%,%p4%,%p5%
-      return
-      
-      IniDelete:
-      inidelete,%p1%,%p2%,%p3%
-      return
-      
-      IniRead:
-      iniread,ov,%p1%,%p2%,%p3%,%p4%
-      return ov
-      
-      IniWrite:
-      iniwrite,%p1%,%p2%,%p3%,%p4%
-      return
-      
-      Input:
-      input,ov,%p1%,%p2%,%p3%
-      return ov
-      
-      InputBox:
-      inputbox,ov,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,,%p8%,%p9%
-      return ov
-      
-      KeyHistory:
-      keyhistory
-      return
-      
-      KeyWait:
-      keywait,%p1%,%p2%
-      return
-      
-      ListHotkeys:
-      listhotkeys
-      return
-      
-      ListLines:
-      listlines
-      return
-      
-      ListVars:
-      listvars
-      return
-      
-      Menu:
-      menu,%p1%,%p2%,%p3%,%p4%,%p5%
-      return
-      
-      MouseClick:
-      mouseclick,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%
-      return
-      
-      MouseClickDrag:
-      mouseclickdrag,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%
-      return
-      
-      MouseGetPos:
-      mousegetpos,r1,r2,r3,r4,%p1%
-      return
-      
-      MouseMove:
-      mousemove,%p1%,%p2%,%p3%,%p4%
-      return
-      
-      MsgBox:
-      if (p2 || p3)
-      {
-         if p4
-            msgbox,%p1%,%p2%,%p3%,%p4%
-         else
-            msgbox,%p1%,%p2%,%p3%
-      }
-      else
-         msgbox,%p1%
-      return
-      
-      OnExit:
-      onexit,%p1%
-      return
-      
-      OutputDebug:
-      outputdebug,%p1%
-      return
-      
-      Pause:
-      pause,%p1%
-      return
-      
-      PixelGetColor:
-      pixelgetcolor,ov,%p1%,%p2%,%p3%
-      return ov
-      
-      PixelSearch:
-      pixelsearch,r1,r2,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%
-      return
-      
-      PostMessage:
-      postmessage,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,%p8%
-      return
-      
-      Process:
-      process,%p1%,%p2%,%p3%
-      return
-      
-      Progress:
-      progress,%p1%,%p2%,%p3%,%p4%,%p5%
-      return
-      
-      Random:
-      random,ov,%p1%,%p2%
-      return ov
-      
-      RegDelete:
-      regdelete,%p1%,%p2%,%p3%
-      return
-      
-      RegRead:
-      regread,ov,%p1%,%p2%,%p3%
-      return ov
-      
-      RegWrite:
-      regwrite,%p1%,%p2%,%p3%,%p4%,%p5%
-      return
-      
-      Run:
-      run,%p1%,%p2%,%p3%,ov
-      return ov
-      
-      RunAs:
-      runas,%p1%,%p2%,%p3%
-      return
-      
-      RunWait:
-      runwait,%p1%,%p2%,%p3%,ov
-      return ov
-      
-      Send:
-      send,%p1%
-      return
-      
-      SendRaw:
-      sendraw,%p1%
-      return
-      
-      SendMessage:
-      sendmessage,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,%p8%
-      return errorlevel
-      
-      SetBatchLines:
-      setbatchlines,%p1%
-      return
-      
-      SetCapslockState:
-      setcapslockstate,%p1%
-      return
-      
-      SetControlDelay:
-      setcontroldelay,%p1%
-      return
-      
-      SetDefaultMouseSpeed:
-      setdefaultmousespeed,%p1%
-      return
-      
-      SetFormat:
-      setformat,%p1%,%p2%
-      return
-      
-      SetKeyDelay:
-      setkeydelay,%p1%,%p2%
-      return
-      
-      SetMouseDelay:
-      setmousedelay,%p1%
-      return
-      
-      SetNumlockState:
-      setnumlockstate,%p1%
-      return
-      
-      SetScrollLockState:
-      setscrolllockstate,%p1%
-      return
-      
-      SetStoreCapslockMode:
-      setstorecapslockmode,%p1%
-      return
-      
-      SetTimer:
-      settimer,%p1%,%p2%,%p3%
-      return
-      
-      SetTitleMatchMode:
-      settitlematchmode,%p1%,%p2%
-      return
-      
-      SetWinDelay:
-      setwindelay,%p1%
-      return
-      
-      SetWorkingDir:
-      setworkingdir,%p1%
-      return
-      
-      Shutdown:
-      shutdown,%p1%
-      return
-      
-      Sleep:
-      sleep,%p1%
-      return
-      
-      Sort:
-      sort,%p1%,%p2%
-      return
-      
-      SoundBeep:
-      soundbeep,%p1%,%p2%
-      return
-      
-      SoundGet:
-      soundget,ov,%p1%,%p2%,%p3%
-      return ov
-      
-      SoundGetWaveVolume:
-      soundgetwavevolume,ov,%p1%
-      return ov
-      
-      SoundPlay:
-      soundplay,%p1%,%p2%
-      return
-      
-      SoundSet:
-      soundset,%p1%,%p2%,%p3%,%p4%
-      return
-      
-      SoundSetWaveVolume:
-      soundsetwavevolume,%p1%,%p2%
-      return
-      
-      SplashImage:
-      splashimage,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%
-      return
-      
-      SplashTextOn:
-      splashtexton,%p1%,%p2%,%p3%,%p4%
-      return
-      
-      SplashTextOff:
-      splashtextoff
-      return
-      
-      SplitPath:
-      splitpath,%p1%,r1,r2,r3,r4,r5
-      return
-      
-      StatusBarGetText:
-      statusbargettext,ov,%p1%,%p2%,%p3%,%p4%,%p5%
-      return ov
-      
-      StatusBarWait:
-      statusbarwait,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,%p8%
-      return
-      
-      StringCaseSense:
-      stringcasesense,%p1%
-      return
-      
-      StringGetPos:
-      stringgetpos,ov,%p1%,%p2%,%p3%,%p4%
-      return ov
-      
-      StringLeft:
-      stringleft,ov,%p1%,%p2%
-      return ov
-      
-      StringLen:
-      stringlen,ov,%p1%
-      return ov
-      
-      StringLower:
-      stringlower,ov,%p1%,%p2%
-      return
-      
-      StringMid:
-      stringmid,ov,%p1%,%p2%,%p3%,%p4%
-      return ov
-      
-      StringReplace:
-      stringreplace,ov,%p1%,%p2%,%p3%,%p4%
-      return ov
-      
-      StringRight:
-      stringright,ov,%p1%,%p2%
-      return ov
-      
-      StringSplit:
-      stringsplit,%p1%,%p2%,%p3%,%p4%
-      return
-      
-      StringTrimLeft:
-      stringtrimleft,ov,%p1%,%p2%
-      return ov
-      
-      StringTrimRight:
-      stringtrimright,ov,%p1%,%p2%
-      return ov
-      
-      StringUpper:
-      stringupper,ov,%p1%,%p2%
-      return ov
-      
-      SysGet:
-      sysget,ov,%p1%,%p2%
-      return ov
-      
-      Thread:
-      thread,%p1%,%p2%,%p3%
-      return
-      
-      ToolTip:
-      tooltip,%p1%,%p2%,%p3%,%p4%
-      return
-      
-      Transform:
-      transform,ov,%p1%,%p2%,%p3%
-      return ov
-      
-      TrayTip:
-      traytip,%p1%,%p2%,%p3%,%p4%
-      return
-      
-      URLDownloadToFile:
-      urldownloadtofile,%p1%,%p2%
-      return
-      
-      WinActivate:
-      winactivate,%p1%,%p2%,%p3%,%p4%
-      return
-      
-      WinActivateBottom:
-      winactivatebottom,%p1%,%p2%,%p3%,%p4%
-      return
-      
-      WinClose:
-      winclose,%p1%,%p2%,%p3%,%p4%,%p5%
-      return
-      
-      WinGetActiveStats:
-      wingetactivestats,r1,r2,r3,r4,r5
-      return
-      
-      WinGetActiveTitle:
-      wingetactivetitle,ov
-      return ov
-      
-      WinGetClass:
-      wingetclass,ov,%p1%,%p2%,%p3%,%p4%
-      return ov
-      
-      WinGet:
-      winget,ov,%p1%,%p2%,%p3%,%p4%,%p5%
-      return ov
-      
-      WinGetPos:
-      wingetpos,r1,r2,r3,r4,%p1%,%p2%,%p3%,%p4%
-      return
-      
-      WinGetText:
-      wingettext,ov,%p1%,%p2%,%p3%,%p4%
-      return ov
-      
-      WinGetTitle:
-      wingettitle,ov,%p1%,%p2%,%p3%,%p4%
-      return ov
-      
-      WinHide:
-      winhide,%p1%,%p2%,%p3%,%p4%
-      return
-      
-      WinKill:
-      winkill,%p1%,%p2%,%p3%,%p4%,%p5%
-      return
-      
-      WinMaximize:
-      winmaximize,%p1%,%p2%,%p3%,%p4%
-      return
-      
-      WinMenuSelectItem:
-      winmenuselectitem,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,%p8%,%p9%,%p10%,%p11%
-      return
-      
-      WinMinimize:
-      winminimize,%p1%,%p2%,%p3%,%p4%
-      return
-      
-      WinMinimizeAll:
-      winminimizeall
-      return
-      
-      WinMinimizeAllUndo:
-      winminimizeallundo
-      return
-      
-      WinMove:
-      if p1 is integer
-      {
-         if p2 is integer
-            winmove,%p1%,%p2%
-         else
-            winmove,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,%p8%
-      }
-      else
-         winmove,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%,%p7%,%p8%
-      return
-      
-      WinRestore:
-      winrestore,%p1%,%p2%,%p3%,%p4%
-      return
-      
-      WinSet:
-      winset,%p1%,%p2%,%p3%,%p4%,%p5%,%p6%
-      return
-      
-      WinSetTitle:
-      winsettitle,%p1%,%p2%,%p3%,%p4%,%p5%
-      return
-      
-      WinShow:
-      winshow,%p1%,%p2%,%p3%,%p4%
-      return
-      
-      WinWait:
-      winwait,%p1%,%p2%,%p3%,%p4%,%p5%
-      return
-      
-      WinWaitActive:
-      winwaitactive,%p1%,%p2%,%p3%,%p4%,%p5%
-      return
-      
-      WinWaitClose:
-      winwaitclose,%p1%,%p2%,%p3%,%p4%,%p5%
-      return
-      
-      WinWaitNotActive:
-      winwaitnotactive,%p1%,%p2%,%p3%,%p4%,%p5%
-      return
-      
    }
    
    SetPriority(processName,priority)
