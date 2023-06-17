@@ -178,16 +178,13 @@ return
 ThermalHelmet: ; Self explanatory
    SendInput {Blind}{lbutton up}{enter down}
    GuiControlGet, NightVision
-   Send {Blind}{%InteractionMenuKey%}{down 4}
-   SendInput {Blind}{enter up}
-   Send {Blind}{down down}
+   Send {Blind}{%InteractionMenuKey%}{down}{WheelDown}{f24 up}{down}{WheelDown}{enter up}{down down}
    SendInput {Blind}{enter down}
    Send {Blind}{down up}
    SendInput {Blind}{enter up}
    If (!NightVision)
    {
-      Send {Blind}{down 3}
-      SendInput {Blind}{WheelDown}
+      Send {Blind}{down}{WheelDown}{f24 up}{down}{WheelDown}{f24 up}
    }
    Sleep(50)
    Send {Blind}{space}{%InteractionMenuKey%}
@@ -220,11 +217,7 @@ jetThermal:
    if (!thermal)
    {
       SendInput {Blind}{lbutton up}{enter down}
-      Send {Blind}{down 3}
-      If (CEOMode)
-         Send {Blind}{down}
-      SendInput {Blind}{enter up}
-      Send {Blind}{down down}
+      Send {Blind}{down}{WheelDown}{f24 up}{down}{WheelDown}{enter up}{down down}
       SendInput {Blind}{enter down}
       Send {Blind}{down up}
       SendInput {Blind}{enter up}
@@ -304,7 +297,7 @@ EWO: ; Self explanatory
             SetMouseDelay 10
             Send {Blind}{lbutton down}{rbutton down}
             SendInput {Blind}{rbutton up}{lbutton up}
-            Sleep(20)
+            Sleep(30)
          }
          SetMouseDelay -1
       }
@@ -517,17 +510,15 @@ KekEWO: ; Opens the options menu to EWO, works even if you are stunned or ragdol
       Sleep(440)
       Send {Blind}{enter}
       Sleep(200)
-      Send {Blind}{up 5}
+      Send {Blind}{up}{WheelUp}{f24 up}{up}{WheelUp}{f24 up}{up}
       Sleep(190)
       Send {Blind}{enter}
       Sleep(40)
-      Send {Blind}{up 6}
-      Sleep(15)
+      Send {Blind}{up}{WheelUp}{f24 up}{up}{WheelUp}{f24 up}{up}{WheelUp}{f24}
       RestartTimer()
       Loop
       {
-         timeElapsed := CalculateTime()
-         If (timeElapsed > 200)
+         If (CalculateTime(originalTime) > 200)
             break
          Send {Blind}{enter}
       }
@@ -546,27 +537,12 @@ return
 BST: ; Self explanatory
    SendInput {Blind}{lbutton up}{enter down}
    GuiControlGet, CEOMode
-   GuiControlGet, BSTSpeed
    GuiControlGet, BSTMC
    If (!CEOMode)
       MsgBox, 0, Warning!, You are not in a CEO! , 0.75
    else
    {
-      Send {Blind}{%InteractionMenuKey%}{enter up}
-      If (BSTSpeed)
-      {
-         Send {Blind}{up}
-         SendInput {Blind}{enter down}
-         Send {Blind}{up 2}
-         SendInput {Blind}{enter up}
-      } else
-      {
-         Send {Blind}{down}
-         SendInput {Blind}{enter down}
-         Send {Blind}{down 3}
-         SendInput {Blind}{enter up}
-      }
-      Send {Blind}{down down}
+      Send {Blind}{%InteractionMenuKey%}{enter up}{down}{WheelDown}{enter down}{down}{WheelDown}{enter up}{down down}
       SendInput {Blind}{enter down}
       Send {Blind}{down up}
       SendInput {Blind}{enter up}
@@ -574,20 +550,37 @@ BST: ; Self explanatory
 return
 
 Ammo: ; Self explanatory
+   ; Creates an array with how long it has been since any of the weapon binds were pressed
+   timesinceWeapons := []
+   timesinceWeapons.Push(CalculateTime(sniperBindTime)), timesinceWeapons.Push(CalculateTime(rpgBindTime)), timesinceWeapons.Push(CalculateTime(stickyBindTime)), timesinceWeapons.Push(CalculateTime(pistolBindTime)), timesinceWeapons.Push(CalculateTime(rifleBindTime)), timesinceWeapons.Push(CalculateTime(shotgunBindTime)), timesinceWeapons.Push(CalculateTime(smgBindTime)), timesinceWeapons.Push(CalculateTime(fistsBindTime)),
+   currentSmallest := 10000000
+   for index, value in timesinceWeapons
+   {
+      if (value = "")
+         Continue
+      if (value < currentSmallest)
+      {
+         currentSmallest := value
+         arrayLocation := index
+      }
+   }
+   
    SendInput {Blind}{lbutton up}{enter down}
-   Send {Blind}{%InteractionMenuKey%}{down 3}
+   Send {Blind}{%InteractionMenuKey%}{down}{WheelDown}{f24 up}{down}
    SendInput {Blind}{enter up}
-   Send {Blind}{down 4}
-   SendInput {Blind}{enter down}
-   Send {Blind}{down 2}
-   SendInput {Blind}{enter up}
-   Send {Blind}{enter}{up down}
+   Send {Blind}{down}{WheelDown}{f24 up}{down}{WheelDown}{enter down}{down}{WheelDown}{enter up}
+   If (arrayLocation = 2)
+      Send {Blind}{enter}
+   else if (arrayLocation = 3)
+      Send {Blind}{enter 2}
+   else
+      Send {Blind}{f24 up}{left}
+   Send {Blind}{up down}
    SendInput {Blind}{enter down}
    Send {Blind}{up up}
-   SendInput {Blind}{enter up}{%InteractionMenuKey% down}
-   Send {Blind}{f24 up}
-   SendInput {Blind}{%InteractionMenuKey% up}
-   Sleep(100)
+   SendInput {Blind}{enter up}
+   Send {Blind}{%InteractionMenuKey%}
+   Sleep(110)
 return
 
 FastRespawn: ; Self explanatory
@@ -668,7 +661,6 @@ GTAHaxCEO: ; GTAHaX CEO Circle
       Sleep(30)
       ControlClick, Button1, ahk_pid %Gay%
       Sleep(30)
-      ;msgbox %PlayerID1%
    }
    
    Sleep(250)
@@ -987,12 +979,11 @@ return
 
 ReloadOutfit: ; Self explanatory
    SendInput {Blind}{lbutton up}{enter down}
-   Send {Blind}{%InteractionMenuKey%}
-   Send {Blind}{up 11}
+   Send {Blind}{%InteractionMenuKey%}{up}{WheelUp}{f24 up}{up}{WheelUp}{f24 up}{up}{WheelUp}{f24 up}{up}{WheelUp}{f24 up}{up}{WheelUp}{f24 up}{up}
    SendInput {Blind}{enter up}
    Send {Blind}{down}
-   SendInput {Blind}{enter down}
-   Send {Blind}{down 2}
+   SendInput {Blind}{enter down}{WheelDown}
+   Send {Blind}{f24 up}{down}
    SendInput {Blind}{enter up}
    Send {Blind}{%InteractionMenuKey%}
 return
@@ -1093,31 +1084,6 @@ ProcessCheck3: ; Self explanatory
       SetTimer, ProcessCheckTimer, 100, -2147483648
 return
 
-TabWeapon2: ; If Fast Switch is enabled
-   GuiControlGet, TabWeapon
-   If (!TabWeapon)
-   {
-      Hotkey(BindSniper,"BindSniper","Off")
-      Hotkey(BindRPG,"BindRPG","Off")
-      Hotkey(BindSticky,"BindSticky","Off")
-      Hotkey(BindPistol,"BindPistol","Off")
-      Hotkey(BindRifle,"BindRifle","Off")
-      Hotkey(BindShotgun,"BindShotgun","Off")
-      Hotkey(BindSMG,"BindSMG","Off")
-      Hotkey(BindFists,"BindFists","Off")
-   } else
-   {
-      Hotkey(BindSniper,"BindSniper","On")
-      Hotkey(BindRPG,"BindRPG","On")
-      Hotkey(BindSticky,"BindSticky","On")
-      Hotkey(BindPistol,"BindPistol","On")
-      Hotkey(BindRifle,"BindRifle","On")
-      Hotkey(BindShotgun,"BindShotgun","On")
-      Hotkey(BindSMG,"BindSMG","On")
-      Hotkey(BindFists,"BindFists","On")
-   }
-return
-
 ShowUI:
    Gui, Show
 return
@@ -1177,46 +1143,62 @@ Return
 
 WeaponSwitch(labelName)
 {
+   GuiControlGet TabWeapon
+   
    currentBind := labelName[2] ; This works in conjunction with the label names to split the variable. The StrSplit below splits it into "Bind" and for example "Sniper". The currentBind variable is now equal to the previously executed label name, minus Bind, so for example it will now just be "Sniper"
    thisWasHorribleToMake := Bind%currentBind% ; Using this, I will access the variable named "Bind" and then for example "Sniper", which is "BindSniper", which is the variable name. This is what we want to access.
    
-   Send {Blind}{%thisWasHorribleToMake% down}{tab} ; It then sends the state of the "BindSniper" variable, for example.
-   SendInput {Blind}{%thisWasHorribleToMake% up}
+   If (!TabWeapon)
+      Send {Blind}{%thisWasHorribleToMake%}
+   else
+   {
+      Send {Blind}{%thisWasHorribleToMake% down}{tab}
+      SendInput {Blind}{%thisWasHorribleToMake% up}
+   }
 }
 
 BindSniper:
+   global sniperBindTime := A_TickCount
    WeaponSwitch(StrSplit(A_ThisLabel, "B" "i" "n" "d"))
 return
 
 BindRPG:
+   global rpgBindTime := A_TickCount
    WeaponSwitch(StrSplit(A_ThisLabel, "B" "i" "n" "d"))
 return
 
 BindSticky:
+   global stickyBindTime := A_TickCount
    WeaponSwitch(StrSplit(A_ThisLabel, "B" "i" "n" "d"))
 Return
 
 BindPistol:
+   global pistolBindTime := A_TickCount
    WeaponSwitch(StrSplit(A_ThisLabel, "B" "i" "n" "d"))
 return
 
 BindRifle:
+   global rifleBindTime := A_TickCount
    WeaponSwitch(StrSplit(A_ThisLabel, "B" "i" "n" "d"))
 return
 
 BindShotgun:
+   global shotgunBindTime := A_TickCount
    WeaponSwitch(StrSplit(A_ThisLabel, "B" "i" "n" "d"))
 Return
 
 BindSMG:
+   global smgBindTime := A_TickCount
    WeaponSwitch(StrSplit(A_ThisLabel, "B" "i" "n" "d"))
 Return
 
 BindFists:
+   global fistsBindTime := A_TickCount
    WeaponSwitch(StrSplit(A_ThisLabel, "B" "i" "n" "d"))
 Return
 
 RPGSpam:
+   global rpgBindTime := A_TickCount
    Send {%BindSticky% down}{%BindRPG% down}{tab}
    SendInput {%BindRPG% up}{%BindSticky% up}
 return
@@ -1231,13 +1213,13 @@ ToggleCrosshair:
 
 Jobs:
    SendInput {Blind}{lbutton up}{enter down}
-   Send {Blind}{%InteractionMenuKey%}{up 8}
-   SendInput {Blind}{enter up}
-   Send {Blind}{down down}
+   Send {Blind}{%InteractionMenuKey%}{up}{WheelUp}{f24 up}{up}{WheelUp}{f24 up}{up}{WheelUp}{f24 up}{up}{WheelUp}
+   
+   Send {Blind}{enter up}{down down}
    SendInput {Blind}{enter down}
-   Send {Blind}{down up}{down}
-   SendInput {Blind}{enter up}
-   Send {Blind}{enter}{%InteractionMenuKey%}
+   Send {Blind}{down up}
+   SendInput {Blind}{WheelDown}
+   Send {Blind}{enter up}{enter}{%InteractionMenuKey%}
 return
 
 MCCEO:
@@ -1259,7 +1241,7 @@ MCCEO:
    RestartTimer()
    Loop
    {
-      timeElapsed := CalculateTime()
+      timeElapsed := CalculateTime(originalTime)
       If (timeElapsed > 1250)
          break
       Send {Blind}{backspace down}
@@ -1288,28 +1270,14 @@ LaunchCycle:
       Hotkey, ^v, Paste, Off
    else
       Hotkey, ^v, Paste, On
-   GuiControlGet, TabWeapon
-   If (!TabWeapon)
-   {
-      Hotkey(BindSniper,"BindSniper","Off")
-      Hotkey(BindRPG,"BindRPG","Off")
-      Hotkey(BindSticky,"BindSticky","Off")
-      Hotkey(BindPistol,"BindPistol","Off")
-      Hotkey(BindRifle,"BindRifle","Off")
-      Hotkey(BindShotgun,"BindShotgun","Off")
-      Hotkey(BindSMG,"BindSMG","Off")
-      Hotkey(BindFists,"BindFists","Off")
-   } else
-   {
-      Hotkey(BindSniper,"BindSniper","On")
-      Hotkey(BindRPG,"BindRPG","On")
-      Hotkey(BindSticky,"BindSticky","On")
-      Hotkey(BindPistol,"BindPistol","On")
-      Hotkey(BindRifle,"BindRifle","On")
-      Hotkey(BindShotgun,"BindShotgun","On")
-      Hotkey(BindSMG,"BindSMG","On")
-      Hotkey(BindFists,"BindFists","On")
-   }
+   Hotkey(BindSniper,"BindSniper","On")
+   Hotkey(BindRPG,"BindRPG","On")
+   Hotkey(BindSticky,"BindSticky","On")
+   Hotkey(BindPistol,"BindPistol","On")
+   Hotkey(BindRifle,"BindRifle","On")
+   Hotkey(BindShotgun,"BindShotgun","On")
+   Hotkey(BindSMG,"BindSMG","On")
+   Hotkey(BindFists,"BindFists","On")
    GuiControlGet, Paste
    If (!Paste)
       Hotkey, ^v, Paste, Off
@@ -1400,7 +1368,6 @@ NotExist1:
       GuiControl,1:,EWOSpecialAbilitySlashActionKey,CapsLock
       GuiControl,1:,EWOMelee,r
       GuiControl,1:,BST,
-      GuiControl,1:,BSTSpeed,0
       GuiControl,1:,Ammo,
       GuiControl,1:,FastRespawn,
       GuiControl,1:,Suspend,
@@ -1458,7 +1425,7 @@ CombatMacros:
    Gui, Add, Link,, Fast Respawn EWO:
    Gui, Add, Link,, Toggle Crosshair: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Toggle-Crosshair">(?)</a>
    Gui, Add, Link,, RPG Spam: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/RPG-Spam">(?)</a>
-   Gui, Add, Link,, Fast Switch <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Fast-Switch">(?)</a>
+   Gui, Add, Link,, Fast Switch: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Fast-Switch">(?)</a>
    
    Gui, Add, Hotkey,vThermalHelmet x+40 y60,
    Gui, Add, Hotkey,vjetThermal,
@@ -1470,7 +1437,7 @@ CombatMacros:
    Gui, Add, Hotkey,vFastRespawnEWO,
    Gui, Add, Hotkey,vToggleCrosshair,
    Gui, Add, Hotkey,vRPGSpam,
-   Gui, Add, Checkbox, gTabWeapon2 vTabWeapon,
+   Gui, Add, Checkbox, vTabWeapon,
 Return
 
 ChatMacros:
@@ -1531,8 +1498,7 @@ Return
 
 MacroOptions:
    Gui, Tab, 4
-   Gui, Add, Link,x+5 y60, BST Less Reliable <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/BST-Less-Reliable-But-Faster">(?)</a>
-   Gui, Add, Link,, Check if GTA open <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Check-if-GTA-is-Open">(?)</a>
+   Gui, Add, Link,x+5 y60, Check if GTA open <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Check-if-GTA-is-Open">(?)</a>
    Gui, Add, Link,, Faster Sniper Switch <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Faster-Sniper-Switch">(?)</a>
    Gui, Add, Link,, Crosshair: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Crosshair">(?)</a>
    Gui, Add, Link,, Crosshair position: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Crosshair-position">(?)</a>
@@ -1553,8 +1519,7 @@ MacroOptions:
    Gui, Add, Link,, AntiKek Mode: <a href="">(?)</a>
    Gui, Add, Link,, Optimize Fast Respawn EWO for: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Optimize-Fast-Respawn-EWO-For">(?)</a>
    
-   Gui, Add, Checkbox,vBSTSpeed h21 x+105 y60,
-   Gui, Add, CheckBox, gProcessCheck3 vProcessCheck2 h21,
+   Gui, Add, CheckBox, gProcessCheck3 vProcessCheck2 h21 x+105 y60,
    Gui, Add, CheckBox, vFasterSniper h21,
    Gui, Add, Checkbox, gCrossHair5 vCrossHair h21,
    Gui, Add, Edit, gCrosshair5 vCrosshairPos h21,
@@ -1671,7 +1636,6 @@ SaveConfigRedirect:
       IniWrite,%EWOSpecialAbilitySlashActionKey%,%CFG%,Keybinds,EWO Special Ability/Action Key
       IniWrite,%EWOMelee%,%CFG%,Keybinds,EWO Melee Key
       IniWrite,%BST%,%CFG%,PVP Macros,BST
-      IniWrite,%BSTSpeed%,%CFG%,PVP Macros,BST Speed
       IniWrite,%Ammo%,%CFG%,PVP Macros,Buy Ammo
       IniWrite,%FastRespawn%,%CFG%,Misc,Fast Respawn
       IniWrite,%FastRespawnEWO%,%CFG%,Misc,Fast Respawn EWO
@@ -1814,7 +1778,6 @@ Read:
       IniRead,Read_EWOSpecialAbilitySlashActionKey,%CFG%,Keybinds,EWO Special Ability/Action Key
       IniRead,Read_EWOMelee,%CFG%,Keybinds,EWO Melee Key
       IniRead,Read_BST,%CFG%,PVP Macros,BST
-      IniRead,Read_BSTSpeed,%CFG%,PVP Macros,BST Speed
       IniRead,Read_Ammo,%CFG%,PVP Macros,Buy Ammo
       IniRead,Read_FastRespawn,%CFG%,Misc,Fast Respawn
       IniRead,Read_FastRespawnEWO,%CFG%,Misc,Fast Respawn EWO
@@ -1872,7 +1835,6 @@ Read:
       GuiControl,1:,EWOSpecialAbilitySlashActionKey,%Read_EWOSpecialAbilitySlashActionKey%
       GuiControl,1:,EWOMelee,%Read_EWOMelee%
       GuiControl,1:,BST,%Read_BST%
-      GuiControl,1:,BSTSpeed,%Read_BSTSpeed%
       GuiControl,1:,Ammo,%Read_Ammo%
       GuiControl,1:,SpecialBuy,%Read_SpecialBuy%
       GuiControl,1:,BuyAll,%Read_BuyAll%
@@ -2317,9 +2279,9 @@ ToggleSing: ; Toggles the sing
       global originalTime := A_TickCount
    }
    
-   CalculateTime()
+   CalculateTime(original)
    {
-      return A_TickCount - originalTime
+      return A_TickCount - original
    }
    
    SetPriority(processName,priority)
