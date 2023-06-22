@@ -256,6 +256,7 @@ EWO: ; Self explanatory
    GuiControlGet, EWOWrite
    GuiControlGet, shootEWO
    GuiControlGet, customTime
+   capsLockState := GetKeyState("CapsLock", "T")
    If (SmoothEWOMode = "Fast Respawn") && (SmoothEWO) || (SmoothEWOMode = "Sticky") && (SmoothEWO)
       Goto, MiscEWOModes
    
@@ -419,7 +420,7 @@ EWO: ; Self explanatory
    SendInput {up up}{%InteractionMenuKey% up}{%EWOMelee% up}{%EWOSpecialAbilitySlashActionKey% up}{%explodeBind% up}
    Send {Blind}{enter 2}{up}{enter}{left}{down}{enter}{backspace}{space up}
    SendInput {%EWOLookBehindKey% up}
-   SetCapsLockState, Off
+   SetCapsLockState, %capsLockState%
 return
 
 MiscEWOModes:
