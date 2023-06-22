@@ -297,7 +297,7 @@ EWO: ; Self explanatory
             SetMouseDelay 10
             Send {Blind}{lbutton down}{rbutton down}
             SendInput {Blind}{rbutton up}{lbutton up}
-            Sleep(40)
+            Sleep(30)
          }
          SetMouseDelay -1
       }
@@ -333,7 +333,10 @@ EWO: ; Self explanatory
          SetMouseDelay -1
       case "Fast":
          SendInput {Blind}{alt up}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%InteractionMenuKey% down}{%EWOSpecialAbilitySlashActionKey% down}
-         Send {Blind}{%EWOLookBehindKey% down}{f24 up}{up}
+         Sleep(28)
+         SendInput {Blind}{%EWOLookBehindKey% down}
+         Sleep(13)
+         SendInput {Blind}{up down}
          Sleep(35)
          SendInput {Blind}{WheelUp}
          Sleep(30)
