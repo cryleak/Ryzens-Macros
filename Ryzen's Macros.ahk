@@ -1159,49 +1159,51 @@ WeaponSwitch(labelName)
 }
 
 BindSniper:
-   global sniperBindTime := A_TickCount
    WeaponSwitch(StrSplit(A_ThisLabel, "B" "i" "n" "d"))
+   global sniperBindTime := A_TickCount
 return
 
 BindRPG:
-   global rpgBindTime := A_TickCount
    WeaponSwitch(StrSplit(A_ThisLabel, "B" "i" "n" "d"))
+   global rpgBindTime := A_TickCount
 return
 
 BindSticky:
-   global stickyBindTime := A_TickCount
    WeaponSwitch(StrSplit(A_ThisLabel, "B" "i" "n" "d"))
+   global stickyBindTime := A_TickCount
 Return
 
 BindPistol:
-   global pistolBindTime := A_TickCount
    WeaponSwitch(StrSplit(A_ThisLabel, "B" "i" "n" "d"))
+   global pistolBindTime := A_TickCount
 return
 
 BindRifle:
-   global rifleBindTime := A_TickCount
    WeaponSwitch(StrSplit(A_ThisLabel, "B" "i" "n" "d"))
+   global rifleBindTime := A_TickCount
 return
 
 BindShotgun:
-   global shotgunBindTime := A_TickCount
    WeaponSwitch(StrSplit(A_ThisLabel, "B" "i" "n" "d"))
+   global shotgunBindTime := A_TickCount
 Return
 
 BindSMG:
-   global smgBindTime := A_TickCount
    WeaponSwitch(StrSplit(A_ThisLabel, "B" "i" "n" "d"))
+   global smgBindTime := A_TickCount
 Return
 
 BindFists:
-   global fistsBindTime := A_TickCount
    WeaponSwitch(StrSplit(A_ThisLabel, "B" "i" "n" "d"))
+   global fistsBindTime := A_TickCount
+
 Return
 
 RPGSpam:
-   global rpgBindTime := A_TickCount
    Send {%BindSticky% down}{%BindRPG% down}{tab}
    SendInput {%BindRPG% up}{%BindSticky% up}
+   global rpgBindTime := A_TickCount
+
 return
 
 ToggleCrosshair:
