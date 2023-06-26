@@ -364,9 +364,9 @@ EWO: ; Self explanatory
          SendInput {Blind}{enter up}{%InteractionMenuKey% up}{%EWOLookBehindKey% up}
       case "Faster":
          SetMouseDelay 10
-         Send {Blind}{lbutton down}{rbutton down}
-         SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}{%InteractionMenuKey% down}
-         Send {Blind}{%EWOLookBehindKey% down}{f24 up}{up}{f24}{up}{enter}
+         Send {Blind}{lbutton down}{rbutton down}{rbutton up}
+         SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{lbutton up}{%EWOSpecialAbilitySlashActionKey% down}{%InteractionMenuKey% down}
+         Send {Blind}{%EWOLookBehindKey% down}{f24 up}{up}{f24}{up}{f24 up}{enter}
          SetMouseDelay -1
       case "Retarded":
          StringUpper, EWOLookBehindKey, EWOLookBehindKey
