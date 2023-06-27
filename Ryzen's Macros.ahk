@@ -1355,6 +1355,8 @@ DisableAll:
    Hotkey(MCCEO,"MCCEO","Off")
    Hotkey(RPGSpam,"RPGSpam","Off")
    Hotkey(PassiveDisableSpamToggle,"PassiveDisableSpamToggle","Off")
+   Hotkey(closeGTABind,"CloseGTAProcesses","Off")
+   Hotkey(beAloneBind,"BeAlone","Off")
 Return
 
 NotExist1:
@@ -1553,6 +1555,8 @@ MiscMacros:
    Gui, Add, Link,, Toggle Jobs: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Toggle-Jobs">(?)</a>
    Gui, Add, Link,, Copy Paste: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Copy-Paste">(?)</a>
    Gui, Add, Link,, MCCEO toggle: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/MCCEO-Toggle">(?)</a>
+   Gui, Add, Link,, Instantly Close GTA: <a href="">(?)</a>
+   Gui, Add, Link,, Be Alone: <a href="">(?)</a>
    
    If (DebugTesting)
       Gui, Add, Link,, Passive Disable Spam Toggle: <a href="">(?)</a>
@@ -1566,6 +1570,8 @@ MiscMacros:
    Gui, Add, Hotkey,vJobs
    Gui, Add, Checkbox, gPaste2 vPaste h21
    Gui, Add, Hotkey,vMCCEO
+   Gui, Add, Hotkey,vcloseGTABind
+   Gui, Add, Hotkey,vbeAloneBind
    
    If (DebugTesting)
       Gui, Add, Hotkey,vPassiveDisableSpamToggle
@@ -1674,6 +1680,8 @@ SaveConfigRedirect:
       IniWrite,%SmoothEWOMode%,%CFG%,Misc,Smooth EWO Mode
       IniWrite,%BugRespawnMode%,%CFG%,Misc,Bug Respawn Mode
       IniWrite,%FasterSniper%,%CFG%,Misc,Faster Sniper
+      IniWrite,%closeGTABind%,%CFG%,Misc,Close GTA Bind
+      IniWrite,%beAloneBind%,%CFG%,Misc,Be Alone Bind
       IniWrite,%PassiveDisableSpamToggle%,%CFG%,Misc,Passive Disable Spam Toggle
       IniWrite,%clumsyPing%,%CFG%,Debug,clumsy ping
       IniWrite,%clumsyLagMode%,%CFG%,Debug,clumsy lag mode
@@ -1704,6 +1712,9 @@ SaveConfigRedirect:
    Hotkey(MCCEO,"MCCEO","On")
    Hotkey(RPGSpam,"RPGSpam","On")
    Hotkey(PassiveDisableSpamToggle,"PassiveDisableSpamToggle","On")
+   Hotkey(closeGTABind,"CloseGTAProcesses","On")
+   Hotkey(beAloneBind,"BeAlone","On")
+   
    If (EWOWrite)
    {
       SetTimer, Write, 10, -2147483648
@@ -1816,6 +1827,8 @@ Read:
       IniRead,Read_SmoothEWOMode,%CFG%,Misc,Smooth EWO Mode
       IniRead,Read_BugRespawnMode,%CFG%,Misc,Bug Respawn Mode
       IniRead,Read_FasterSniper,%CFG%,Misc,Faster Sniper
+      IniRead,Read_closeGTABind,%CFG%,Misc,Close GTA Bind
+      IniRead,Read_beAloneBind,%CFG%,Misc,Be Alone Bind
       IniRead,Read_PassiveDisableSpamToggle,%CFG%,Misc,Passive Disable Spam Toggle
       IniRead,Read_clumsyPing,%CFG%,Debug,clumsy ping
       IniRead,Read_clumsyLagMode,%CFG%,Debug,clumsy lag mode
@@ -1876,6 +1889,8 @@ Read:
       GuiControl,1:Choose,SmoothEWOMode,%Read_SmoothEWOMode%
       GuiControl,1:Choose,BugRespawnMode,%Read_BugRespawnMode%
       GuiControl,1:,FasterSniper,%Read_FasterSniper%
+      GuiControl,1:,closeGTABind,%Read_closeGTABind%
+      GuiControl,1:,beAloneBind,%Read_beAloneBind%
       GuiControl,1:,PassiveDisableSpamToggle,%Read_PassiveDisableSpamToggle%
       GuiControl,1:,clumsyPing,%Read_clumsyPing%
       GuiControl,1:Choose,clumsyLagMode,%Read_clumsyLagMode%
@@ -2045,9 +2060,9 @@ ClumsyClosed:
    }
 Return
 
-ProcessExist(Name) ; For convenience sake
+ProcessExist(PID_or_Name="") ; For convenience's sake
 {
-   Process, Exist, %Name%
+   Process, Exist, % (PID_or_Name="") ? DllCall("GetCurrentProcessID") : PID_or_Name
    Return ErrorLevel
 }
 
@@ -2467,6 +2482,44 @@ ToggleSing: ; Toggles the sing
          Send {Blind}{%keyToSend%}
       Hotkey, *K, SendKey, Off
    Return
+   
+   BeAlone:
+      SoundPlay, %ConfigDirectory%\assets\pending.wav
+      ProcessSuspend("GTA5.exe")
+      Sleep 10000
+      SoundPlay, %ConfigDirectory%\assets\sweeped.wav
+      ProcessResume("GTA5.exe")
+   Return
+   
+   /*
+   Thanks heresy!
+   https://www.autohotkey.com/board/topic/30341-process-suspendresume-exampleexe/
+   Thank you for reminding me that tenerary if statements exist btw
+   */
+   
+   ProcessSuspend(PID_or_Name)
+   {
+      PID := (InStr(PID_or_Name,".")) ? ProcessExist(PID_or_Name) : PID_or_Name
+      
+      h:=DllCall("OpenProcess", "uInt", 0x1F0FFF, "Int", 0, "Int", pid)
+      If !h
+         Return -1
+      
+      DllCall("ntdll.dll\NtSuspendProcess", "Int", h)
+      DllCall("CloseHandle", "Int", h)
+   }
+   
+   ProcessResume(PID_or_Name)
+   {
+      PID := (InStr(PID_or_Name,".")) ? ProcessExist(PID_or_Name) : PID_or_Name
+      
+      h:=DllCall("OpenProcess", "uInt", 0x1F0FFF, "Int", 0, "Int", pid)
+      If !h
+         Return -1
+      
+      DllCall("ntdll.dll\NtResumeProcess", "Int", h)
+      DllCall("CloseHandle", "Int", h)
+   }
    
    ; ==========================================
    
