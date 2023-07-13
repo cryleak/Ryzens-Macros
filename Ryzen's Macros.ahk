@@ -178,13 +178,16 @@ return
 ThermalHelmet: ; Self explanatory
    SendInput {Blind}{lbutton up}{enter down}
    GuiControlGet, NightVision
-   Send {Blind}{%InteractionMenuKey%}{down}{WheelDown}{f24 up}{down}{WheelDown}{enter up}{down down}
+   Send {Blind}{%InteractionMenuKey%}
+   SendDown(4,0)
+   SendInput {Blind}{enter up}
+   Send {Blind}{down down}
    SendInput {Blind}{enter down}
    Send {Blind}{down up}
    SendInput {Blind}{enter up}
    If (!NightVision)
    {
-      Send {Blind}{down}{WheelDown}{f24 up}{down}{WheelDown}{f24 up}
+      SendDown(4,0)
    }
    Sleep(50)
    Send {Blind}{space}{%InteractionMenuKey%}
@@ -217,7 +220,10 @@ jetThermal:
    if (!thermal)
    {
       SendInput {Blind}{lbutton up}{enter down}
-      Send {Blind}{down}{WheelDown}{f24 up}{down}{WheelDown}{enter up}{down down}
+      Send {Blind}{%InteractionMenuKey%}
+      SendDown(4,0)
+      SendInput {Blind}{enter up}
+      Send {Blind}{down down}
       SendInput {Blind}{enter down}
       Send {Blind}{down up}
       SendInput {Blind}{enter up}
@@ -511,11 +517,11 @@ KekEWO: ; Opens the options menu to EWO, works even if you are stunned or ragdol
       Sleep(440)
       Send {Blind}{enter}
       Sleep(200)
-      Send {Blind}{up}{WheelUp}{f24 up}{up}{WheelUp}{f24 up}{up}
+      SendDown(5,0)
       Sleep(190)
       Send {Blind}{enter}
       Sleep(40)
-      Send {Blind}{up}{WheelUp}{f24 up}{up}{WheelUp}{f24 up}{up}{WheelUp}{f24}
+      SendDown(6,0)
       RestartTimer()
       Loop
       {
@@ -543,7 +549,11 @@ BST: ; Self explanatory
       MsgBox, 0, Warning!, You are not in a CEO! , 0.75
    else
    {
-      Send {Blind}{%InteractionMenuKey%}{enter up}{down}{WheelDown}{enter down}{down}{WheelDown}{enter up}{down down}
+      Send {Blind}{%InteractionMenuKey%}{enter up}
+      SendDown(3,0)
+      SendInput {Blind}{enter down}
+      SendDown(1,1)
+      Send {Blind}{enter up}{down down}
       SendInput {Blind}{enter down}
       Send {Blind}{down up}
       SendInput {Blind}{enter up}
@@ -551,6 +561,7 @@ BST: ; Self explanatory
 return
 
 Ammo: ; Self explanatory
+   
    ; Creates an array with how long it has been since any of the weapon binds were pressed
    timesinceWeapons := []
    timesinceWeapons.Push(CalculateTime(sniperBindTime)), timesinceWeapons.Push(CalculateTime(rpgBindTime)), timesinceWeapons.Push(CalculateTime(stickyBindTime)), timesinceWeapons.Push(CalculateTime(pistolBindTime)), timesinceWeapons.Push(CalculateTime(rifleBindTime)), timesinceWeapons.Push(CalculateTime(shotgunBindTime)), timesinceWeapons.Push(CalculateTime(smgBindTime)), timesinceWeapons.Push(CalculateTime(fistsBindTime)),
@@ -567,9 +578,13 @@ Ammo: ; Self explanatory
    }
    
    SendInput {Blind}{lbutton up}{enter down}
-   Send {Blind}{%InteractionMenuKey%}{down}{WheelDown}{f24 up}{down}
+   Send {Blind}{%InteractionMenuKey%}
+   SendDown(3,0)
    SendInput {Blind}{enter up}
-   Send {Blind}{down}{WheelDown}{f24 up}{down}{WheelDown}{enter down}{down}{WheelDown}{enter up}
+   SendDown(4,0)
+   SendInput {Blind}{enter down}
+   SendDown(2,0)
+   SendInput {Blind}{enter up}
    If (arrayLocation = 2)
       Send {Blind}{enter}
    else if (arrayLocation = 3)
@@ -980,13 +995,11 @@ return
 
 ReloadOutfit: ; Self explanatory
    SendInput {Blind}{lbutton up}{enter down}
-   Send {Blind}{%InteractionMenuKey%}{up}{WheelUp}{f24 up}{up}{WheelUp}{f24 up}{up}{WheelUp}{f24 up}{up}{WheelUp}{f24 up}{up}{WheelUp}{f24 up}{up}
-   SendInput {Blind}{enter up}
-   Send {Blind}{down}
-   SendInput {Blind}{enter down}{WheelDown}
-   Send {Blind}{f24 up}{down}
-   SendInput {Blind}{enter up}
    Send {Blind}{%InteractionMenuKey%}
+   SendUp(11,2)
+   Send {Blind}{enter up}
+   SendDown(3,0)
+   Send {Blind}{enter}
 return
 
 Crosshair5:
@@ -1149,6 +1162,7 @@ WeaponSwitch(labelName)
    currentBind := labelName[2] ; This works in conjunction with the label names to split the variable. The StrSplit below splits it into "Bind" and for example "Sniper". The currentBind variable is now equal to the previously executed label name, minus Bind, so for example it will now just be "Sniper"
    thisWasHorribleToMake := Bind%currentBind% ; Using this, I will access the variable named "Bind" and then for example "Sniper", which is "BindSniper", which is the variable name. This is what we want to access.
    
+   SendInput {Blind}{tab up}
    If (!TabWeapon)
       Send {Blind}{%thisWasHorribleToMake%}
    else
@@ -1196,14 +1210,12 @@ Return
 BindFists:
    WeaponSwitch(StrSplit(A_ThisLabel, "B" "i" "n" "d"))
    global fistsBindTime := A_TickCount
-
 Return
 
 RPGSpam:
    Send {%BindSticky% down}{%BindRPG% down}{tab}
    SendInput {%BindRPG% up}{%BindSticky% up}
    global rpgBindTime := A_TickCount
-
 return
 
 ToggleCrosshair:
@@ -1216,13 +1228,14 @@ ToggleCrosshair:
 
 Jobs:
    SendInput {Blind}{lbutton up}{enter down}
-   Send {Blind}{%InteractionMenuKey%}{up}{WheelUp}{f24 up}{up}{WheelUp}{f24 up}{up}{WheelUp}{f24 up}{up}{WheelUp}
-   
-   Send {Blind}{enter up}{down down}
+   Send {Blind}{%InteractionMenuKey%}
+   SendUp(8,0)
+   SendInput {Blind}{enter up}
+   Send {Blind}{down down}
    SendInput {Blind}{enter down}
    Send {Blind}{down up}
-   SendInput {Blind}{WheelDown}
-   Send {Blind}{enter up}{enter}{%InteractionMenuKey%}
+   SendInput {Blind}{WheelDown}{enter up}
+   Send {Blind}{enter}{%InteractionMenuKey%}
 return
 
 MCCEO:
@@ -2521,7 +2534,75 @@ ToggleSing: ; Toggles the sing
       DllCall("CloseHandle", "Int", h)
    }
    
-   ; ==========================================
+   SendDown(amount:=1,sleepAfter:=0)
+   {
+      If (amount = 1)
+         SendInput {Blind}{WheelDown}
+      
+      else if IsEven(amount) && (amount >= 2)
+      {
+         Loop % amount/2
+         {
+            Send {Blind}{down}
+            SendInput {Blind}{WheelDown}
+            If (amount >= 4)
+               Send {Blind}{f24 up}
+         }
+         
+      } else if not IsEven(Amount) && (amount >= 3)
+      {
+         Loop % (amount/2) - 0.5
+         {
+            Send {Blind}{down}
+            SendInput {Blind}{Wheeldown}
+            If (amount >= 5)
+               Send {Blind}{f24 up}
+         }
+         If (amount = 3)
+            Send {Blind}{f24 up}
+         Send {Blind}{down}
+      }
+   }
+   
+   SendUp(amount:=1,sleepAfter:=0)
+   {
+      If (amount = 1)
+         SendInput {Blind}{WheelUp}
+      
+      else if IsEven(amount) && (amount >= 2)
+      {
+         Loop % amount/2
+         {
+            Send {Blind}{up}
+            SendInput {Blind}{WheelUp}
+            If (amount >= 4)
+               Send {Blind}{f24 up}
+         }
+         
+      } else if not IsEven(Amount) && (amount >= 3)
+      {
+         Loop % (amount/2) - 0.5
+         {
+            Send {Blind}{up}
+            SendInput {Blind}{WheelUp}
+            If (amount >= 5)
+               Send {Blind}{f24 up}
+         }
+         If (amount = 3)
+            Send {Blind}{f24 up}
+         Send {Blind}{up}
+      }
+      
+      If IsEven(Amount)
+      {
+         Send % "{Blind}" . (sleepAfter = 1 ? "{f24 up}" : sleepAfter = 2 ? "{f24}" : "") ; This basically just makes it send "{Blind}{f24 up}" or "{Blind}{f24}"
+      }
+   }
+   
+   IsEven(num)
+   {
+      return (Num & 1) != 0 ? 0 : 1
+   }
    
    /*
    DllCall("QueryPerformanceFrequency", "Int64*", freq)
@@ -2530,4 +2611,3 @@ ToggleSing: ; Toggles the sing
    DllCall("QueryPerformanceCounter", "Int64*", CounterAfter)
    MsgBox % "Elapsed QPC time is " . (CounterAfter - CounterBefore) / freq * 1000 " ms"
    */
-

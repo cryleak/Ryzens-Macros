@@ -32,8 +32,8 @@ Back:
    FileInstall, C:\Users\theok\Documents\GitHub\Ryzens-Macros\DynamicScript.ahk, %ConfigDirectory%\DynamicScript.ahk, 0
    FileInstall, C:\Users\theok\Documents\GitHub\Ryzens-Macros\GTAHaXUI.exe, %ConfigDirectory%\GTAHaXUI.exe, 1
    FileInstall, C:\Users\theok\Documents\GitHub\Ryzens-Macros\assets\crosshair.png, %ConfigDirectory%\assets\crosshair.png, 1
-   FileInstall, C:\Users\theok\Documents\GitHub\Ryzens-Macros\assets\pending.wav, %ConfigDirectory%\assets\pending.wav, 1
-   FileInstall, C:\Users\theok\Documents\GitHub\Ryzens-Macros\assets\sweeped.wav, %ConfigDirectory%\assets\sweeped.wav, 1
+   FileInstall, C:\Users\theok\Documents\GitHub\Ryzens-Macros\assets\pending.wav, %ConfigDirectory%\assets\pending.wav, 0
+   FileInstall, C:\Users\theok\Documents\GitHub\Ryzens-Macros\assets\sweeped.wav, %ConfigDirectory%\assets\sweeped.wav, 0
    FileInstall, C:\Users\theok\Documents\GitHub\Ryzens-Macros\Lyrics.txt, %ConfigDirectory%\Lyrics.txt, 0
    FileInstall, Reload.exe, %A_MyDocuments%\Reload.exe, 1
    IniRead, GTALocationEpic, %ConfigDirectory%\FileLocationData.ini, Epic Games Launcher, Location, %A_Space%
