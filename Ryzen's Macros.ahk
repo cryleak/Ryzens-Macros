@@ -999,7 +999,7 @@ ReloadOutfit: ; Self explanatory
    SendUp(11,2)
    Send {Blind}{enter up}
    SendDown(3,0)
-   Send {Blind}{enter}
+   Send {Blind}{enter}{%InteractionMenuKey%}
 return
 
 Crosshair5:
