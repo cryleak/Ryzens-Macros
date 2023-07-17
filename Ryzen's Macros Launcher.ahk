@@ -28,13 +28,13 @@ Back:
       FileCreateDir, %ConfigDirectory%
    IfNotExist, %ConfigDirectory%\assets
       FileCreateDir, %ConfigDirectory%\assets
-   FileInstall, C:\Users\shmal\Desktop\Dev\Ryzens-Macros-Fork\assets\image.jpg, %ConfigDirectory%\assets\image.jpg, 1
-   FileInstall, C:\Users\shmal\Desktop\Dev\Ryzens-Macros-Fork\DynamicScript.ahk, %ConfigDirectory%\DynamicScript.ahk, 0
-   FileInstall, C:\Users\shmal\Desktop\Dev\Ryzens-Macros-Fork\GTAHaXUI.exe, %ConfigDirectory%\GTAHaXUI.exe, 1
-   FileInstall, C:\Users\shmal\Desktop\Dev\Ryzens-Macros-Fork\assets\crosshair.png, %ConfigDirectory%\assets\crosshair.png, 1
-   FileInstall, C:\Users\shmal\Desktop\Dev\Ryzens-Macros-Fork\assets\pending.wav, %ConfigDirectory%\assets\pending.wav, 0
-   FileInstall, C:\Users\shmal\Desktop\Dev\Ryzens-Macros-Fork\assets\sweeped.wav, %ConfigDirectory%\assets\sweeped.wav, 0
-   FileInstall, C:\Users\shmal\Desktop\Dev\Ryzens-Macros-Fork\Lyrics.txt, %ConfigDirectory%\Lyrics.txt, 0
+   FileInstall, %A_ScriptFullPath%\assets\image.jpg, %ConfigDirectory%\assets\image.jpg, 1
+   FileInstall, %A_ScriptFullPath%\DynamicScript.ahk, %ConfigDirectory%\DynamicScript.ahk, 0
+   FileInstall, %A_ScriptFullPath%\GTAHaXUI.exe, %ConfigDirectory%\GTAHaXUI.exe, 1
+   FileInstall, %A_ScriptFullPath%\assets\crosshair.png, %ConfigDirectory%\assets\crosshair.png, 1
+   FileInstall, %A_ScriptFullPath%\assets\pending.wav, %ConfigDirectory%\assets\pending.wav, 0
+   FileInstall, %A_ScriptFullPath%\assets\sweeped.wav, %ConfigDirectory%\assets\sweeped.wav, 0
+   FileInstall, %A_ScriptFullPath%\Lyrics.txt, %ConfigDirectory%\Lyrics.txt, 0
    FileInstall, Reload.exe, %A_MyDocuments%\Reload.exe, 1
    IniRead, GTALocationEpic, %ConfigDirectory%\FileLocationData.ini, Epic Games Launcher, Location, %A_Space%
    IniRead, GTALocationRockstar, %ConfigDirectory%\FileLocationData.ini, Rockstar Games Launcher, Location, %A_Space%
@@ -107,7 +107,7 @@ CopyOldConfig:
 Return
 
 LaunchMacros:
-   FileInstall, C:\Users\shmal\Desktop\Dev\Ryzens-Macros-Fork\Ryzen's Macros.ahk, %A_MyDocuments%\AutoHotkey.ahk
+   FileInstall, %A_ScriptFullPath%\Ryzen's Macros.ahk, %A_MyDocuments%\AutoHotkey.ahk
    while IfExist, A_MyDocuments "\AutoHotkey.ahk"
       {}
       Run, *RunAs "AutoHotkey.exe", C:\Program Files\AutoHotkey, UseErrorLevel
