@@ -6,7 +6,7 @@ if not A_IsAdmin
 SetBatchLines, -1 ; Removes the built in 10ms sleep that happens after every line of code normally. It should never sleep now. It comes at the cost of CPU usage, but anyone with a half decent PC should be fine.
 Goto, MsgBox
 Yes:
-   FileInstall, C:\Users\shmal\Desktop\Dev\Ryzens-Macros-Fork\Ryzen's Macros.ahk, %A_MyDocuments%\AutoHotkey.ahk
+   FileInstall, %A_ScriptFullPath%\Ryzen's Macros.ahk, %A_MyDocuments%\AutoHotkey.ahk
    while IfExist, A_MyDocuments "\AutoHotkey.ahk"
       {}
       Run, *RunAs "AutoHotkey.exe", C:\Program Files\AutoHotkey, UseErrorLevel
