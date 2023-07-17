@@ -220,7 +220,6 @@ jetThermal:
    if (!thermal)
    {
       SendInput {Blind}{lbutton up}{enter down}
-      Send {Blind}{%InteractionMenuKey%}
       SendDown(4,0)
       SendInput {Blind}{enter up}
       Send {Blind}{down down}
