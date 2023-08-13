@@ -220,7 +220,6 @@ jetThermal:
    if (!thermal)
    {
       SendInput {Blind}{lbutton up}{enter down}
-      Send {Blind}{%InteractionMenuKey%}
       SendDown(4,0)
       SendInput {Blind}{enter up}
       Send {Blind}{down down}
@@ -1005,7 +1004,7 @@ ReloadOutfit: ; Self explanatory
    SendUp(11,2)
    Send {Blind}{enter up}
    SendDown(3,0)
-   Send {Blind}{enter}
+   Send {Blind}{enter}{%InteractionMenuKey%}
 return
 
 Crosshair5:
