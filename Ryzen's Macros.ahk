@@ -56,12 +56,18 @@ CEOCircleGlobalIndex := 1895156
 CEOCircleGlobalOffset1 := 5
 CEOCircleGlobalOffset2 := 10
 CEOCircleGlobalOffset3 := 11
+; Interaction Menu Open Globals:
+; func_1 in am_pi_menu.c
+IntMenuGlobalIndex := 2672524
+IntMenuGlobalOffset1 := 947
+IntMenuGlobalOffset2 := 6
 
 ; Add them together
 FreemodeGlobalIndexAddedTogether := FreemodeGlobalIndex + EWOGlobalOffset1 ; 290761
 EWOGlobalIndexAddedTogether := EWOGlobalIndex + EWOGlobalOffset0 ; 2801060
 ScoreGlobalIndexAddedTogether := ScoreGlobalIndex + ScoreGlobalOffset1 + ScoreGlobalOffset2 ; 2675026
 CEOCircleGlobalIndexAddedTogether := CEOCircleGlobalIndex + CEOCircleGlobalOffset1 + CEOCircleGlobalOffset2 + CEOCircleGlobalOffset3 ; 1895182
+IntMenuGlobalIndexAddedTogether := IntMenuGlobalIndex + IntMenuGlobalOffset1 + IntMenuGlobalOffset2 ; 2673477
 
 Goto, CheckHWID ; Checks your PC's UUID. Shitty but it works
 Back: ; It goes back to this checkpoint. It works.
@@ -143,6 +149,7 @@ Else
 {
    Process, Close, %Gay%
    Process, Close, %ewoWriteWindow%
+   Process, Close, %intMenuWindow%
    Process, Close, %Gay3%
    Process, Close, %Obese11%
    Run,Reload.exe,%A_MyDocuments%
@@ -166,6 +173,7 @@ Return
 ExitMacros: ; Self explanatory
    Process, Close, %Gay%
    Process, Close, %ewoWriteWindow%
+   Process, Close, %intMenuWindow%
    Process, Close, %Gay3%
    Process, Close, %Obese11%
 ExitApp
@@ -456,7 +464,7 @@ Write: ; Shows the score even if you have EWOd in the session using some advance
       {
          Run, GTAHaXUI.exe, %ConfigDirectory%,Min,ewoWriteWindow ; "Min" is a launch option you can specify. This makes the window invsible; however, it will still show up on Alt+Tab. I fix that 2 lines below.
          WinWait, ahk_pid %ewoWriteWindow% ; Waits for GTAHaX to actually exist before continuing
-         Sleep(25)
+         Sleep 25
          WinSet, ExStyle, ^0x80, ahk_pid %ewoWriteWindow% ; Makes the window not show up on Alt+Tab
          ControlSetText, Edit1, %ScoreGlobalIndexAddedTogether%, ahk_pid %ewoWriteWindow%
       } else ; If it does exist
@@ -532,19 +540,61 @@ KekEWO: ; Opens the options menu to EWO, works even if you are stunned or ragdol
       }
    } else if (antiKekMode = "Interaction Menu Spam")
    {
-      SendInput {Blind}{up down}{%EWOLookBehindKey% down}{lshift down}{lctrl down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% up}{%InteractionMenuKey% down}
+      if not (timerActive)
+      {
+         SetTimer, intMenuOpen, 10, 2147483647
+         timerActive := 1
+         Sleep 50
+      }
+      SendInput {Blind}{%EWOLookBehindKey% down}{lshift down}{lctrl down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% up}{%InteractionMenuKey% down}{%EWOMelee% down}
       RestartTimer()
       While (CalculateTime(originalTime) < 600)
       {
-         SendInput {Blind}{%EWOSpecialAbilitySlashActionKey% up}{enter down}{%EWOMelee% down}
-         Send {Blind}{up 2}
-         SendInput {Blind}{enter up}
-         Send {Blind}{%InteractionMenuKey% up}{backspace}{%EWOMelee% up}{f24 5}{%InteractionMenuKey% down}
+         If (intMenuOpen)
+         {
+            SendInput {Blind}{%EWOSpecialAbilitySlashActionKey% up}{enter down}
+            Send {Blind}{up 2}
+            SendInput {Blind}{enter up}
+            Send {Blind}{f24 up}{backspace}
+            Sleep 50
+         }
+         /*
+         
+         else
+         {
+            Sleep 50
+            if (!intMenuOpen)
+            {
+               Send {Blind}{backspace}{f24 2}{%InteractionMenuKey% down}
+               Sleep 50
+            }
+         }
+         */
+         
       }
       SendInput {Blind}{%InteractionMenuKey% up}
    }
    SendInput {Blind}{%EWOMelee% up}{%EWOLookBehindKey% up}{%InteractionMenuKey% up}{up up}{lshift up}{lctrl up}
 return
+
+intMenuOpen:
+   ; Create the window
+   if !WinExist("ahk_pid " intMenuWindow) ; If window doesn't exist, make it exist and add shit to it
+   {
+      Run, GTAHaXUI.exe, %ConfigDirectory%,Min,intMenuWindow ; "Min" is a launch option you can specify. This makes the window invsible; however, it will still show up on Alt+Tab. I fix that 2 lines below.
+      WinWait, ahk_pid %intMenuWindow% ; Waits for GTAHaX to actually exist before continuing
+      Sleep 25
+      WinSet, ExStyle, ^0x80, ahk_pid %intMenuWindow% ; Makes the window not show up on Alt+Tab
+      ControlSetText, Edit1, %IntMenuGlobalIndexAddedTogether%, ahk_pid %intMenuWindow%
+   } else
+   {
+      ControlGet, currentValue2,Line,1,Edit7,ahk_pid %intMenuWindow% ; This is the current value. This is next to the lowest global variable-related line. It gets the current value of the global.
+      If (currentValue2 = 0)
+         intMenuOpen := 1
+      else
+         intMenuOpen := 0
+   }
+Return
 
 BST: ; Self explanatory
    SendInput {Blind}{lbutton up}{enter down}
@@ -1144,6 +1194,7 @@ ProcessCheckTimer:
             MsgBox, 0, Macros will close now. RIP., GTA is no longer running. Macros will close now. RIP.
             Process, Close, %Gay%
             Process, Close, %ewoWriteWindow%
+            Process, Close, %intMenuWindow%
             Process, Close, %Gay3%
             Process, Close, %Obese11%
             ExitApp
@@ -1753,6 +1804,7 @@ Return
 CloseGTAHaX:
    Process, Close, %Gay%
    Process, Close, %ewoWriteWindow%
+   Process, Close, %intMenuWindow%
    Process, Close, %Gay3%
    Process, Close, %Obese11%
 Return
