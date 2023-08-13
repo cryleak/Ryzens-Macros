@@ -358,7 +358,7 @@ EWO: ; Self explanatory
          Sleep(46)
          SendInput {Blind}{%EWOSpecialAbilitySlashActionKey% down}
          Send {Blind}{enter up}{%InteractionMenuKey% up}
-         */
+               */
          SendInput {Blind}{alt up}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%InteractionMenuKey% down}{%EWOSpecialAbilitySlashActionKey% down}
          Sleep(33.5)
          SendInput {Blind}{%EWOLookBehindKey% down}
@@ -372,7 +372,7 @@ EWO: ; Self explanatory
          SetMouseDelay 10
          Send {Blind}{lbutton down}{rbutton down}{rbutton up}
          SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{lbutton up}{%EWOSpecialAbilitySlashActionKey% down}{%InteractionMenuKey% down}
-         Send {Blind}{%EWOLookBehindKey% down}{f24 up}{up}{f24}{up}{f24 up}{enter}
+         Send {Blind}{%EWOLookBehindKey% down}{f24 up}{up}{f24 up}{up}{f24 up}{enter}
          SetMouseDelay -1
       case "Retarded":
          StringUpper, EWOLookBehindKey, EWOLookBehindKey
@@ -505,9 +505,11 @@ EWOWrite: ; Checks if EWO Write is enabled
    }
 Return
 
-KekEWO: ; Opens the options menu to EWO, works even if you are stunned or ragdolledF
+KekEWO: ; Opens the options menu to EWO, works even if you are stunned or ragdolled
+   If (KekEWO = "CapsLock")
+      SetCapsLockState Off
    GuiControlGet, antiKekMode
-   SendInput {Blind}{%EWOLookBehindKey% up}
+   SendInput {Blind}{%EWOLookBehindKey% up}{%EWOSpecialAbilitySlashActionKey% up}
    if (antiKekMode = "Options Menu")
    {
       SendInput {Blind}{%EWOMelee% down}{lshift down}
@@ -531,14 +533,18 @@ KekEWO: ; Opens the options menu to EWO, works even if you are stunned or ragdol
       }
    } else if (antiKekMode = "Interaction Menu Spam")
    {
-      SendInput {Blind}{lbutton down}
-      Send {Blind}{f24}
-      SendInput {Blind}{shift up}{up down}{enter down}{%InteractionMenuKey% down}{lbutton up}{rbutton up}{%EWOMelee% down}
-      Send {Blind}{%EWOLookBehindKey% down}{f24}{f24 up}
-      SendInput {Blind}{wheelup}{up up}{enter up}
+      SendInput {Blind}{up down}{%EWOLookBehindKey% down}{lshift down}{lctrl down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% up}{%InteractionMenuKey% down}
+      RestartTimer()
+      While (CalculateTime(originalTime) < 600)
+      {
+         SendInput {Blind}{%EWOSpecialAbilitySlashActionKey% up}{enter down}{%EWOMelee% down}
+         Send {Blind}{up 2}
+         SendInput {Blind}{enter up}
+         Send {Blind}{%InteractionMenuKey% up}{backspace}{%EWOMelee% up}{f24 5}{%InteractionMenuKey% down}
+      }
+      SendInput {Blind}{%InteractionMenuKey% up}
    }
-   SendInput {Blind}{%EWOMelee% up}{lshift up}{%EWOLookBehindKey% up}{%InteractionMenuKey% up}
-   Send {Blind}{f24}
+   SendInput {Blind}{%EWOMelee% up}{%EWOLookBehindKey% up}{%InteractionMenuKey% up}{up up}{lshift up}{lctrl up}
 return
 
 BST: ; Self explanatory
