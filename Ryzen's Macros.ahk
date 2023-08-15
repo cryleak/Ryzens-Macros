@@ -546,10 +546,12 @@ KekEWO: ; Opens the options menu to EWO, works even if you are stunned or ragdol
          timerActive := 1
          Sleep 50
       }
-      SendInput {Blind}{%EWOLookBehindKey% down}{lshift down}{lctrl down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% up}{%InteractionMenuKey% down}{%EWOMelee% down}
+      Send {Blind}{%EWOMelee%}
+      SendInput {Blind}{%EWOLookBehindKey% down}{lshift down}{lctrl down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% up}{%InteractionMenuKey% down}
       RestartTimer()
-      While (CalculateTime(originalTime) < 600)
+      While (CalculateTime(originalTime) < 400)
       {
+         Send {Blind}{%EWOMelee%}
          If (intMenuOpen)
          {
             SendInput {Blind}{%EWOSpecialAbilitySlashActionKey% up}{enter down}
@@ -558,19 +560,6 @@ KekEWO: ; Opens the options menu to EWO, works even if you are stunned or ragdol
             Send {Blind}{f24 up}{backspace}
             Sleep 50
          }
-         /*
-         
-         else
-         {
-            Sleep 50
-            if (!intMenuOpen)
-            {
-               Send {Blind}{backspace}{f24 2}{%InteractionMenuKey% down}
-               Sleep 50
-            }
-         }
-         */
-         
       }
       SendInput {Blind}{%InteractionMenuKey% up}
    }
@@ -1189,6 +1178,7 @@ ProcessCheckTimer:
          {
             Gosub, CloseGTAProcesses
             SetTimer, Write, Off, -2147483648
+            SetTimer, IntMenuOpen, Off, -2147483648
             SetTimer, CloseGTAHaX, 100, -2147483648
             SetTimer, ExitMacros, -10000, -2147483648
             MsgBox, 0, Macros will close now. RIP., GTA is no longer running. Macros will close now. RIP.
@@ -1690,6 +1680,7 @@ SaveConfig:
 SaveConfigRedirect:
    GuiControlGet, ProcessCheck2
    SetTimer, Write, Off, -2147483648
+   SetTimer, IntMenuOpen, Off, -2147483648
    SetTimer, TabBackInnn, Off, -2147483648
    SetTimer, ProcessCheckTimer, Off, -2147483648
    Gosub,DisableAll
