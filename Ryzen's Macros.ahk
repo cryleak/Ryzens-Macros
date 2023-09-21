@@ -540,23 +540,30 @@ KekEWO: ; Opens the options menu to EWO, works even if you are stunned or ragdol
       }
    } else if (antiKekMode = "Interaction Menu Spam")
    {
+      ; If the routine is not active (see IntMenuOpen), it will make it active for the rest of the script's life.
       if not (timerActive)
       {
-         SetTimer, intMenuOpen, 10, 2147483647
+         SetTimer, IntMenuOpen, 10, 2147483647
          timerActive := 1
          Sleep 50
       }
+      
+      ; Sets up all the keys that are going to be held down.
       Send {Blind}{%EWOMelee%}
       SendInput {Blind}{%EWOLookBehindKey% down}{lshift down}{lctrl down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% up}{%InteractionMenuKey% down}
-      RestartTimer()
+      RestartTimer() ; Puts the system time into a variable that can be used later to calculate the amount of milliseconds that have passed since this was executed.
+      
+      ; While the time since RestartTimer() was called is less than 400ms, it will check if the interaction menu is open.
+      ; Checking if the interaction menu is open takes ~75-150ms or so, which means it is not viable for other macros. AntiKek, however can easily break and the slight delay is usually worth it.
       While (CalculateTime(originalTime) < 400)
       {
          Send {Blind}{%EWOMelee%}
+         ; If the interaction menu is open, EWO
          If (intMenuOpen)
          {
-            SendInput {Blind}{%EWOSpecialAbilitySlashActionKey% up}{enter down}
-            Send {Blind}{up 2}
-            SendInput {Blind}{enter up}
+            SendInput {Blind}{%EWOSpecialAbilitySlashActionKey% up}{enter down}{up down}
+            Send {Blind}{f24}{f24 up}
+            SendInput {Blind}{WheelUp}{enter up}
             Send {Blind}{f24 up}{backspace}
             Sleep 50
          }
@@ -566,18 +573,20 @@ KekEWO: ; Opens the options menu to EWO, works even if you are stunned or ragdol
    SendInput {Blind}{%EWOMelee% up}{%EWOLookBehindKey% up}{%InteractionMenuKey% up}{up up}{lshift up}{lctrl up}
 return
 
-intMenuOpen:
+; Runs every 10ms
+IntMenuOpen:
    ; Create the window
    if !WinExist("ahk_pid " intMenuWindow) ; If window doesn't exist, make it exist and add shit to it
    {
-      Run, GTAHaXUI.exe, %ConfigDirectory%,Min,intMenuWindow ; "Min" is a launch option you can specify. This makes the window invsible; however, it will still show up on Alt+Tab. I fix that 2 lines below.
-      WinWait, ahk_pid %intMenuWindow% ; Waits for GTAHaX to actually exist before continuing
+      Run, GTAHaXUI.exe, %ConfigDirectory%,Min,intMenuWindow
+      WinWait, ahk_pid %intMenuWindow%
       Sleep 25
-      WinSet, ExStyle, ^0x80, ahk_pid %intMenuWindow% ; Makes the window not show up on Alt+Tab
+      WinSet, ExStyle, ^0x80, ahk_pid %intMenuWindow%
       ControlSetText, Edit1, %IntMenuGlobalIndexAddedTogether%, ahk_pid %intMenuWindow%
    } else
    {
-      ControlGet, currentValue2,Line,1,Edit7,ahk_pid %intMenuWindow% ; This is the current value. This is next to the lowest global variable-related line. It gets the current value of the global.
+      ControlGet, currentValue2,Line,1,Edit7,ahk_pid %intMenuWindow% ; Getting current value of the global
+      ; This global will be set to 0 whenever the interaction menu is open.
       If (currentValue2 = 0)
          intMenuOpen := 1
       else
