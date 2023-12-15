@@ -8,7 +8,7 @@ IfNotExist, %ConfigDirectory%
 IfNotExist, %ConfigDirectory%\assets
    FileCreateDir, %ConfigDirectory%\assets
 clumsyEnabled = 0
-MacroVersion := "4.2.1.1"
+MacroVersion := "4.3"
 If InStr(A_ScriptName,.ahk) && not (A_ScriptName = "AutoHotkey.ahk")
 {
    MacroText := "Ryzen's Macros Dev Build Version "MacroVersion ; Macro version
@@ -30,11 +30,13 @@ thermal = 0
 Herpes := "No more bitches :(" ; ginlang asked me to add a variable named herpes
 CFG = %A_MyDocuments%\Ryzen's Macros\GTA Binds.ini ; Config file name
 global originalTime
+; global intMenuOpen
+global ewoWindow
 CrosshairDone := 0 ; If crosshair has been applied
 ; gtaWindow := This apparently doesn't work so I will just manually specify it
 China := "Bind"
 SendInputFallbackText = I have detected that it has taken a very long time to complete the chat message. First, check if the characters are being sent one by one, or in instant `"batches`". If it is being sent in batches, then your FPS is likely very low. Please complain to me on Discord and I will raise the threshold for this message. If it is being sent one by one, try this: If you are running Flawless Widescreen, you must close it, as it causes issues, and makes most macros far slower. Please open a support ticket on the Discord Server if the problem persists, or if Flawless Widescreen is not running.
-WriteWasJustPerformed = 0 ; EWO Score Write was just performed
+global WriteWasJustPerformed = 0 ; EWO Score Write was just performed
 IniRead,DebugTesting,%CFG%,Debug,Debug Testing ; Checks if debug testing is true, usually false.
 IniRead,WhileChat,%CFG%,Debug,Improve Chat Macros But You Can't Use Multiple Keybinds ; yes
 IniWrite,%WhileChat%,%CFG%,Debug,Improve Chat Macros But You Can't Use Multiple Keybinds
@@ -43,31 +45,40 @@ IniRead,OriginalName, %ConfigDirectory%\FileLocationData.ini, Name, Name
 
 ; GTAHaX EWO Offsets:
 FreemodeGlobalIndex := 262145
-EWOGlobalOffset1 := 28616
+EWOGlobalOffset1 := 28686
 ; GTAHaX EWO Offsets 2:
-EWOGlobalIndex := 2794162
-EWOGlobalOffset0 := 6898
+EWOGlobalIndex := 2738587
+EWOGlobalOffset0 := 6937
 ; GTAHaX EWO Score Offsets:
-ScoreGlobalIndex := 2672524
-ScoreGlobalOffset1 := 1685
+ScoreGlobalIndex := 2672741
+ScoreGlobalOffset1 := 1689
 ScoreGlobalOffset2 := 817
 ; CEO Circle Offsets:
-CEOCircleGlobalIndex := 1895156
+CEOCircleGlobalIndex := 1886967
 CEOCircleGlobalOffset1 := 5
 CEOCircleGlobalOffset2 := 10
 CEOCircleGlobalOffset3 := 11
 ; Interaction Menu Open Globals:
 ; func_1 in am_pi_menu.c
-IntMenuGlobalIndex := 2672524
-IntMenuGlobalOffset1 := 947
+IntMenuGlobalIndex := 2672741
+IntMenuGlobalOffset1 := 951
 IntMenuGlobalOffset2 := 6
+; Suicide Globals:
+SuicideGlobalIndex := 1574582
+SuicideGlobalOffset1 := 6
+; EWO Speed Globals:
+EWOSpeedGlobalIndex := 2672741
+EWOSpeedGlobalOffset1 := 994
+EWOSpeedGlobalOffset2 := 4
 
 ; Add them together
-FreemodeGlobalIndexAddedTogether := FreemodeGlobalIndex + EWOGlobalOffset1 ; 290761
-EWOGlobalIndexAddedTogether := EWOGlobalIndex + EWOGlobalOffset0 ; 2801060
-ScoreGlobalIndexAddedTogether := ScoreGlobalIndex + ScoreGlobalOffset1 + ScoreGlobalOffset2 ; 2675026
-CEOCircleGlobalIndexAddedTogether := CEOCircleGlobalIndex + CEOCircleGlobalOffset1 + CEOCircleGlobalOffset2 + CEOCircleGlobalOffset3 ; 1895182
-IntMenuGlobalIndexAddedTogether := IntMenuGlobalIndex + IntMenuGlobalOffset1 + IntMenuGlobalOffset2 ; 2673477
+FreemodeGlobalIndexAddedTogether := FreemodeGlobalIndex + EWOGlobalOffset1 ; 290831
+EWOGlobalIndexAddedTogether := EWOGlobalIndex + EWOGlobalOffset0 ; 2745524
+ScoreGlobalIndexAddedTogether := ScoreGlobalIndex + ScoreGlobalOffset1 + ScoreGlobalOffset2 ; 2673698
+CEOCircleGlobalIndexAddedTogether := CEOCircleGlobalIndex + CEOCircleGlobalOffset1 + CEOCircleGlobalOffset2 + CEOCircleGlobalOffset3 ; 1886993
+IntMenuGlobalIndexAddedTogether := IntMenuGlobalIndex + IntMenuGlobalOffset1 + IntMenuGlobalOffset2 ; 2673698
+SuicideGlobalIndexAddedTogether := SuicideGlobalIndex + SuicideGlobalOffset1 ; 1574588
+EWOSpeedGlobalIndexAddedTogether := EWOSpeedGlobalIndex + EWOSpeedGlobalOffset1 + EWOSpeedGlobalOffset2 ; 2673739
 
 Goto, CheckHWID ; Checks your PC's UUID. Shitty but it works
 Back: ; It goes back to this checkpoint. It works.
@@ -97,7 +108,7 @@ Back: ; It goes back to this checkpoint. It works.
    SetKeyDelay, -1, -1 ; Sets key delay to the lowest possible, there is still delay due to the keyboard hook in GTA, but this makes it excecute as fast as possible WITHOUT skipping keystrokes. Set this a lot higher if you uninstalled the keyboard hook using mods.
    SetWinDelay, -1 ; After any window modifying command, the script has a built in delay. Fuck delays.
    SetMouseDelay, -1
-   SetControlDelay, -1 ; After any control modifying command, for example; ControlSend, there is a built in delay.
+   SetControlDelay, 0 ; After any control modifying command, for example; ControlSend, there is a built in delay.
    Gui,Font,q5,Segoe UI Semibold ; Sets font to something
    IniRead,neverOnTop,%CFG%,Debug,Never On Top ; Secret module
    IniRead,fuckYou,%CFG%,Debug,Fuck You ; Secret module
@@ -140,6 +151,15 @@ Back: ; It goes back to this checkpoint. It works.
 Return
 
 Reload: ; Reloads the macros
+Thread, Priority, 2147483647
+Critical, On
+Process, Close, %Gay%
+Process, Close, %ewoWriteWindow%
+Process, Close, %ewoSpeedWindow%
+Process, Close, %intMenuWindow%
+Process, Close, %Gay3%
+Process, Close, %ewoWindow%
+Process, Close, %Obese11%
 If (!isCompiled)
 {
    MsgBox, 0, %MacroText%,If you see this`, something strange is happening. , 0.75
@@ -147,11 +167,6 @@ If (!isCompiled)
 }
 Else
 {
-   Process, Close, %Gay%
-   Process, Close, %ewoWriteWindow%
-   Process, Close, %intMenuWindow%
-   Process, Close, %Gay3%
-   Process, Close, %Obese11%
    Run,Reload.exe,%A_MyDocuments%
    ExitApp
 }
@@ -171,9 +186,13 @@ Flawless: ; Flawless Widescreen fix
 Return
 
 ExitMacros: ; Self explanatory
+   Thread, Priority, 2147483647,
+   Critical, On
    Process, Close, %Gay%
    Process, Close, %ewoWriteWindow%
+   Process, Close, %ewoSpeedWindow%
    Process, Close, %intMenuWindow%
+   Process, Close, %ewoWindow%
    Process, Close, %Gay3%
    Process, Close, %Obese11%
 ExitApp
@@ -187,16 +206,14 @@ ThermalHelmet: ; Self explanatory
    SendInput {Blind}{lbutton up}{enter down}
    GuiControlGet, NightVision
    Send {Blind}{%InteractionMenuKey%}
-   SendDown(4,0)
+   SendDown(5,0)
    SendInput {Blind}{enter up}
    Send {Blind}{down down}
    SendInput {Blind}{enter down}
    Send {Blind}{down up}
    SendInput {Blind}{enter up}
    If (!NightVision)
-   {
       SendDown(4,0)
-   }
    Sleep(50)
    Send {Blind}{space}{%InteractionMenuKey%}
 return
@@ -263,197 +280,92 @@ FastSniperSwitch: ; Self explanatory
 return
 
 EWO: ; Self explanatory
-   
-   GuiControlGet, SmoothEWO
-   GuiControlGet, SmoothEWOMode
-   GuiControlGet, EWOWrite
    GuiControlGet, shootEWO
-   GuiControlGet, customTime
-   capsLockState := GetKeyState("CapsLock", "T")
-   If (SmoothEWOMode = "Fast Respawn") && (SmoothEWO) || (SmoothEWOMode = "Sticky") && (SmoothEWO)
-      Goto, MiscEWOModes
-   
-   ; Sometimes if you quickly switch to another weapon before you EWO it won't be instant. This fix only works if you have "Fast Switch" enabled, aka if you are an AW player most likely.
-   if (fuckYou <> 1)
-   {
-      ; This will give me the bind of the hotkey that was last executed before this one. There will be an asterisk in the bind name, which StrReplace() removes.
-      priorHotkey := StrReplace(A_PriorHotkey, "*")
-      ; If the previous hotkey's bind is the same as any of the weapon-switching binds, then it will wait a few milliseconds before EWOing.
-      if (priorHotkey = BindSticky) || (priorHotkey = BindRPG) || (priorHotkey = BindPistol) || (priorHotkey = BindRifle) ||(priorHotkey = BindShotgun) || (priorHotkey = BindSMG) || (priorHotkey = BindSniper)
-      {
-         ; If it has been less than 150ms since you pressed it, it will wait that amount of time, minus the time since the prior hotkey.
-         if (A_TimeSincePriorHotkey	< 150)
-            Sleep(150 - A_TimeSincePriorHotkey) ; Maths
-      }
-   }
-   
-   SendInput {Blind}{%EWOLookBehindKey% up}{lbutton up}{%EWOMelee% down}{lshift up}{rshift up}{lctrl up}{rctrl up}
+   GuiControlGet, StickyEWO
+   If (StickyEWO)
+      Goto MiscEWOModes
    If (shootEWO)
    {
       SendInput {Blind}{lbutton down}
       Send {Blind}{f24 up}
    }
+   SetMouseDelay 10
+   Send {Blind}{lbutton down}{rbutton down}
    SendInput {Blind}{lbutton up}{rbutton up}
-   If (SmoothEWO)
-   {
-      If GetKeyState("RButton","P")
-      {
-         switch SmoothEWOMode
-         {
-         case "Staeni":
-            SetMouseDelay 10
-            Send {Blind}{lbutton down}{rbutton down}
-            SendInput {Blind}{rbutton up}{lbutton up}
-            Sleep(80)
-         case "Retarded":
-            Sleep(100)
-         case "Fast":
-            SetMouseDelay 10
-            Send {Blind}{lbutton down}{rbutton down}
-            SendInput {Blind}{rbutton up}{lbutton up}
-            Sleep(30)
-         }
-         SetMouseDelay -1
-      }
-      
-      switch SmoothEWOMode
-      {
-      case "Fastest":
-         SetMouseDelay 10
-         Send {Blind}{lbutton down}{rbutton down}
-         SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{up down}{%InteractionMenuKey% down}{%explodeBind% down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}
-         Send {Blind}{%EWOLookBehindKey% down}{f24 2}{f24 up}
-         SendInput {Blind}{wheelup}{up up}{enter up}
-         SetMouseDelay -1
-      case "Fasterest":
-         SetMouseDelay 10
-         Send {Blind}{lbutton down}{rbutton down}
-         SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{up down}{%InteractionMenuKey% down}{%explodeBind% down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}
-         Send {Blind}{%EWOLookBehindKey% down}{f24 2}
-         SendInput {Blind}{wheelup}{up up}{enter up}
-         SetMouseDelay -1
-      case "Custom":
-         customTimeFrames := StrSplit(customTime,"F")
-         SetMouseDelay 10
-         Send {Blind}{lbutton down}{rbutton down}{rbutton up}{lbutton up}
-         SendInput {Blind}{%EWOLookBehindKey% down}
-         If InStr(customTime,"F")
-            CancerFunction("f24 up",customTimeFrames[1],"Send")
-         else
-            Sleep(customTime)
-         SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{up down}{%InteractionMenuKey% down}{%explodeBind% down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}
-         Send {Blind}{f24}{f24 up}
-         SendInput {Blind}{wheelup}{up up}{enter up}
-         SetMouseDelay -1
-      case "Fast":
-         SendInput {Blind}{alt up}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%InteractionMenuKey% down}{%EWOSpecialAbilitySlashActionKey% down}
-         Sleep(28)
-         SendInput {Blind}{%EWOLookBehindKey% down}
-         Sleep(13)
-         SendInput {Blind}{up down}
-         Sleep(35)
-         SendInput {Blind}{WheelUp}
-         Sleep(30)
-         SendInput {Blind}{enter up}{%InteractionMenuKey% up}{%EWOLookBehindKey% up}
-      case "Staeni":
-         /*
-         SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%InteractionMenuKey% down}
-         Sleep(20)
-         Send {Blind}{%EWOLookBehindKey% down}{up}
-         Sleep(25)
-         SendInput {Blind}{WheelUp}
-         Sleep(46)
-         SendInput {Blind}{%EWOSpecialAbilitySlashActionKey% down}
-         Send {Blind}{enter up}{%InteractionMenuKey% up}
-               */
-         SendInput {Blind}{alt up}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%InteractionMenuKey% down}{%EWOSpecialAbilitySlashActionKey% down}
-         Sleep(33.5)
-         SendInput {Blind}{%EWOLookBehindKey% down}
-         Sleep(14)
-         SendInput {Blind}{up down}
-         Sleep(37.5)
-         SendInput {Blind}{WheelUp}
-         Sleep(50)
-         SendInput {Blind}{enter up}{%InteractionMenuKey% up}{%EWOLookBehindKey% up}
-      case "Faster":
-         SetMouseDelay 10
-         Send {Blind}{lbutton down}{rbutton down}{rbutton up}
-         SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{lbutton up}{%EWOSpecialAbilitySlashActionKey% down}{%InteractionMenuKey% down}
-         Send {Blind}{%EWOLookBehindKey% down}{f24 up}{up}{f24 up}{up}{f24 up}{enter}
-         SetMouseDelay -1
-      case "Retarded":
-         StringUpper, EWOLookBehindKey, EWOLookBehindKey
-         Random, var, 1, 4
-         SendInput {Blind}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%InteractionMenuKey% down}{%EWOSpecialAbilitySlashActionKey% down}
-         Sleep(25)
-         Send {Blind}{up}
-         Sleep(25)
-         Send {Blind}{up}
-         Sleep(40)
-         Send {Blind}{%EWOLookBehindKey% down}
-         if (var = 1) ; why the fuck did i do this
-            Send {Blind}{f24}{f24 up}
-         else if (var = 2)
-            Send {Blind}{f24 2}{f24 up}
-         else if (var = 3)
-            Send {Blind}{f24 3}{f24 up}
-         Send {Blind}{enter up}
-         StringLower, EWOLookBehindKey, EWOLookBehindKey
-      case "Retarded2":
-         SendInput {Blind}{lbutton up}{rbutton up}{enter down}
-         Send {Blind}{%InteractionMenuKey%}{enter up}{up down}
-         SendInput {Blind}{enter down}
-         Send {Blind}{up up}
-         SendInput {Blind}{enter up}
-         GuiControl,1:, CEOMode, 0
-         Sleep(110)
-         
-         SendInput {Blind}{%EWOLookBehindKey% down}{lbutton up}{rbutton up}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{%InteractionMenuKey% down}
-         Sleep(13)
-         Send {Blind}{shift down}{f24 up}{shift up}{up}
-         Sleep(12)
-         Send {Blind}{up}
-         Sleep(9)
-         Send {Blind}{%EWOSpecialAbilitySlashActionKey% down}{enter up}
-      case "Retarded3":
-         Send {Blind}{lbutton down}{rbutton down}
-         SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{up down}{%InteractionMenuKey% down}{%explodeBind% down}{lbutton up}{rbutton up}{%EWOLookBehindKey% down}{%EWOSpecialAbilitySlashActionKey% down}
-         Send {Blind}{space down}{f24}
-         SendInput {Blind}{wheelup}{up up}{enter up}
-      }
-   } else
-   {
-      SetMouseDelay 10
-      Send {Blind}{lbutton down}{rbutton down}
-      SendInput {Blind}{lctrl up}{rctrl up}{lshift up}{rshift up}{enter down}{up down}{%InteractionMenuKey% down}{%explodeBind% down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% down}
-      Send {Blind}{%EWOLookBehindKey% down}{f24}{f24 up}
-      SendInput {Blind}{wheelup}{up up}{enter up}
-      SetMouseDelay -1
-   }
-   SendInput {up up}{%InteractionMenuKey% up}{%EWOMelee% up}{%EWOSpecialAbilitySlashActionKey% up}{%explodeBind% up}
-   Send {Blind}{enter 2}{up}{enter}{left}{down}{enter}{backspace}{space up}
-   SendInput {%EWOLookBehindKey% up}
-   SetCapsLockState, %capsLockState%
+   Gosub, Die
+   SetMouseDelay -1
 return
 
-MiscEWOModes:
-   GuiControlGet, SmoothEWO
-   GuiControlGet, SmoothEWOMode
-   GuiControlGet, EWOWrite
-   GuiControlGet, shootEWO
-   If (SmoothEWOMode = "Sticky") && (SmoothEWO)
+Die:
+   ControlClick, Button1, ahk_pid %ewoSpeedWindow%
+   ControlClick, Button1, ahk_pid %ewoWindow%
+   global writeWasJustPerformed = 1 ; If this is 1 then TabBackInnn will activate the GTA window; EWO Write sometimes tabs you out due to an issue.
+   SetTimer, WriteWasPerformed, -400, 2147483647 ; Runs this once after 350ms, and then deletes the timer. Better than Sleep in this case.
+Return
+
+GTAHaXEWO:
+   If (!GTAAlreadyClosed)
    {
-      SendInput {lbutton down}{rbutton up}
-      Send {Blind}{%BindRifle%}
-      SendInput {lbutton up}
-      Send {Blind}{tab} ; {lbutton 5}
-      Loop, 15 {
-         if WinActive("ahk_exe GTA5.exe")
+      if !WinExist("ahk_pid " ewoWindow) ; If window doesn't exist, make it exist and add shit to it
+      {
+         Run, GTAHaXUI.exe, %ConfigDirectory%,Min,ewoWindow ; "Min" is a launch option you can specify. This makes the window invsible; however, it will still show up on Alt+Tab. I fix that 2 lines below.
+         WinWait, ahk_pid %ewoWindow% ; Waits for GTAHaX to actually exist before continuing
+         WinSet, ExStyle, ^0x80, ahk_pid %ewoWindow% ; Makes the window not show up on Alt+Tab
+         Sleep 25
+         ControlSetText, Edit1, %SuicideGlobalIndexAddedTogether%, ahk_pid %ewoWindow%
+         ControlSetText, Edit8, 1, ahk_pid %ewoWindow%
+      } else ; If it does exist
+      {
+         ControlGet, currentSuicideGlobalIndex,Line,1,Edit1,ahk_pid %ewoWindow% ; GTAHaX uses a very basic window, so AHK can retrieve the values from "controls". These are the lines in this case. Here it is checking what the top line contains.
+         ControlGet, newValue3,Line,1,Edit8,ahk_pid %ewoWindow% ; The value we want to set it to. We want this to be 0.
+         
+         If (!currentSuicideGlobalIndex = SuicideGlobalIndexAddedTogether) || (!newValue3 = 1) ; If global index isn't correct, then close GTAHaX and remake the window. Too lazy to remove everything, this is better anyways.
          {
-            Send {Blind}{%explodeBind% 4} ; {lbutton}
+            Process, Close, %ewoWindow%
+            Goto, GTAHaXEWO
          }
       }
-      SendInput {Blind}{lbutton up}
+   }
+Return
+
+MiscEWOModes:
+   SendInput {lbutton down}{rbutton up}
+   Send {Blind}{%BindRifle%}
+   SendInput {lbutton up}
+   Send {Blind}{tab} ; {lbutton 5}
+   Loop, 15 {
+      if WinActive("ahk_exe GTA5.exe")
+      {
+         Send {Blind}{%explodeBind% 4}
+      }
+   }
+   SendInput {Blind}{lbutton up}
+Return
+
+EWOSpeed: ; Shows the score even if you have EWOd in the session using some advanced shit
+   If (!GTAAlreadyClosed)
+   {
+      if !WinExist("ahk_pid " ewoSpeedWindow) ; If window doesn't exist, make it exist and add shit to it
+      {
+         Run, GTAHaXUI.exe, %ConfigDirectory%,Min,ewoSpeedWindow ; "Min" is a launch option you can specify. This makes the window invsible; however, it will still show up on Alt+Tab. I fix that 2 lines below.
+         WinWait, ahk_pid %ewoSpeedWindow% ; Waits for GTAHaX to actually exist before continuing
+         Sleep 100
+         WinSet, ExStyle, ^0x80, ahk_pid %ewoSpeedWindow% ; Makes the window not show up on Alt+Tab
+         ControlSetText, Edit1, %EWOSpeedGlobalIndexAddedTogether%, ahk_pid %ewoSpeedWindow%
+         sleep 25
+         ControlSetText, Edit8, 11, ahk_pid %ewoSpeedWindow%
+         sleep 50
+      } else ; If it does exist
+      {
+         ControlGet, currentEWOSpeedGlobalIndex,Line,1,Edit1,ahk_pid %ewoSpeedWindow% ; GTAHaX uses a very basic window, so AHK can retrieve the values from "controls". These are the lines in this case. Here it is checking what the top line contains
+         {
+            If (!currentEWOSpeedGlobalIndex = EWOSpeedGlobalIndexAddedTogether) ; If global index isn't correct, then close GTAHaX and remake the window. Too lazy to remove everything, this is better anyways.
+            {
+               Process, Close, %ewoSpeedWindow%
+               Goto, EWOSpeed
+            }
+         }
+      }
    }
 Return
 
@@ -476,7 +388,7 @@ Write: ; Shows the score even if you have EWOd in the session using some advance
          {
             ControlClick, Button1, ahk_pid %ewoWriteWindow% ; For some reason ControlClick can tab you out, so it will only click it if there is an actual to do so.
             global writeWasJustPerformed = 1 ; If this is 1 then TabBackInnn will activate the GTA window; EWO Write sometimes tabs you out due to an issue.
-            SetTimer, WriteWasPerformed, -350, -2147483648 ; Runs this once after 350ms, and then deletes the timer. Better than Sleep in this case.
+            SetTimer, WriteWasPerformed, -400, 2147483647 ; Runs this once after 350ms, and then deletes the timer. Better than Sleep in this case.
          } else
          {
             If (!currentScoreGlobalIndex = ScoreGlobalIndexAddedTogether) || (!newValue = 0) ; If global index isn't correct, then close GTAHaX and remake the window. Too lazy to remove everything, this is better anyways.
@@ -494,7 +406,7 @@ WriteWasPerformed: ; Submodule of the Write module
 Return
 
 TabBackInnn: ; Submodule of the submodule of the Write module
-   If (writeWasJustPerformed)
+   If (writeWasJustPerformed = 1)
       WinActivate, ahk_exe GTA5.exe
 Return
 
@@ -503,75 +415,14 @@ EWOWrite: ; Checks if EWO Write is enabled
    If (EWOWrite)
    {
       SetTimer, Write, 10, -2147483648
-      SetTimer, TabBackInnn, 10, -2147483648
    }
    else
    {
       SetTimer, Write, Off, -2147483648
-      SetTimer, TabBackInnn, Off, -2147483648
    }
 Return
 
-KekEWO: ; Opens the options menu to EWO, works even if you are stunned or ragdolled
-   If (KekEWO = "CapsLock")
-      SetCapsLockState Off
-   GuiControlGet, antiKekMode
-   SendInput {Blind}{%EWOLookBehindKey% up}{%EWOSpecialAbilitySlashActionKey% up}
-   if (antiKekMode = "Options Menu")
-   {
-      SendInput {Blind}{%EWOMelee% down}{lshift down}
-      Send {Blind}{p}
-      Sleep(65)
-      Send {Blind}{right}
-      Sleep(440)
-      Send {Blind}{enter}
-      Sleep(200)
-      SendDown(5,0)
-      Sleep(190)
-      Send {Blind}{enter}
-      Sleep(40)
-      SendDown(6,0)
-      RestartTimer()
-      Loop
-      {
-         If (CalculateTime(originalTime) > 200)
-            break
-         Send {Blind}{enter}
-      }
-   } else if (antiKekMode = "Interaction Menu Spam")
-   {
-      ; If the routine is not active (see IntMenuOpen), it will make it active for the rest of the script's life.
-      if not (timerActive)
-      {
-         SetTimer, IntMenuOpen, 10, 2147483647
-         timerActive := 1
-         Sleep 50
-      }
-      
-      ; Sets up all the keys that are going to be held down.
-      Send {Blind}{%EWOMelee%}
-      SendInput {Blind}{%EWOLookBehindKey% down}{lshift down}{lctrl down}{lbutton up}{rbutton up}{%EWOSpecialAbilitySlashActionKey% up}{%InteractionMenuKey% down}
-      RestartTimer() ; Puts the system time into a variable that can be used later to calculate the amount of milliseconds that have passed since this was executed.
-      
-      ; While the time since RestartTimer() was called is less than 400ms, it will check if the interaction menu is open.
-      ; Checking if the interaction menu is open takes ~75-150ms or so, which means it is not viable for other macros. AntiKek, however can easily break and the slight delay is usually worth it.
-      While (CalculateTime(originalTime) < 400)
-      {
-         Send {Blind}{%EWOMelee%}
-         ; If the interaction menu is open, EWO
-         If (intMenuOpen)
-         {
-            SendInput {Blind}{%EWOSpecialAbilitySlashActionKey% up}{enter down}{up down}
-            Send {Blind}{f24}{f24 up}
-            SendInput {Blind}{WheelUp}{enter up}
-            Send {Blind}{f24 up}{backspace}
-            Sleep 50
-         }
-      }
-      SendInput {Blind}{%InteractionMenuKey% up}
-   }
-   SendInput {Blind}{%EWOMelee% up}{%EWOLookBehindKey% up}{%InteractionMenuKey% up}{up up}{lshift up}{lctrl up}
-return
+/*
 
 ; Runs every 10ms
 IntMenuOpen:
@@ -580,19 +431,28 @@ IntMenuOpen:
    {
       Run, GTAHaXUI.exe, %ConfigDirectory%,Min,intMenuWindow
       WinWait, ahk_pid %intMenuWindow%
-      Sleep 25
       WinSet, ExStyle, ^0x80, ahk_pid %intMenuWindow%
       ControlSetText, Edit1, %IntMenuGlobalIndexAddedTogether%, ahk_pid %intMenuWindow%
    } else
    {
+      ControlGet, currentIntMenuGlobalIndex,Line,1,Edit1,ahk_pid %intMenuWindow% ; GTAHaX uses a very basic window, so AHK can retrieve the values from "controls". These are the lines in this case. Here it is checking what the top line contains.
       ControlGet, currentValue2,Line,1,Edit7,ahk_pid %intMenuWindow% ; Getting current value of the global
+      If (!currentIntMenuGlobalIndex = IntMenuGlobalIndexAddedTogether) ; If global index isn't correct, then close GTAHaX and remake the window. Too lazy to remove everything, this is better anyways.
+      {
+         Process, Close, %intMenuWindow%
+         Goto, IntMenuOpen
+      }
       ; This global will be set to 0 whenever the interaction menu is open.
       If (currentValue2 = 0)
-         intMenuOpen := 1
+      {
+         global intMenuOpen := 1
+         Sleep 50
+      }
       else
-         intMenuOpen := 0
+         global intMenuOpen := 0
    }
 Return
+*/
 
 BST: ; Self explanatory
    SendInput {Blind}{lbutton up}{enter down}
@@ -632,12 +492,9 @@ Ammo: ; Self explanatory
    
    SendInput {Blind}{lbutton up}{enter down}
    Send {Blind}{%InteractionMenuKey%}
-   SendDown(3,0)
-   SendInput {Blind}{enter up}
    SendDown(4,0)
-   SendInput {Blind}{enter down}
-   SendDown(2,0)
    SendInput {Blind}{enter up}
+   Send {Blind}{enter}
    If (arrayLocation = 2)
       Send {Blind}{enter}
    else if (arrayLocation = 3)
@@ -1049,7 +906,7 @@ return
 ReloadOutfit: ; Self explanatory
    SendInput {Blind}{lbutton up}{enter down}
    Send {Blind}{%InteractionMenuKey%}
-   SendUp(11,2)
+   SendUp(5,2)
    Send {Blind}{enter up}
    SendDown(3,0)
    Send {Blind}{enter}{%InteractionMenuKey%}
@@ -1146,9 +1003,9 @@ return
 ProcessCheck3: ; Self explanatory
    GuiControlGet, ProcessCheck2
    if (!ProcessCheck2)
-      SetTimer, ProcessCheckTimer, Off, -2147483648
+      SetTimer, ProcessCheckTimer, Off, -2147483644
    else
-      SetTimer, ProcessCheckTimer, 100, -2147483648
+      SetTimer, ProcessCheckTimer, 100, -2147483644
 return
 
 ShowUI:
@@ -1186,14 +1043,18 @@ ProcessCheckTimer:
          If !WinExist("ahk_exe GTA5.exe")
          {
             Gosub, CloseGTAProcesses
-            SetTimer, Write, Off, -2147483648
-            SetTimer, IntMenuOpen, Off, -2147483648
-            SetTimer, CloseGTAHaX, 100, -2147483648
-            SetTimer, ExitMacros, -10000, -2147483648
+            SetTimer, Write, Off, -2147483647
+            SetTimer, EWOSpeed, Off, -2147483645
+            ; SetTimer, IntMenuOpen, Off, -2147483643
+            SetTimer, GTAHaXEWO, Off, -2147483647
+            SetTimer, CloseGTAHaX, 100, 2147483647
+            SetTimer, ExitMacros, -10000, 2147483647
             MsgBox, 0, Macros will close now. RIP., GTA is no longer running. Macros will close now. RIP.
             Process, Close, %Gay%
             Process, Close, %ewoWriteWindow%
+            Process, Close, %ewoSpeedWindow%
             Process, Close, %intMenuWindow%
+            Process, Close, %ewoWindow%
             Process, Close, %Gay3%
             Process, Close, %Obese11%
             ExitApp
@@ -1282,15 +1143,12 @@ ToggleCrosshair:
    Goto, Crosshair6
 
 Jobs:
-   SendInput {Blind}{lbutton up}{enter down}
-   Send {Blind}{%InteractionMenuKey%}
-   SendUp(8,0)
-   SendInput {Blind}{enter up}
-   Send {Blind}{down down}
-   SendInput {Blind}{enter down}
-   Send {Blind}{down up}
-   SendInput {Blind}{WheelDown}{enter up}
-   Send {Blind}{enter}{%InteractionMenuKey%}
+   SendInput {Blind}{lbutton up} ; {enter down}
+   Send {Blind}{%InteractionMenuKey%}{up 3}{enter}
+   SendUp(1,1)
+   Send {Blind}{enter}
+   SendDown(2,0)
+   Send {Blind}{enter 2}{%InteractionMenuKey%}
 return
 
 MCCEO:
@@ -1405,7 +1263,6 @@ DisableAll:
    Hotkey(jetThermal,"JetThermal","Off")
    Hotkey(FastSniperSwitch,"FastSniperSwitch","Off")
    Hotkey(EWO,"EWO","Off")
-   Hotkey(KekEWO,"KekEWO","Off")
    Hotkey(BST,"BST","Off")
    Hotkey(Ammo,"Ammo","Off")
    Hotkey(FastRespawn,"FastRespawn","Off")
@@ -1475,7 +1332,6 @@ NotExist1:
       GuiControl,1:,shootEWO,0
       GuiControl,1:,customTime,30
       GuiControl,1:,FasterSniper,1
-      GuiControl,Choose,SmoothEWOMode,Fastest
       GuiControl,Choose,clumsyLagMode,sending
    }
 Return
@@ -1576,7 +1432,7 @@ MacroOptions:
    Gui, Add, Link,, Crosshair: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Crosshair">(?)</a>
    Gui, Add, Link,, Crosshair position: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Crosshair-position">(?)</a>
    Gui, Add, Link,, Night Vision Thermal <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Night-Vision-Thermal">(?)</a>
-   Gui, Add, Link,, Slower EWO? <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Slower-EWO">(?)</a>
+   Gui, Add, Link,, Sticky EWO? <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Slower-EWO">(?)</a>
    Gui, Add, Link,, Shoot EWO? <a href="">(?)</a>
    Gui, Add, Link,, Custom EWO Sleep Time: <a href="">(?)</a>
    Gui, Add, Link,, CEO Mode: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/CEO-Mode">(?)</a>
@@ -1588,8 +1444,6 @@ MacroOptions:
       Gui, Add, Link,, clumsy ping: <a href="">(?)</a>
       Gui, Add, Link,, clumsy lag mode: <a href="">(?)</a>
    }
-   Gui, Add, Link,, Slower EWO Mode: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Slower-EWO">(?)</a>
-   Gui, Add, Link,, AntiKek Mode: <a href="">(?)</a>
    Gui, Add, Link,, Optimize Fast Respawn EWO for: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Optimize-Fast-Respawn-EWO-For">(?)</a>
    
    Gui, Add, CheckBox, gProcessCheck3 vProcessCheck2 h21 x+105 y60,
@@ -1597,7 +1451,7 @@ MacroOptions:
    Gui, Add, Checkbox, gCrossHair5 vCrossHair h21,
    Gui, Add, Edit, gCrosshair5 vCrosshairPos h21,
    Gui, Add, CheckBox, vNightVision h21,
-   Gui, Add, Checkbox, vSmoothEWO h21,
+   Gui, Add, Checkbox, vStickyEWO h21,
    Gui, Add, Checkbox, vshootEWO h21,
    Gui, Add, Edit, vcustomTime h21,
    Gui, Add, CheckBox, vCEOMode h21,
@@ -1609,15 +1463,12 @@ MacroOptions:
       Gui, Add, Edit, gClumsyPing vclumsyPing h21,
       Gui, Add, DropDownList, gclumsyLagMode vclumsyLagMode, sending|recieving
    }
-   Gui, Add, DropDownList, vSmoothEWOMode, Sticky|Retarded|Retarded2|Retarded3|Staeni|Fast|Faster|Fastest|Fasterest|Custom
-   Gui, Add, DropDownList, vantiKekMode, Options Menu|Interaction Menu Spam
    Gui, Add, DropDownList, vBugRespawnMode, Sticky|Homing|RPG
 Return
 
 MiscMacros:
    Gui, Tab, 5
-   Gui, Add, Link,x+5 y60, AntiKek: (120+ FPS Only) <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Kek-EWO">(?)</a>
-   Gui, Add, Link,, Show UI: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Show-UI">(?)</a>
+   Gui, Add, Link,x+5 y60, Show UI: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Show-UI">(?)</a>
    Gui, Add, Link,, Toggle CEO: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Toggle-CEO">(?)</a>
    Gui, Add, Link,, Reload Outfit: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Reload-Outfit">(?)</a>
    Gui, Add, Link,, Toggle Jobs: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Toggle-Jobs">(?)</a>
@@ -1631,8 +1482,7 @@ MiscMacros:
    
    Gui, Add, Link,, Press a Key: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Press-a-Key">(?)</a>
    
-   Gui, Add, Hotkey,vKekEWO x+100 y60
-   Gui, Add, Hotkey,vShowUI,
+   Gui, Add, Hotkey,vShowUI x+100 y60
    Gui, Add, Hotkey,vToggleCEO,
    Gui, Add, Hotkey,vReloadOutfit,
    Gui, Add, Hotkey,vJobs
@@ -1689,9 +1539,11 @@ SaveConfig:
 SaveConfigRedirect:
    GuiControlGet, ProcessCheck2
    SetTimer, Write, Off, -2147483648
-   SetTimer, IntMenuOpen, Off, -2147483648
-   SetTimer, TabBackInnn, Off, -2147483648
-   SetTimer, ProcessCheckTimer, Off, -2147483648
+   SetTimer, EWOSpeed, Off, -2147483645
+   SetTimer, GTAHaXEWO, Off, -2147483646
+   ; SetTimer, IntMenuOpen, Off, -2147483643
+   SetTimer, TabBackInnn, Off, -2147483645
+   SetTimer, ProcessCheckTimer, Off, -2147483644
    Gosub,DisableAll
    Gui,Submit,NoHide
    If (save)
@@ -1709,7 +1561,6 @@ SaveConfigRedirect:
       IniWrite,%BindFists%,%CFG%,Keybinds,Fists Bind
       IniWrite,%EWO%,%CFG%,PVP Macros,EWO
       IniWrite,%EWOWrite%,%CFG%,PVP Macros,EWO Write
-      IniWrite,%KekEWO%,%CFG%,PVP Macros,Kek EWO
       IniWrite,%EWOLookBehindKey%,%CFG%,Keybinds,EWO Look Behind Button
       IniWrite,%EWOSpecialAbilitySlashActionKey%,%CFG%,Keybinds,EWO Special Ability/Action Key
       IniWrite,%EWOMelee%,%CFG%,Keybinds,EWO Melee Key
@@ -1733,7 +1584,6 @@ SaveConfigRedirect:
       IniWrite,%ProcessCheck2%,%CFG%,Misc,Process Check
       IniWrite,%NightVision%,%CFG%,Misc,Use Night Vision Thermal
       IniWrite,%RPGSpam%,%CFG%,PVP Macros,RPG Spam
-      IniWrite,%antiKekMode%,%CFG%,PVP Macros,AntiKek Mode
       IniWrite,%BindRPG%,%CFG%,Keybinds,RPG Bind
       IniWrite,%BindSticky%,%CFG%,Keybinds,Sticky Bind
       IniWrite,%BindPistol%,%CFG%,Keybinds,Pistol Bind
@@ -1743,10 +1593,9 @@ SaveConfigRedirect:
       IniWrite,%Jobs%,%CFG%,Misc,Disable All Job Blips
       IniWrite,%Paste%,%CFG%,Misc,Allow Copy Paste
       IniWrite,%MCCEO%,%CFG%,Misc,MC CEO Toggle
-      IniWrite,%SmoothEWO%,%CFG%,Misc,Smooth EWO
+      IniWrite,%SmoothEWO%,%CFG%,Misc,Sticky Bomb EWO
       IniWrite,%shootEWO%,%CFG%,Misc,Shoot EWO
       IniWrite,%customTime%,%CFG%,Misc,Custom EWO Time
-      IniWrite,%SmoothEWOMode%,%CFG%,Misc,Smooth EWO Mode
       IniWrite,%BugRespawnMode%,%CFG%,Misc,Bug Respawn Mode
       IniWrite,%FasterSniper%,%CFG%,Misc,Faster Sniper
       IniWrite,%closeGTABind%,%CFG%,Misc,Close GTA Bind
@@ -1761,7 +1610,6 @@ SaveConfigRedirect:
    Hotkey(jetThermal,"JetThermal","On")
    Hotkey(FastSniperSwitch,"FastSniperSwitch","On")
    Hotkey(EWO,"EWO","On")
-   Hotkey(KekEWO,"KekEWO","On")
    Hotkey(BST,"BST","On")
    Hotkey(Ammo,"Ammo","On")
    Hotkey(FastRespawn,"FastRespawn","On")
@@ -1787,10 +1635,13 @@ SaveConfigRedirect:
    If (EWOWrite)
    {
       SetTimer, Write, 10, -2147483648
-      SetTimer, TabBackInnn, 10, -2147483648
    }
+   SetTimer, TabBackInnn, 10, -2147483645
    if (ProcessCheck2)
-      SetTimer, ProcessCheckTimer, 100, -2147483648
+      SetTimer, ProcessCheckTimer, 100, -2147483644
+   ; SetTimer, IntMenuOpen, 1, -2147483643
+   SetTimer, EWOSpeed, 250, -2147483645
+   SetTimer, GTAHaXEWO, 10, -2147483646
    ;MsgBox, 0, Saved!, Your config has been saved and/or the macros have been started!, 2
    If (GTAAlreadyClosed = 0 && save)
       TrayTip, %MacroText%, Your config has been saved and/or the macros have been started!, 10, 1
@@ -1804,7 +1655,9 @@ Return
 CloseGTAHaX:
    Process, Close, %Gay%
    Process, Close, %ewoWriteWindow%
+   Process, Close, %ewoSpeedWindow%
    Process, Close, %intMenuWindow%
+   Process, Close, %ewoWindow%
    Process, Close, %Gay3%
    Process, Close, %Obese11%
 Return
@@ -1857,7 +1710,6 @@ Read:
       IniRead,Read_BindFists,%CFG%,Keybinds,Fists Bind
       IniRead,Read_EWO,%CFG%,PVP Macros,EWO
       IniRead,Read_EWOWrite,%CFG%,PVP Macros,EWO Write
-      IniRead,Read_KekEWO,%CFG%,PVP Macros,Kek EWO
       IniRead,Read_EWOLookBehindKey,%CFG%,Keybinds,EWO Look Behind Button
       IniRead,Read_EWOSpecialAbilitySlashActionKey,%CFG%,Keybinds,EWO Special Ability/Action Key
       IniRead,Read_EWOMelee,%CFG%,Keybinds,EWO Melee Key
@@ -1881,7 +1733,6 @@ Read:
       IniRead,Read_ProcessCheck2,%CFG%,Misc,Process Check
       IniRead,Read_NightVision,%CFG%,Misc,Use Night Vision Thermal
       IniRead,Read_RPGSpam,%CFG%,PVP Macros,RPG Spam
-      IniRead,Read_antiKekMode,%CFG%,PVP Macros,AntiKek Mode
       IniRead,Read_BindRPG,%CFG%,Keybinds,RPG Bind
       IniRead,Read_BindSticky,%CFG%,Keybinds,Sticky Bind
       IniRead,Read_BindPistol,%CFG%,Keybinds,Pistol Bind
@@ -1891,10 +1742,9 @@ Read:
       IniRead,Read_Jobs,%CFG%,Misc,Disable All Job Blips
       IniRead,Read_Paste,%CFG%,Misc,Allow Copy Paste
       IniRead,Read_MCCEO,%CFG%,Misc,MC CEO Toggle
-      IniRead,Read_SmoothEWO,%CFG%,Misc,Smooth EWO
+      IniRead,Read_SmoothEWO,%CFG%,Misc,Sticky Bomb EWO
       IniRead,Read_shootEWO,%CFG%,Misc,Shoot EWO
       IniRead,Read_customTime,%CFG%,Misc,Custom EWO Time
-      IniRead,Read_SmoothEWOMode,%CFG%,Misc,Smooth EWO Mode
       IniRead,Read_BugRespawnMode,%CFG%,Misc,Bug Respawn Mode
       IniRead,Read_FasterSniper,%CFG%,Misc,Faster Sniper
       IniRead,Read_closeGTABind,%CFG%,Misc,Close GTA Bind
@@ -1916,7 +1766,6 @@ Read:
       GuiControl,1:,BindFists,%Read_BindFists%
       GuiControl,1:,EWO,%Read_EWO%
       GuiControl,1:,EWOWrite,%Read_EWOWrite%
-      GuiControl,1:,KekEWO,%Read_KekEWO%
       GuiControl,1:,EWOLookBehindKey,%Read_EWOLookBehindKey%
       GuiControl,1:,EWOSpecialAbilitySlashActionKey,%Read_EWOSpecialAbilitySlashActionKey%
       GuiControl,1:,EWOMelee,%Read_EWOMelee%
@@ -1943,7 +1792,6 @@ Read:
       GuiControl,1:,ProcessCheck2,%Read_ProcessCheck2%
       GuiControl,1:,NightVision,%Read_NightVision%
       GuiControl,1:,RPGSpam,%Read_RPGSpam%
-      GuiControl,1:Choose,antiKekMode,%Read_antiKekMode%
       GuiControl,1:,BindRPG,%Read_BindRPG%
       GuiControl,1:,BindSticky,%Read_BindSticky%
       GuiControl,1:,BindPistol,%Read_BindPistol%
@@ -1956,7 +1804,6 @@ Read:
       GuiControl,1:,SmoothEWO,%Read_SmoothEWO%
       GuiControl,1:,shootEWO,%Read_shootEWO%
       GuiControl,1:,customTime,%Read_customTime%
-      GuiControl,1:Choose,SmoothEWOMode,%Read_SmoothEWOMode%
       GuiControl,1:Choose,BugRespawnMode,%Read_BugRespawnMode%
       GuiControl,1:,FasterSniper,%Read_FasterSniper%
       GuiControl,1:,closeGTABind,%Read_closeGTABind%
@@ -1969,10 +1816,10 @@ Return
 
 CheckHWID:
    UrlDownloadToFile, https://pastebin.com/raw/dpBPUkBM, %A_Temp%\Keys.ini
-   while not FileExist(A_Temp "\Keys.ini") ; This cheeky little piece of code makes it wait until the file exists.
+   while IfExist, A_Temp "\Keys.ini"
       {}
-      Loop 60
-         IniRead, Key%A_Index%, %A_Temp%\Keys.ini, Registration, Key%A_Index%
+      valid_ids := []
+   key := % UUID()
    IniRead, latestMacroVersion, %A_Temp%\Keys.ini, Versions, LatestMacroVersion
    if VerCompare(MacroVersion, "<"latestMacroVersion)
    {
@@ -1980,11 +1827,24 @@ CheckHWID:
       ExitApp
    }
    
+   Loop 84
+   {
+      IniRead, K%A_Index%, %A_Temp%\Keys.ini, Registration, K%A_Index%
+      currentHWID := K%A_Index%
+      valid_ids.Push(currentHWID)
+   }
    FileDelete, %A_Temp%\Keys.ini
+   for index, currentKey in valid_ids
+   {
+      if (currentKey = key)
+         global keyMatches := 1
+   }
    
-   key := % UUID()
-   valid_ids := Object((Key1), y,(Key2), y,(Key3), y,(Key4), y,(Key5), y,(Key6), y,(Key7), y,(Key8), y,(Key9), y,(Key10), y,(Key11), y,(Key12), y,(Key13), y,(Key14), y,(Key15), y,(Key16), y,(Key17), y,(Key18), y,(Key19), y,(Key20), y,(Key21), y,(Key22), y,(Key23), y,(Key24), y,(Key25), y,(Key26), y,(Key27), y,(Key28), y,(Key29), y,(Key30), y,(Key31), y,(Key32), y,(Key33), y,(Key34), y,(Key35), y,(Key36), y,(Key37), y,(Key38), y,(Key39), y,(Key40), y,(Key41), y,(Key42), y,(Key43), y,(Key44), y,(Key45), y,(Key46), y,(Key47), y,(Key48), y,(Key49), y,(Key50), y,(Key51), y,(Key52), y,(Key53), y,(Key54), y,(Key55), y,(Key56), y,(Key57), y,(Key58), y,(Key59), y,(Key60), y)
-   if (!valid_ids.HasKey(key))
+   if (keyMatches)
+   {
+      Goto Back
+   }
+   else
    {
       c0=D4D0C8
       Clipboard := key
@@ -1992,12 +1852,12 @@ CheckHWID:
       Gui,2:Add, Link,, <a href="https://discord.gg/5Y3zJK4KGW">Here</a> is an invite to the discord server.
       Gui,2:Add, Button,ym+80 gExitMacros2, OK
       Gui,2:Show,, HWID Mismatch
-      Return
-   } else
-      Goto, Back
+   }
 Return
 
 ExitMacros2:
+   Thread, Priority, 2147483647
+   Critical, On
 ExitApp
 
 Suspend:

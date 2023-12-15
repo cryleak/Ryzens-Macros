@@ -18,7 +18,7 @@ TrayButtonInfo = 0
 #Persistent ; Makes the script never exit, probably unneccassary because other commands (like hotkey) already cause it to never exit.
 #Requires AutoHotkey >=1.1.36.02 Unicode <1.2
 
-LauncherVersion := "1.1.1.3"
+LauncherVersion := "1.1.1.4"
 ConfigDirectory = %A_MyDocuments%\Ryzen's Macros
 FileDelete, %A_MyDocuments%\AutoHotkey.ahk
 Goto, CheckHWID ; Checks your PC's UUID. Shitty but it works
@@ -133,8 +133,8 @@ CheckHWID:
    UrlDownloadToFile, https://pastebin.com/raw/dpBPUkBM, %A_Temp%\Keys.ini
    while IfExist, A_Temp "\Keys.ini"
       {}
-      Loop 60
-         IniRead, Key%A_Index%, %A_Temp%\Keys.ini, Registration, Key%A_Index%
+      valid_ids := []
+   key := % UUID()
    IniRead, latestLauncherVersion, %A_Temp%\Keys.ini, Versions, LatestLauncherVersion
    if VerCompare(LauncherVersion, "<"latestLauncherVersion)
    {
@@ -142,21 +142,33 @@ CheckHWID:
       ExitApp
    }
    
+   Loop 84
+   {
+      IniRead, K%A_Index%, %A_Temp%\Keys.ini, Registration, K%A_Index%
+      currentHWID := K%A_Index%
+      valid_ids.Push(currentHWID)
+   }
    FileDelete, %A_Temp%\Keys.ini
+   for index, currentKey in valid_ids
+   {
+      if (currentKey = key)
+         global keyMatches := 1
+   }
    
-   key := % UUID()
-   valid_ids := Object((Key1), y,(Key2), y,(Key3), y,(Key4), y,(Key5), y,(Key6), y,(Key7), y,(Key8), y,(Key9), y,(Key10), y,(Key11), y,(Key12), y,(Key13), y,(Key14), y,(Key15), y,(Key16), y,(Key17), y,(Key18), y,(Key19), y,(Key20), y,(Key21), y,(Key22), y,(Key23), y,(Key24), y,(Key25), y,(Key26), y,(Key27), y,(Key28), y,(Key29), y,(Key30), y,(Key31), y,(Key32), y,(Key33), y,(Key34), y,(Key35), y,(Key36), y,(Key37), y,(Key38), y,(Key39), y,(Key40), y,(Key41), y,(Key42), y,(Key43), y,(Key44), y,(Key45), y,(Key46), y,(Key47), y,(Key48), y,(Key49), y,(Key50), y,(Key51), y,(Key52), y,(Key53), y,(Key54), y,(Key55), y,(Key56), y,(Key57), y,(Key58), y,(Key59), y,(Key60), y)
-   if not (valid_ids.HasKey(key)) {
+   if (keyMatches)
+   {
+      Goto Back
+   }
+   else
+   {
       c0=D4D0C8
       Clipboard := key
       Gui,2:Add, Link,w400, Your HWID has been copied to the clipboard. Please join the Discord Server and send it in the #macro-hwid channel. To gain access to the channel, you must react in the #macros channel.
       Gui,2:Add, Link,, <a href="https://discord.gg/5Y3zJK4KGW">Here</a> is an invite to the discord server.
       Gui,2:Add, Button,ym+80 gExitMacros2, OK
       Gui,2:Show,, HWID Mismatch
-      Return
-   } else {
-      Goto, Back
    }
+Return
 
 ExitMacros2:
 ExitApp
