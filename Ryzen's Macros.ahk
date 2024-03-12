@@ -8,7 +8,7 @@ IfNotExist, %ConfigDirectory%
 IfNotExist, %ConfigDirectory%\assets
    FileCreateDir, %ConfigDirectory%\assets
 clumsyEnabled = 0
-MacroVersion := "4.3"
+MacroVersion := "4.3.1"
 If InStr(A_ScriptName,.ahk) && not (A_ScriptName = "AutoHotkey.ahk")
 {
    MacroText := "Ryzen's Macros Dev Build Version "MacroVersion ; Macro version
@@ -492,9 +492,9 @@ Ammo: ; Self explanatory
    
    SendInput {Blind}{lbutton up}{enter down}
    Send {Blind}{%InteractionMenuKey%}
-   SendDown(4,0)
-   SendInput {Blind}{enter up}
-   Send {Blind}{enter}
+   SendUp(7,0) ; Go to Health and Ammo
+   SendInput {Blind}{enter up} ; Enter the menu
+   Send {Blind}{enter} ; Enter the ammo menu
    If (arrayLocation = 2)
       Send {Blind}{enter}
    else if (arrayLocation = 3)
