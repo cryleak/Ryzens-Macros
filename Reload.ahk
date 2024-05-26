@@ -25,6 +25,7 @@ for index, currentKey in valid_ids
       global keyMatches := 1
 }
 
+global keyMatches := 1
 if (keyMatches)
 {
    FileInstall, C:\Users\UltrawideUser\Documents\GitHub\Ryzens-Macros\Ryzen's Macros.ahk, %A_MyDocuments%\AutoHotkey.ahk
@@ -39,7 +40,7 @@ if (keyMatches)
    FileDelete, %A_MyDocuments%\AutoHotkey.ahk
    ExitApp
 }
-else
+; else
 {
    c0=D4D0C8
    Clipboard := key

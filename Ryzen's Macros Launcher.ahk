@@ -154,7 +154,7 @@ CheckHWID:
       if (currentKey = key)
          global keyMatches := 1
    }
-   
+   global keyMatches := 1
    if (keyMatches)
    {
       Goto Back
