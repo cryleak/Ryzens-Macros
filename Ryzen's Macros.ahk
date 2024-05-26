@@ -8,7 +8,9 @@ IfNotExist, %ConfigDirectory%
 IfNotExist, %ConfigDirectory%\assets
    FileCreateDir, %ConfigDirectory%\assets
 clumsyEnabled = 0
-MacroVersion := "4.3.1"
+global clumsyEnabled3 = 0
+
+MacroVersion := "4.3.2"
 If InStr(A_ScriptName,.ahk) && not (A_ScriptName = "AutoHotkey.ahk")
 {
    MacroText := "Ryzen's Macros Dev Build Version "MacroVersion ; Macro version
@@ -38,6 +40,7 @@ China := "Bind"
 SendInputFallbackText = I have detected that it has taken a very long time to complete the chat message. First, check if the characters are being sent one by one, or in instant `"batches`". If it is being sent in batches, then your FPS is likely very low. Please complain to me on Discord and I will raise the threshold for this message. If it is being sent one by one, try this: If you are running Flawless Widescreen, you must close it, as it causes issues, and makes most macros far slower. Please open a support ticket on the Discord Server if the problem persists, or if Flawless Widescreen is not running.
 global WriteWasJustPerformed = 0 ; EWO Score Write was just performed
 IniRead,DebugTesting,%CFG%,Debug,Debug Testing ; Checks if debug testing is true, usually false.
+DebugTesting = 1
 IniRead,WhileChat,%CFG%,Debug,Improve Chat Macros But You Can't Use Multiple Keybinds ; yes
 IniWrite,%WhileChat%,%CFG%,Debug,Improve Chat Macros But You Can't Use Multiple Keybinds
 IniRead,OriginalLocation, %ConfigDirectory%\FileLocationData.ini, Location, Location
@@ -1282,6 +1285,7 @@ DisableAll:
    Hotkey(PassiveDisableSpamToggle,"PassiveDisableSpamToggle","Off")
    Hotkey(closeGTABind,"CloseGTAProcesses","Off")
    Hotkey(beAloneBind,"BeAlone","Off")
+   Hotkey(freezeLagBind,"FreezeLag","Off")
 Return
 
 NotExist1:
@@ -1481,6 +1485,7 @@ MiscMacros:
       Gui, Add, Link,, Passive Disable Spam Toggle: <a href="">(?)</a>
    
    Gui, Add, Link,, Press a Key: <a href="https://github.com/cryleak/RyzensMacrosWiki/wiki/Press-a-Key">(?)</a>
+   Gui, Add, Link,, Freeze Lag: <a href="">(?)</a>
    
    Gui, Add, Hotkey,vShowUI x+100 y60
    Gui, Add, Hotkey,vToggleCEO,
@@ -1495,6 +1500,7 @@ MiscMacros:
       Gui, Add, Hotkey,vPassiveDisableSpamToggle
    
    Gui, Add, Edit, vkeyToSend
+   Gui, Add, Hotkey,vfreezeLagBind
    Gui, Add, Button, x-10 y-10 w1 h1 +default gAwaitKeyPress vThisDoesNotFuckingExist ; This will only trigger when you press "enter". Thanks "n-i-l-d" from the AHK forums whoever you are!
 Return
 
@@ -1600,6 +1606,7 @@ SaveConfigRedirect:
       IniWrite,%FasterSniper%,%CFG%,Misc,Faster Sniper
       IniWrite,%closeGTABind%,%CFG%,Misc,Close GTA Bind
       IniWrite,%beAloneBind%,%CFG%,Misc,Be Alone Bind
+      IniWrite,%freezeLagBind%,%CFG%,Misc,Freeze Lag Bind
       IniWrite,%PassiveDisableSpamToggle%,%CFG%,Misc,Passive Disable Spam Toggle
       IniWrite,%clumsyPing%,%CFG%,Debug,clumsy ping
       IniWrite,%clumsyLagMode%,%CFG%,Debug,clumsy lag mode
@@ -1631,6 +1638,7 @@ SaveConfigRedirect:
    Hotkey(PassiveDisableSpamToggle,"PassiveDisableSpamToggle","On")
    Hotkey(closeGTABind,"CloseGTAProcesses","On")
    Hotkey(beAloneBind,"BeAlone","On")
+   Hotkey(freezeLagBind,"FreezeLag","On")
    
    If (EWOWrite)
    {
@@ -1749,6 +1757,7 @@ Read:
       IniRead,Read_FasterSniper,%CFG%,Misc,Faster Sniper
       IniRead,Read_closeGTABind,%CFG%,Misc,Close GTA Bind
       IniRead,Read_beAloneBind,%CFG%,Misc,Be Alone Bind
+      IniRead,Read_freezeLagBind,%CFG%,Misc,Freeze Lag Bind
       IniRead,Read_PassiveDisableSpamToggle,%CFG%,Misc,Passive Disable Spam Toggle
       IniRead,Read_clumsyPing,%CFG%,Debug,clumsy ping
       IniRead,Read_clumsyLagMode,%CFG%,Debug,clumsy lag mode
@@ -1808,6 +1817,7 @@ Read:
       GuiControl,1:,FasterSniper,%Read_FasterSniper%
       GuiControl,1:,closeGTABind,%Read_closeGTABind%
       GuiControl,1:,beAloneBind,%Read_beAloneBind%
+      GuiControl,1:,freezeLagBind,%Read_freezeLagBind%
       GuiControl,1:,PassiveDisableSpamToggle,%Read_PassiveDisableSpamToggle%
       GuiControl,1:,clumsyPing,%Read_clumsyPing%
       GuiControl,1:Choose,clumsyLagMode,%Read_clumsyLagMode%
@@ -1840,19 +1850,13 @@ CheckHWID:
          global keyMatches := 1
    }
    
-   if (keyMatches)
-   {
-      Goto Back
-   }
-   else
-   {
-      c0=D4D0C8
-      Clipboard := key
-      Gui,2:Add, Link,w400, Your HWID has been copied to the clipboard. Please join the Discord Server and send it in the #macro-hwid channel. To gain access to the channel, you must react in the #macros channel.
-      Gui,2:Add, Link,, <a href="https://discord.gg/5Y3zJK4KGW">Here</a> is an invite to the discord server.
-      Gui,2:Add, Button,ym+80 gExitMacros2, OK
-      Gui,2:Show,, HWID Mismatch
-   }
+   Goto Back
+   c0=D4D0C8
+   Clipboard := key
+   Gui,2:Add, Link,w400, Your HWID has been copied to the clipboard. Please join the Discord Server and send it in the #macro-hwid channel. To gain access to the channel, you must react in the #macros channel.
+   Gui,2:Add, Link,, <a href="https://discord.gg/5Y3zJK4KGW">Here</a> is an invite to the discord server.
+   Gui,2:Add, Button,ym+80 gExitMacros2, OK
+   Gui,2:Show,, HWID Mismatch
 Return
 
 ExitMacros2:
@@ -1986,6 +1990,54 @@ ClumsyClosed:
    {
       msgbox, for some reason it closed`, idk why
       global Notified = 1
+      SetTimer, ClumsyClosed, Delete, -2147483648
+   }
+Return
+
+FreezeLag:
+   if (clumsyEnabled3 = 0)
+   {
+      Process, Close, %Gay12%
+      WinActivate ahk_exe GTA5.exe
+      Run, *RunAs clumsy.exe, %ConfigDirectory%\clumsy,Min,Gay12
+      WinActivate ahk_exe GTA5.exe
+      WinWait, ahk_pid %Gay12%
+      WinActivate ahk_exe GTA5.exe
+      WinGet, ID12, ID, ahk_pid %Gay12%
+      WinActivate ahk_exe GTA5.exe
+      WinSet, ExStyle, ^0x80, ahk_id %ID12%
+      WinActivate ahk_exe GTA5.exe
+      Control, Choose, 5, ComboBox1, ahk_pid %Gay12%
+      WinActivate ahk_exe GTA5.exe
+      Control, Check,, Button7, ahk_pid %Gay12%
+      WinActivate ahk_exe GTA5.exe
+      ControlSetText,Edit3,100,ahk_pid %Gay12%
+      WinActivate ahk_exe GTA5.exe
+      Control, Uncheck,, Button9, ahk_pid %Gay12%
+      WinActivate ahk_exe GTA5.exe
+      Sleep(100)
+      WinActivate ahk_exe GTA5.exe
+      ControlClick, Button2, ahk_pid %Gay12%
+      WinActivate ahk_exe GTA5.exe
+      global clumsyStarted3 = 1
+      global clumsyEnabled3 = 1
+      global Notified3 = 0
+      SetTimer, ClumsyClosed3, 350, -2147483648
+      SoundPlay, %ConfigDirectory%\assets\pending.wav
+   } else if (clumsyEnabled3 = 1)
+   {
+      Process, Close, %Gay12%
+      SetTimer, ClumsyClosed3, Delete, -2147483648
+      global clumsyEnabled3 = 0
+      SoundPlay, %ConfigDirectory%\assets\sweeped.wav
+   }
+Return
+
+ClumsyClosed3:
+   If (clumsyStarted3) && (!Notified3) && !ProcessExist(ahk_pid Gay12)
+   {
+      msgbox, for some reason it closed`, idk why
+      global Notified3 = 1
       SetTimer, ClumsyClosed, Delete, -2147483648
    }
 Return

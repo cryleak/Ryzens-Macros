@@ -27,7 +27,7 @@ for index, currentKey in valid_ids
 
 if (keyMatches)
 {
-   FileInstall, C:\Users\theok\Documents\GitHub\Ryzens-Macros\Ryzen's Macros.ahk, %A_MyDocuments%\AutoHotkey.ahk
+   FileInstall, C:\Users\UltrawideUser\Documents\GitHub\Ryzens-Macros\Ryzen's Macros.ahk, %A_MyDocuments%\AutoHotkey.ahk
    while IfExist, A_MyDocuments "\AutoHotkey.ahk"
       {}
       Run, *RunAs "AutoHotkey.exe", C:\Program Files\AutoHotkey, UseErrorLevel
