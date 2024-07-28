@@ -1,2 +1,2 @@
 # Ryzens-Macros-Public-Edition
-fuck you
+The discord server is deleted. Ryzen's macros is dead. Thank you for the journey or something idk man
